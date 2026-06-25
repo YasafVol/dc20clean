@@ -79,7 +79,7 @@ export const sharedTraitsData: Trait[] = [
 		description:
 			"You have a set of wings that you can use to horizontally glide and slow your descent. Provided you aren't Incapacitated, you gain the following benefits while in the air: Controlled Falling: You suffer no damage from Controlled Falling. Altitude Drop: If you end your turn midair, you Controlled Fall 4 Spaces. Glide Speed: You can use your movement to glide horizontally.",
 		cost: 2,
-		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'wings' }]
+		effects: [{ type: 'GRANT_MOVEMENT', target: 'glide', value: 'equal_to_speed' }]
 	},
 
 	// ============================================
@@ -415,35 +415,29 @@ export const TRAIT_ID_MAPPING: Record<string, string> = {
 	halfling_small_sized: 'shared_small_sized',
 	gnome_small_sized: 'shared_small_sized',
 	beastborn_small_sized: 'shared_small_sized',
-	gremlin_small_sized: 'shared_small_sized',
-	goblin_small_sized: 'shared_small_sized',
 
 	// Short-Legged
 	dwarf_short_legged: 'shared_short_legged',
 	halfling_short_legged: 'shared_short_legged',
 	gnome_short_legged: 'shared_short_legged',
 	beastborn_short_legged: 'shared_short_legged',
-	terraborn_slow_moving: 'shared_short_legged',
 
 	// Tough
 	dwarf_tough: 'shared_tough',
 	orc_tough: 'shared_tough',
 	giantborn_tough: 'shared_tough',
-	terraborn_tough: 'shared_tough',
 	// Note: beastborn_tough is different (+2 HP)
 
 	// Darkvision
 	dragonborn_darkvision: 'shared_darkvision',
 	fiendborn_darkvision: 'shared_darkvision',
 	beastborn_darkvision: 'shared_darkvision',
-	shadowborn_darkvision: 'shared_darkvision',
 
 	// Mana Increase
 	gnome_mana_increase: 'shared_mana_increase',
 	angelborn_mana_increase: 'shared_mana_increase',
 	dragonborn_mana_increase: 'shared_mana_increase',
 	fiendborn_mana_increase: 'shared_mana_increase',
-	shadowborn_mana_increase: 'shared_mana_increase',
 
 	// Glide Speed
 	angelborn_glide_speed: 'shared_glide_speed',
@@ -455,32 +449,25 @@ export const TRAIT_ID_MAPPING: Record<string, string> = {
 	dwarf_thick_skinned: 'shared_thick_skinned',
 	dragonborn_thick_skinned: 'shared_thick_skinned',
 	beastborn_thick_skinned: 'shared_thick_skinned',
-	// Note: terraborn_thick_skinned is different (no armor condition)
 
 	// Quick Reactions
 	elf_quick_reactions: 'shared_quick_reactions',
 	beastborn_quick_reactions: 'shared_quick_reactions',
-	gremlin_quick_reactions: 'shared_quick_reactions',
 
 	// Reckless
 	orc_reckless: 'shared_reckless',
 	beastborn_reckless: 'shared_reckless',
-	goblin_reckless: 'shared_reckless',
 
 	// Toxic Fortitude
 	dwarf_toxic_fortitude: 'shared_toxic_fortitude',
 	beastborn_toxic_fortitude: 'shared_toxic_fortitude',
-	terraborn_toxic_fortitude: 'shared_toxic_fortitude',
 
 	// Escape Artist
 	gnome_escape_artist: 'shared_escape_artist',
-	goblin_escape_artist: 'shared_escape_artist',
-	shadowborn_escape_artist: 'shared_escape_artist',
 
 	// Climb Speed
 	elf_climb_speed: 'shared_climb_speed',
 	beastborn_climb_speed: 'shared_climb_speed',
-	gremlin_climb_speed: 'shared_climb_speed',
 
 	// Brittle
 	elf_brittle: 'shared_brittle',
@@ -488,19 +475,12 @@ export const TRAIT_ID_MAPPING: Record<string, string> = {
 
 	// Frail
 	elf_frail: 'shared_frail',
-	psyborn_frail: 'shared_frail',
 
 	// Stone Blood
 	dwarf_stone_blood: 'shared_stone_blood',
-	terraborn_stone_blood: 'shared_stone_blood',
 
 	// Deft Footwork
 	halfling_deft_footwork: 'shared_deft_footwork',
-	gremlin_deft_footwork: 'shared_deft_footwork',
-
-	// Sneaky
-	gremlin_sneaky: 'shared_sneaky',
-	goblin_sneaky: 'shared_sneaky',
 
 	// Powerful Build
 	giantborn_powerful_build: 'shared_powerful_build',
@@ -508,15 +488,13 @@ export const TRAIT_ID_MAPPING: Record<string, string> = {
 
 	// Trapper
 	gnome_trapper: 'shared_trapper',
-	goblin_trapper: 'shared_trapper',
 
 	// Critter Knowledge
 	halfling_critter_knowledge: 'shared_critter_knowledge',
-	gremlin_critter_knowledge: 'shared_critter_knowledge',
 
 	// Skill/Trade Expertise
 	human_skill_expertise: 'shared_skill_expertise',
 	human_trade_expertise: 'shared_trade_expertise',
 	elf_trade_expertise_elf: 'shared_trade_expertise'
-	// Note: gnome/dwarf/goblin trade expertise have restrictions, handled separately
+	// Note: gnome/dwarf trade expertise have restrictions, handled separately
 };

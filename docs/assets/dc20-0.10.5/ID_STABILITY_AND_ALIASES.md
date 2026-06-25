@@ -1,0 +1,141 @@
+# DC20 0.10.5 ID Stability And Aliases
+
+Last Updated: 2026-06-12
+
+## Purpose
+
+This document records the stable ID surfaces that must be protected before any v0.10.5 rulesdata mutation. It is the source-of-record for whether a legacy ID can route silently, requires upgrade review, or must remain view-only.
+
+## Current Rule
+
+Stable IDs are compatibility contracts across:
+
+- saved characters
+- draft character state
+- calculator lookups
+- validation
+- character sheet rendering
+- PDF export
+- storage import/export
+
+Do not rename or remove IDs in rulesdata until the corresponding alias or migration decision exists here.
+
+## Stable ID Surfaces
+
+### Characters and draft state
+
+- `classId`
+- `ancestry1Id`
+- `ancestry2Id`
+- `selectedTraitIds`
+- `selectedTraitChoices`
+- `selectedFeatureChoices`
+- `selectedTalents`
+- `selectedSpells`
+- `selectedManeuvers`
+- `skillsData`
+- `tradesData`
+- `languagesData`
+
+Primary persistence and runtime surfaces:
+
+- `src/lib/types/dataContracts.ts`
+- `src/lib/stores/characterContext.tsx`
+- `src/lib/services/characterCompletion.ts`
+- `src/lib/services/calculatorModules/effectCollection.ts`
+- `src/lib/services/calculatorModules/validation.ts`
+- `src/lib/pdf/transformers.ts`
+
+### Rulesdata contracts
+
+- class feature IDs
+- subclass feature IDs
+- feature choice keys
+- talent IDs
+- spell IDs
+- maneuver IDs
+- trait IDs
+- equipment property IDs
+
+## Alias Decision Table
+
+| Domain         | Current / old identity                                        | v0.10.5 identity                          | Status                                      | Notes                                                               |
+| -------------- | ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
+| Rules version  | no persisted `rulesVersion`                                   | additive `rulesVersion` metadata          | required                                    | runtime gate before rulesdata mutation                              |
+| Class features | placeholder level-5 / capstone IDs                            | concrete feature IDs                      | alias needed if placeholders were persisted | verify actual saved-character exposure first                        |
+| Talent         | `multiclass_grandmaster`                                      | removed from selectable catalog           | deprecate + compatibility policy            | do not hard-delete without load policy                              |
+| Talent         | `multiclass_legendary`                                        | removed from selectable catalog           | deprecate + compatibility policy            | same as above                                                       |
+| Talent         | `barbarian_swift_berserker` / `swift_berserker`               | removed from selectable catalog           | implemented deprecated/loadable fence       | old saved characters remain loadable and upgrade-required           |
+| Class feature  | `combat_readiness_brace` / `Brace`                            | `combat_readiness_fortify` / `Fortify`    | implemented alias                           | Champion Fighting Spirit option rename; not a maneuver alias        |
+| Maneuver       | `brace` / `Brace`                                             | `brace` / `Brace`                         | no-op                                       | Brace remains a current v0.10.5 Defense maneuver                    |
+| Spell          | `summon-familiar` / `Summon Familiar`                         | `call-familiar` / `Call Familiar`         | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `fly` / `Fly`                                                 | `blessing-of-air` / `Blessing of Air`     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `vicious-mockery` / `Vicious Mockery`                         | `mockery` / `Mockery`                     | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `toxic-aura` / `Toxic Aura`                                   | `toxic-burst` / `Toxic Burst`             | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `close-wound` / `Close Wound`                                 | `close-wounds` / `Close Wounds`           | implemented alias                           | singular-to-plural compatibility route                              |
+| Spell          | `earth-blessing` / `Earth Blessing`                           | `blessing-of-earth` / `Blessing of Earth` | implemented alias                           | exact rename; old IDs route for lookup, saved IDs are not rewritten |
+| Spell          | `gravity-sinkhole`, `gravity-sink-hole` / `Gravity Sink Hole` | `gravity-well` / `Gravity Well`           | implemented rework fence                    | upgrade-required; no silent remap                                   |
+| Spell          | `absorb-element` / `Absorb Element`                           | `absorb-elements` / `Absorb Elements`     | implemented alias                           | singular-to-plural compatibility route                              |
+| Spell          | `force-dome` / `Force Dome`                                   | `forcefield` / `Forcefield`               | implemented rework fence                    | upgrade-required; explicit upgrade only                             |
+| Spell          | `wall-of-force` / `Wall of Force`                             | `forcefield` / `Forcefield`               | implemented rework fence                    | upgrade-required; explicit upgrade only                             |
+| Trait          | `beastborn_hazardous_hide`                                    | still `Hazardous Hide`                    | implemented no-op identity                  | source-confirmed returned trait; text/effect value refreshed        |
+| Trait          | `beastborn_additional_limb`, `beastborn_capable_limb`         | stable IDs, v0.10.5 wording/costs         | implemented no alias                        | `Capable Limb` is cost 2 and includes Spell Focus/Somatic use       |
+| Equipment      | Toss / Thrown / Returning property IDs                        | unchanged IDs, new costs / prerequisite   | no alias expected                           | preserve IDs, update validation only                                |
+
+## Domain Notes
+
+### Class and talent IDs
+
+- Follow `docs/systems/FEATURE_ID_NAMING_CONVENTION.md`.
+- The highest-risk class issue is replacing placeholder IDs with final IDs after they may already be referenced by progression files or saved characters.
+- Removing `Grandmaster`, `Legendary Multiclass`, and `Swift Berserker` from v0.10.5 selection must not erase their historical presence in already-saved characters.
+- Deprecated talents remain in `allTalents` for lookup/effect attribution and are omitted from `selectableTalents` for character creation.
+
+### Spell IDs
+
+- Spells are persisted through selected spell slots and saved spell arrays.
+- Rename work must keep old saved characters renderable and exportable.
+- Treat renamed-and-reworked spells as stronger than normal aliases. Some may need:
+  - alias for lookup
+  - compatibility warning
+  - view-only behavior
+
+### Maneuver IDs
+
+- Current repo usage indicates name-sensitive maneuver behavior in parts of the stack.
+- `Brace` remains a current Defense maneuver. The `Fortify` rename applies to Champion Fighting Spirit's Combat Readiness option, not the maneuver catalog.
+- `Reposition` is a semantic rewrite and is implemented as current v0.10.5 rules data, not an alias-only task.
+
+### Trait IDs
+
+- Trait IDs are persisted directly in `selectedTraitIds`.
+- Any rename or split/merge of trait identities needs alias review first.
+- `Hazardous Hide returned` is implemented as stable ID reuse, not an alias item.
+- `Additional Limb` and `Capable Limb` keep their IDs while their rendered rules text and point costs match v0.10.5.
+
+### Equipment IDs
+
+- Property IDs should stay stable.
+- Current v0.10.5 equipment changes appear to be cost and prerequisite changes, not identity changes.
+- Saved custom equipment still needs compatibility review because it stores selected property IDs under a fixed v0.10 rules version.
+
+## Resolved Migration Policy
+
+- True renames resolve additively at lookup time so historical characters remain
+  renderable without storage mutation.
+- Material reworks remain `upgrade-required` and are rewritten only through the
+  explicit v0.10 to v0.10.5 upgrade flow.
+- `Force Dome` and `Wall of Force` are approved merge inputs for `Forcefield`;
+  both original identities are disclosed in the conversion report.
+- Removed selections remain loadable for compatibility but are removed during
+  explicit upgrade when no v0.10.5 selection exists.
+- Unsupported rules versions remain view-only and are not offered an automated
+  conversion.
+
+## Minimum Alias Policy
+
+- Additive alias registries only.
+- No destructive rewrite of saved data on first load.
+- Preserve raw original IDs in storage until the user confirms an explicit
+  upgrade.
+- If semantics changed materially, surface compatibility state instead of silently remapping.

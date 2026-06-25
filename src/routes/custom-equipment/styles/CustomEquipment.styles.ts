@@ -59,7 +59,8 @@ export const CategoryGrid = styled.div`
 
 export const CategoryCard = styled.button<{ $selected?: boolean }>`
 	background: ${theme.colors.bg.secondary};
-	border: 1px solid ${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
+	border: 1px solid
+		${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${theme.spacing[6]};
 	text-align: left;
@@ -136,15 +137,21 @@ export const Step = styled.div<{ $active?: boolean; $completed?: boolean }>`
 	font-weight: ${theme.typography.fontWeight.bold};
 	font-size: ${theme.typography.fontSize.sm};
 	background: ${(props) =>
-		props.$completed ? theme.colors.accent.success : props.$active ? theme.colors.accent.primary : theme.colors.bg.tertiary};
-	color: ${(props) => (props.$completed || props.$active ? theme.colors.text.inverse : theme.colors.text.muted)};
+		props.$completed
+			? theme.colors.accent.success
+			: props.$active
+				? theme.colors.accent.primary
+				: theme.colors.bg.tertiary};
+	color: ${(props) =>
+		props.$completed || props.$active ? theme.colors.text.inverse : theme.colors.text.muted};
 	transition: all ${theme.transitions.fast};
 `;
 
 export const StepConnector = styled.div<{ $active?: boolean }>`
 	flex: 1;
 	height: 2px;
-	background: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.border.default)};
+	background: ${(props) =>
+		props.$active ? theme.colors.accent.primary : theme.colors.border.default};
 	transition: all ${theme.transitions.fast};
 `;
 
@@ -157,7 +164,8 @@ export const OptionGrid = styled.div`
 export const OptionCard = styled.button<{ $selected?: boolean }>`
 	background: ${(props) =>
 		props.$selected ? theme.colors.accent.primary : theme.colors.bg.tertiary};
-	border: 1px solid ${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
+	border: 1px solid
+		${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
 	border-radius: ${theme.borderRadius.md};
 	padding: ${theme.spacing[4]};
 	text-align: left;
@@ -317,7 +325,8 @@ export const Tab = styled.button<{ $active?: boolean }>`
 	border: none;
 	border-radius: ${theme.borderRadius.md} ${theme.borderRadius.md} 0 0;
 	color: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.text.secondary)};
-	font-weight: ${(props) => (props.$active ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium)};
+	font-weight: ${(props) =>
+		props.$active ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 

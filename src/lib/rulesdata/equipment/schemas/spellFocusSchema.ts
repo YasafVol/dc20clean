@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/spellFocusSchema.ts
  * @description Schema definitions for custom spell focuses.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 import { BaseEquipment, BaseProperty } from './baseEquipment';
@@ -17,8 +17,8 @@ export type SpellFocusHands = 'one-handed' | 'two-handed';
 // ================================================================= //
 
 export interface SpellFocusProperty extends BaseProperty {
-	/** The mechanical effect of this property */
-	effect?: string;
+	/** Spell focus hand requirements this property is available for. Omitted means all focus types. */
+	focusHands?: SpellFocusHands[];
 }
 
 // ================================================================= //

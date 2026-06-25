@@ -14,6 +14,9 @@ import type {
 import type { SavedCharacter, CharacterState } from '../types/dataContracts';
 import { api } from '../../../convex/_generated/api';
 import { getConvexClient } from '../convexClient';
+import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
+import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
+import { normalizeSelectedTalents } from '../utils/storageUtils';
 
 type StoredCharacterDoc = SavedCharacter & {
 	_id: string;
@@ -23,7 +26,12 @@ type StoredCharacterDoc = SavedCharacter & {
 
 function normalizeCharacter(doc: StoredCharacterDoc): SavedCharacter {
 	const { _id, _creationTime, userId, ...rest } = doc;
-	return rest;
+	return {
+		...rest,
+		schemaVersion: rest.schemaVersion || CURRENT_SCHEMA_VERSION,
+		rulesVersion: normalizeRulesVersion(rest.rulesVersion),
+		selectedTalents: normalizeSelectedTalents(rest.selectedTalents as any)
+	};
 }
 
 /**
@@ -44,13 +52,16 @@ function convertTalentsToArray(talents: Record<string, number> | string[] | unde
 	return result;
 }
 
-function sanitizeCharacterStateForConvex(state: CharacterState | undefined): CharacterState | undefined {
+function sanitizeCharacterStateForConvex(
+	state: CharacterState | undefined
+): CharacterState | undefined {
 	if (!state) return state;
 
 	return {
 		...state,
 		ui: {
 			manualDefenseOverrides: state.ui?.manualDefenseOverrides ?? {},
+			activeConditions: state.ui?.activeConditions ?? {},
 			combatToggles: {
 				isRaging: state.ui?.combatToggles?.isRaging ?? false
 			}
@@ -61,6 +72,8 @@ function sanitizeCharacterStateForConvex(state: CharacterState | undefined): Cha
 function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	return {
 		...character,
+		schemaVersion: character.schemaVersion || CURRENT_SCHEMA_VERSION,
+		rulesVersion: normalizeRulesVersion(character.rulesVersion),
 		// Convert Record<string, number> to string[] for database compatibility
 		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
 		characterState: sanitizeCharacterStateForConvex(character.characterState) as CharacterState
@@ -175,4 +188,3 @@ export function getConvexStorageAdapter(): CharacterStorageWithEvents {
 export const convexStorageAdapter = {
 	get: getConvexStorageAdapter
 };
-

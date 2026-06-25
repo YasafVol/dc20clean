@@ -20,6 +20,7 @@ import { StyledContainer, StyledBackButton } from './styles/Layout';
 
 // Import skills data to map skills to attributes
 import { skillsData } from '../../lib/rulesdata/skills';
+import { formatSpellCost } from '../../lib/rulesdata/spells-data/spellCost';
 
 // Import desktop-specific styled components
 import {
@@ -534,10 +535,7 @@ export const CharacterSheetDesktop: React.FC<{ characterId: string; onBack?: () 
 											</StyledSpellsTableCell>
 											<StyledSpellsTableCell>
 												<StyledSpellCost>
-													{spell.cost?.ap ? `${spell.cost.ap} AP` : ''}
-													{spell.cost?.ap && spell.cost?.mp ? ', ' : ''}
-													{spell.cost?.mp ? `${spell.cost.mp} MP` : ''}
-													{!spell.cost?.ap && !spell.cost?.mp ? 'No Cost' : ''}
+													{spell.cost ? formatSpellCost(spell.cost) : 'No Cost'}
 												</StyledSpellCost>
 											</StyledSpellsTableCell>
 											<StyledSpellsTableCell>

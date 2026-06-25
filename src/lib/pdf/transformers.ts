@@ -31,13 +31,64 @@ const pickList = <T>(primary: unknown, fallback: unknown): T[] => {
 	return normalizeList<T>(fallback);
 };
 
+type ReductionFlags = PdfExportData['reduction'];
+
+const REDUCTION_LABELS: Record<keyof ReductionFlags, string> = {
+	physical: 'PDR',
+	elemental: 'EDR',
+	mystical: 'MDR'
+};
+
+const normalizeReductionType = (type: unknown): keyof ReductionFlags | null => {
+	const value = String(type ?? '').toLowerCase();
+	if (value === 'physical' || value === 'pdr') return 'physical';
+	if (value === 'elemental' || value === 'edr') return 'elemental';
+	if (value === 'mystical' || value === 'mdr' || value === 'mental') return 'mystical';
+	return null;
+};
+
+const isDamageReductionValue = (value: unknown) =>
+	value === true || value === 'true' || value === 'reduction' || value === 'damage_reduction';
+
+const reductionFromResistanceEntries = (
+	entries: Array<{ type?: unknown; value?: unknown }> = []
+): ReductionFlags =>
+	entries.reduce<ReductionFlags>(
+		(flags, entry) => {
+			const type = normalizeReductionType(entry.type);
+			if (type && isDamageReductionValue(entry.value)) flags[type] = true;
+			return flags;
+		},
+		{ physical: false, elemental: false, mystical: false }
+	);
+
+const formatResistanceOrReduction = (entry: {
+	type?: unknown;
+	value?: unknown;
+	source?: string | { name?: string };
+}) => {
+	const type = normalizeReductionType(entry.type);
+	const source =
+		typeof entry.source === 'string' ? entry.source : (entry.source?.name ?? 'Unknown Source');
+	if (type && isDamageReductionValue(entry.value)) {
+		return `${REDUCTION_LABELS[type]} [${source}]`;
+	}
+	return `${entry.type} Resistance (${entry.value}) [${source}]`;
+};
+
+const findExactCurrentSpell = (value: string) =>
+	ALL_SPELLS.find(
+		(spell) =>
+			spell.id === value ||
+			spell.name === value ||
+			spell.name.toLowerCase() === value.toLowerCase()
+	);
+
 const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: boolean } | null => {
 	if (!entry) return null;
 	if (typeof entry === 'string') {
-		const byId = ALL_SPELLS.find((spell) => spell.id === entry);
-		if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
-		const byName = ALL_SPELLS.find((spell) => spell.name.toLowerCase() === entry.toLowerCase());
-		if (byName) return { spellName: byName.name, isCantrip: !!byName.isCantrip };
+		const currentSpell = findExactCurrentSpell(entry);
+		if (currentSpell) return { spellName: currentSpell.name, isCantrip: !!currentSpell.isCantrip };
 		return { spellName: entry, isCantrip: false };
 	}
 	if (typeof entry === 'object') {
@@ -54,8 +105,10 @@ const resolveSpellEntry = (entry: unknown): { spellName: string; isCantrip: bool
 			return { spellName: spellLike.name, isCantrip: !!spellLike.isCantrip };
 		}
 		if (spellLike.id) {
-			const byId = ALL_SPELLS.find((spell) => spell.id === spellLike.id);
-			if (byId) return { spellName: byId.name, isCantrip: !!byId.isCantrip };
+			const currentSpell = findExactCurrentSpell(spellLike.id);
+			if (currentSpell) {
+				return { spellName: currentSpell.name, isCantrip: !!currentSpell.isCantrip };
+			}
 		}
 	}
 	return null;
@@ -416,9 +469,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	// Resistances (Phase 7 — from SavedCharacter optional fields)
 	if (character.resistances && character.resistances.length > 0) {
-		const resistanceLines = character.resistances.map(
-			(r) => `${r.type} Resistance (${r.value}) [${r.source}]`
-		);
+		const resistanceLines = character.resistances.map(formatResistanceOrReduction);
 		featuresParts.push('[Resistances]');
 		featuresParts.push(resistanceLines.join(', '));
 	}
@@ -434,18 +485,14 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 
 	// Senses (Phase 7)
 	if (character.senses && character.senses.length > 0) {
-		const senseLines = character.senses.map(
-			(s) => `${s.type} ${s.range} Spaces [${s.source}]`
-		);
+		const senseLines = character.senses.map((s) => `${s.type} ${s.range} Spaces [${s.source}]`);
 		featuresParts.push('[Senses]');
 		featuresParts.push(senseLines.join(', '));
 	}
 
 	// Combat Training (Phase 7)
 	if (character.combatTraining && character.combatTraining.length > 0) {
-		const trainingLines = character.combatTraining.map(
-			(t) => `${t.type} [${t.source}]`
-		);
+		const trainingLines = character.combatTraining.map((t) => `${t.type} [${t.source}]`);
 		featuresParts.push('[Combat Training]');
 		featuresParts.push(trainingLines.join(', '));
 	}
@@ -724,7 +771,7 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 	};
 	const bloodied = false;
 	const wellBloodied = false;
-	const reduction = { physical: false, elemental: false, mental: false };
+	const reduction = reductionFromResistanceEntries(character.resistances ?? []);
 
 	// Movement & misc
 	const moveSpeed = character.finalMoveSpeed ?? 0;
@@ -971,9 +1018,7 @@ export function transformCalculatedCharacterToPdfData(
 
 	// Resistances (Phase 7)
 	if (result.resistances && result.resistances.length > 0) {
-		const resistanceLines = result.resistances.map(
-			(r) => `${r.type} Resistance (${r.value}) [${r.source.name}]`
-		);
+		const resistanceLines = result.resistances.map(formatResistanceOrReduction);
 		featuresParts.push('[Resistances]');
 		featuresParts.push(resistanceLines.join(', '));
 	}
@@ -989,18 +1034,14 @@ export function transformCalculatedCharacterToPdfData(
 
 	// Senses (Phase 7)
 	if (result.senses && result.senses.length > 0) {
-		const senseLines = result.senses.map(
-			(s) => `${s.type} ${s.range} Spaces [${s.source.name}]`
-		);
+		const senseLines = result.senses.map((s) => `${s.type} ${s.range} Spaces [${s.source.name}]`);
 		featuresParts.push('[Senses]');
 		featuresParts.push(senseLines.join(', '));
 	}
 
 	// Combat Training (Phase 7)
 	if (result.combatTraining && result.combatTraining.length > 0) {
-		const trainingLines = result.combatTraining.map(
-			(t) => `${t.type} [${t.source.name}]`
-		);
+		const trainingLines = result.combatTraining.map((t) => `${t.type} [${t.source.name}]`);
 		featuresParts.push('[Combat Training]');
 		featuresParts.push(trainingLines.join(', '));
 	}
@@ -1201,7 +1242,7 @@ export function transformCalculatedCharacterToPdfData(
 	};
 	const bloodied = false;
 	const wellBloodied = false;
-	const reduction = { physical: false, elemental: false, mental: false };
+	const reduction = reductionFromResistanceEntries(result.resistances ?? []);
 
 	// Movement & misc
 	const moveSpeed = stats.finalMoveSpeed ?? 0;

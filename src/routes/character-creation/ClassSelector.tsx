@@ -164,7 +164,8 @@ function ClassSelector() {
 
 			{isLevelUpMode && originalLevel && (
 				<LevelUpBanner>
-					⬆️ {t('characterCreation.levelingUpFrom')} {originalLevel} {t('characterCreation.to')} {t('characterCreation.level')} {selectedLevel}
+					⬆️ {t('characterCreation.levelingUpFrom')} {originalLevel} {t('characterCreation.to')}{' '}
+					{t('characterCreation.level')} {selectedLevel}
 				</LevelUpBanner>
 			)}
 
@@ -174,18 +175,23 @@ function ClassSelector() {
 				</LevelLabel>
 				<LevelSelectWrapper>
 					<Select value={selectedLevel.toString()} onValueChange={handleLevelChange}>
-						<SelectTrigger
-							id="level-select"
-							className="bg-background/50 border-primary/50 text-foreground"
-						>
+							<SelectTrigger
+								id="level-select"
+								data-testid="starting-level-select"
+								className="bg-background/50 border-primary/50 text-foreground"
+							>
 							<SelectValue placeholder={t('characterCreation.selectLevel')} />
 						</SelectTrigger>
 						<SelectContent>
-							{availableLevels.map((level) => (
-								<SelectItem key={level} value={level.toString()}>
-									{`${t('characterCreation.level')} ${level}`}
-								</SelectItem>
-							))}
+								{availableLevels.map((level) => (
+									<SelectItem
+										key={level}
+										value={level.toString()}
+										data-testid={`starting-level-option-${level}`}
+									>
+										{`${t('characterCreation.level')} ${level}`}
+									</SelectItem>
+								))}
 						</SelectContent>
 					</Select>
 				</LevelSelectWrapper>
@@ -212,11 +218,7 @@ function ClassSelector() {
 						>
 							<CardHeader>
 								<IconWrapper $isSelected={isSelected}>
-									<ClassIcon
-										src={classInfo?.icon}
-										alt={classDef.name}
-										$isSelected={isSelected}
-									/>
+									<ClassIcon src={classInfo?.icon} alt={classDef.name} $isSelected={isSelected} />
 								</IconWrapper>
 								<ClassTitle $isSelected={isSelected}>{classDef.name}</ClassTitle>
 							</CardHeader>

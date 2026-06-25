@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-24
 
 ---
 
@@ -35,16 +35,16 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 
 **Key sections:**
 
-| Section        | Fields                                                                   | Description                        |
-| -------------- | ------------------------------------------------------------------------ | ---------------------------------- |
-| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                |
-| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                      |
-| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                         |
-| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                  |
-| Selections     | `selectedTraitIds`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                       |
-| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc. |
-| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)  |
-| Metadata       | `createdAt`, `lastModified`, `schemaVersion`                             | Timestamps and version             |
+| Section        | Fields                                                                   | Description                                     |
+| -------------- | ------------------------------------------------------------------------ | ----------------------------------------------- |
+| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                             |
+| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                                   |
+| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                                      |
+| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                               |
+| Selections     | `selectedTraitIds`, `selectedTraitChoices`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                                    |
+| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc.              |
+| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)               |
+| Metadata       | `createdAt`, `lastModified`, `schemaVersion`, `rulesVersion`             | Timestamps, storage shape, rules interpretation |
 
 ### 2.2 Display Arrays (v2.2.0+)
 
@@ -92,6 +92,8 @@ interface CharacterState {
 	maneuvers?: ManeuverData[];
 }
 ```
+
+`activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. `characterState.ui.activeConditions` stores older toggle-style UI condition state for compatibility. `defenseOverrides` stores manual precision/area defense overrides from the redesigned sheet.
 
 ---
 
@@ -144,6 +146,11 @@ The storage backend is selected via environment variable:
 // VITE_USE_CONVEX=false (or unset) → localStorage
 const storage = getDefaultStorage();
 ```
+
+Local mode does not create a Convex client or mount Convex authentication, so
+`VITE_CONVEX_URL` is not required for the default localStorage application.
+When `VITE_USE_CONVEX=true`, startup requires `VITE_CONVEX_URL` and fails with a
+configuration error if it is missing.
 
 ---
 
@@ -277,6 +284,8 @@ encounters: defineTable({
 - **Google OAuth** and **GitHub OAuth** via Convex Auth
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
+- Convex authentication is mounted only when `VITE_USE_CONVEX=true`; local mode
+  uses an unauthenticated app-auth context and keeps cloud-only routes hidden.
 
 ### 5.6 Auth UI & Access Control
 
@@ -356,6 +365,10 @@ Key implementation: `src/routes/character-creation/CharacterCreation.tsx`
 
 ## 6. Migration & Compatibility
 
+Internal versioning policy is defined in `docs/systems/VERSIONING_SYSTEM.MD`. This
+storage system owns `schemaVersion` persistence and participates in `rulesVersion`
+compatibility, but it must not conflate those lanes.
+
 ### 6.1 Schema Versioning
 
 ```typescript
@@ -365,24 +378,79 @@ const CURRENT_SCHEMA_VERSION = '2.2.0';
 character.schemaVersion = CURRENT_SCHEMA_VERSION;
 ```
 
-**Current Version**: `2.2.0` (as of 2026-02-06)
+**Current Version**: `2.2.0` (as of 2026-06-01)
+
+`schemaVersion` is only the storage-shape version. It must not be used to infer which DC20 rules text a character was built under. Numeric legacy values such as `2` are normalized to semver strings during load/save.
 
 **Version History**:
+
 - `2.0.0`: Initial schema
 - `2.1.0`: Added `selectedFeatureChoices`, migrated `selectedTalents` from array to count-based record
 - `2.2.0`: Added optional display arrays (`resistances`, `vulnerabilities`, `senses`, `combatTraining`)
 
-### 6.2 Auto-Migration
+### 6.2 Rules Versioning
 
-When loading characters, `migrateCharacterSchema()` automatically:
+```typescript
+const CURRENT_RULES_VERSION = 'dc20-0.10.5';
+
+// Missing rulesVersion is inferred as the legacy v0.10 ruleset.
+character.rulesVersion ?? 'dc20-0.10';
+```
+
+`rulesVersion` is the rules interpretation fence. It is additive and is preserved on load, import, save, Convex normalization, draft state, character sheet auto-save, and PDF export routing. New characters are saved as `dc20-0.10.5`; missing or explicit `dc20-0.10` characters are legacy and classify as `upgrade-required` under the current runtime.
+
+Compatibility states are computed at runtime:
+
+| State              | Load | Sheet render | Edit / level up | Auto-save                              | PDF export                      |
+| ------------------ | ---- | ------------ | --------------- | -------------------------------------- | ------------------------------- |
+| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation | Yes                             |
+| `upgrade-required` | Yes  | Yes          | Blocked         | Disabled                               | Best-effort stored-value export |
+| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                               | Best-effort stored-value export |
+
+#### Explicit v0.10 to Current-Version Copy
+
+`LoadCharacter.tsx` exposes an update-to-current-version action for legacy characters. The action is planned
+and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
+
+1. Inspect every persisted feature, trait, talent, spell, and maneuver selection through the
+   versioned alias catalog.
+2. Show automatic renames, reworked selections, deprecated removals, and unresolved blockers
+   before writing data.
+3. Refuse copy creation when an identity is ambiguous or the source rules version is unsupported.
+4. Create a new current-rules copy with lineage metadata (`rulesUpgradeSourceId`,
+   `rulesUpgradeSourceVersion`, `rulesUpgradedAt`) while leaving the legacy source record
+   locked and unchanged.
+5. Rewrite approved aliases, explicitly map listed reworks, remove listed deprecated selections
+   in the new copy, and set that copy to `dc20-0.10.5`.
+6. Mark the new copy `rulesUpgradeStatus: "needs-review"` for any risky result: removed
+   choices, reworked choices, unresolved validation, or failed recalculation.
+
+Migration never mutates the old instance. The legacy source remains view/export/delete only. The new copy preserves stored game state,
+notes, inventory, and resources where possible; derived values are interpreted and recalculated
+by the normal v0.10.5 sheet/editor pipeline after migration.
+
+If a legacy character already has a current-rules copy, the default UI action opens that copy.
+Users can explicitly create another copy from a secondary action.
+
+PDF export always reads stored `SavedCharacter` values. It does not run the current calculator
+during export for either legacy or current characters.
+
+### 6.3 Auto-Migration
+
+When loading characters, local storage deserialization automatically normalizes:
 
 1. Adds missing fields with defaults
 2. Converts legacy formats (object → array)
 3. Updates schema version
+4. Applies the same normalization to pasted character JSON import before saving
 
-**Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier automatically receive empty arrays for the new display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`). No user action required — migration happens transparently on load.
+This is read-time normalization. It becomes durable when the normalized character is later saved. The legacy attacks object-map migration is the only localStorage migration currently persisted immediately on single-character lookup.
 
-### 6.3 localStorage → Convex Migration
+**Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier receive empty/default-compatible display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`) when loaded and are persisted on the next full save.
+
+Imported older JSON is normalized through the same deserializer before duplicate-ID handling and save, so legacy stringified arrays, missing `rulesVersion`, and older talent shapes follow the same compatibility path as existing localStorage records.
+
+### 6.4 localStorage → Convex Migration
 
 **Not automatic** - users must:
 
@@ -390,7 +458,7 @@ When loading characters, `migrateCharacterSchema()` automatically:
 2. Sign in to Convex
 3. Import characters (existing feature)
 
-### 6.4 Convex Schema Update Workflow
+### 6.5 Convex Schema Update Workflow
 
 When validators or table definitions change in `convex/`:
 
@@ -404,15 +472,16 @@ When validators or table definitions change in `convex/`:
 
 ### 7.1 Character Storage
 
-| File                                     | Purpose                              |
-| ---------------------------------------- | ------------------------------------ |
-| `src/lib/types/dataContracts.ts`         | SavedCharacter, CharacterState types |
-| `src/lib/utils/storageUtils.ts`          | localStorage CRUD operations         |
-| `src/lib/storage/characterStorage.ts`    | Storage interface definition         |
-| `src/lib/storage/localStorageAdapter.ts` | localStorage adapter                 |
-| `src/lib/storage/index.ts`               | Backend selector                     |
-| `convex/schema.ts`                       | Convex schema (all tables)           |
-| `convex/characters.ts`                   | Character mutations/queries          |
+| File                                               | Purpose                                  |
+| -------------------------------------------------- | ---------------------------------------- |
+| `src/lib/types/dataContracts.ts`                   | SavedCharacter, CharacterState types     |
+| `src/lib/utils/storageUtils.ts`                    | localStorage CRUD operations             |
+| `src/lib/storage/characterStorage.ts`              | Storage interface definition             |
+| `src/lib/storage/localStorageAdapter.ts`           | localStorage adapter                     |
+| `src/lib/storage/index.ts`                         | Backend selector                         |
+| `src/lib/rulesdata/versioning/characterUpgrade.ts` | Explicit rules upgrade planner/converter |
+| `convex/schema.ts`                                 | Convex schema (all tables)               |
+| `convex/characters.ts`                             | Character mutations/queries              |
 
 ### 7.2 DM Tools Storage
 
@@ -431,16 +500,7 @@ When validators or table definitions change in `convex/`:
 
 ## 8. Usage Examples
 
-### 8.1 Loading Characters (Current)
-
-```typescript
-// In LoadCharacter.tsx
-import { getAllSavedCharacters } from '@/lib/utils/storageUtils';
-
-const characters = getAllSavedCharacters();
-```
-
-### 8.2 Loading Characters (Future with Abstraction)
+### 8.1 Loading Characters
 
 ```typescript
 import { getDefaultStorage } from '@/lib/storage';
@@ -449,14 +509,15 @@ const storage = getDefaultStorage();
 const characters = await storage.getAllCharacters();
 ```
 
-### 8.3 Saving Character State
+### 8.2 Saving Character State
 
 ```typescript
 // Auto-save in CharacterSheetProvider
-import { saveCharacter } from '@/lib/utils/storageUtils';
+import { getDefaultStorage } from '@/lib/storage';
 
 const saveCharacterData = async (character: SavedCharacter) => {
-	await saveCharacter(updatedCharacter);
+	const storage = getDefaultStorage();
+	await storage.saveCharacter(updatedCharacter);
 };
 ```
 
@@ -472,6 +533,5 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-19
 > Maintainer: @DC20Clean-Team
-

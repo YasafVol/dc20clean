@@ -94,14 +94,15 @@ export interface GrantCombatTrainingEffect {
 
 export interface GrantMovementEffect {
 	type: 'GRANT_MOVEMENT';
-	target: string;
-	value: string;
+	target: 'climb' | 'swim' | 'fly' | 'burrow' | 'glide';
+	value: 'equal_to_speed' | 'half_speed' | 'double_speed' | number;
 }
 
 export interface GrantSenseEffect {
 	type: 'GRANT_SENSE';
 	target: string;
 	value: number;
+	mode?: 'set' | 'increase' | 'increase_existing';
 }
 
 export interface GrantChoiceEffect {
@@ -294,6 +295,8 @@ export interface ClassFeature {
 	levelGained: number;
 	description: string;
 	isFlavor?: boolean;
+	/** Text mirrors progression-table grants rather than adding independent effects. */
+	isProgressionDerived?: boolean;
 	/** Direct effects of the feature, applied automatically. */
 	effects?: Effect[];
 	/** Named sub-sections of a feature, each with its own effects. */
@@ -323,9 +326,14 @@ export interface ClassDefinition {
 	 */
 	classCategory?: 'martial' | 'spellcaster' | 'hybrid';
 	startingEquipment?: {
+		arsenal?: string | string[];
 		weaponsOrShields?: string | string[];
 		rangedWeapons?: string | string[];
+		rangedWeapon?: string | string[];
+		spellFocuses?: string | string[];
+		spellFocus?: string | string[];
 		armor?: string | string[];
+		tradeTools?: string | string[];
 		packs?: string | string[];
 		[key: string]: unknown;
 	};

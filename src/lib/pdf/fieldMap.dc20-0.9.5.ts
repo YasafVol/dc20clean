@@ -202,7 +202,7 @@ export const fieldMap_dc20_095: FieldMapItem[] = [
 	// Reduction checkboxes
 	{ path: 'reduction.physical', field: 'Physical-Damage-Reduction', type: 'checkbox' },
 	{ path: 'reduction.elemental', field: 'Elemantal-Damage-Reduction', type: 'checkbox' },
-	{ path: 'reduction.mental', field: 'Mental-Damage-Reduction', type: 'checkbox' },
+	{ path: 'reduction.mystical', field: 'Mental-Damage-Reduction', type: 'checkbox' },
 
 	// Exhaustion
 	{ path: "exhaustion['-1']", field: 'Exhaustion -1', type: 'checkbox' },

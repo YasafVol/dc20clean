@@ -21,6 +21,9 @@ export const barbarianTalents: Talent[] = [
 		id: 'barbarian_swift_berserker',
 		name: 'Swift Berserker',
 		category: 'Class',
+		deprecated: true,
+		deprecationReason:
+			'Removed from the v0.10.5 selectable catalog; legacy saved characters remain loadable.',
 		description:
 			'You can immediately enter a Rage as a Reaction upon rolling for Initiative. The movement granted by your Charge ignores Difficult Terrain and doesn’t provoke Opportunity Attacks.',
 		prerequisites: { classId: 'barbarian', feature: 'Rage', subclass: 'Berserker', level: 3 },

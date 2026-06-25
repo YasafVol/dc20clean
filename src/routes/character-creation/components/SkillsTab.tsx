@@ -183,9 +183,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 	};
 
 	const hasConversions =
-		conversions.skillToTradeConversions > 0 ||
-		conversions.tradeToSkillConversions > 0 ||
-		conversions.tradeToLanguageConversions > 0;
+		conversions.skillToTradeConversions > 0 || conversions.tradeToLanguageConversions > 0;
 
 	const skillPointsRemaining = pointsData.availableSkillPoints - pointsData.skillPointsUsed;
 	const canConvertSkillToTrade = skillPointsRemaining >= 1;
@@ -219,14 +217,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						{conversions.skillToTradeConversions > 0
 							? `${conversions.skillToTradeConversions} skill → ${conversions.skillToTradeConversions * 2} trade`
 							: ''}
-						{conversions.skillToTradeConversions > 0 &&
-						(conversions.tradeToSkillConversions > 0 || conversions.tradeToLanguageConversions > 0)
-							? ', '
-							: ''}
-						{conversions.tradeToSkillConversions > 0
-							? `${conversions.tradeToSkillConversions} trade → ${Math.floor(conversions.tradeToSkillConversions / 2)} skill`
-							: ''}
-						{conversions.tradeToSkillConversions > 0 && conversions.tradeToLanguageConversions > 0
+						{conversions.skillToTradeConversions > 0 && conversions.tradeToLanguageConversions > 0
 							? ', '
 							: ''}
 						{conversions.tradeToLanguageConversions > 0
@@ -240,6 +231,8 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						size="sm"
 						onClick={actions.convertSkillToTrade}
 						disabled={!canConvertSkillToTrade}
+						data-testid="convert-skill-to-trade"
+						data-action-id="convert-skill-to-trade"
 						className="border-white/50 bg-transparent"
 					>
 						Convert 1 Skill → 2 Trade Points
@@ -249,6 +242,8 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 						size="sm"
 						onClick={actions.resetConversions}
 						disabled={!hasConversions}
+						data-testid="reset-background-conversions"
+						data-action-id="reset-background-conversions"
 						className={`border-white/50 bg-transparent ${hasConversions ? 'hover:border-destructive hover:text-destructive' : ''}`}
 					>
 						Reset Conversions
@@ -303,9 +298,12 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 													handleSkillChange(skill.id, level);
 												}
 											}}
-$isActive={isActive}
-$isDisabled={isDisabled}
-$needsElevation={needsElevation && canSelect}
+											$isActive={isActive}
+											$isDisabled={isDisabled}
+											$needsElevation={needsElevation && canSelect}
+											aria-disabled={isDisabled}
+											data-action-id={`skill-${skill.id}-mastery-${level}`}
+											data-testid={`skill-${skill.id}-mastery-${level}`}
 										>
 											{level}
 											{needsElevation && canSelect && <ElevationIndicator>⬆</ElevationIndicator>}

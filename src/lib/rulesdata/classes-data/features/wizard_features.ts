@@ -9,11 +9,11 @@ export const wizardClass: ClassDefinition = {
 	className: 'Wizard',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus (Arcane Focus or Spellbook)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses: '2 Spell Focuses.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Alchemist's Supplies, Calligrapher's Supplies, Glassblower's Tools, or Herbalist's Supplies.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {
@@ -35,8 +35,12 @@ export const wizardClass: ClassDefinition = {
 			id: 'wizard_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
-			description: 'You gain the ability to cast arcane spells.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+			description:
+				'You gain the ability to cast arcane spells. You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'wizard_spell_school_initiate',
@@ -205,17 +209,50 @@ export const wizardClass: ClassDefinition = {
 		},
 		{
 			id: 'wizard_level_5_placeholder',
-			featureName: 'Arcane Mastery (Placeholder)',
+			featureName: 'Expert Wizard',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'wizard_level_8_capstone_placeholder',
-			featureName: 'Grand Magister (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Wizard Class Features.',
+			benefits: [
+				{
+					name: 'Spell School Initiate',
+					description:
+						'You learn 1 additional Arcane Spell from your chosen School. Signature School reduces MP cost by an additional 1.',
+					effects: [
+						{ type: 'GRANT_SPELL', target: 'chosen_school', value: 1 },
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_signature_school',
+							value: 'Signature School reduces MP cost by an additional 1.'
+						}
+					]
+				},
+				{
+					name: 'Arcane Sigil',
+					description:
+						'Spell Tag (X MP) adds 1 additional School or Tag per MP spent. Area (X MP) increases the diameter by 1 Space per MP spent.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_arcane_sigil',
+							value:
+								'Spell Tag adds 1 additional School or Tag per MP; Area increases diameter by 1 Space per MP.'
+						}
+					]
+				},
+				{
+					name: 'Prepared Spell',
+					description:
+						'After a Long Rest, choose 1 additional known Spell. Both chosen Spells become Prepared Spells, but you still only have one Mana Limit Break.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_wizard_prepared_spell',
+							value:
+								'Choose 1 additional known Spell after a Long Rest; both are Prepared Spells, but only one Mana Limit Break.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [

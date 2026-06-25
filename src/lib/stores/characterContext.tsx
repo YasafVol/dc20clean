@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, useMemo, useEffect, ReactNode } from 'react';
 import type { CharacterInProgress } from '../types/characterProgress.types';
+import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../types/schemaVersion';
+import { CURRENT_RULES_VERSION, normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
 
 import {
 	calculateCharacterWithBreakdowns,
@@ -46,7 +48,8 @@ export interface CharacterInProgressStoreData
 	skillToTradeConversions?: number;
 	tradeToSkillConversions?: number;
 	tradeToLanguageConversions?: number;
-	schemaVersion?: number;
+	schemaVersion?: string;
+	rulesVersion?: string;
 	selectedTalents?: Record<string, number>; // Changed from string[] to count-based
 	pathPointAllocations?: { martial?: number; spellcasting?: number };
 	selectedMulticlassOption?:
@@ -109,7 +112,8 @@ const initialCharacterInProgressState: CharacterInProgressStoreData = {
 	skillToTradeConversions: 0,
 	tradeToSkillConversions: 0,
 	tradeToLanguageConversions: 0,
-	schemaVersion: 2
+	schemaVersion: CURRENT_SCHEMA_VERSION,
+	rulesVersion: CURRENT_RULES_VERSION
 };
 
 /**
@@ -154,6 +158,8 @@ function loadCharacterDraft(): CharacterInProgressStoreData | null {
 		// Convert date strings back to Date objects
 		return {
 			...draft,
+			schemaVersion: normalizeSchemaVersion(draft.schemaVersion || CURRENT_SCHEMA_VERSION),
+			rulesVersion: normalizeRulesVersion(draft.rulesVersion),
 			createdAt: draft.createdAt ? new Date(draft.createdAt) : new Date(),
 			updatedAt: draft.updatedAt ? new Date(draft.updatedAt) : new Date(),
 			// Ensure cache is cleared
@@ -178,7 +184,7 @@ export function clearCharacterDraft(): void {
 }
 
 // Action types
-type CharacterAction =
+export type CharacterAction =
 	| { type: 'UPDATE_ATTRIBUTE'; attribute: string; value: number }
 	| { type: 'UPDATE_SKILLS'; skillsData: Record<string, number> }
 	| { type: 'UPDATE_TRADES'; tradesData: Record<string, number> }
@@ -201,9 +207,9 @@ type CharacterAction =
 	| { type: 'UPDATE_SPELLS_AND_MANEUVERS'; spells: Record<string, string>; maneuvers: string[] }
 	| { type: 'UPDATE_STORE'; updates: Partial<CharacterInProgressStoreData> }
 	| { type: 'INITIALIZE_FROM_SAVED'; character: CharacterInProgressStoreData }
-	| { type: 'NEXT_STEP' }
-	| { type: 'PREVIOUS_STEP' }
-	| { type: 'SET_STEP'; step: number }
+		| { type: 'NEXT_STEP'; maxStep?: number }
+		| { type: 'PREVIOUS_STEP' }
+		| { type: 'SET_STEP'; step: number; maxStep?: number }
 	| { type: 'TOGGLE_PRIME_CAP_RULE'; value?: boolean }
 	| {
 			type: 'SET_CONVERSIONS';
@@ -224,7 +230,7 @@ type CharacterAction =
 	| { type: 'RESTORE_FROM_DRAFT'; draft: CharacterInProgressStoreData };
 
 // Reducer function
-function characterReducer(
+export function characterReducer(
 	state: CharacterInProgressStoreData,
 	action: CharacterAction
 ): CharacterInProgressStoreData {
@@ -241,10 +247,35 @@ function characterReducer(
 			return { ...state, skillMasteryLimitElevations: action.elevations };
 		case 'UPDATE_TRADE_LIMIT_ELEVATIONS':
 			return { ...state, tradeMasteryLimitElevations: action.elevations };
-		case 'SET_CLASS':
-			return { ...state, classId: action.classId };
-		case 'SET_LEVEL':
-			return { ...state, level: action.level };
+			case 'SET_CLASS':
+				return {
+					...state,
+					classId: action.classId,
+					selectedFeatureChoices: {},
+					selectedTalents: {},
+					pathPointAllocations: { martial: 0, spellcasting: 0 },
+					selectedMulticlassOption: null,
+					selectedMulticlassClass: undefined,
+					selectedMulticlassFeature: undefined,
+					selectedSubclass: undefined,
+					selectedCrossPathSpellList: undefined,
+					selectedSpells: {},
+					selectedManeuvers: []
+				};
+			case 'SET_LEVEL':
+				return {
+					...state,
+					level: action.level,
+					selectedTalents: {},
+					pathPointAllocations: { martial: 0, spellcasting: 0 },
+					selectedMulticlassOption: null,
+					selectedMulticlassClass: undefined,
+					selectedMulticlassFeature: undefined,
+					selectedSubclass: action.level >= 3 ? state.selectedSubclass : undefined,
+					selectedCrossPathSpellList: undefined,
+					selectedSpells: {},
+					selectedManeuvers: []
+				};
 		case 'SET_SELECTED_TALENTS':
 			return { ...state, selectedTalents: action.talents };
 		case 'SET_PATH_POINTS':
@@ -297,12 +328,18 @@ function characterReducer(
 			return { ...state, ...action.updates };
 		case 'INITIALIZE_FROM_SAVED':
 			return { ...action.character };
-		case 'NEXT_STEP':
-			return { ...state, currentStep: Math.min(state.currentStep + 1, 7) };
-		case 'PREVIOUS_STEP':
-			return { ...state, currentStep: Math.max(state.currentStep - 1, 1) };
-		case 'SET_STEP':
-			return { ...state, currentStep: Math.max(1, Math.min(action.step, 7)) };
+			case 'NEXT_STEP':
+				return {
+					...state,
+					currentStep: Math.min(state.currentStep + 1, action.maxStep ?? Number.MAX_SAFE_INTEGER)
+				};
+			case 'PREVIOUS_STEP':
+				return { ...state, currentStep: Math.max(state.currentStep - 1, 1) };
+			case 'SET_STEP':
+				return {
+					...state,
+					currentStep: Math.max(1, Math.min(action.step, action.maxStep ?? Number.MAX_SAFE_INTEGER))
+				};
 		case 'SET_CONVERSIONS':
 			return {
 				...state,
@@ -345,8 +382,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 	const getCurrentFlowType = (): 'create' | 'levelup' => {
 		// Check if we're in level-up mode by looking at window.location
 		const isLevelUpPath =
-			window.location.pathname.includes('level-up') ||
-			window.location.search.includes('levelup');
+			window.location.pathname.includes('level-up') || window.location.search.includes('levelup');
 		return isLevelUpPath ? 'levelup' : 'create';
 	};
 

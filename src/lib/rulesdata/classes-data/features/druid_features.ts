@@ -9,11 +9,11 @@ export const druidClass: ClassDefinition = {
 	className: 'Druid',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon'],
-		armor: ['1 set of Light Armor (non-metal)'],
-		spellFocus: ['1 Spell Focus (Druidic Focus)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses: '2 Spell Focuses.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Herbalist's Supplies, Leatherworker's Tools, Sculptor's Tools, or Weaver's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {
@@ -35,8 +35,12 @@ export const druidClass: ClassDefinition = {
 			id: 'druid_spellcasting_path',
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
-			description: 'You gain the ability to cast primal spells.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+			description:
+				'You gain the ability to cast primal spells. You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'druid_domain',
@@ -182,26 +186,49 @@ export const druidClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'druid_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'druid_level_5_placeholder',
-			featureName: "Nature's Champion (Placeholder)",
+			featureName: 'Expert Druid',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'druid_level_8_capstone_placeholder',
-			featureName: 'Primal Avatar (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Druid Class Features.',
+			benefits: [
+				{
+					name: 'Druid Domain',
+					description:
+						'Druid Domain spaces increase to 10 and vanish if you end your turn farther than 20 Spaces away. Spend MP to increase Domain spaces by 8 per MP. Wild Growth restores +1 HP per 2 MP spent.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_druid_domain',
+							value:
+								'Druid Domain spaces increase to 10; vanish if you end your turn farther than 20 Spaces away; spend MP for +8 Spaces per MP; Wild Growth heals +1 HP per 2 MP.'
+						}
+					]
+				},
+				{
+					name: 'Wild Form',
+					description: 'Your Wild Form gains +1 HP and +1 Trait Point.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_wild_form',
+							value: 'Wild Form gains +1 HP and +1 Trait Point.'
+						}
+					]
+				},
+				{
+					name: "Nature's Torrent",
+					description:
+						"Nature's Torrent range increases to 15 Spaces. You can spend 2 MP to apply +1 Vulnerability, or spend X MP to increase the Area diameter by X Spaces.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_druid_natures_torrent',
+							value:
+								"Nature's Torrent range 15 Spaces; spend 2 MP for +1 Vulnerability or X MP for +X Area diameter."
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [

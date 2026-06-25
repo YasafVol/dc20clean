@@ -160,6 +160,7 @@ export interface SavedCharacter {
 
 	// TYPED DATA: No more JSON strings
 	selectedTraitIds: string[];
+	selectedTraitChoices?: Record<string, string>;
 	selectedFeatureChoices: Record<string, string>;
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
@@ -167,7 +168,7 @@ export interface SavedCharacter {
 	languagesData: any;
 
 	// LEVEL PROGRESSION DATA (M2.7)
-	selectedTalents?: string[]; // IDs of talents chosen
+	selectedTalents?: Record<string, number> | string[]; // Count-based talent selections; arrays are legacy
 	pathPointAllocations?: { martial?: number; spellcasting?: number }; // Path point distribution
 	unlockedFeatureIds?: string[]; // Features gained from leveling
 	selectedSubclass?: string; // Subclass name if chosen
@@ -236,8 +237,8 @@ export interface SavedCharacter {
 		D?: { name: string; limited: boolean; fluent: boolean };
 	};
 	// Calculated display arrays (optional, regenerated from calculator)
-	resistances?: Array<{ type: string; value: number | 'half'; source: string }>;
-	vulnerabilities?: Array<{ type: string; value: number | 'half'; source: string }>;
+	resistances?: Array<{ type: string; value: number | string | boolean; source: string }>;
+	vulnerabilities?: Array<{ type: string; value: number | string; source: string }>;
 	senses?: Array<{ type: string; range: number; source: string }>;
 	combatTraining?: Array<{ type: string; source: string }>;
 
@@ -260,6 +261,12 @@ export interface SavedCharacter {
 	lastModified: string;
 	completedAt: string;
 	schemaVersion: string; // For migration tracking
+	rulesVersion?: string; // Rules interpretation, separate from storage schema
+	rulesUpgradeBackupOf?: string; // Original character ID when this record is an upgrade backup
+	rulesUpgradeSourceId?: string; // Legacy character ID used to create an upgraded draft
+	rulesUpgradeSourceVersion?: string; // Previous rules version for an upgraded character
+	rulesUpgradeStatus?: 'draft' | 'needs-review' | 'resolved'; // Manual review state for upgraded drafts
+	rulesUpgradedAt?: string; // Timestamp of the explicit rules upgrade
 }
 
 /**
@@ -299,5 +306,3 @@ export interface LegacyCharacter {
 	// All other fields from SavedCharacter
 	[key: string]: any;
 }
-
-

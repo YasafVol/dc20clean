@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { SavedCharacter } from '../../lib/types/dataContracts';
 import { getDefaultStorage } from '../../lib/storage';
+import { assessCharacterCompatibility } from '../../lib/rulesdata/versioning/compatibility';
 
 const LevelUp: React.FC = () => {
 	const { id } = useParams();
@@ -30,6 +31,9 @@ const LevelUp: React.FC = () => {
 
 	const handleLevelUp = async () => {
 		if (!character) return;
+		const compatibility = assessCharacterCompatibility(character);
+		if (!compatibility.canLevelUp) return;
+
 		// For now, just increment the level and call onComplete
 		const updatedCharacter = {
 			...character,
@@ -42,6 +46,18 @@ const LevelUp: React.FC = () => {
 	if (!character) {
 		return <div style={{ padding: '20px', color: '#e5e7eb' }}>Character not found.</div>;
 	}
+
+	const compatibility = assessCharacterCompatibility(character);
+	if (!compatibility.canLevelUp) {
+		return (
+			<div style={{ padding: '20px', color: '#e5e7eb' }}>
+				<h2>Level Up Blocked</h2>
+				<p>This character must be upgraded before it can be leveled up.</p>
+				{compatibility.reasons[0] ? <p>{compatibility.reasons[0]}</p> : null}
+			</div>
+		);
+	}
+
 	return (
 		<div style={{ padding: '20px', color: '#e5e7eb' }}>
 			<h2>Level Up: {character.finalName}</h2>

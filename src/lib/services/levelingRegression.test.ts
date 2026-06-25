@@ -94,7 +94,7 @@ describe('Leveling System Regression Tests (M4.1g)', () => {
 			const enhanced = convertToEnhancedBuildData(character);
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
-			// No path points at L1 (pathPoints not tracked numerically)
+			// No path points are granted until the first path progression at L2.
 			expect(result.levelBudgets?.totalPathPoints).toBe(0);
 			// Note: pathPointsUsed is not tracked in current implementation
 		});

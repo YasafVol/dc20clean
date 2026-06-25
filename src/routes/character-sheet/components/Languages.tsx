@@ -26,19 +26,29 @@ const Languages: React.FC<LanguagesProps> = ({ languages, isMobile }) => {
 
 	return (
 		<LanguagesSection $isMobile={effectiveIsMobile}>
-			<SectionTitle $isMobile={effectiveIsMobile}>{t('characterSheet.languagesTitle')}</SectionTitle>
+			<SectionTitle $isMobile={effectiveIsMobile}>
+				{t('characterSheet.languagesTitle')}
+			</SectionTitle>
 			<SectionDescription $isMobile={effectiveIsMobile}>
 				{t('characterSheet.languagesDescription')}
 			</SectionDescription>
 
 			{/* Header with L and F labels */}
 			<FluencyHeader $isMobile={effectiveIsMobile}>
-				<LanguageNameHeader $isMobile={effectiveIsMobile}>{t('characterSheet.languagesLanguage')}</LanguageNameHeader>
+				<LanguageNameHeader $isMobile={effectiveIsMobile}>
+					{t('characterSheet.languagesLanguage')}
+				</LanguageNameHeader>
 				<FluencyHeaderContainer $isMobile={effectiveIsMobile}>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title={t('characterSheet.languagesLimited')}>
+					<FluencyHeaderLabel
+						$isMobile={effectiveIsMobile}
+						title={t('characterSheet.languagesLimited')}
+					>
 						L
 					</FluencyHeaderLabel>
-					<FluencyHeaderLabel $isMobile={effectiveIsMobile} title={t('characterSheet.languagesFluent')}>
+					<FluencyHeaderLabel
+						$isMobile={effectiveIsMobile}
+						title={t('characterSheet.languagesFluent')}
+					>
 						F
 					</FluencyHeaderLabel>
 				</FluencyHeaderContainer>

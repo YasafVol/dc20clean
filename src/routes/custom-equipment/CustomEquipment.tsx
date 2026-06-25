@@ -87,9 +87,7 @@ const CustomEquipment: React.FC = () => {
 				{/* Content based on tab and selection */}
 				{activeTab === 'create' && !selectedCategory && (
 					<>
-						<p className="mb-6 text-gray-400">
-							{t('customEquipment.selectCategory')}
-						</p>
+						<p className="mb-6 text-gray-400">{t('customEquipment.selectCategory')}</p>
 						<CategoryGrid>
 							{EQUIPMENT_CATEGORIES.map((category) => (
 								<CategoryCard

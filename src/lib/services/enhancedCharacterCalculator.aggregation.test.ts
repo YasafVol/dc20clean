@@ -5,7 +5,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from './enhancedCharacterCalculator';
 import type { EnhancedCharacterBuildData } from '../types/effectSystem';
 
 describe('Level Progression Aggregation (UT-1)', () => {
@@ -60,11 +63,86 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			const result = calculateCharacterWithBreakdowns(char);
 
 			const ragePdModifier = result.conditionalModifiers.find(
-				(modifier) => (modifier.effect as any).target === 'pd' && modifier.condition === 'while_raging'
+				(modifier) =>
+					(modifier.effect as any).target === 'pd' && modifier.condition === 'while_raging'
 			);
 
 			expect(ragePdModifier).toBeDefined();
 		});
+
+		it('should apply Rage PD penalty when the Rage toggle is active', () => {
+			const char = createTestCharacter('barbarian', 1, { might: 3, agility: 2, intelligence: 0 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				activeConditions: ['while_raging']
+			});
+
+			expect(result.stats.finalPD).toBe(6);
+		});
+
+		it('should derive while_raging from sheet combat toggles', () => {
+			const buildData = convertToEnhancedBuildData({
+				...createTestCharacter('barbarian', 1, { might: 3 }),
+				characterState: {
+					ui: {
+						combatToggles: { isRaging: true }
+					},
+					inventory: { items: [] }
+				}
+			});
+
+			expect(buildData.activeConditions).toContain('while_raging');
+		});
+
+		it('should apply Berserker Defense only when no armor is equipped', () => {
+			const unarmored = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 3, charisma: 0 })
+			);
+			const armored = calculateCharacterWithBreakdowns({
+				...createTestCharacter('barbarian', 1, { might: 3, charisma: 0 }),
+				equipmentInventory: [
+					{
+						id: 'test-armor',
+						itemType: 'Armor',
+						itemName: 'Test Armor',
+						isEquipped: true
+					}
+				]
+			});
+
+			expect(unarmored.stats.finalAD).toBe(14);
+			expect(armored.stats.finalAD).toBe(12);
+		});
+
+		it('should use the higher of Might or Agility for Mighty Leap jump distance', () => {
+			const mightBased = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 4, agility: 1 })
+			);
+			const agilityBased = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 1, agility: 4 })
+			);
+
+			expect(mightBased.stats.finalJumpDistance).toBe(4);
+			expect(agilityBased.stats.finalJumpDistance).toBe(4);
+		});
+
+		it('should apply death threshold modifiers to the final threshold magnitude', () => {
+			const withoutResolve = calculateCharacterWithBreakdowns(
+				createTestCharacter('barbarian', 1, { might: 3 })
+			);
+			const withResolve = calculateCharacterWithBreakdowns({
+				...createTestCharacter('barbarian', 1, { might: 3 }),
+				selectedTraitIds: ['human_resolve']
+			});
+
+			expect(withResolve.stats.finalDeathThreshold).toBe(
+				withoutResolve.stats.finalDeathThreshold + 1
+			);
+			expect(withResolve.breakdowns.death_threshold?.total).toBe(
+				withResolve.stats.finalDeathThreshold
+			);
+		});
+
 		it('should aggregate Level 2 stats correctly', () => {
 			const char = createTestCharacter('barbarian', 2, { might: 3 });
 			const result = calculateCharacterWithBreakdowns(char);
@@ -91,6 +169,23 @@ describe('Level Progression Aggregation (UT-1)', () => {
 		});
 	});
 
+	describe('Commander Progression', () => {
+		it('should collect Natural Leader check advantage as sheet-facing text', () => {
+			const char = createTestCharacter('commander', 1, { charisma: 2 });
+			const result = calculateCharacterWithBreakdowns(char);
+
+			const naturalLeaderAdvantage = result.grantedAbilities.find(
+				(ability) =>
+					ability.type === 'advantage' &&
+					ability.source.name === 'Natural Leader' &&
+					ability.name === 'Natural Leader'
+			);
+
+			expect(naturalLeaderAdvantage).toBeDefined();
+			expect(naturalLeaderAdvantage?.description).toContain('military groups');
+		});
+	});
+
 	describe('Wizard Progression', () => {
 		it('should aggregate spellcaster stats correctly', () => {
 			const char = createTestCharacter('wizard', 1, { intelligence: 3 });
@@ -114,6 +209,53 @@ describe('Level Progression Aggregation (UT-1)', () => {
 			// MP should increase with level (L1: 6, L3: 8)
 			expect(result.stats.finalMPMax).toBeGreaterThan(6);
 			expect(result.levelBudgets?.totalSpellsKnown).toBeGreaterThanOrEqual(4); // L1: 4, L3: 5
+		});
+
+		it('should grant spell focus combat training to source-based spellcasters', () => {
+			for (const classId of ['wizard', 'sorcerer', 'warlock', 'druid']) {
+				const result = calculateCharacterWithBreakdowns(createTestCharacter(classId, 1));
+				expect(result.combatTraining.map((training) => training.type)).toContain('Spell_Focuses');
+			}
+		});
+	});
+
+	describe('Subclass Feature Aggregation', () => {
+		it('should surface Chastise and Hand of Salvation as granted abilities', () => {
+			const inquisitor = calculateCharacterWithBreakdowns({
+				...createTestCharacter('cleric', 3),
+				selectedSubclass: 'Inquisitor'
+			});
+			expect(
+				inquisitor.grantedAbilities.some((ability) => ability.source.name === 'Chastise')
+			).toBe(true);
+
+			const priest = calculateCharacterWithBreakdowns({
+				...createTestCharacter('cleric', 3),
+				selectedSubclass: 'Priest'
+			});
+			expect(
+				priest.grantedAbilities.some((ability) => ability.source.name === 'Hand of Salvation')
+			).toBe(true);
+		});
+
+		it('should not auto-grant intro-only Source of Power blurbs as flavor features', () => {
+			const expectations: Array<{
+				classId: string;
+				expectedFlavorFeature: string;
+			}> = [
+				{ classId: 'monk', expectedFlavorFeature: 'Meditation' },
+				{ classId: 'rogue', expectedFlavorFeature: 'Cypher Speech' },
+				{ classId: 'spellblade', expectedFlavorFeature: 'Sense Magic' }
+			];
+
+			for (const { classId, expectedFlavorFeature } of expectations) {
+				const result = calculateCharacterWithBreakdowns(createTestCharacter(classId, 2));
+				const autoGrantedNames =
+					result.autoGrantedFlavorFeatures?.map((feature) => feature.featureName) ?? [];
+
+				expect(autoGrantedNames).toContain(expectedFlavorFeature);
+				expect(autoGrantedNames).not.toContain('Source of Power');
+			}
 		});
 	});
 
@@ -294,6 +436,74 @@ describe('Spells & Maneuvers Step Gating (T1)', () => {
 			expect(result.spellsKnownSlots).toBeDefined();
 			expect(result.spellsKnownSlots?.length).toBeGreaterThan(0);
 		});
+
+		it('should apply Cleric Knowledge domain mastery caps to all Knowledge Trades', () => {
+			const char = createTestCharacter('cleric', 1, { charisma: 3 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				featureChoices: { cleric_divine_domain: ['Knowledge'] },
+				tradesData: {
+					arcana: 2,
+					history: 2,
+					nature: 2,
+					occultism: 2,
+					religion: 2
+				}
+			});
+
+			for (const tradeId of ['arcana', 'history', 'nature', 'occultism', 'religion']) {
+				expect(result.validation.masteryLimits.tradeEffectiveCaps[tradeId]).toBe(2);
+			}
+			expect(result.validation.errors).not.toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({ code: 'MASTERY_CAP_EXCEEDED', field: 'trades' })
+				])
+			);
+		});
+
+		it('should grant Cleric Dark domain Darkvision 10 when no Darkvision exists', () => {
+			const char = createTestCharacter('cleric', 1, { charisma: 3 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				featureChoices: { cleric_divine_domain: ['Dark'] }
+			});
+
+			expect(result.senses.find((sense) => sense.type === 'darkvision')?.range).toBe(10);
+		});
+
+		it('should increase existing Darkvision by 5 from Cleric Dark domain', () => {
+			const char = createTestCharacter('cleric', 1, { charisma: 3 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				selectedTraitIds: ['dragonborn_darkvision'],
+				featureChoices: { cleric_divine_domain: ['Dark'] }
+			});
+
+			expect(result.senses.find((sense) => sense.type === 'darkvision')?.range).toBe(15);
+		});
+
+		it('should grant Hunter Subterranean senses when no matching senses exist', () => {
+			const char = createTestCharacter('hunter', 1, { agility: 3 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				featureChoices: { hunter_favored_terrain_0: ['Subterranean'] }
+			});
+
+			expect(result.senses.find((sense) => sense.type === 'darkvision')?.range).toBe(10);
+			expect(result.senses.find((sense) => sense.type === 'tremorsense')?.range).toBe(3);
+		});
+
+		it('should increase existing senses from Hunter Subterranean terrain', () => {
+			const char = createTestCharacter('hunter', 1, { agility: 3 });
+			const result = calculateCharacterWithBreakdowns({
+				...char,
+				selectedTraitIds: ['dragonborn_darkvision', 'dwarf_minor_tremorsense'],
+				featureChoices: { hunter_favored_terrain_0: ['Subterranean'] }
+			});
+
+			expect(result.senses.find((sense) => sense.type === 'darkvision')?.range).toBe(15);
+			expect(result.senses.find((sense) => sense.type === 'tremorsense')?.range).toBe(5);
+		});
 	});
 
 	describe('Hybrid Class Counting', () => {
@@ -403,5 +613,3 @@ describe('Spells & Maneuvers Step Gating (T1)', () => {
 		});
 	});
 });
-
-

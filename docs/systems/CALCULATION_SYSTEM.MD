@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-24
 
 ---
 
@@ -22,6 +22,8 @@
 - `src/lib/rulesdata/schemas/character.schema.ts` — canonical `Effect` union
 - `src/lib/rulesdata/attributes.ts` — base attributes and modifiers
 - `src/lib/rulesdata/progression/levelCaps.ts` — **single source of truth** for attribute/mastery caps by level
+- `src/lib/rulesdata/equipment/equipmentEffects.ts` — converts equipped inventory
+  rows and Equipage items into canonical attributed effects
 
   ***
 
@@ -32,6 +34,7 @@ The calculator was refactored into 8 specialized modules plus an orchestrator:
 **Orchestrator**: `enhancedCharacterCalculator.ts` (~500 lines) coordinates the calculation pipeline by calling modules in sequence.
 
 **Modules** (in `src/lib/services/calculatorModules/`):
+
 - `abilityCollection.ts` — collects granted abilities, movements, resistances, senses, combat training, conditional modifiers
 - `breakdownGeneration.ts` — creates stat breakdowns for tooltips
 - `spellSystem.ts` — global magic profile and spell slot generation
@@ -43,7 +46,7 @@ The calculator was refactored into 8 specialized modules plus an orchestrator:
 
 This modular structure improves maintainability and makes the calculation pipeline easier to understand and test.
 
-  ***
+---
 
 ## 2. Formula Summary
 
@@ -67,9 +70,14 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 - **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(always-on effects.pd)`
 - **AD** = `8 + Combat Mastery + Might + Charisma + sum(always-on effects.ad)`
+- Equipped armor, shields, and weapons contribute through the same effect sums. For
+  example, an equipped Guard weapon adds `MODIFY_STAT pd +1`.
 - Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.
+- Sheet combat toggles and active-condition maps feed `activeConditions`. Rage maps to `while_raging`; `not_wearing_armor` is inferred automatically when no equipped Armor or custom Equipage armor row exists.
 - **Save DC** = `10 + Combat Mastery + Prime Attribute`
-- **Death Threshold** = `Prime Attribute + Combat Mastery`
+- **Death Threshold magnitude** = `Prime Attribute + Combat Mastery + sum(effects.deathThresholdModifier)`.
+  Sheet Death's Door comparisons use the negative HP threshold, e.g. a magnitude of
+  `4` means death at `-4 HP`.
 - **Initiative** = `Combat Mastery + Agility`
 - **Attack/Spell Check** = `Combat Mastery + Prime Attribute + sum(effects.attackSpellCheck)`
 - **Martial Check** = `max(Acrobatics total, Athletics total)`
@@ -86,7 +94,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 ### Movement
 
 - **Move Speed** = `5 + sum(effects.moveSpeed)`
-- **Jump Distance** = `Agility + sum(effects.jumpDistance)`
+- **Jump Distance** = `Agility + sum(effects.jumpDistance)`, except effects that set `jumpCalculationAttribute` to `might` use the higher of Might or Agility as the base.
 
 ### Background Budgets
 
@@ -105,6 +113,26 @@ This modular structure improves maintainability and makes the calculation pipeli
 - **Attribute Points** = `12 + sum(progressionGains.totalAttributePoints) + sum(effects.attributePoints)`
 
 **Note**: Techniques have been removed in DC20 v0.10.
+
+### DC20 v0.10.5 Resource Progression
+
+The calculator reads resolved class progressions through `classesData` and aggregates levels 1 through target level. Per-class progression exports are built from shared martial, spellcaster, or hybrid templates plus class-specific feature IDs before they reach the calculator:
+
+| Class Category | Level 1 Resources | Level 10 Resource Totals |
+| -------------- | ----------------- | ------------------------ |
+| Martial        | 2 SP              | 6 SP                     |
+| Spellcaster    | 6 MP              | 21 MP                    |
+| Hybrid         | 1 SP, 3 MP        | 3 SP, 11 MP              |
+
+The v0.10.5 shared schedule grants Talents at levels 2, 4, 6, and 8; Path Progression at levels 2, 4, 6, and 8; Ancestry Points at levels 4 and 8; subclass choices at levels 3, 7, and 10; and class features at levels 1, 2, 5, and 9.
+
+Level 5 Expert Features are resolved from the class feature data using the existing persisted level-5 IDs. Their universal modeled effects flow through normal aggregation:
+
+- Bard and Rogue Expert Features add skill points through `MODIFY_STAT`.
+- Sorcerer and Warlock Expert Features add resource maximums through `MODIFY_STAT`.
+- Monk Expert Feature adds Speed and Jump Distance through `MODIFY_STAT`.
+- Bard and Wizard Expert Features add spell slots through `GRANT_SPELL`.
+- Champion Expert Feature adds maneuver capacity through `GRANT_MANEUVERS`.
 
 ### Path Bonuses (M3.9)
 
@@ -126,7 +154,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 ## 3. Effect Application Order
 
-1.  Aggregate class features and ancestry traits into `Effect[]`
+1.  Aggregate class features, ancestry traits, talents, choices, and equipped equipment into `Effect[]`
 2.  Resolve user-choice effects (e.g., any_attribute/any_skill)
 3.  Apply numeric modifiers to base stats and resource maximums
 4.  Compute background budgets and conversions
@@ -176,7 +204,9 @@ All cap logic now references `src/lib/rulesdata/progression/levelCaps.ts`:
 ## 5. Output Structure
 
 - `calculationResult`: top-level object consumed by context/UI
-- `breakdowns`: per-stat arrays with `{ source, delta, total }`
+- `breakdowns`: per-stat arrays with `{ source, delta, total }`. Current combat
+  breakdown keys include `attack_spell_check`, `save_dc`, `death_threshold`,
+  `initiative`, and `martial_check`.
 - `validation`: background overspend, mastery cap errors
 
 ---
@@ -237,6 +267,7 @@ Input Data (buildData)
 Effects Aggregation (effectCollection.ts)
 ├── aggregateAttributedEffects() → rawEffects
 └── resolveEffectChoices() → resolvedEffects
+   └── resolves nested class feature choice effects and leaves unresolved spell grants inactive
 
 Effect Collection (abilityCollection.ts)
 ├── collectGrantedAbilities() → abilities (GRANT_ABILITY)
@@ -247,6 +278,10 @@ Effect Collection (abilityCollection.ts)
 ├── collectCombatTraining() → combatTraining (GRANT_COMBAT_TRAINING)
 └── collectConditionalModifiers() → conditionalModifiers
 ```
+
+Sense grants are grouped by sense type. The calculator keeps the highest base range, adds unconditional increases, and supports conditional "increase if already present" grants for rules such as Cleric Dark Domain Darkvision and Hunter Subterranean Favored Terrain.
+
+Class feature effect aggregation includes direct feature effects, benefit-level effects, selected subclass effects, selected feature-choice option effects, and selected talent effects. Intro-only flavor features such as Monk/Rogue/Spellblade `Source of Power` are excluded from automatic multiclass flavor-feature grants. Level 9 class capstone records remain non-mechanical when the source has not published class-specific mechanics.
 
 #### Stage 2: Base Values (No Dependencies)
 
@@ -378,9 +413,10 @@ Dependencies: finalIntelligence, progressionGains, resolvedEffects, buildData
 ├── baseSkillPoints = 5 + progressionGains.totalSkillPoints + finalIntelligence + skillPointsBonus
 ├── baseTradePoints = 3 + progressionGains.totalTradePoints + tradePointsBonus
 ├── baseLanguagePoints = 2 + languagePointsBonus
-├── conversions (skillToTrade, tradeToSkill, tradeToLanguage)
-├── availableSkillPoints (after conversions)
-├── availableTradePoints (after conversions)
+├── conversions (skillToTrade, tradeToSkill undo compatibility, tradeToLanguage)
+├── effectiveSkillToTrade = skillToTrade - floor(min(tradeToSkill, skillToTrade*2)/2)
+├── availableSkillPoints = baseSkillPoints - effectiveSkillToTrade
+├── availableTradePoints = baseTradePoints + effectiveSkillToTrade*2 - tradeToLanguage
 └── availableLanguagePoints (after conversions)
 ```
 
@@ -554,5 +590,3 @@ For values that depend on breakdowns, the order must be:
 
 > Last updated: 2026-02-06
 > Maintainer: @DC20Clean-Team
-
-

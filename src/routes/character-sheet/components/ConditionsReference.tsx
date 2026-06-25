@@ -2,8 +2,8 @@
  * Conditions Reference Widget
  *
  * A searchable, filterable reference guide showing all DC20 conditions
- * and their effects. Users can browse by type (stacking/overlapping/absolute)
- * and filter by tags (physical, mental, sensory, movement, damage).
+ * and their effects. Users can filter by tags (physical, mental, sensory,
+ * movement, damage).
  */
 
 import React, { useState, useMemo } from 'react';
@@ -20,7 +20,6 @@ import {
 	StyledConditionCard,
 	StyledConditionHeader,
 	StyledConditionName,
-	StyledConditionTypeBadge,
 	StyledConditionDescription,
 	StyledConditionTags,
 	StyledConditionTag,
@@ -41,12 +40,6 @@ const TAG_LABELS: Record<ConditionTag, string> = {
 	sensory: '👁️ Sensory',
 	movement: '🏃 Movement',
 	damage: '⚔️ Damage'
-};
-
-const TYPE_LABELS: Record<string, string> = {
-	stacking: 'Stacks (X)',
-	overlapping: 'Overlapping',
-	absolute: 'On/Off'
 };
 
 const ConditionsReference: React.FC<ConditionsReferenceProps> = ({ isMobile = false }) => {
@@ -148,9 +141,6 @@ const ConditionsReference: React.FC<ConditionsReferenceProps> = ({ isMobile = fa
 								>
 									<div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
 										<StyledConditionName $isMobile={isMobile}>{condition.name}</StyledConditionName>
-										<StyledConditionTypeBadge $type={condition.type} $isMobile={isMobile}>
-											{TYPE_LABELS[condition.type]}
-										</StyledConditionTypeBadge>
 									</div>
 									<StyledExpandIcon $expanded={isExpanded} $isMobile={isMobile}>
 										▼

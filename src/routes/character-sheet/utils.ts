@@ -14,7 +14,15 @@ import type {
 	SkillData
 } from '../../types';
 import type { Spell } from '../../lib/rulesdata/schemas/spell.schema';
+import {
+	formatSpellCost,
+	formatSpellEnhancementCost
+} from '../../lib/rulesdata/spells-data/spellCost';
 import type { Maneuver } from '../../lib/rulesdata/martials/maneuvers';
+import {
+	formatManeuverCost,
+	formatManeuverEnhancementCost
+} from '../../lib/rulesdata/martials/maneuverFormatting';
 import { logger } from '../../lib/utils/logger';
 interface CalculatedDefenses {
 	calculatedPD: number;
@@ -359,7 +367,6 @@ export const handlePrintCharacterSheet = (
                             </div>
                             <div class="dc20-logo">DC20</div>
                         </div>
-                        
                         <div class="main-grid">
                             <div class="column">
                                 <div class="section">
@@ -370,7 +377,7 @@ export const handlePrintCharacterSheet = (
                                         <div class="resource-circle">${currentValues.currentMP}/${characterData.finalMPMax}</div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="section">
                                     <div class="section-title">Defenses</div>
                                     <div style="text-align: center;">
@@ -388,7 +395,7 @@ export const handlePrintCharacterSheet = (
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="section">
                                     <div class="section-title">Attributes</div>
                                     <div class="skill-row">
@@ -408,7 +415,7 @@ export const handlePrintCharacterSheet = (
                         <span class="skill-bonus">+${characterData.finalIntelligence}</span>
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Skills</div>
                     ${Object.entries(skillsByAttribute)
@@ -434,7 +441,7 @@ export const handlePrintCharacterSheet = (
 											.join('')}
                 </div>
             </div>
-            
+
             <div class="column">
                 <div class="section">
                     <div class="section-title">Attacks</div>
@@ -449,11 +456,11 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
 
-                
 
-                
+
+
+
                 <div class="section">
                     <div class="section-title">Features</div>
                     ${features
@@ -468,7 +475,7 @@ export const handlePrintCharacterSheet = (
 											.join('')}
                 </div>
             </div>
-            
+
             <div class="column">
                 <div class="section">
                     <div class="section-title">Inventory</div>
@@ -483,7 +490,7 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Languages</div>
                     ${languages
@@ -497,7 +504,7 @@ export const handlePrintCharacterSheet = (
 											)
 											.join('')}
                 </div>
-                
+
                 <div class="section">
                     <div class="section-title">Trades</div>
                     ${printableTrades
@@ -513,13 +520,12 @@ export const handlePrintCharacterSheet = (
                 </div>
             </div>
         </div>
-    </div>
-
-    ${
-			characterData.className &&
-			findClassByName(characterData.className)?.spellcastingPath &&
-			currentSpells.length > 0
-				? `
+                        </div>
+	                        ${
+														characterData.className &&
+														findClassByName(characterData.className)?.spellcastingPath &&
+														currentSpells.length > 0
+															? `
     <div class="page-break"></div>
     <div class="character-sheet">
         <div class="header">
@@ -537,9 +543,9 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="dc20-logo">DC20</div>
         </div>
-        
+
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Spells</h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
             ${currentSpells
 							.map((spell) => {
@@ -554,11 +560,10 @@ export const handlePrintCharacterSheet = (
                                 <span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">${spell.school || 'Unknown'}</span>
                             </div>
                         </div>
-                        
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost?.ap ?? '-'} AP${spell.cost?.mp ? `, ${spell.cost.mp} MP` : ''}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${spell.cost ? formatSpellCost(spell.cost) : '-'}</span>
                             </div>
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Range</span><br>
@@ -569,7 +574,7 @@ export const handlePrintCharacterSheet = (
                                 <span style="color: #2c3e50; font-size: 0.9rem;">${spell.duration || '-'}</span>
                             </div>
                         </div>
-                        
+
                         ${
 													fullSpell && fullSpell.effects && fullSpell.effects.length > 0
 														? `
@@ -589,18 +594,18 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
-                        ${
-													fullSpell && fullSpell.spellPassive
-														? `
+													}
+	                        ${
+														fullSpell && fullSpell.spellPassive
+															? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Spell Passive</h4>
                                 <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullSpell.spellPassive}</p>
                             </div>
                         `
-														: ''
-												}
-                        
+															: ''
+													}
+
                         ${
 													fullSpell && fullSpell.enhancements && fullSpell.enhancements.length > 0
 														? `
@@ -610,7 +615,7 @@ export const handlePrintCharacterSheet = (
 																	.map(
 																		(enhancement) => `
                                     <div style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px;">
-                                        <strong style="color: #2c3e50; font-size: 0.95rem;">${enhancement.name}</strong> (${enhancement.type} ${enhancement.cost})
+                                        <strong style="color: #2c3e50; font-size: 0.95rem;">${enhancement.name}</strong> (${formatSpellEnhancementCost(enhancement)})
                                         <br />
                                         <span style="color: #34495e; line-height: 1.6; font-size: 0.9rem;">${enhancement.description}</span>
                                     </div>
@@ -621,7 +626,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													spell.notes
 														? `
@@ -639,8 +644,8 @@ export const handlePrintCharacterSheet = (
         </div>
     </div>
     `
-				: ''
-		}
+															: ''
+													}
 
     ${
 			characterData.className &&
@@ -664,13 +669,15 @@ export const handlePrintCharacterSheet = (
             </div>
             <div class="dc20-logo">DC20</div>
         </div>
-        
+
         <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Maneuvers</h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
             ${currentManeuvers
 							.map((maneuver) => {
 								const fullManeuver = allManeuvers.find((m) => m.name === maneuver.name);
+								const maneuverDetails = fullManeuver ?? maneuver;
+								const maneuverEnhancements = maneuverDetails.enhancements ?? [];
 								return `
                     <div class="maneuver-card" style="border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
@@ -682,18 +689,28 @@ export const handlePrintCharacterSheet = (
                                 ${maneuver.isReaction ? '<span style="background: #e67e22; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 8px;">Reaction</span>' : ''}
                             </div>
                         </div>
-                        
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                             <div>
                                 <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Cost</span><br>
-                                <span style="color: #2c3e50; font-size: 0.9rem;">${maneuver.cost ? `${maneuver.cost.ap} AP${maneuver.cost.mp ? `, ${maneuver.cost.mp} MP` : ''}` : 'N/A'}</span>
+                                <span style="color: #2c3e50; font-size: 0.9rem;">${formatManeuverCost(maneuverDetails.cost)}</span>
                             </div>
                             ${
-															fullManeuver && fullManeuver.trigger
+															maneuverDetails.range
+																? `
+                                <div>
+                                    <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Range</span><br>
+                                    <span style="color: #2c3e50; font-size: 0.9rem;">${maneuverDetails.range}</span>
+                                </div>
+                            `
+																: ''
+														}
+                            ${
+															maneuverDetails.trigger
 																? `
                                 <div>
                                     <span style="font-weight: bold; color: #7f8c8d; font-size: 0.8rem; text-transform: uppercase;">Trigger</span><br>
-                                    <span style="color: #2c3e50; font-size: 0.9rem;">${fullManeuver.trigger}</span>
+                                    <span style="color: #2c3e50; font-size: 0.9rem;">${maneuverDetails.trigger}</span>
                                 </div>
                             `
 																: ''
@@ -709,29 +726,50 @@ export const handlePrintCharacterSheet = (
 																: ''
 														}
                         </div>
-                        
+
                         ${
-													fullManeuver && fullManeuver.description
+													maneuverDetails.description
 														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Description</h4>
-                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${fullManeuver.description}</p>
+                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem;">${maneuverDetails.description}</p>
                             </div>
                         `
 														: ''
 												}
-                        
+
                         ${
-													fullManeuver && fullManeuver.trigger
+													maneuverEnhancements.length > 0
+														? `
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                                <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Enhancements</h4>
+                                ${maneuverEnhancements
+																	.map(
+																		(enhancement) => `
+                                    <div style="margin-bottom: 10px;">
+                                        <strong style="color: #2c3e50;">${enhancement.name}</strong>
+                                        <span style="color: #7f8c8d;">(${formatManeuverEnhancementCost(enhancement)})</span>
+                                        <div style="color: #34495e; font-size: 0.9rem; line-height: 1.5;">${enhancement.description}</div>
+                                    </div>
+                                `
+																	)
+																	.join('')}
+                            </div>
+                        `
+														: ''
+												}
+
+                        ${
+													maneuverDetails.trigger
 														? `
                             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                                 <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 1.1rem;">Trigger</h4>
-                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem; font-style: italic;">${fullManeuver.trigger}</p>
+                                <p style="color: #34495e; line-height: 1.6; margin: 0; font-size: 0.95rem; font-style: italic;">${maneuverDetails.trigger}</p>
                             </div>
                         `
 														: ''
 												}
-                        
+
                         ${
 													fullManeuver && fullManeuver.requirement
 														? `
@@ -742,7 +780,7 @@ export const handlePrintCharacterSheet = (
                         `
 														: ''
 												}
-                        
+
                         ${
 													maneuver.notes
 														? `

@@ -9,17 +9,13 @@ export const bardClass: ClassDefinition = {
 	className: 'Bard',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon or Light Shield'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus (Musical Instrument)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal: 'Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Calligrapher's Supplies, Disguise Kit, Gaming Kit, Musical Instrument, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
-		combatTraining: {
-			armor: ['Light_Armor'],
-			shields: ['Light_Shields']
-		},
 		spellList: {
 			description:
 				'When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the following Spell Tags: Embolden, Enfeeble, Healing, Illusion, or Sound.',
@@ -40,7 +36,7 @@ export const bardClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain spellcasting abilities. You can choose Spells from the Enchantment School or with Embolden, Enfeeble, Healing, Illusion, or Sound tags.',
+				'You gain Combat Training with Spell Focuses, Light Armor, and Light Shields. When you learn a new Spell, you can choose any Spell from the Enchantment Spell School or with the Embolden, Enfeeble, Healing, Illusion, or Sound tags.',
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
@@ -193,26 +189,44 @@ export const bardClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'bard_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'bard_level_5_placeholder',
-			featureName: 'Virtuoso (Placeholder)',
+			featureName: 'Expert Bard',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'bard_level_8_capstone_placeholder',
-			featureName: 'Magnum Opus (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Bard Class Features.',
+			benefits: [
+				{
+					name: 'Font of Inspiration',
+					description: 'Your Help Die starts at a d10.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_bard_font_of_inspiration',
+							value: 'Your Help Die starts at d10.'
+						}
+					]
+				},
+				{
+					name: 'Remarkable Repertoire',
+					description: 'You gain +2 Skill Points and learn any 2 Spells from any Spell List.',
+					effects: [
+						{ type: 'MODIFY_STAT', target: 'skillPoints', value: 2 },
+						{ type: 'GRANT_SPELL', target: 'any_spell_list', value: 2 }
+					]
+				},
+				{
+					name: 'Bardic Performance',
+					description:
+						'At the start of each of your turns you can change your performance for free. When you start a performance, you can spend 2 MP to improve the selected performance.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_bard_bardic_performance',
+							value:
+								'Free performance change at start of turn. Spend 2 MP when starting: Battle Ballad die becomes d8, Fast Tempo grants +2 Speed, Inspiring Performance grants +1 temp HP, or Emotional Performance grants resistance to its listed Conditions.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [
@@ -220,10 +234,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Eloquence',
 			description: 'Masters of persuasion and charm magic.',
 			features: [
-			{
-				id: 'bard_eloquence_beguiling_presence',
-				featureName: 'Beguiling Presence',
-				levelGained: 3,
+				{
+					id: 'bard_eloquence_beguiling_presence',
+					featureName: 'Beguiling Presence',
+					levelGained: 3,
 					description: 'You gain enhanced charm abilities and magical persuasion.',
 					benefits: [
 						{
@@ -231,7 +245,7 @@ export const bardClass: ClassDefinition = {
 							description:
 								"You learn the Charm Spell, and it doesn't end as a result of the target taking damage. If you already know it, you instead learn another spell with the Charmed Tag.",
 							effects: [
-								{ type: 'GRANT_SPELL', target: 'charm', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'Charm', value: 1 },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'enhanced_charm',
@@ -265,10 +279,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'bard_eloquence_eloquent_orator',
-				featureName: 'Eloquent Orator',
-				levelGained: 3,
+				{
+					id: 'bard_eloquence_eloquent_orator',
+					featureName: 'Eloquent Orator',
+					levelGained: 3,
 					description:
 						'Your speech is magically enchanted. Creatures can always understand the words you speak, provided they speak at least 1 Language.',
 					isFlavor: true,
@@ -286,10 +300,10 @@ export const bardClass: ClassDefinition = {
 			subclassName: 'Jester',
 			description: 'Comedic performers who use humor and chaos in battle.',
 			features: [
-			{
-				id: 'bard_jester_antagonizing_act',
-				featureName: 'Antagonizing Act',
-				levelGained: 3,
+				{
+					id: 'bard_jester_antagonizing_act',
+					featureName: 'Antagonizing Act',
+					levelGained: 3,
 					description: 'You gain abilities that frustrate and distract enemies.',
 					benefits: [
 						{
@@ -330,10 +344,10 @@ export const bardClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'bard_jester_comedian',
-				featureName: 'Comedian',
-				levelGained: 3,
+				{
+					id: 'bard_jester_comedian',
+					featureName: 'Comedian',
+					levelGained: 3,
 					description: 'You have ADV on Checks to make other creatures laugh.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'comedy', value: 'ADV' }]

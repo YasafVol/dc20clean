@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/armorSchema.ts
  * @description Schema definitions for custom armor.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 import { BaseEquipment, BaseProperty } from './baseEquipment';
@@ -27,6 +27,8 @@ export interface ArmorTypeDefinition {
 // ================================================================= //
 
 export interface ArmorProperty extends BaseProperty {
+	/** Armor types this property is available for. Omitted means all armor types. */
+	armorTypes?: ArmorType[];
 	/** Whether this property is only available for light armor */
 	lightOnly?: boolean;
 	/** Whether this property is only available for heavy armor */

@@ -1,6 +1,7 @@
 // Character Sheet Types and Interfaces
 
 import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
+import type { ManeuverEnhancement } from '../lib/rulesdata/schemas/maneuver.schema';
 
 export interface CharacterSheetProps {
 	characterId: string;
@@ -15,9 +16,14 @@ export interface ManeuverData {
 	description?: string;
 	cost?: {
 		ap: number;
+		sp?: number;
+		/** Legacy field from older sheet rows. New maneuver data uses `sp`. */
 		mp?: number;
 	};
+	range?: string;
 	isReaction?: boolean;
+	trigger?: string;
+	enhancements?: ManeuverEnhancement[];
 	notes?: string;
 }
 
@@ -286,8 +292,12 @@ export interface InventoryItemData {
 	itemName: string;
 	count: number;
 	cost?: string;
+	/** Whether this row is currently equipped/wielded and should affect calculations */
+	isEquipped?: boolean;
 	/** Links to a saved Equipage item's id (when picked from custom equipment storage) */
 	customEquipmentId?: string;
+	/** Saved Equipage category for display and effect fallback labeling */
+	customEquipmentCategory?: 'weapon' | 'armor' | 'shield' | 'spellFocus';
 	/** User-written description for custom freeform items */
 	description?: string;
 }

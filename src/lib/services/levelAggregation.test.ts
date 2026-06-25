@@ -44,28 +44,26 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 	});
 
 	describe('Budget Accumulation - Path Points', () => {
-		// Note: The progression data uses `pathProgression: true` flag instead of `pathPoints: number`
-		// The resolver only reads `pathPoints` field, so totalPathPoints remains 0
-		// Path progression is tracked via the boolean flag for UI purposes, not as a budget count
-
-		it('should have 0 path points at all levels (pathProgression flag not counted as budget)', () => {
-			// The resolver doesn't translate pathProgression: true to pathPoints
+		it('should count each path progression as one spendable path point', () => {
 			const result1 = resolveClassProgression('barbarian', 1);
 			expect(result1.budgets.totalPathPoints).toBe(0);
 
 			const result2 = resolveClassProgression('barbarian', 2);
-			expect(result2.budgets.totalPathPoints).toBe(0);
+			expect(result2.budgets.totalPathPoints).toBe(1);
 
 			const result3 = resolveClassProgression('barbarian', 3);
-			expect(result3.budgets.totalPathPoints).toBe(0);
+			expect(result3.budgets.totalPathPoints).toBe(1);
 
 			const result4 = resolveClassProgression('barbarian', 4);
-			expect(result4.budgets.totalPathPoints).toBe(0);
+			expect(result4.budgets.totalPathPoints).toBe(2);
+
+			const result8 = resolveClassProgression('barbarian', 8);
+			expect(result8.budgets.totalPathPoints).toBe(4);
 		});
 
-		it('should have 0 path points for spellcaster classes (flag not budget)', () => {
+		it('should count path points for spellcaster classes', () => {
 			const result4 = resolveClassProgression('wizard', 4);
-			expect(result4.budgets.totalPathPoints).toBe(0);
+			expect(result4.budgets.totalPathPoints).toBe(2);
 		});
 
 		it('should have 0 path points at level 1', () => {
@@ -90,9 +88,13 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 			const result4 = resolveClassProgression('barbarian', 4);
 			expect(result4.budgets.totalAncestryPoints).toBe(2);
 
-			// L7: +2 ancestry points = 4 total
+			// L7: unchanged from L4
 			const result7 = resolveClassProgression('barbarian', 7);
-			expect(result7.budgets.totalAncestryPoints).toBe(4);
+			expect(result7.budgets.totalAncestryPoints).toBe(2);
+
+			// L8: +2 ancestry points = 4 total
+			const result8 = resolveClassProgression('barbarian', 8);
+			expect(result8.budgets.totalAncestryPoints).toBe(4);
 		});
 
 		it('should have 0 ancestry points at level 1 for all classes', () => {
@@ -256,8 +258,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 
 			expect(result.level).toBe(5);
 			expect(result.budgets.totalTalents).toBe(2); // L2: +1, L4: +1
-			// pathPoints field is not set in progression data (uses pathProgression: true flag)
-			expect(result.budgets.totalPathPoints).toBe(0);
+			expect(result.budgets.totalPathPoints).toBe(2); // L2: +1, L4: +1
 			expect(result.budgets.totalAncestryPoints).toBe(2); // L4: +2
 		});
 

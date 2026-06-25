@@ -14,9 +14,7 @@ import type {
 } from '../types/effectSystem';
 // SpellSource, SpellSchool, SpellTag moved to calculatorModules/spellSystem.ts
 // ModifyMasteryCapEffect, IncreaseMasteryCapEffect moved to calculatorModules/validation.ts
-import {
-	resolveClassProgression
-} from '../rulesdata/classes-data/classProgressionResolver';
+import { resolveClassProgression } from '../rulesdata/classes-data/classProgressionResolver';
 import { classesData } from '../rulesdata/loaders/class.loader';
 // findTalentById moved to calculatorModules/effectCollection.ts
 // getLevelCaps moved to calculatorModules/validation.ts and statCalculation.ts
@@ -70,13 +68,56 @@ import {
 import { calculateBudgets } from './calculatorModules/budgetCalculation';
 import { calculateDerivedStats } from './calculatorModules/statCalculation';
 import { runValidation } from './calculatorModules/validation';
+import { normalizeSelectedTalents } from '../utils/storageUtils';
 
 // CrossPathGrants, aggregatePathBenefits, checkFlavorFeatureAutoGrant moved to calculatorModules/progressionAggregation.ts
+
+function getInventoryRows(contextData: any): any[] {
+	const inventory = contextData.characterState?.inventory ?? contextData.inventory;
+	if (Array.isArray(inventory?.items)) return inventory.items;
+	if (Array.isArray(inventory?.current)) return inventory.current;
+	if (Array.isArray(inventory)) return inventory;
+	return [];
+}
+
+function hasEquippedArmor(inventoryRows: any[]): boolean {
+	return inventoryRows.some((item) => {
+		if (!item?.isEquipped) return false;
+		if (item.itemType === 'Armor') return true;
+		return item.itemType === 'Custom' && item.customEquipmentCategory === 'armor';
+	});
+}
+
+function getActiveConditions(contextData: any, inventoryRows: any[]): string[] {
+	const conditions = new Set<string>();
+
+	for (const conditionId of contextData.characterState?.activeConditions ?? []) {
+		if (typeof conditionId === 'string' && conditionId) conditions.add(conditionId);
+	}
+
+	for (const [conditionId, isActive] of Object.entries(
+		contextData.characterState?.ui?.activeConditions ?? {}
+	)) {
+		if (isActive) conditions.add(conditionId);
+	}
+
+	if (contextData.characterState?.ui?.combatToggles?.isRaging) {
+		conditions.add('while_raging');
+	}
+
+	if (!hasEquippedArmor(inventoryRows)) {
+		conditions.add('not_wearing_armor');
+	}
+
+	return Array.from(conditions);
+}
 
 /**
  * Convert character context data to enhanced build data
  */
 export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterBuildData {
+	const equipmentInventory = getInventoryRows(contextData);
+
 	return {
 		id: contextData.id || '',
 		finalName: contextData.finalName || '',
@@ -105,7 +146,7 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		featureChoices: contextData.selectedFeatureChoices ?? {},
 		selectedTalents:
 			contextData.selectedTalents && typeof contextData.selectedTalents === 'object'
-				? contextData.selectedTalents
+				? normalizeSelectedTalents(contextData.selectedTalents)
 				: {},
 		selectedSubclass: contextData.selectedSubclass,
 
@@ -124,11 +165,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		manualPD: contextData.manualPD,
 		manualAD: contextData.manualAD,
 		manualPDR: contextData.manualPDR,
-		activeConditions: Object.entries(
-			contextData.characterState?.ui?.activeConditions ?? {}
-		)
-			.filter(([, isActive]) => Boolean(isActive))
-			.map(([conditionId]) => conditionId),
+		activeConditions: getActiveConditions(contextData, equipmentInventory),
+		equipmentInventory,
 
 		// Conversions between point pools (for Background step)
 		conversions: {
@@ -273,6 +311,11 @@ export function calculateCharacterWithBreakdowns(
 	// 2. Resolve user choices
 	const resolvedEffects = resolveEffectChoices(rawEffects, buildData.selectedTraitChoices);
 	const activeConditions = new Set(buildData.activeConditions ?? []);
+	if (hasEquippedArmor(buildData.equipmentInventory ?? [])) {
+		activeConditions.delete('not_wearing_armor');
+	} else {
+		activeConditions.add('not_wearing_armor');
+	}
 
 	// 3. Resolve class progression (budgets + features) - only if class is selected
 	let resolvedProgression = null;
@@ -301,16 +344,42 @@ export function calculateCharacterWithBreakdowns(
 	);
 
 	// 4. Calculate all derived stats and breakdowns (via statCalculation module)
-	const derivedStats = calculateDerivedStats(buildData, resolvedEffects, activeConditions, progressionGains);
+	const derivedStats = calculateDerivedStats(
+		buildData,
+		resolvedEffects,
+		activeConditions,
+		progressionGains
+	);
 	const {
-		finalMight, finalAgility, finalCharisma, finalIntelligence,
-		combatMastery, primeModifier, primeAttribute, usePrimeCapRule,
-		finalPD, finalAD, finalPDR,
-		finalSaveDC, finalSaveMight, finalSaveAgility, finalSaveCharisma, finalSaveIntelligence,
-		finalDeathThreshold, finalGritPoints, finalInitiativeBonus,
-		attackSpellCheckBase, breakdowns,
-		finalHPMax, finalSPMax, finalMPMax, finalMoveSpeed, finalJumpDistance,
-		finalAttributePoints, finalRestPoints, finalMartialCheck
+		finalMight,
+		finalAgility,
+		finalCharisma,
+		finalIntelligence,
+		combatMastery,
+		primeModifier,
+		primeAttribute,
+		usePrimeCapRule,
+		finalPD,
+		finalAD,
+		finalPDR,
+		finalSaveDC,
+		finalSaveMight,
+		finalSaveAgility,
+		finalSaveCharisma,
+		finalSaveIntelligence,
+		finalDeathThreshold,
+		finalGritPoints,
+		finalInitiativeBonus,
+		finalAttackSpellCheck,
+		breakdowns,
+		finalHPMax,
+		finalSPMax,
+		finalMPMax,
+		finalMoveSpeed,
+		finalJumpDistance,
+		finalAttributePoints,
+		finalRestPoints,
+		finalMartialCheck
 	} = derivedStats;
 
 	// --- Spell System (M3.20) ---
@@ -431,7 +500,7 @@ export function calculateCharacterWithBreakdowns(
 			staminaSpendLimit: combatMastery,
 
 			// Combat stats with breakdowns
-			finalAttackSpellCheck: attackSpellCheckBase,
+			finalAttackSpellCheck,
 			finalMartialCheck: finalMartialCheck,
 
 			// Class and ancestry info for UI
@@ -533,4 +602,3 @@ export function calculateCharacterWithBreakdowns(
 		isFromCache: false
 	};
 }
-

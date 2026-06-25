@@ -4,17 +4,17 @@ export const rogueClass: ClassDefinition = {
 	className: 'Rogue',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons or Light Shields'],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
-		armor: ['1 set of Light Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: ['X or Y Packs (Adventuring Packs Coming Soon)']
+		arsenal: 'Choose 3 of any of the following items: Weapon or Light Shield.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Cryptographer's Tools, Disguise Kit, Herbalist's Supplies, or Lockpicking Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['Light Armor'],
-			shields: ['Light Shields']
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
 		},
 		maneuvers: {
 			learnsAllAttack: true,
@@ -30,19 +30,46 @@ export const rogueClass: ClassDefinition = {
 	},
 	coreFeatures: [
 		{
+			id: 'rogue_martial_path',
+			featureName: 'Martial Path',
+			levelGained: 1,
+			description: 'You gain Combat Training with Weapons, Light Armor, and Light Shields.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
+			]
+		},
+		{
 			id: 'rogue_source_of_power',
 			featureName: 'Source of Power',
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.'
+				'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_source_of_power',
+					value:
+						'Rogues exploit weakness through nimbleness and cunning, whether learned as thieves, nobles, or assassins.'
+				}
+			]
 		},
 		{
 			id: 'rogue_debilitating_strike',
 			featureName: 'Debilitating Strike',
 			levelGained: 1,
-		description:
-			'When you hit with a weapon attack you may spend 1 SP. The target makes a Physical Save vs your Save DC; on failure, choose Deafened, Exposed, Hindered, or Slowed 2. The effect lasts for 1 Round and different choices may stack but not duplicates.'
+			description:
+				'When you make a Weapon Attack, you can spend 1 SP to force the target to make a Physical Save against your Save DC. Save Failure: the target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round. A target cannot be affected by the same option more than once at a time.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_debilitating_strike',
+					value:
+						'When making a Weapon Attack, spend 1 SP to force a Physical Save. Failure: target suffers Deafened, Exposed, Hindered, or Slowed 2 for 1 Round; same option cannot affect a target more than once at a time.'
+				}
+			]
 		},
 		{
 			id: 'rogue_roguish_finesse',
@@ -88,36 +115,65 @@ export const rogueClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.'
+				'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_cypher_speech',
+					value:
+						'Become fluent in a Mortal language and craft hidden messages for a demographic of your choice, embedding simple directives in speech or writing.'
+				}
+			]
 		},
 		{
 			id: 'rogue_cheap_shot',
 			featureName: 'Cheap Shot',
 			levelGained: 2,
 			description:
-				'You deal +1 damage on Martial Attacks against targets that are Flanked, Prone, conditioned (except Invisible), or unaware of you due to being Hidden.'
-		},
-		{
-			id: 'rogue_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+				'You deal +1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'rogue_cheap_shot',
+					value:
+						'+1 damage on Martial Attacks against creatures that are Flanked or Prone, have any Condition other than Invisible, or are targets you are Hidden from.'
+				}
+			]
 		},
 		{
 			id: 'rogue_level_5_placeholder',
-			featureName: 'Shadow Master (Placeholder)',
+			featureName: 'Expert Rogue',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'rogue_level_8_capstone_placeholder',
-			featureName: 'Perfect Crime (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Rogue Class Features.',
+			benefits: [
+				{
+					name: 'Debilitating Strike',
+					description: 'You can spend SP to choose 1 additional condition per SP spent.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_rogue_debilitating_strike',
+							value: 'Spend SP to choose 1 additional Debilitating Strike condition per SP.'
+						}
+					]
+				},
+				{
+					name: 'Roguish Finesse',
+					description: 'You gain 1 Skill Point.',
+					effects: [{ type: 'MODIFY_STAT', target: 'skillPoints', value: 1 }]
+				},
+				{
+					name: 'Cheap Shot',
+					description: 'Cheap Shot deals +2 damage instead.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_rogue_cheap_shot',
+							value: 'Cheap Shot deals +2 damage instead.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [
@@ -146,7 +202,14 @@ export const rogueClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Gain ADV on checks to determine causes of death or ways to kill, including identifying poisons, toxins, or lethal materials.'
+						'Gain ADV on checks to determine causes of death or ways to kill, including identifying poisons, toxins, or lethal materials.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'cause_of_death_or_ways_to_kill',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		},
@@ -173,15 +236,15 @@ export const rogueClass: ClassDefinition = {
 							]
 						},
 						{
-					name: 'Taunting Shot',
-						description:
-							'Once per round when attacking a conditioned foe, forgo Cheap Shot damage to force a Charisma Save or Taunt the target until your next turn ends.',
+							name: 'Taunting Shot',
+							description:
+								'Once per round when you make an Attack against a creature that fulfills the criteria for Cheap Shot, you can forgo your Cheap Shot damage to force a Charisma Save. Failure: the target is Taunted by you until the end of your next turn.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'rogue_taunting_shot',
 									value:
-										'When an attack targets a creature with a Condition, you may forego Cheap Shot damage to force a Charisma Save. Failure: the creature is Taunted until the end of your next turn.'
+										'Once per round when an Attack targets a creature that fulfills the criteria for Cheap Shot, forego Cheap Shot damage to force a Charisma Save. Failure: the creature is Taunted until the end of your next turn.'
 								}
 							]
 						},
@@ -206,7 +269,15 @@ export const rogueClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.'
+						'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'rogue_tall_tales',
+							value:
+								'Spin captivating stories for up to five minutes to distract non-hostile crowds, giving them DisADV on Awareness Checks while enthralled.'
+						}
+					]
 				}
 			]
 		}

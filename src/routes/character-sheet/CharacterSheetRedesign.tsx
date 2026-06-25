@@ -50,6 +50,8 @@ import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAna
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
+import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
+import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 
 // Import existing components
 import Spells from './components/Spells';
@@ -76,6 +78,7 @@ import Snackbar from '../../components/Snackbar';
 
 // Import theme
 import { logger } from '../../lib/utils/logger';
+import { getDefaultStorage } from '../../lib/storage';
 
 interface CharacterSheetRedesignProps {
 	characterId: string;
@@ -198,6 +201,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (actionType && activeConditions.length > 0) {
 			const diceModifier = getDiceModifierForAction(activeConditions, actionType);
 			rollMode = diceModifier.mode;
+			bonus -= diceModifier.penalty;
 			logger.debug('ui', 'Applying condition-based dice modifier', { actionType, diceModifier });
 		}
 
@@ -216,6 +220,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateRestPoints,
 		updateExhaustion,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
 		saveStatus,
@@ -367,9 +372,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	// Rest and Grit values
 	const currentRest = resources?.current?.currentRestPoints ?? 0;
-	const maxRest = calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
+	const maxRest =
+		calculatedData?.breakdowns?.restPoints?.total ?? characterData.finalRestPoints ?? 0;
 	const currentGrit = resources?.current?.currentGritPoints ?? 0;
-	const maxGrit = calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
+	const maxGrit =
+		calculatedData?.breakdowns?.gritPoints?.total ?? characterData.finalGritPoints ?? 0;
 
 	const primeAttribute = characterData.finalPrimeModifierAttribute || 'charisma';
 	const primeValue = characterData.finalPrimeModifierValue || 0;
@@ -388,7 +395,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const basePrecisionDR = characterData.finalPDR ?? 0;
 	const ragePdPenalty = hasRageFeature && isRaging ? 5 : 0;
 
-	const precisionAD = Math.max(0, (defenseOverrides.precisionAD ?? basePrecisionAD) - ragePdPenalty);
+	const precisionAD = Math.max(
+		0,
+		(defenseOverrides.precisionAD ?? basePrecisionAD) - ragePdPenalty
+	);
 	const precisionADHeavyThreshold = precisionAD + 5;
 	const precisionADBrutalThreshold = precisionAD + 10;
 	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
@@ -452,7 +462,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
 		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
 		{ id: 'features', label: t('characterSheet.tabFeatures'), emoji: '✨' },
-		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{
+			id: 'conditions',
+			label: t('characterSheet.tabConditions'),
+			emoji: '🎭',
+			badge: activeConditionsCount
+		},
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
@@ -468,77 +483,41 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Overflow tabs shown in hamburger menu on mobile (includes inventory)
 	const hamburgerMenuItems: { id: string; label: string; emoji: string; badge?: number }[] = [
 		{ id: 'inventory', label: t('characterSheet.tabInventory'), emoji: '🎒' },
-		{ id: 'conditions', label: t('characterSheet.tabConditions'), emoji: '🎭', badge: activeConditionsCount },
+		{
+			id: 'conditions',
+			label: t('characterSheet.tabConditions'),
+			emoji: '🎭',
+			badge: activeConditionsCount
+		},
 		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers'), emoji: '⚡' },
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
 
-	// Export PDF handler - mirrors CharacterSheetClean behavior and exports current sheet state.
+	// Export PDF from stored character values only.
 	const handleExportPdf = async () => {
 		if (!characterData) return;
 
 		try {
-			const [pdf, calc, denormMod] = await Promise.all([
-				import('../../lib/pdf/transformers'),
-				import('../../lib/services/enhancedCharacterCalculator'),
-				import('../../lib/services/denormalizeMastery')
-			]);
+			const pdf = await import('../../lib/pdf/transformers');
 			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
-
-			const buildData = calc.convertToEnhancedBuildData({
-				...characterData,
-				attribute_might: characterData.finalMight,
-				attribute_agility: characterData.finalAgility,
-				attribute_charisma: characterData.finalCharisma,
-				attribute_intelligence: characterData.finalIntelligence,
-				classId: characterData.classId,
-				ancestry1Id: characterData.ancestry1Id,
-				ancestry2Id: characterData.ancestry2Id,
-				selectedTraitIds: characterData.selectedTraitIds || [],
-				selectedTraitChoices: (characterData as any).selectedTraitChoices || {},
-				featureChoices: characterData.selectedFeatureChoices || {},
-				skillsData: characterData.skillsData || {},
-				tradesData: characterData.tradesData || {},
-				languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
+			const storedCharacter =
+				(await getDefaultStorage().getCharacterById(characterData.id)) ?? characterData;
+			const pdfData = pdf.transformSavedCharacterToPdfData(storedCharacter);
+			const blob = await fillPdfFromData(pdfData, {
+				flatten: false,
+				version: getPdfVersionForCharacter(storedCharacter)
 			});
-			const calcResult = calc.calculateCharacterWithBreakdowns(buildData);
 
-			const denorm =
-				characterData.masteryLadders &&
-				characterData.skillTotals &&
-				characterData.knowledgeTradeMastery &&
-				characterData.languageMastery
-					? ({
-							masteryLadders: characterData.masteryLadders,
-							skillTotals: (characterData as any).skillTotals,
-							knowledgeTradeMastery: (characterData as any).knowledgeTradeMastery,
-							languageMastery: (characterData as any).languageMastery
-						} as any)
-					: denormMod.denormalizeMastery({
-							finalAttributes: {
-								might: calcResult.stats.finalMight,
-								agility: calcResult.stats.finalAgility,
-								charisma: calcResult.stats.finalCharisma,
-								intelligence: calcResult.stats.finalIntelligence,
-								prime: calcResult.stats.finalPrimeModifierValue
-							},
-							skillsRanks: characterData.skillsData || {},
-							tradesRanks: characterData.tradesData || {},
-							languagesData: characterData.languagesData || { common: { fluency: 'fluent' } }
-						});
-
-			const pdfData = pdf.transformCalculatedCharacterToPdfData(calcResult, {
-				saved: characterData,
-				denorm
-			});
-			const blob = await fillPdfFromData(pdfData, { flatten: false, version: '0.10' });
-
-			const safeName = (characterData.finalName || characterData.id || 'Character')
+			const safeName = (storedCharacter.finalName || storedCharacter.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
 				.replace(/^_+|_+$/g, '')
 				.slice(0, 60);
-			const fileName = `${safeName}_vDC20-0.10.pdf`;
+			const rulesVersionLabel = normalizeRulesVersion(storedCharacter.rulesVersion).replace(
+				'dc20-',
+				''
+			);
+			const fileName = `${safeName}_vDC20-${rulesVersionLabel}.pdf`;
 
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
@@ -589,6 +568,33 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				error: err instanceof Error ? err.message : String(err)
 			});
 			showSnackbarWithMessage('Failed to copy to clipboard', 'error');
+		}
+	};
+
+	const downloadCharacterJson = () => {
+		if (!state.character) return;
+
+		try {
+			const characterJson = JSON.stringify(state.character, null, 2);
+			const blob = new Blob([characterJson], { type: 'application/json' });
+			const safeName = (state.character.finalName || state.character.id || 'Character')
+				.replace(/[^A-Za-z0-9]+/g, '_')
+				.replace(/^_+|_+$/g, '')
+				.slice(0, 60);
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${safeName || 'Character'}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			showSnackbarWithMessage('Character JSON downloaded!', 'success');
+		} catch (err) {
+			logger.error('ui', 'Failed to download JSON', {
+				error: err instanceof Error ? err.message : String(err)
+			});
+			showSnackbarWithMessage('Failed to download JSON', 'error');
 		}
 	};
 
@@ -691,11 +697,14 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			>
 				<HeaderContent>
 					<CharacterIdentity>
-						<CharacterName>{characterData.finalName || t('characterSheet.unnamedCharacter')}</CharacterName>
+						<CharacterName>
+							{characterData.finalName || t('characterSheet.unnamedCharacter')}
+						</CharacterName>
 						<CharacterMeta>
 							<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
 							<MetaItem>
-								{t('characterSheet.level')} {characterData.level || 1} {characterData.className || t('characterSheet.adventurer')}
+								{t('characterSheet.level')} {characterData.level || 1}{' '}
+								{characterData.className || t('characterSheet.adventurer')}
 							</MetaItem>
 							<MetaItem>
 								{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
@@ -738,6 +747,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							whileTap={{ scale: 0.95 }}
 						>
 							📋 {t('characterSheet.copy')}
+						</ActionButton>
+						<ActionButton
+							onClick={downloadCharacterJson}
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							⬇️ {t('characterSheet.downloadJson')}
 						</ActionButton>
 						<ActionButton
 							onClick={handleExportPdf}
@@ -878,6 +894,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 															state.character?.characterState?.activeConditions || []
 														}
 														onToggleCondition={toggleActiveCondition}
+														onSetConditionStacks={setActiveConditionStacks}
 													/>
 												</>
 											)}
@@ -932,6 +949,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									<ActiveConditionsTracker
 										activeConditions={state.character?.characterState?.activeConditions || []}
 										onToggleCondition={toggleActiveCondition}
+										onSetConditionStacks={setActiveConditionStacks}
 									/>
 								)}
 								{activeTab === 'knowledge' && (

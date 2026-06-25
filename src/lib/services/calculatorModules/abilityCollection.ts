@@ -11,7 +11,7 @@ export interface GrantedAbility {
 	name: string;
 	description: string;
 	source: AttributedEffect['source'];
-	type: 'active';
+	type: 'active' | 'advantage';
 	isConditional: boolean;
 	condition?: string;
 }
@@ -39,6 +39,7 @@ export interface Sense {
 	type: string;
 	range: number;
 	source: EffectSource;
+	sources?: EffectSource[];
 }
 
 export interface CombatTrainingGrant {
@@ -57,7 +58,7 @@ export interface ConditionalModifier {
  * Collect granted abilities from resolved effects
  */
 export function collectGrantedAbilities(resolvedEffects: AttributedEffect[]): GrantedAbility[] {
-	return resolvedEffects
+	const abilities = resolvedEffects
 		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_ABILITY')
 		.map((effect) => ({
 			name: (effect as any).target,
@@ -67,6 +68,25 @@ export function collectGrantedAbilities(resolvedEffects: AttributedEffect[]): Gr
 			isConditional: !!(effect as any).condition,
 			condition: (effect as any).condition
 		}));
+
+	const advantageNotes = new Map<string, GrantedAbility>();
+	for (const effect of resolvedEffects) {
+		if (!effect.resolved || (effect as any).type !== 'GRANT_ADV_ON_CHECK') continue;
+		const target = String((effect as any).target);
+		const key = `${effect.source.type}:${effect.source.id}:${effect.source.name}`;
+		if (advantageNotes.has(key)) continue;
+
+		advantageNotes.set(key, {
+			name: effect.source.name,
+			description: effect.source.description || `ADV on ${target.replace(/_/g, ' ')} Checks.`,
+			source: effect.source,
+			type: 'advantage',
+			isConditional: !!(effect as any).condition,
+			condition: (effect as any).condition
+		});
+	}
+
+	return [...abilities, ...advantageNotes.values()];
 }
 
 /**
@@ -150,13 +170,35 @@ export function collectVulnerabilities(resolvedEffects: AttributedEffect[]): Vul
  * Collect senses from GRANT_SENSE effects
  */
 export function collectSenses(resolvedEffects: AttributedEffect[]): Sense[] {
-	return resolvedEffects
-		.filter((effect) => effect.resolved && (effect as any).type === 'GRANT_SENSE')
-		.map((effect) => ({
-			type: (effect as any).target as string,
-			range: Number((effect as any).value) || 0,
-			source: effect.source
-		}));
+	const grouped = new Map<string, AttributedEffect[]>();
+
+	for (const effect of resolvedEffects) {
+		if (!effect.resolved || (effect as any).type !== 'GRANT_SENSE') continue;
+		const key = String((effect as any).target ?? '').toLowerCase();
+		grouped.set(key, [...(grouped.get(key) ?? []), effect]);
+	}
+
+	return Array.from(grouped.values()).map((effects) => {
+		const setEffects = effects.filter((effect) => ((effect as any).mode ?? 'set') === 'set');
+		const setRange = Math.max(0, ...setEffects.map((effect) => Number((effect as any).value) || 0));
+		const unconditionalIncrease = effects
+			.filter((effect) => (effect as any).mode === 'increase')
+			.reduce((sum, effect) => sum + (Number((effect as any).value) || 0), 0);
+		const existingIncrease =
+			setEffects.length > 1
+				? effects
+						.filter((effect) => (effect as any).mode === 'increase_existing')
+						.reduce((sum, effect) => sum + (Number((effect as any).value) || 0), 0)
+				: 0;
+		const sourceEffect = effects[effects.length - 1];
+
+		return {
+			type: String((sourceEffect as any).target),
+			range: setRange + unconditionalIncrease + existingIncrease,
+			source: sourceEffect.source,
+			sources: effects.map((effect) => effect.source)
+		};
+	});
 }
 
 /**
@@ -180,7 +222,11 @@ export function collectCombatTraining(resolvedEffects: AttributedEffect[]): Comb
  */
 export function injectDefaultMovements(movements: Movement[], groundSpeed: number): Movement[] {
 	const result = [...movements];
-	const defaultSource: EffectSource = { type: 'base', id: 'default_movement', name: 'Default (Slowed 1)' };
+	const defaultSource: EffectSource = {
+		type: 'base',
+		id: 'default_movement',
+		name: 'Default (Slowed 1)'
+	};
 	if (!result.some((m) => m.type.toLowerCase() === 'climb')) {
 		result.push({
 			type: 'climb',

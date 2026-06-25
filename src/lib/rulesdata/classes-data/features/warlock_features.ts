@@ -4,11 +4,13 @@ export const warlockClass: ClassDefinition = {
 	className: 'Warlock',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon or Light Shield'],
-		armor: ['1 set of Light Armor'],
-		spellFocus: ['1 Spell Focus'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		spellFocuses:
+			'2 Spell Focuses. You can choose Weapons if you choose the Pact Weapon option of the Pact Boon Feature.',
+		armor:
+			'1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Pact Armor option of the Pact Boon Feature.',
+		tradeTools:
+			"Choose 2 of any of the following items: Alchemist's Supplies, Disguise Kit, Jeweler's Tools, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
 		spellList: {
@@ -33,8 +35,11 @@ export const warlockClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+				'You gain the ability to cast spells. Choose 3 Spell Schools; when you learn a new Spell, you can choose any Spell from those Schools. You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'warlock_beseech_patron',
@@ -42,7 +47,15 @@ export const warlockClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.'
+				'You can beseech your Patron for aid when you are in need. Your Patron may or may not answer, and may demand something in return. The nature of this interaction is determined by your relationship with your Patron and is at the discretion of the GM.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'warlock_beseech_patron',
+					value:
+						'Beseech your Patron for aid when in need. The Patron may answer, demand something in return, or decline at GM discretion.'
+				}
+			]
 		},
 		{
 			id: 'warlock_contract',
@@ -124,7 +137,7 @@ export const warlockClass: ClassDefinition = {
 									value: 'Considered to have Training with your Pact Armor.'
 								},
 								{ type: 'GRANT_CHOICE', target: 'maneuver_defensive', value: 3 },
-								{ type: 'MODIFY_STAT', target: 'mdr', value: 1 },
+								{ type: 'GRANT_RESISTANCE', target: 'mystical', value: true },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'pact_armor_summon',
@@ -148,9 +161,9 @@ export const warlockClass: ClassDefinition = {
 						{
 							name: 'Pact Familiar',
 							description:
-								'You learn the Find Familiar Spell. When you cast it, your Familiar gains 3 additional Familiar Traits of your choice for free.',
+								'You learn the Call Familiar Spell. When you cast it, your Familiar gains 3 additional Familiar Traits of your choice for free.',
 							effects: [
-								{ type: 'GRANT_SPELL', target: 'Find Familiar', value: 1 },
+								{ type: 'GRANT_SPELL', target: 'Call Familiar', value: 1 },
 								{
 									type: 'GRANT_ABILITY',
 									target: 'pact_familiar_bonus',
@@ -178,32 +191,41 @@ export const warlockClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'warlock_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [
+			id: 'warlock_level_5_placeholder',
+			featureName: 'Expert Warlock',
+			levelGained: 5,
+			description: 'You gain the following benefits for your Warlock Class Features.',
+			benefits: [
 				{
-					type: 'GRANT_CHOICE',
-					target: 'talent',
-					value: 1
+					name: 'Warlock Contract',
+					description: 'Your maximum HP increases by 2.',
+					effects: [{ type: 'MODIFY_STAT', target: 'hpMax', value: 2 }]
+				},
+				{
+					name: 'Pact Boon',
+					description:
+						'Your Pact Boon improves. Pact Weapon gains an additional 1-point Weapon Property, learns 1 Attack Maneuver, and can spend MP on Martial Enhancements or Maneuvers. Pact Armor gains an additional 1-point Armor Property, learns 1 Defense Maneuver, and can spend MP on Defense Maneuvers. Pact Spell learns 2 Spells from any source, chooses another Pact Spell, and can change either or both after a Long Rest. Pact Familiar gains 3 additional Trait Points and cannot take Negative Traits.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_warlock_pact_boon',
+							value:
+								'Chosen Pact Boon improves: Weapon/Armor gain a 1-point property and MP conversion, Pact Spell gains 2 any-source Spells and another Pact Spell, or Pact Familiar gains 3 Trait Points and no Negative Traits.'
+						}
+					]
+				},
+				{
+					name: 'Life Tap',
+					description: 'You gain ADV on the Check to produce the effect.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_warlock_life_tap',
+							value: 'Life Tap grants ADV on the Check to produce the effect.'
+						}
+					]
 				}
 			]
-		},
-		{
-			id: 'warlock_level_5_placeholder',
-			featureName: 'Dark Pact (Placeholder)',
-			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'warlock_level_8_capstone_placeholder',
-			featureName: "Patron's Vessel (Placeholder)",
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [
@@ -230,16 +252,16 @@ export const warlockClass: ClassDefinition = {
 							]
 						},
 						{
-					name: 'Forbidden Knowledge',
-						description:
-							'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
-						effects: [
-							{
-								type: 'GRANT_ABILITY',
-								target: 'forbidden_knowledge',
-								value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
-							}
-						]
+							name: 'Forbidden Knowledge',
+							description:
+								'When you complete a Short or Long Rest, you temporarily learn any Spell of your choice. When you cast that Spell, its MP cost is reduced by 2 (minimum of 0). You forget the Spell immediately after you cast it.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'forbidden_knowledge',
+									value: 'Temporarily learn any spell after a rest with a 2 MP cost reduction.'
+								}
+							]
 						},
 						{
 							name: 'Eldritch Bargain',
@@ -291,12 +313,24 @@ export const warlockClass: ClassDefinition = {
 								{
 									name: 'Charmed',
 									description: 'Your Fey Aspect is the Charmed condition.',
-									effects: []
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'warlock_fey_aspect_charmed',
+											value: 'Your Fey Aspect Condition is Charmed.'
+										}
+									]
 								},
 								{
 									name: 'Intimidated',
 									description: 'Your Fey Aspect is the Intimidated condition.',
-									effects: []
+									effects: [
+										{
+											type: 'GRANT_ABILITY',
+											target: 'warlock_fey_aspect_intimidated',
+											value: 'Your Fey Aspect Condition is Intimidated.'
+										}
+									]
 								}
 							]
 						}
@@ -345,7 +379,14 @@ export const warlockClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.'
+						'You can enter and interact with the dreams of sleeping creatures you can see within 5 Spaces. You have ADV on Checks to influence or navigate dreams.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'influence_or_navigate_dreams',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		}

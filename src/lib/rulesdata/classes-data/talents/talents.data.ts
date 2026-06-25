@@ -99,7 +99,7 @@ export const multiclassTalents: Talent[] = [
 		category: 'Multiclass',
 		description:
 			'Choose one of the following: (1) A 5th Level Class Feature from any Class you have at least 1 Class Feature from, OR (2) A 3rd Level Subclass Feature from a Class you have at least 1 Class Feature from.',
-		prerequisites: { level: 7 },
+		prerequisites: { level: 6 },
 		effects: [
 			{ type: 'GRANT_CHOICE', target: 'multiclass_feature_level_5_or_subclass_3', value: 1 }
 		]
@@ -109,9 +109,9 @@ export const multiclassTalents: Talent[] = [
 		name: 'Master Multiclass',
 		category: 'Multiclass',
 		description:
-			'You can choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.',
-		prerequisites: { level: 10 },
-		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_feature_level_6', value: 1 }]
+			'You can choose a 7th Level Subclass Expert Feature from a Subclass you have its 3rd Level Subclass Feature from.',
+		prerequisites: { level: 8 },
+		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_feature_level_7', value: 1 }]
 	},
 	{
 		id: 'multiclass_grandmaster',
@@ -120,7 +120,9 @@ export const multiclassTalents: Talent[] = [
 		description:
 			'You can choose an 8th Level Class Capstone Feature from any Class you have at least 2 Class Features from.',
 		prerequisites: { level: 13 },
-		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_capstone_feature_level_8', value: 1 }]
+		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_capstone_feature_level_8', value: 1 }],
+		deprecated: true,
+		deprecationReason: 'Removed in DC20 v0.10.5 until Prestige is added.'
 	},
 	{
 		id: 'multiclass_legendary',
@@ -129,6 +131,8 @@ export const multiclassTalents: Talent[] = [
 		description:
 			'You can choose a 9th Level Subclass Capstone Feature from any Subclass you have at least 2 Subclass Features from.',
 		prerequisites: { level: 17 },
-		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_capstone_level_9', value: 1 }]
+		effects: [{ type: 'GRANT_CHOICE', target: 'multiclass_subclass_capstone_level_9', value: 1 }],
+		deprecated: true,
+		deprecationReason: 'Removed in DC20 v0.10.5 until Prestige is added.'
 	}
 ];

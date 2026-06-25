@@ -6,10 +6,28 @@
  * Extracted from the main calculateCharacterWithBreakdowns function.
  */
 
-import type { EnhancedCharacterBuildData, AttributedEffect, EnhancedStatBreakdown } from '../../types/effectSystem';
+import type {
+	EnhancedCharacterBuildData,
+	AttributedEffect,
+	EnhancedStatBreakdown
+} from '../../types/effectSystem';
 import { attributesData } from '../../rulesdata/attributes';
 import { getLevelCaps } from '../../rulesdata/progression/levelCaps';
-import { createStatBreakdown, createInitiativeBreakdown, createMartialCheckBreakdown } from './breakdownGeneration';
+import {
+	createStatBreakdown,
+	createInitiativeBreakdown,
+	createMartialCheckBreakdown
+} from './breakdownGeneration';
+
+function hasMightJumpOverride(effects: AttributedEffect[]): boolean {
+	return effects.some(
+		(effect) =>
+			effect.resolved &&
+			(effect as any).type === 'SET_VALUE' &&
+			(effect as any).target === 'jumpCalculationAttribute' &&
+			(effect as any).value === 'might'
+	);
+}
 
 export interface DerivedStats {
 	// Final attributes
@@ -52,6 +70,7 @@ export interface DerivedStats {
 	finalGritPoints: number;
 	finalInitiativeBonus: number;
 	attackSpellCheckBase: number;
+	finalAttackSpellCheck: number;
 
 	// Breakdowns
 	breakdowns: Record<string, EnhancedStatBreakdown>;
@@ -149,14 +168,16 @@ export function calculateDerivedStats(
 	const primeAttribute = usePrimeCapRule ? 'prime' : attributePrime;
 
 	// Saves and other derived
-	const finalSaveDC = 10 + combatMastery + primeModifier;
+	const baseSaveDC = 10 + combatMastery + primeModifier;
 	const finalSaveMight = finalMight + combatMastery;
 	const finalSaveAgility = finalAgility + combatMastery;
 	const finalSaveCharisma = finalCharisma + combatMastery;
 	const finalSaveIntelligence = finalIntelligence + combatMastery;
-	const finalDeathThreshold = primeModifier + combatMastery;
+	const baseDeathThreshold = primeModifier + combatMastery;
 	const baseMoveSpeed = 5;
-	const baseJumpDistance = finalAgility;
+	const baseJumpDistance = hasMightJumpOverride(resolvedEffects)
+		? Math.max(finalAgility, finalMight)
+		: finalAgility;
 	const finalGritPoints = Math.max(0, 2 + finalCharisma);
 	const finalInitiativeBonus = combatMastery + finalAgility;
 
@@ -175,8 +196,18 @@ export function calculateDerivedStats(
 	);
 
 	// Movement breakdowns
-	breakdowns.move_speed = createStatBreakdown('moveSpeed', baseMoveSpeed, resolvedEffects, activeConditions);
-	breakdowns.jump_distance = createStatBreakdown('jumpDistance', baseJumpDistance, resolvedEffects, activeConditions);
+	breakdowns.move_speed = createStatBreakdown(
+		'moveSpeed',
+		baseMoveSpeed,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.jump_distance = createStatBreakdown(
+		'jumpDistance',
+		baseJumpDistance,
+		resolvedEffects,
+		activeConditions
+	);
 
 	// Final values from breakdowns
 	const finalHPMax = breakdowns.hpMax.total;
@@ -189,11 +220,35 @@ export function calculateDerivedStats(
 
 	// Combat breakdowns
 	const attackSpellCheckBase = combatMastery + primeModifier;
-	breakdowns.attack_spell_check = createStatBreakdown('attackSpellCheck', attackSpellCheckBase, resolvedEffects, activeConditions);
-	breakdowns.save_dc = createStatBreakdown('saveDC', finalSaveDC, resolvedEffects, activeConditions);
+	breakdowns.attack_spell_check = createStatBreakdown(
+		'attackSpellCheck',
+		attackSpellCheckBase,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.save_dc = createStatBreakdown(
+		'saveDC',
+		baseSaveDC,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.death_threshold = createStatBreakdown(
+		'deathThresholdModifier',
+		baseDeathThreshold,
+		resolvedEffects,
+		activeConditions
+	);
+	breakdowns.death_threshold.statName = 'deathThreshold';
+	const finalAttackSpellCheck = breakdowns.attack_spell_check.total;
+	const finalSaveDC = breakdowns.save_dc.total;
+	const finalDeathThreshold = breakdowns.death_threshold.total;
 
 	// Initiative breakdown
-	breakdowns.initiative = createInitiativeBreakdown(combatMastery, finalAgility, finalInitiativeBonus);
+	breakdowns.initiative = createInitiativeBreakdown(
+		combatMastery,
+		finalAgility,
+		finalInitiativeBonus
+	);
 
 	// Martial check
 	const skills = buildData.skillsData ?? {};
@@ -239,6 +294,7 @@ export function calculateDerivedStats(
 		finalGritPoints,
 		finalInitiativeBonus,
 		attackSpellCheckBase,
+		finalAttackSpellCheck,
 		breakdowns,
 		finalHPMax,
 		finalSPMax,

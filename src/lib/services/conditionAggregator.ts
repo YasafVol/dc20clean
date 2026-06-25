@@ -7,7 +7,11 @@
  * @see docs/plannedSpecs/CONDITIONS_SPEC.md for full specification
  */
 
-import { ALL_CONDITIONS } from '../rulesdata/conditions/conditions.data';
+import {
+	ALL_CONDITIONS,
+	EFFECT_SPECIFIC_AFFLICTIONS,
+	getConditionDefinition
+} from '../rulesdata/conditions/conditions.data';
 import type {
 	CharacterConditionStatus,
 	ConditionInteraction,
@@ -45,6 +49,32 @@ export interface ConditionAggregatorInput {
 	level?: number;
 }
 
+type ConditionSourceCategory = 'Ancestry' | 'Class' | 'Subclass' | 'Talent';
+
+const ATTRIBUTE_SAVE_TARGETS = new Set(['might', 'agility', 'charisma', 'intelligence']);
+
+const CONDITION_ALIAS_TO_ID = new Map<string, string>();
+const ALL_KNOWN_CONDITIONS = [...ALL_CONDITIONS, ...EFFECT_SPECIFIC_AFFLICTIONS];
+
+for (const condition of ALL_KNOWN_CONDITIONS) {
+	const conditionId = condition.id;
+	const aliases = new Set<string>([
+		normalizeLookupKey(condition.id),
+		normalizeLookupKey(condition.name)
+	]);
+
+	if (condition.usesStacks) {
+		aliases.add(stripStackSuffix(normalizeLookupKey(condition.id)));
+		aliases.add(stripStackSuffix(normalizeLookupKey(condition.name)));
+	}
+
+	for (const alias of aliases) {
+		if (alias) {
+			CONDITION_ALIAS_TO_ID.set(alias, conditionId);
+		}
+	}
+}
+
 /**
  * Maps conditions to the attribute saves that can be used against them.
  * Used for expanding "ADV on X Saves" effects into condition resistances.
@@ -75,6 +105,108 @@ export function getConditionsAffectedByAttribute(attribute: string): string[] {
 	return ATTRIBUTE_TO_CONDITIONS[attribute.toLowerCase()] ?? [];
 }
 
+function normalizeLookupKey(value: string): string {
+	return value.toLowerCase().replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function stripStackSuffix(value: string): string {
+	return value.replace(/\s+x$/i, '').trim();
+}
+
+function resolveConditionId(target: string): string | null {
+	const normalized = normalizeLookupKey(target);
+	if (!normalized) return null;
+
+	const candidates = new Set<string>([
+		normalized,
+		normalized
+			.replace(/\([^)]*\)/g, ' ')
+			.replace(/\s+/g, ' ')
+			.trim()
+	]);
+
+	for (const candidate of Array.from(candidates)) {
+		if (!candidate) continue;
+		candidates.add(
+			candidate
+				.replace(/\b\d+\b/g, 'x')
+				.replace(/\s+/g, ' ')
+				.trim()
+		);
+		candidates.add(
+			candidate
+				.replace(/\b\d+\b/g, ' ')
+				.replace(/\s+/g, ' ')
+				.trim()
+		);
+		candidates.add(stripStackSuffix(candidate));
+	}
+
+	for (const candidate of candidates) {
+		const conditionId = CONDITION_ALIAS_TO_ID.get(candidate);
+		if (conditionId) {
+			return conditionId;
+		}
+	}
+
+	return null;
+}
+
+function addInteraction(
+	interactions: Map<string, ConditionInteraction[]>,
+	conditionTarget: string,
+	interaction: ConditionInteraction
+): boolean {
+	const conditionId = resolveConditionId(conditionTarget);
+	if (!conditionId) {
+		return false;
+	}
+
+	const existingInteractions = interactions.get(conditionId) || [];
+	existingInteractions.push(interaction);
+	interactions.set(conditionId, existingInteractions);
+	return true;
+}
+
+function buildSourceLabel(sourceCategory: ConditionSourceCategory, sourceName: string): string {
+	return `${sourceCategory}: ${sourceName}`;
+}
+
+function formatConditionResistanceDetails(value: string | number | boolean): string | undefined {
+	if (typeof value === 'boolean') {
+		return value ? 'Resistance' : undefined;
+	}
+
+	if (typeof value === 'number') {
+		return `Resistance (${value})`;
+	}
+
+	const normalized = value.trim().toLowerCase();
+	if (!normalized) return undefined;
+	if (normalized === 'adv' || normalized === 'advantage') return 'ADV on saves';
+	if (normalized === 'half') return 'Resistance (Half)';
+	return `Resistance (${value})`;
+}
+
+function formatConditionVulnerabilityDetails(value: string | number): string | undefined {
+	if (typeof value === 'number') {
+		return `Vulnerability (${value})`;
+	}
+
+	const normalized = value.trim().toLowerCase();
+	if (!normalized) return undefined;
+	if (normalized === 'disadvantage') return 'DisADV on saves';
+	return `Vulnerability (${value})`;
+}
+
+function formatAdvOnSaveDetails(target: string, value: string | boolean): string {
+	if (typeof value === 'string' && value.trim() && value.trim().toUpperCase() !== 'ADV') {
+		return `ADV on saves (${value})`;
+	}
+
+	return `ADV on saves vs ${target}`;
+}
+
 /**
  * Processes an array of effects and extracts condition interactions.
  *
@@ -86,68 +218,79 @@ export function getConditionsAffectedByAttribute(attribute: string): string[] {
 function processConditionEffects(
 	effects: Effect[] | undefined,
 	sourceName: string,
-	sourceCategory: string,
+	sourceCategory: ConditionSourceCategory,
 	interactions: Map<string, ConditionInteraction[]>
 ): void {
 	if (!effects) return;
 
 	for (const effect of effects) {
-		// Handle condition immunity effects
 		if (effect.type === 'GRANT_CONDITION_IMMUNITY') {
-			const conditionId = effect.target;
-			const existingInteractions = interactions.get(conditionId) || [];
-
-			existingInteractions.push({
+			addInteraction(interactions, effect.target, {
 				type: 'immunity' as ConditionInteractionType,
-				source: `${sourceCategory}: ${sourceName}`,
-				details: (effect as any).details
+				source: buildSourceLabel(sourceCategory, sourceName)
 			});
-
-			interactions.set(conditionId, existingInteractions);
+			continue;
 		}
 
-		// Handle condition resistance effects
 		if (effect.type === 'GRANT_CONDITION_RESISTANCE') {
-			const conditionId = effect.target;
-			const existingInteractions = interactions.get(conditionId) || [];
-
-			existingInteractions.push({
+			addInteraction(interactions, effect.target, {
 				type: 'resistance' as ConditionInteractionType,
-				source: `${sourceCategory}: ${sourceName}`,
-				details: (effect as any).details
+				source: buildSourceLabel(sourceCategory, sourceName),
+				details: effect.value
 			});
-
-			interactions.set(conditionId, existingInteractions);
+			continue;
 		}
 
-		// Handle condition vulnerability effects
 		if (effect.type === 'GRANT_CONDITION_VULNERABILITY') {
-			const conditionId = effect.target;
-			const existingInteractions = interactions.get(conditionId) || [];
-
-			existingInteractions.push({
+			addInteraction(interactions, effect.target, {
 				type: 'vulnerability' as ConditionInteractionType,
-				source: `${sourceCategory}: ${sourceName}`,
-				details: (effect as any).details
+				source: buildSourceLabel(sourceCategory, sourceName),
+				details: effect.value
 			});
-
-			interactions.set(conditionId, existingInteractions);
+			continue;
 		}
 
-		// Handle advantage on attribute saves (expand to condition resistances)
-		if (effect.type === 'GRANT_ADVANTAGE_ON_SAVE') {
+		if (effect.type === 'GRANT_RESISTANCE') {
+			addInteraction(interactions, effect.target, {
+				type: 'resistance' as ConditionInteractionType,
+				source: buildSourceLabel(sourceCategory, sourceName),
+				details: formatConditionResistanceDetails(effect.value)
+			});
+			continue;
+		}
+
+		if (effect.type === 'GRANT_VULNERABILITY') {
+			addInteraction(interactions, effect.target, {
+				type: 'vulnerability' as ConditionInteractionType,
+				source: buildSourceLabel(sourceCategory, sourceName),
+				details: formatConditionVulnerabilityDetails(effect.value)
+			});
+			continue;
+		}
+
+		if (effect.type === 'GRANT_ADV_ON_SAVE') {
+			if (
+				addInteraction(interactions, effect.target, {
+					type: 'resistance' as ConditionInteractionType,
+					source: buildSourceLabel(sourceCategory, sourceName),
+					details: formatAdvOnSaveDetails(effect.target, effect.value)
+				})
+			) {
+				continue;
+			}
+
 			const attribute = effect.target.toLowerCase();
-			const affectedConditions = getConditionsAffectedByAttribute(attribute);
+			if (!ATTRIBUTE_SAVE_TARGETS.has(attribute)) {
+				continue;
+			}
 
-			for (const conditionId of affectedConditions) {
+			for (const conditionId of getConditionsAffectedByAttribute(attribute)) {
 				const existingInteractions = interactions.get(conditionId) || [];
-
 				existingInteractions.push({
 					type: 'resistance' as ConditionInteractionType,
-					source: `${sourceCategory}: ${sourceName}`,
-					details: `ADV on ${effect.target} Saves`
+					source: buildSourceLabel(sourceCategory, sourceName),
+					details: `ADV on ${effect.target} saves`
 				});
-
 				interactions.set(conditionId, existingInteractions);
 			}
 		}
@@ -174,7 +317,7 @@ export function calculateCharacterConditions(
 	const interactions = new Map<string, ConditionInteraction[]>();
 
 	// 1. Initialize all conditions with empty interactions
-	for (const condition of ALL_CONDITIONS) {
+	for (const condition of ALL_KNOWN_CONDITIONS) {
 		interactions.set(condition.id, []);
 	}
 
@@ -187,25 +330,23 @@ export function calculateCharacterConditions(
 
 	// 3. Scan class features (filter by level if provided)
 	if (input.classFeatures) {
-		const className = input.className || 'Class';
 		for (const feature of input.classFeatures) {
 			// Skip features above character level
 			if (input.level !== undefined && feature.levelGained !== undefined) {
 				if (feature.levelGained > input.level) continue;
 			}
-			processConditionEffects(feature.effects, feature.featureName, className, interactions);
+			processConditionEffects(feature.effects, feature.featureName, 'Class', interactions);
 		}
 	}
 
 	// 4. Scan subclass features (filter by level if provided)
 	if (input.subclassFeatures) {
-		const subclassName = input.subclassName || 'Subclass';
 		for (const feature of input.subclassFeatures) {
 			// Skip features above character level
 			if (input.level !== undefined && feature.levelGained !== undefined) {
 				if (feature.levelGained > input.level) continue;
 			}
-			processConditionEffects(feature.effects, feature.featureName, subclassName, interactions);
+			processConditionEffects(feature.effects, feature.featureName, 'Subclass', interactions);
 		}
 	}
 
@@ -271,5 +412,5 @@ export function groupConditionsByType(conditions: CharacterConditionStatus[]): {
  * @returns The condition definition or undefined if not found
  */
 export function getConditionById(conditionId: string) {
-	return ALL_CONDITIONS.find((c) => c.id === conditionId);
+	return getConditionDefinition(conditionId, { includeEffectSpecific: true });
 }

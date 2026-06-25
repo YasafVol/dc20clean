@@ -1,7 +1,7 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/shieldSchema.ts
  * @description Schema definitions for custom shields.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
 import { BaseEquipment, BaseProperty } from './baseEquipment';
@@ -23,6 +23,8 @@ export interface ShieldTypeDefinition {
 // ================================================================= //
 
 export interface ShieldProperty extends BaseProperty {
+	/** Shield types this property is available for. Omitted means all shield types. */
+	shieldTypes?: ShieldType[];
 	/** Whether this property is only available for light shields */
 	lightOnly?: boolean;
 	/** Whether this property is only available for heavy shields */

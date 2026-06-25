@@ -2,19 +2,24 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-02-08
+> Last Updated: 2026-06-25
 
 ## Tech Stack
 
 - Framework: React 19 + TypeScript
 - Build Tool: Vite 6
-- Styling: Material-UI (MUI) + Emotion + Tailwind CSS 4
+- Styling: styled-components + Tailwind CSS 4 + shadcn/Radix primitives; Emotion packages remain installed for compatibility, but MUI is not part of the active stack.
 - State Management: React Context API
 - Persistence: Hybrid storage
   - localStorage is active by default (anonymous/offline-first)
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
+
+## UI System TODOs
+
+- Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
+- Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
 
 ## Local Setup
 
@@ -51,6 +56,8 @@ Testing:
 - `npm run test:e2e:debug` — E2E in debug mode
 - `npm run test` — Run unit tests (run mode) then E2E tests
 
+Testing policy and coverage rules are centralized in `docs/systems/TESTING_SYSTEM.MD`.
+
 E2E per-project and parallel:
 
 - `npm run e2e:desktop` / `e2e:mobile` / `e2e:all` — Single-worker E2E by project
@@ -61,6 +68,18 @@ PDF export:
 
 - `npm run export:list-fields` — Extract PDF form field names
 - `npm run export:local` — Run local PDF export proof-of-concept
+
+Rules source audits:
+
+- `npm run spells:validate:0105`
+- `npm run martials:validate:0105`
+- `npm run ancestries:validate:0105`
+- `npm run background:validate:0105`
+- `npm run conditions:validate:0105`
+- `npm run classes:validate:0105`
+- `npm run classes:effects:validate`
+- `npm run classes:audit:validate`
+- `npm run leveling:review:validate:0105`
 
 Single test execution:
 
@@ -73,6 +92,16 @@ npx vitest src/lib/services/enhancedCharacterCalculator.test.ts
 
 CI checks are temporarily non-blocking while the 0.10 rules release is in flight.
 Workflows still run for signal and will be restored to blocking once the release stabilizes.
+
+## Internal Versioning
+
+Versioning policy is centralized in `docs/systems/VERSIONING_SYSTEM.MD`.
+
+- App/package version, storage schema version, rules version, PDF template version, and
+  subsystem rules-source metadata are separate lanes.
+- `rulesVersion` fences rules interpretation and compatibility.
+- `schemaVersion` only describes saved-data shape.
+- PDF routing is versioned independently through the compatibility layer.
 
 ## Project Structure
 
@@ -89,10 +118,10 @@ src/
 │   │   └── utils/                 #   Sheet utilities
 │   ├── conditions/                # Conditions reference page
 │   ├── custom-equipment/          # Equipment builder wizard
+│   ├── martial-manual/            # Maneuver reference browser
 │   ├── dm/                        # DM tools
 │   │   ├── encounters/            #   Encounter planner
 │   │   └── monsters/              #   Monster designer
-│   ├── systems/                   # Hidden systems explorer
 │   └── spellbook/                 # Spell reference browser
 ├── lib/
 │   ├── config/                    # Feature flags
@@ -106,7 +135,8 @@ src/
 │   │   ├── martials/              #   Maneuver data
 │   │   ├── progression/           #   Leveling, paths, multiclass
 │   │   ├── schemas/               #   TypeScript + Zod schemas
-│   │   └── spells-data/           #   125 spells organized by school
+│   │   ├── spells-data/           #   160 generated v0.10.5 spells
+│   │   └── versioning/            #   Rules version gates, aliases, upgrade copies
 │   ├── services/                  # Business logic (calculator, spell assignment, monster calc)
 │   ├── storage/                   # Storage adapters (localStorage, Convex)
 │   ├── stores/                    # React Context providers
@@ -117,6 +147,7 @@ src/
 │   └── ui/                        #   shadcn/ui primitives (button, card, dialog, etc.)
 ├── assets/                        # Images and SVGs
 ├── debug/                         # Debug/test components
+├── i18n/                          # Locale configuration and translations
 └── styles/                        # Global styles
 
 convex/                            # Convex backend
@@ -150,6 +181,7 @@ docs/systems/                      # System documentation
 - E2E tests: Add to `e2e/` directory with `.e2e.spec.ts` extension
 - Test approval: Never modify existing tests without explicit written approval
 - Coverage: Update or add tests when modifying behavior
+- Rules behavior should be proven first with source-audit validators and focused calculator tests; add E2E only for user-flow, persistence, and visible-sheet acceptance.
 
 ## Pull Request Guidelines
 

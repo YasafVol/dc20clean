@@ -1,13 +1,10 @@
-### **File: `docs/systems/LEVELING_SYSTEM.MD`**
-
-````markdown
 # DC20Clean – Leveling System
 
 > **Purpose**  
-> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10 max level).
+> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10.5 max level).
 >
-> **Status:** ✅ **Complete** - All core leveling functionality implemented, tested, and DC20 v0.10 compliant. All 29 gaps fixed per `docs/archive/LEVELING_GAPS_SPEC.md`.
-> **Last Updated:** January 25, 2026
+> **Status:** ✅ **Complete** - Core leveling functionality implemented with DC20 v0.10.5 progression tables.
+> **Last Updated:** 2026-06-24
 
 ---
 
@@ -26,7 +23,7 @@ flowchart TD
     end
 
     subgraph "Data Sources"
-        C1["/rulesdata/classes-data/progressions/*.progression.ts"]
+        C1["/rulesdata/classes-data/progressions/*.progression.ts\n(runtime-resolved stubs)"]
         C2["/rulesdata/classes-data/talents/*.ts"]
         C3["/rulesdata/progression/paths/*.ts"]
     end
@@ -44,23 +41,26 @@ flowchart TD
     B -- "Calculates totals for target level" --> D
     D -- "Populates budgets for each stage" --> E
 ```
-````
 
 ---
 
 ## 2. Key Files & Their Roles
 
-| Layer              | File / Dir                                                     | Responsibility                                                                                             |
-| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/*.progression.ts` | **(New)** Defines level-by-level stat gains and choices (Talents, Paths, etc.) for each class.             |
-|                    | `src/lib/rulesdata/classes-data/talents/`                      | **(New)** Defines all General, Class, and Multiclass Talents.                                              |
-|                    | `src/lib/rulesdata/progression/paths/`                         | Defines the Martial and Spellcaster Path progressions.                                                     |
-| **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                    | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.                        |
-|                    | `src/lib/rulesdata/classes-data/talents/talent.types.ts`        | Defines the `Talent` interface.                                                                            |
-| **Runtime Engine** | `src/lib/services/enhancedCharacterCalculator.ts`              | Aggregates all stats and choices from level 1 up to the user's selected target level.                      |
-| **State Layer**    | `src/lib/stores/characterContext.tsx`                          | Stores the user's target level and all their subsequent choices.                                           |
-| **UI**             | `src/routes/character-creation/CharacterCreation.tsx`          | Orchestrates the multi-stage flow, conditionally showing the "Leveling" stage.                             |
-|                    | `src/routes/character-creation/LevelingChoices.tsx`            | **(New)** A dedicated UI component for spending accumulated Talent and Path Points.                        |
+| Layer              | File / Dir                                                                   | Responsibility                                                                                                                                                      |
+| ------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rule Data**      | `src/lib/rulesdata/classes-data/progressions/classProgressionDefinitions.ts` | Defines each class's progression category, feature schedule, and optional full explicit progression table.                                                          |
+|                    | `src/lib/rulesdata/classes-data/progressions/*.progression.ts`               | Thin public exports that resolve through the runtime progression definition map.                                                                                    |
+|                    | `src/lib/rulesdata/classes-data/progressions/templates/`                     | Defines shared category progression tables for full martial, full caster, and hybrid classes.                                                                       |
+|                    | `src/lib/rulesdata/classes-data/talents/`                                    | Defines all General, Class, and Multiclass Talents. `allTalents` remains compatibility lookup; `selectableTalents` filters deprecated talents from current choices. |
+|                    | `src/lib/rulesdata/progression/paths/`                                       | Defines the Martial and Spellcaster Path progressions.                                                                                                              |
+| **v0.10.5 Audit**  | `scripts/leveling/dc20-0105-leveling-review.ts`                              | Generates the leveling review report for talents, path progression, and class table progression rows.                                                               |
+|                    | `docs/migration/leveling-v0105-review.json`                                  | Generated review report covering source/runtime talent names, path point rules, progression mismatches, and known multiclass gaps.                                  |
+| **Type Contracts** | `src/lib/rulesdata/schemas/class.schema.ts`                                  | Defines the `LevelGains` and `ClassLevel` interfaces for the new progression files.                                                                                 |
+|                    | `src/lib/rulesdata/classes-data/talents/talent.types.ts`                     | Defines the `Talent` interface.                                                                                                                                     |
+| **Runtime Engine** | `src/lib/services/enhancedCharacterCalculator.ts`                            | Aggregates all stats and choices from level 1 up to the user's selected target level.                                                                               |
+| **State Layer**    | `src/lib/stores/characterContext.tsx`                                        | Stores the user's target level and all their subsequent choices.                                                                                                    |
+| **UI**             | `src/routes/character-creation/CharacterCreation.tsx`                        | Orchestrates the multi-stage flow, conditionally showing the "Leveling" stage.                                                                                      |
+|                    | `src/routes/character-creation/LevelingChoices.tsx`                          | UI for spending accumulated Talent and Path Points, including current multiclass tiers.                                                                             |
 
 ---
 
@@ -68,24 +68,62 @@ flowchart TD
 
 ### 3.1. Level Selection
 
-- A dropdown will be added to **Stage 1: Class & Features** allowing the user to select a starting level from 1 to 10.
+- **Stage 1: Class & Features** lets the user select a starting level from 1 to 10.
 - This selection is stored in the `characterContext` and is a primary input for the `enhancedCharacterCalculator`.
-- **Note**: DC20 v0.10 is a level 1-10 system (not 1-20).
+- **Note**: DC20 v0.10.5 is a level 1-10 system (not 1-20).
 
 ### 3.2. Aggregation Engine
 
-- The calculator will read the character's `classId` and `level`.
-- It will then iterate through the corresponding `...progression.ts` file from `level: 1` to the target `level`.
-- In each iteration, it will sum the values from the `gained...` properties (e.g., `gainedHealth`, `gainedAttributePoints`) and the `gains` object (e.g., `talents`, `pathPoints`).
+- The calculator reads the character's `classId` and `level`.
+- Runtime resolves the class progression table from `CLASS_PROGRESSION_DEFINITIONS`.
+- Each class declares a progression category: `fullMartial`, `fullCaster`, or `hybrid`.
+- If the class provides a full `explicitProgression`, runtime uses that table. Otherwise runtime uses the category table.
+- Runtime then overlays the class's feature schedule onto the selected table.
+- It iterates through the resolved table from `level: 1` to the target `level`.
+- In each iteration, it sums the values from the `gained...` properties (e.g., `gainedHealth`, `gainedAttributePoints`) and the `gains` object (e.g., `talents`, `pathPoints`).
+- Talent points are progression budget entries only. Generic `Talent` records must not be authored as class features or included in `gains.classFeatures`; selected talent effects enter the calculator through `selectedTalents`.
 - The final output is a single set of budgets that represents the character's total resources for their level.
 
 ### 3.3. Conditional "Leveling Choices" Stage
 
-- This new stage will appear at **Step 2** if the character's target level is greater than 1.
-- It will contain two sections:
+- This stage appears at **Step 2** if the character's target level is greater than 1.
+- It contains two sections:
   1.  **Talent Selection:** Allows the user to choose from General, Class, and Multiclass talents until their `talentsToChoose` budget is 0.
   2.  **Path Point Allocation:** Allows the user to spend their `pathPointsToSpend` budget on the Martial and Spellcaster paths.
-- The "Next" button for this stage will be disabled until all points are spent.
+- The "Next" button for this stage is disabled until all points are spent.
+- Removed v0.10 talents can remain in `allTalents` for saved-character rendering and calculation while `selectableTalents` keeps them hidden from v0.10.5 character creation and level-up selection.
+
+### 3.3.1. DC20 v0.10.5 Level Schedule
+
+The class progression tables use the v0.10.5 schedule:
+
+| Level | Progression Gains                           |
+| ----- | ------------------------------------------- |
+| 1     | Class Features                              |
+| 2     | Class Feature, Talent, Path Progression     |
+| 3     | Subclass Feature                            |
+| 4     | Talent, 2 Ancestry Points, Path Progression |
+| 5     | Class Expert Feature                        |
+| 6     | Talent, Path Progression                    |
+| 7     | Subclass Expert Feature                     |
+| 8     | Talent, 2 Ancestry Points, Path Progression |
+| 9     | Class Capstone Feature                      |
+| 10    | Subclass Capstone Feature                   |
+
+The current bundled v0.10.5 source schedules level 9 class capstones and level 7/10 subclass features, but does not publish class-specific mechanics for the level 9 class capstone slots. Runtime progression does not create placeholder capstone feature records; add level 9 class capstones only when a source publishes mechanics.
+
+Resource totals follow the class tables. Category tables are defaults only; source-specific class exceptions must provide a full explicit 10-row table rather than partial row patches.
+
+| Class Category | Level 1 Resources | Level 10 Resource Totals |
+| -------------- | ----------------- | ------------------------ |
+| Martial        | 2 SP              | 6 SP                     |
+| Spellcaster    | 6 MP              | 21 MP                    |
+| Hybrid         | 1 SP, 3 MP        | 3 SP, 11 MP              |
+
+Current known progression exceptions from the v0.10.5 source audit:
+
+- Rogue uses a full explicit source table because its HP gains differ from the full martial table.
+- Warlock uses a full explicit source table because its HP gains differ from the full caster table.
 
 ### 3.4. Path Point Bonuses (M3.9 - ✅ IMPLEMENTED)
 
@@ -122,14 +160,14 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 **Example (Level 5 Barbarian with 2 martial path points):**
 
-- SP: 1 (L1) + 1 (L3) + 1 (path L1) = **3**
-- Maneuvers: 4 (L1) + 1 (L5) + 1 (path L1) + 1 (path L2) = **7**
+- SP: 2 (L1) + 1 (L3) + 1 (path L1) = **4**
+- Maneuvers: 2 (L1) + 1 (L3) + 1 (L5) + 1 (path L1) + 1 (path L2) = **6**
 
 ### 3.5. Dynamic Budgeting in Subsequent Stages
 
-- **Ancestry (Stage 3):** The "Ancestry Points Remaining" counter will be initialized with `5 + aggregated ancestryPoints`.
-- **Attributes (Stage 4):** The "Attribute Points Remaining" counter will be initialized with `12 + aggregated attributePoints`.
-- **Background (Stage 5):** The Skill, Trade, and Language point counters will be initialized with their base values plus any aggregated points from the progression tables.
+- **Ancestry (Stage 3):** The "Ancestry Points Remaining" counter initializes with `5 + aggregated ancestryPoints`.
+- **Attributes (Stage 4):** The "Attribute Points Remaining" counter initializes with `12 + aggregated attributePoints`.
+- **Background (Stage 5):** Skill, Trade, and Language counters initialize with their base values plus aggregated progression points.
 
 ---
 
@@ -146,20 +184,36 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 - `docs/systems/CLASS_SYSTEM.MD` – Defines the class data structure.
 - `docs/systems/EFFECT_SYSTEM.MD` – Defines the `Effect` types used by Talents.
-- `docs/systems/CALCULATION_SYSTEM.MD` – Outlines the core calculation engine that will be enhanced.
+- `docs/systems/CALCULATION_SYSTEM.MD` – Defines the core calculation engine.
+
+## 5.1. DC20 v0.10.5 Review Path
+
+- Generate report: `npm run leveling:review:generate:0105`
+- Validate report freshness: `npm run leveling:review:validate:0105`
+- Print report: `npm run leveling:review:extract:0105`
+
+The report compares:
+
+1. Source class table rows from `docs/migration/classes-v0105-report.json` against runtime `classesData`.
+2. Source Talent names against current selectable General, Class, and Multiclass Talents.
+3. Runtime Martial and Spellcaster Path tables against the source path-progression prose.
+4. Source and runtime class-table category diagnostics, including which classes use category defaults and which use explicit source tables.
+5. Known structural gaps, including lack of actual level-split multiclassing such as Barbarian 1 / Wizard 1.
 
 ---
 
 ## 6. Implementation Status
 
-| Milestone                           | Status      | Description                                                             |
-| ----------------------------------- | ----------- | ----------------------------------------------------------------------- |
-| M3.9: Combat Mastery & Path Bonuses | ✅ **DONE** | Combat mastery formula fixed, path bonuses integrated into calculations |
-| M3.10: Subclass Selection           | ✅ **DONE** | UI for subclass choice at level 3, validation, feature application      |
+| Milestone                           | Status      | Description                                                                                       |
+| ----------------------------------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| M3.9: Combat Mastery & Path Bonuses | ✅ **DONE** | Combat mastery formula fixed, path bonuses integrated into calculations                           |
+| M3.10: Subclass Selection           | ✅ **DONE** | UI for subclass choice at level 3, validation, feature application                                |
+| v0.10.5 review script               | ✅ **DONE** | `leveling:review:*:0105` audits talents, path points, progression rows, and known multiclass gaps |
+| Runtime category/explicit model     | ✅ **DONE** | Classes resolve from category tables unless they provide a full explicit source progression table |
 
 ---
 
-> _Last updated: January 25, 2026_  
+> _Last updated: 2026-06-24_
 > _Maintainer: @DC20Clean-Team_
 
 ---
@@ -168,7 +222,7 @@ Path points grant immediate bonuses to character resources based on allocation:
 
 ### 10.1. Overview
 
-The multiclass system allows characters to gain features from other classes by spending **Talent Points** acquired through leveling. Characters can select from 6 different multiclass tiers, each unlocking at specific character levels and with specific prerequisites.
+The multiclass system allows characters to gain features from other classes by spending **Talent Points** acquired through leveling. DC20 v0.10.5 exposes four multiclass tiers. Removed Grandmaster and Legendary definitions remain lookup-only for legacy saved-character compatibility.
 
 ---
 
@@ -176,14 +230,12 @@ The multiclass system allows characters to gain features from other classes by s
 
 #### 10.2.1. Tier Definitions
 
-| Tier            | Level Required | Target Feature Level                   | Subclass Support | Prerequisites                    |
-| --------------- | -------------- | -------------------------------------- | ---------------- | -------------------------------- |
-| **Novice**      | 2              | 1st level core features                | No               | None                             |
-| **Adept**       | 4              | 2nd level core features                | No               | None                             |
-| **Expert**      | 7              | 5th level core OR 3rd level subclass   | Yes              | 1+ class features from target    |
-| **Master**      | 10             | 6th level subclass features only       | Yes (only)       | 1+ subclass features from target |
-| **Grandmaster** | 13             | 8th level core features (capstone)     | No               | 2+ class features from target    |
-| **Legendary**   | 17             | 9th level subclass features (capstone) | Yes (only)       | 2+ subclass features from target |
+| Tier       | Level Required | Target Feature Level                 | Subclass Support | Prerequisites                 |
+| ---------- | -------------- | ------------------------------------ | ---------------- | ----------------------------- |
+| **Novice** | 2              | 1st level core features              | No               | None                          |
+| **Adept**  | 4              | 2nd level core features              | No               | None                          |
+| **Expert** | 6              | 5th level core OR 3rd level subclass | Yes              | 1+ class features from target |
+| **Master** | 8              | 7th level subclass expert feature    | Yes (only)       | 3rd level subclass feature    |
 
 #### 10.2.2. Tier Details
 
@@ -203,7 +255,7 @@ The multiclass system allows characters to gain features from other classes by s
 
 **Expert Multiclass**
 
-- Available at character level 7+
+- Available at character level 6+
 - Select either:
   - A 5th level core class feature, OR
   - A 3rd level subclass feature
@@ -212,24 +264,15 @@ The multiclass system allows characters to gain features from other classes by s
 
 **Master Multiclass**
 
-- Available at character level 10+
-- Select a 6th level subclass feature (subclass features only)
-- Prerequisite: Must have at least 1 subclass feature from the target subclass
+- Available at character level 8+
+- Select a 7th level subclass expert feature (subclass features only)
+- Prerequisite: Must have the target subclass's 3rd level feature
 - Cost: 1 Talent Point
 
-**Grandmaster Multiclass**
+**Removed legacy tiers**
 
-- Available at character level 13+
-- Select an 8th level class capstone feature from any class
-- Prerequisite: Must have at least 2 class features from the target class
-- Cost: 1 Talent Point
-
-**Legendary Multiclass**
-
-- Available at character level 17+
-- Select a 9th level subclass capstone feature (subclass features only)
-- Prerequisite: Must have at least 2 subclass features from the target subclass
-- Cost: 1 Talent Point
+- Grandmaster and Legendary Multiclass are not selectable in v0.10.5.
+- Their definitions and talent records remain loadable so existing v0.10 characters can be classified as upgrade-required without losing historical selections.
 
 ---
 
@@ -256,6 +299,8 @@ export interface MulticlassTierDefinition {
 }
 
 export const MULTICLASS_TIERS: MulticlassTierDefinition[];
+export const LEGACY_MULTICLASS_TIERS: MulticlassTierDefinition[];
+export const ALL_MULTICLASS_TIERS: MulticlassTierDefinition[];
 export function getMulticlassTier(tierId: MulticlassTier): MulticlassTierDefinition | undefined;
 export function getAvailableMulticlassTiers(characterLevel: number): MulticlassTierDefinition[];
 ```
@@ -356,14 +401,14 @@ getOwnedClassFeatures(classId): number {
   if (classId === mainClassId) {
     return resolvedProgression.unlockedFeatureIds.length;
   }
-  // TODO: Count multiclass features when tracking implemented
+  // Persisted state currently supports one multiclass selection.
   return 0;
 }
 
 // Estimate subclass features based on level
 getOwnedSubclassFeatures(classId): number {
   if (classId === mainClassId && hasSubclass && level >= 3) {
-    return [3, 6, 9, 12, 15, 18].filter(l => l <= level).length;
+    return [3, 7, 10].filter(l => l <= level).length;
   }
   return 0;
 }
@@ -398,14 +443,14 @@ getEligibleClasses(): ClassData[] {
     return allClasses;
   }
 
-  // Expert/Grandmaster: Only classes with N+ class features
+  // Expert: Only classes with N+ class features
   if (tier.minClassFeatures > 0) {
     return allClasses.filter(cls =>
       getOwnedClassFeatures(cls.id) >= tier.minClassFeatures
     );
   }
 
-  // Master/Legendary: Only classes with N+ subclass features
+  // Master: Only classes with the required subclass feature
   return allClasses.filter(cls =>
     getOwnedSubclassFeatures(cls.id) >= tier.minSubclassFeatures
   );
@@ -417,7 +462,7 @@ getEligibleClasses(): ClassData[] {
 - Prerequisite checks only count features from **main class**
 - Multiclass feature ownership not yet tracked
 - Per-class validation not yet per-class (checks global count)
-- Will be enhanced when multiclass feature tracking implemented
+- Multiple independently sourced multiclass selections require a future persistence expansion
 
 ---
 
@@ -425,23 +470,17 @@ getEligibleClasses(): ClassData[] {
 
 #### 10.5.1. Tiers with Subclass Support
 
-**Expert (Level 7):**
+**Expert (Level 6):**
 
 - Shows both core features (level 5) AND subclass features (level 3)
 - User can choose either type
 - Subclass features prefixed with subclass name: "Berserker: Rage Enhancement"
 
-**Master (Level 10):**
+**Master (Level 8):**
 
-- Shows ONLY subclass features (level 6)
+- Shows ONLY subclass expert features (level 7)
 - No core class features available
-- Must meet subclass prerequisite (1+ subclass feature)
-
-**Legendary (Level 17):**
-
-- Shows ONLY subclass features (level 9, capstones)
-- No core class features available
-- Must meet subclass prerequisite (2+ subclass features)
+- Must have the target subclass's level 3 feature
 
 #### 10.5.2. Feature Display Format
 
@@ -462,10 +501,10 @@ getEligibleClasses(): ClassData[] {
 
 **Location:** `src/lib/rulesdata/progression/multiclass.test.ts`
 
-**Coverage:** 31 tests
+**Coverage:** 30 tests
 
-- Data integrity (6 tiers, unique IDs, ordering)
-- Individual tier property validation
+- Data integrity (4 current tiers plus 2 legacy lookup tiers, unique IDs, ordering)
+- Current and legacy tier property validation
 - Prerequisite requirement verification
 - `getMulticlassTier()` functionality
 - `getAvailableMulticlassTiers()` level filtering
@@ -474,14 +513,14 @@ getEligibleClasses(): ClassData[] {
 **Run Tests:**
 
 ```bash
-npm run test:unit -- multiclass.test.ts
+npx vitest run --project server src/lib/rulesdata/progression/multiclass.test.ts
 ```
 
 #### 10.6.2. Manual Testing Checklist
 
 - [ ] Level 2 character sees only Novice tier
 - [ ] Level 4 character sees Novice + Adept
-- [ ] Level 7 character sees first 3 tiers
+- [ ] Level 6 character sees first 3 tiers
 - [ ] Expert tier shows both core and subclass features
 - [ ] Master tier shows only subclass features
 - [ ] Selected feature persists after save
@@ -495,22 +534,29 @@ npm run test:unit -- multiclass.test.ts
 
 #### 10.7.1. Planned Features
 
-1. **Multiclass Feature Tracking**
+1. **True Level-Split Multiclassing**
+   - Status: TODO, not implemented.
+   - Support characters with levels in more than one class, such as Barbarian 1 / Wizard 1.
+   - Add persisted per-class level state, for example `classLevels: Record<classId, number>`.
+   - Aggregate each selected class progression independently, then combine budgets, features, resources, and effects deterministically.
+   - Keep the current multiclass-talent system separate; multiclass talents grant selected features and are not true class-level multiclassing.
+
+2. **Multiclass Feature Tracking**
    - Track which class/subclass each multiclass feature came from
    - Enable proper prerequisite validation per source class
    - Support multiple multiclass features from different classes
 
-2. **Advanced Prerequisites**
+3. **Advanced Prerequisites**
    - "Must have 1 feature from THIS class" (not just ANY class)
    - "Must have 1 subclass feature from THIS subclass"
    - Track feature sources for accurate validation
 
-3. **Feature Choice Resolution**
+4. **Feature Choice Resolution**
    - Handle multiclass features with nested choices
    - Store and apply choice-based effects
    - UI for resolving multiclass feature choices
 
-4. **Multiple Multiclass Selections**
+5. **Multiple Multiclass Selections**
    - Allow spending multiple talent points on multiclass
    - Track multiple multiclass features simultaneously
    - Manage complex prerequisite chains

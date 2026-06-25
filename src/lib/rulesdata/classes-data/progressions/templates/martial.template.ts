@@ -1,7 +1,7 @@
 /**
- * DC20 v0.10 Martial Class Progression Template
+ * DC20 v0.10.5 Martial Class Progression Template
  *
- * Applies to: Barbarian, Champion, Commander, Hunter, Monk
+ * Applies by default to full martial classes. Rogue uses a full explicit source table.
  *
  * Changes from 0.9.5:
  * - HP: +8 at level 1, +2 per level after
@@ -10,8 +10,8 @@
  * - Techniques: REMOVED from game
  * - Path Progression now at levels 2, 4, 6, 8 (moved from 7, 10 to 6, 8)
  *
- * Common progression shared by all martial classes.
- * Class-specific features should be added in the 'gains.classFeatures' array.
+ * Common progression table for category-derived martial classes.
+ * Class-specific features are overlaid by classProgressionDefinitions.ts.
  */
 
 import type { ClassProgressionLevel } from '../../progressionTypes';
@@ -102,8 +102,8 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 7
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -117,9 +117,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
-			// NOTE: Path Progression moved to level 6
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -133,8 +131,9 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true, // NEW: Moved from level 10
-			classFeatures: [] // Add class capstone feature
+			talents: 1,
+			pathProgression: true,
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -148,7 +147,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: []
 		}
 	},
 	{
@@ -162,9 +161,7 @@ export const martialProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
-			// NOTE: Path Progression moved to level 8
+			subclassFeatureChoice: true
 		}
 	}
 ];

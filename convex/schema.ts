@@ -75,6 +75,7 @@ const uiStateValidator = v.object({
 		AD: v.optional(v.number()),
 		PDR: v.optional(v.number())
 	}),
+	activeConditions: v.optional(v.record(v.string(), v.boolean())),
 	combatToggles: v.optional(
 		v.object({
 			isRaging: v.optional(v.boolean())
@@ -100,6 +101,13 @@ const characterStateValidator = v.object({
 	inventory: inventoryValidator,
 	notes: notesValidator,
 	activeConditions: v.optional(v.array(v.string())),
+	defenseOverrides: v.optional(
+		v.object({
+			precisionAD: v.optional(v.number()),
+			areaAD: v.optional(v.number()),
+			precisionDR: v.optional(v.number())
+		})
+	),
 	attacks: v.optional(v.array(v.any())),
 	spells: v.optional(v.array(v.any())),
 	maneuvers: v.optional(v.array(v.any()))
@@ -190,6 +198,7 @@ const characterValidator = {
 
 	// Typed data (no JSON strings)
 	selectedTraitIds: v.array(v.string()),
+	selectedTraitChoices: v.optional(v.record(v.string(), v.string())),
 	selectedFeatureChoices: v.any(), // Record<string, string>
 	skillsData: v.any(), // Record<string, number>
 	tradesData: v.any(), // Record<string, number>
@@ -246,25 +255,41 @@ const characterValidator = {
 	),
 
 	// Calculated display arrays (optional, regenerated from calculator)
-	resistances: v.optional(v.array(v.object({
-		type: v.string(),
-		value: v.union(v.number(), v.string()),
-		source: v.string()
-	}))),
-	vulnerabilities: v.optional(v.array(v.object({
-		type: v.string(),
-		value: v.union(v.number(), v.string()),
-		source: v.string()
-	}))),
-	senses: v.optional(v.array(v.object({
-		type: v.string(),
-		range: v.number(),
-		source: v.string()
-	}))),
-	combatTraining: v.optional(v.array(v.object({
-		type: v.string(),
-		source: v.string()
-	}))),
+	resistances: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				value: v.union(v.number(), v.string()),
+				source: v.string()
+			})
+		)
+	),
+	vulnerabilities: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				value: v.union(v.number(), v.string()),
+				source: v.string()
+			})
+		)
+	),
+	senses: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				range: v.number(),
+				source: v.string()
+			})
+		)
+	),
+	combatTraining: v.optional(
+		v.array(
+			v.object({
+				type: v.string(),
+				source: v.string()
+			})
+		)
+	),
 
 	// Spells and maneuvers at root level
 	spells: v.array(v.any()), // SpellData[]
@@ -285,7 +310,13 @@ const characterValidator = {
 	createdAt: v.string(),
 	lastModified: v.string(),
 	completedAt: v.string(),
-	schemaVersion: v.string()
+	schemaVersion: v.string(),
+	rulesVersion: v.optional(v.string()),
+	rulesUpgradeBackupOf: v.optional(v.string()),
+	rulesUpgradeSourceId: v.optional(v.string()),
+	rulesUpgradeSourceVersion: v.optional(v.string()),
+	rulesUpgradeStatus: v.optional(v.string()),
+	rulesUpgradedAt: v.optional(v.string())
 };
 
 // ============================================================================
@@ -630,4 +661,3 @@ export default defineSchema({
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
 });
-

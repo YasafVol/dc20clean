@@ -51,7 +51,7 @@ export const StyledInventoryContainer = styled.div<MobileStyledProps>`
 
 export const StyledInventoryHeaderRow = styled.div`
 	display: grid;
-	grid-template-columns: 30px 100px 2fr 60px 30px 70px;
+	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	border-bottom: 1px solid ${theme.colors.border.default};
@@ -68,7 +68,7 @@ export const StyledInventoryHeaderColumn = styled.span.withConfig({
 
 export const StyledInventoryRow = styled.div`
 	display: grid;
-	grid-template-columns: 30px 100px 2fr 60px 30px 70px;
+	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	align-items: center;
@@ -200,4 +200,17 @@ export const StyledEmptyInventory = styled.div`
 
 export const StyledInventoryCellCentered = styled.div<MobileStyledProps>`
 	text-align: center;
+`;
+
+export const StyledInventoryCheckbox = styled.input<MobileStyledProps>`
+	width: 18px;
+	height: 18px;
+	margin: 0 auto;
+	accent-color: ${theme.colors.accent.primary};
+	cursor: pointer;
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.45;
+	}
 `;

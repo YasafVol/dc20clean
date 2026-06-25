@@ -17,21 +17,21 @@
 
 ## Phase Tracker
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Fix 12 broken progression feature ID references + 4 Sorcerer subclass levelGained values | Complete |
-| 2 | Fix incorrect values — Warlock MP, Halfling conditions, trait costs | Complete |
-| 3a | Add missing subclass feature IDs to Commander, Bard, Cleric (12 features) | Complete |
-| 3b | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation | Complete |
-| 3c | Fix starting equipment across all 13 classes (arsenal count + trade tools) | Complete |
-| 3d | Fix description drift (Monk stance, Rogue duration/round, Spellblade runes, Dwarf description) | Complete |
-| 4a | Refactor calculator into 8 discrete modules | Complete |
-| 4b | Wire calculator to collect GRANT_RESISTANCE, GRANT_VULNERABILITY, GRANT_SENSE, GRANT_COMBAT_TRAINING + default Climb/Swim | Pending |
-| 5 | Add optional fields to SavedCharacter + Convex schema, bump version to 2.2.0, add migration defaults | Complete |
-| 6 | Character sheet — Movements panel, Senses, Resistances, Combat Training, Conditions, Features grouping | Complete |
-| 7 | Update PDF features field to include Resistances, Senses, Combat Training sections | Complete |
-| 8 | Add tests — snapshot, data validation, calculator collection, PDF formatting, E2E | Complete |
-| 9 | Update system docs — 8 specs affected | Complete |
+| Phase | Description                                                                                                               | Status   |
+| ----- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
+| 1     | Fix 12 broken progression feature ID references + 4 Sorcerer subclass levelGained values                                  | Complete |
+| 2     | Fix incorrect values — Warlock MP, Halfling conditions, trait costs                                                       | Complete |
+| 3a    | Add missing subclass feature IDs to Commander, Bard, Cleric (12 features)                                                 | Complete |
+| 3b    | Add 5 missing Beastborn traits + wire Winged Arms to requirements.hasTrait + update validation                            | Complete |
+| 3c    | Fix starting equipment across all 13 classes (arsenal count + trade tools)                                                | Complete |
+| 3d    | Fix description drift (Monk stance, Rogue duration/round, Spellblade runes, Dwarf description)                            | Complete |
+| 4a    | Refactor calculator into 8 discrete modules                                                                               | Complete |
+| 4b    | Wire calculator to collect GRANT_RESISTANCE, GRANT_VULNERABILITY, GRANT_SENSE, GRANT_COMBAT_TRAINING + default Climb/Swim | Pending  |
+| 5     | Add optional fields to SavedCharacter + Convex schema, bump version to 2.2.0, add migration defaults                      | Complete |
+| 6     | Character sheet — Movements panel, Senses, Resistances, Combat Training, Conditions, Features grouping                    | Complete |
+| 7     | Update PDF features field to include Resistances, Senses, Combat Training sections                                        | Complete |
+| 8     | Add tests — snapshot, data validation, calculator collection, PDF formatting, E2E                                         | Complete |
+| 9     | Update system docs — 8 specs affected                                                                                     | Complete |
 
 ## Architecture Overview
 
@@ -61,7 +61,7 @@ flowchart LR
     subgraph persist [Persistence]
         Schema["SavedCharacter + Convex"]
     end
-    
+
     Features --> Calc
     Progressions --> Calc
     Traits --> Calc
@@ -194,7 +194,12 @@ The `TraitRequirements` interface already exists in `character.schema.ts` with `
 // Remove: prerequisites: ['beastborn_limited_flight']
 // Add:
 requirements: {
-  hasTrait: ['beastborn_glide_speed', 'beastborn_limited_flight', 'beastborn_full_flight', 'beastborn_flyby']
+	hasTrait: [
+		'beastborn_glide_speed',
+		'beastborn_limited_flight',
+		'beastborn_full_flight',
+		'beastborn_flyby'
+	];
 }
 ```
 
@@ -308,8 +313,8 @@ After refactor, add collection logic to `abilityCollection.ts`:
 
 ```typescript
 const resistances = resolvedEffects
-  .filter(e => e.type === 'GRANT_RESISTANCE')
-  .map(e => ({ type: e.target, value: e.value, source: e.source }));
+	.filter((e) => e.type === 'GRANT_RESISTANCE')
+	.map((e) => ({ type: e.target, value: e.value, source: e.source }));
 ```
 
 **GRANT_VULNERABILITY** — Same pattern.
@@ -318,16 +323,16 @@ const resistances = resolvedEffects
 
 ```typescript
 const senses = resolvedEffects
-  .filter(e => e.type === 'GRANT_SENSE')
-  .map(e => ({ type: e.target, range: e.value, source: e.source }));
+	.filter((e) => e.type === 'GRANT_SENSE')
+	.map((e) => ({ type: e.target, range: e.value, source: e.source }));
 ```
 
 **GRANT_COMBAT_TRAINING** — Currently `combatTraining: []` hardcoded:
 
 ```typescript
 const combatTraining = resolvedEffects
-  .filter(e => e.type === 'GRANT_COMBAT_TRAINING')
-  .map(e => ({ type: e.target, source: e.source }));
+	.filter((e) => e.type === 'GRANT_COMBAT_TRAINING')
+	.map((e) => ({ type: e.target, source: e.source }));
 ```
 
 ### 4c. Add Default Climb/Swim Movement Entries
@@ -341,13 +346,13 @@ Per DC20 rules (CH3):
 After collecting `GRANT_MOVEMENT` effects, check if Climb and Swim are missing and inject defaults:
 
 ```typescript
-if (!movements.some(m => m.type === 'climb')) {
-  movements.push({
-    type: 'climb',
-    speed: Math.floor(groundSpeed / 2),
-    source: { name: 'Default (Slowed 1)', category: 'rule' },
-    isDefault: true  // new flag for UI to show "(Slowed)" label
-  });
+if (!movements.some((m) => m.type === 'climb')) {
+	movements.push({
+		type: 'climb',
+		speed: Math.floor(groundSpeed / 2),
+		source: { name: 'Default (Slowed 1)', category: 'rule' },
+		isDefault: true // new flag for UI to show "(Slowed)" label
+	});
 }
 // Same for swim
 ```
@@ -514,8 +519,8 @@ Before Phase 4a begins, add a snapshot test that captures the full `EnhancedCalc
 // Run BEFORE refactor to capture baseline
 const fixtures = [barbL1, wizL5, spellbladeL3, dwarfRogueL2];
 for (const fixture of fixtures) {
-  const result = calculateCharacterWithBreakdowns(fixture);
-  expect(result).toMatchSnapshot();
+	const result = calculateCharacterWithBreakdowns(fixture);
+	expect(result).toMatchSnapshot();
 }
 ```
 
@@ -688,6 +693,7 @@ Phases 1-3 can run in parallel (data fixes only). Phase 4 depends on data being 
 ## Archive Instructions
 
 When all phases are complete:
+
 1. Update the Phase Tracker table — all rows to "Complete"
 2. Move this file to `docs/archive/FEATURE_VALIDATION_PLAN.MD`
 3. Update the header: `Status: Completed — Archived YYYY-MM-DD`

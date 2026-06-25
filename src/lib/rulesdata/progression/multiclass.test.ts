@@ -7,6 +7,9 @@
 import { describe, it, expect } from 'vitest';
 import {
 	MULTICLASS_TIERS,
+	ALL_MULTICLASS_TIERS,
+	SUBCLASS_FEATURE_LEVELS,
+	countOwnedSubclassFeatures,
 	getMulticlassTier,
 	getAvailableMulticlassTiers,
 	type MulticlassTier
@@ -14,8 +17,13 @@ import {
 
 describe('Multiclass System', () => {
 	describe('MULTICLASS_TIERS data integrity', () => {
-		it('should have exactly 6 tiers', () => {
-			expect(MULTICLASS_TIERS).toHaveLength(6);
+		it('exposes only the four current v0.10.5 tiers', () => {
+			expect(MULTICLASS_TIERS.map((tier) => tier.id)).toEqual([
+				'novice',
+				'adept',
+				'expert',
+				'master'
+			]);
 		});
 
 		it('should have unique tier IDs', () => {
@@ -70,7 +78,7 @@ describe('Multiclass System', () => {
 		it('Expert tier should have correct properties', () => {
 			const expert = MULTICLASS_TIERS.find((t) => t.id === 'expert');
 			expect(expert).toBeDefined();
-			expect(expert?.levelRequired).toBe(7);
+			expect(expert?.levelRequired).toBe(6);
 			expect(expert?.targetLevel).toBe(5);
 			expect(expert?.includeSubclass).toBe(true);
 			expect(expert?.subclassLevel).toBe(3);
@@ -82,27 +90,24 @@ describe('Multiclass System', () => {
 		it('Master tier should have correct properties', () => {
 			const master = MULTICLASS_TIERS.find((t) => t.id === 'master');
 			expect(master).toBeDefined();
-			expect(master?.levelRequired).toBe(10);
-			expect(master?.targetLevel).toBe(6);
+			expect(master?.levelRequired).toBe(8);
+			expect(master?.targetLevel).toBe(7);
 			expect(master?.includeSubclass).toBe(true);
-			expect(master?.subclassLevel).toBe(6);
+			expect(master?.subclassLevel).toBe(7);
 			expect(master?.subclassOnly).toBe(true); // Only subclass features
 			expect(master?.minClassFeatures).toBe(0);
 			expect(master?.minSubclassFeatures).toBe(1);
 		});
 
-		it('Grandmaster tier should have correct properties', () => {
-			const grandmaster = MULTICLASS_TIERS.find((t) => t.id === 'grandmaster');
+		it('keeps removed Grandmaster and Legendary definitions available for legacy lookup', () => {
+			const grandmaster = getMulticlassTier('grandmaster');
 			expect(grandmaster).toBeDefined();
 			expect(grandmaster?.levelRequired).toBe(13);
 			expect(grandmaster?.targetLevel).toBe(8);
 			expect(grandmaster?.includeSubclass).toBe(false);
 			expect(grandmaster?.minClassFeatures).toBe(2);
 			expect(grandmaster?.minSubclassFeatures).toBe(0);
-		});
-
-		it('Legendary tier should have correct properties', () => {
-			const legendary = MULTICLASS_TIERS.find((t) => t.id === 'legendary');
+			const legendary = getMulticlassTier('legendary');
 			expect(legendary).toBeDefined();
 			expect(legendary?.levelRequired).toBe(17);
 			expect(legendary?.targetLevel).toBe(9);
@@ -138,13 +143,13 @@ describe('Multiclass System', () => {
 		});
 
 		it('Grandmaster should require 2 class features', () => {
-			const grandmaster = MULTICLASS_TIERS.find((t) => t.id === 'grandmaster');
+			const grandmaster = getMulticlassTier('grandmaster');
 			expect(grandmaster?.minClassFeatures).toBe(2);
 			expect(grandmaster?.minSubclassFeatures).toBe(0);
 		});
 
 		it('Legendary should require 2 subclass features', () => {
-			const legendary = MULTICLASS_TIERS.find((t) => t.id === 'legendary');
+			const legendary = getMulticlassTier('legendary');
 			expect(legendary?.minClassFeatures).toBe(0);
 			expect(legendary?.minSubclassFeatures).toBe(2);
 		});
@@ -164,14 +169,7 @@ describe('Multiclass System', () => {
 		});
 
 		it('should return correct tier for all valid IDs', () => {
-			const tierIds: MulticlassTier[] = [
-				'novice',
-				'adept',
-				'expert',
-				'master',
-				'grandmaster',
-				'legendary'
-			];
+			const tierIds: MulticlassTier[] = ALL_MULTICLASS_TIERS.map((tier) => tier.id);
 
 			for (const id of tierIds) {
 				const tier = getMulticlassTier(id);
@@ -197,60 +195,41 @@ describe('Multiclass System', () => {
 			expect(level3[0].id).toBe('novice');
 		});
 
-		it('should return Novice and Adept for level 4-6', () => {
+		it('should return Novice and Adept for levels 4-5', () => {
 			const level4 = getAvailableMulticlassTiers(4);
 			const level5 = getAvailableMulticlassTiers(5);
-			const level6 = getAvailableMulticlassTiers(6);
 
 			expect(level4).toHaveLength(2);
 			expect(level4.map((t) => t.id)).toEqual(['novice', 'adept']);
 			expect(level5).toHaveLength(2);
-			expect(level6).toHaveLength(2);
 		});
 
-		it('should return first 3 tiers for level 7-9', () => {
+		it('returns Expert starting at level 6', () => {
+			const level6 = getAvailableMulticlassTiers(6);
 			const level7 = getAvailableMulticlassTiers(7);
-			const level9 = getAvailableMulticlassTiers(9);
 
+			expect(level6.map((t) => t.id)).toEqual(['novice', 'adept', 'expert']);
 			expect(level7).toHaveLength(3);
 			expect(level7.map((t) => t.id)).toEqual(['novice', 'adept', 'expert']);
-			expect(level9).toHaveLength(3);
 		});
 
-		it('should return first 4 tiers for level 10-12', () => {
+		it('returns Master starting at level 8', () => {
+			const level8 = getAvailableMulticlassTiers(8);
 			const level10 = getAvailableMulticlassTiers(10);
 
+			expect(level8.map((t) => t.id)).toEqual(['novice', 'adept', 'expert', 'master']);
 			expect(level10).toHaveLength(4);
 			expect(level10.map((t) => t.id)).toEqual(['novice', 'adept', 'expert', 'master']);
 		});
 
-		it('should return first 5 tiers for level 13-16', () => {
+		it('does not expose removed tiers at higher levels', () => {
 			const level13 = getAvailableMulticlassTiers(13);
-
-			expect(level13).toHaveLength(5);
-			expect(level13.map((t) => t.id)).toEqual([
-				'novice',
-				'adept',
-				'expert',
-				'master',
-				'grandmaster'
-			]);
-		});
-
-		it('should return all 6 tiers for level 17+', () => {
 			const level17 = getAvailableMulticlassTiers(17);
 			const level20 = getAvailableMulticlassTiers(20);
 
-			expect(level17).toHaveLength(6);
-			expect(level17.map((t) => t.id)).toEqual([
-				'novice',
-				'adept',
-				'expert',
-				'master',
-				'grandmaster',
-				'legendary'
-			]);
-			expect(level20).toHaveLength(6);
+			expect(level13.map((t) => t.id)).toEqual(['novice', 'adept', 'expert', 'master']);
+			expect(level17.map((t) => t.id)).toEqual(['novice', 'adept', 'expert', 'master']);
+			expect(level20.map((t) => t.id)).toEqual(['novice', 'adept', 'expert', 'master']);
 		});
 
 		it('should return tiers in ascending level order', () => {
@@ -263,6 +242,15 @@ describe('Multiclass System', () => {
 	});
 
 	describe('Subclass Feature Support', () => {
+		it('uses the v0.10.5 subclass feature schedule', () => {
+			expect(SUBCLASS_FEATURE_LEVELS).toEqual([3, 7, 10]);
+			expect(countOwnedSubclassFeatures(2)).toBe(0);
+			expect(countOwnedSubclassFeatures(3)).toBe(1);
+			expect(countOwnedSubclassFeatures(6)).toBe(1);
+			expect(countOwnedSubclassFeatures(7)).toBe(2);
+			expect(countOwnedSubclassFeatures(10)).toBe(3);
+		});
+
 		it('Novice and Adept should not support subclass features', () => {
 			const novice = getMulticlassTier('novice');
 			const adept = getMulticlassTier('adept');
@@ -281,11 +269,11 @@ describe('Multiclass System', () => {
 			expect(expert?.subclassOnly).toBeUndefined(); // Can pick core OR subclass
 		});
 
-		it('Master should only support subclass features at level 6', () => {
+		it('Master should only support subclass features at level 7', () => {
 			const master = getMulticlassTier('master');
 
 			expect(master?.includeSubclass).toBe(true);
-			expect(master?.subclassLevel).toBe(6);
+			expect(master?.subclassLevel).toBe(7);
 			expect(master?.subclassOnly).toBe(true);
 		});
 

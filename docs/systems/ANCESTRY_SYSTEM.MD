@@ -1,8 +1,8 @@
-# DC20Clean – Ancestry & Trait System
+# DC20Clean – Ancestry System
 
-> Purpose: Single reference for Ancestries and Traits: data pipeline, effect typing, and selection UI.
+> Purpose: Reference for ancestry data, ancestry trait pools, ancestry-point selection, and ancestry creation UI.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-21
 
 ---
 
@@ -45,19 +45,40 @@ flowchart LR
 
 ## 2 Key Files & Their Roles
 
-| Layer                     | File / Dir                                                                                | Responsibility                                             |
-| ------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                   |
-|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                              | Declarative list of `ancestriesData` (16 ancestries)       |
-|                           | `src/lib/rulesdata/ancestries/sharedTraits.ts`                                            | Shared trait definitions used across ancestries            |
-| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`        |
-|                           | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Zod schema used for validation & effect typing             |
-| **Validation Tests**      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads every trait / ancestry and asserts schema compliance |
-| **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, outputs stats        |
-| **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                          |
-| **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `ancestriesData` / `traitsData` directly            |
+| Layer                     | File / Dir                                                                                | Responsibility                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Rule Data (canonical)** | `src/lib/rulesdata/ancestries/traits.ts`                                                  | Declarative list of `traitsData` objects                            |
+|                           | `src/lib/rulesdata/ancestries/ancestries.ts`                                              | Declarative list of core `ancestriesData` (11 ancestries)           |
+|                           | `src/lib/rulesdata/ancestries/sharedTraits.ts`                                            | Shared trait definitions used across ancestries                     |
+|                           | `scripts/ancestries/dc20-0105-ancestries.mjs`                                             | Source parser/audit generator for the v0.10.5 ancestry chapter      |
+|                           | `docs/migration/ancestries-v0105-report.json`                                             | Generated source audit report used by tests to detect runtime drift |
+| **Type Contracts**        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `IAncestry`, `ITraitEffect`                 |
+|                           | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Zod schema used for validation & effect typing                      |
+| **Validation Tests**      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads every trait / ancestry and asserts schema compliance          |
+| **Runtime Engine**        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, outputs stats                 |
+| **State Layer**           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results to UI                                   |
+| **UI**                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Import `ancestriesData` / `traitsData` directly                     |
 
 Note: Class features can modify ancestry budgets via effects (e.g., Cleric “Ancestral” domain adds `+2` to `ancestryPoints`). Ensure such effects are applied before spending ancestry points.
+
+---
+
+## Refactor TODO: Split Ancestry and Traits into Subsystems
+
+The current implementation and docs still treat ancestry and traits as one large system. They should be modeled as two related subsystems:
+
+- **Ancestry subsystem**: owns ancestry records, core/non-core ancestry availability, default and expanded trait pools, ancestry-point budgets, variant trait set references, and the character-creation selection flow.
+- **Trait subsystem**: owns the reusable trait catalog, trait costs, prerequisites, effect definitions, effect confidence/automation classification, and calculator/sheet effect integration.
+
+Target shape:
+
+- Keep `docs/systems/ANCESTRY_SYSTEM.MD` focused on ancestry selection and trait-pool composition.
+- Keep `docs/systems/TRAITS_SYSTEM.MD` focused on individual trait data and effects.
+- Move duplicated trait checklist/testing details out of this doc and into `TRAITS_SYSTEM.MD`.
+- Keep the generated v0.10.5 ancestry audit script/report able to validate both layers, but have tests assert ancestry concerns and trait concerns in separate describe blocks or separate files.
+- Consider file-level separation once the docs are clean: ancestry data can stay in `ancestries/ancestries.ts`; trait catalog may remain in `ancestries/traits.ts` for now, but should be treated as the trait subsystem boundary.
+
+Do not make this a behavior refactor until the 0.10.5 data audit is stable; the first pass should be documentation and test-boundary cleanup only.
 
 ---
 
@@ -129,7 +150,7 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 **Location**: `src/lib/rulesdata/ancestries/ancestries.test.ts`
 
-**Coverage**: 34 comprehensive tests validating:
+**Coverage**: 48 comprehensive tests validating:
 
 #### Data Structure & Schema Compliance
 
@@ -179,11 +200,13 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 #### Data Coverage Statistics
 
-- ✅ Reports total ancestry count (16)
-- ✅ Reports total trait count (244)
+- ✅ Reports total ancestry count (11)
+- ✅ Reports total trait count (`traitsData` has 178 core traits; source report has 180 including Fallen/Redeemed variant traits)
 - ✅ Reports trait distribution per ancestry
 - ✅ Reports effect type usage distribution
 - ✅ Reports cost distribution
+- ✅ Confirms the runtime ancestry list matches the generated v0.10.5 core source report
+- ✅ Confirms magazine/non-core ancestries are absent from runtime data
 
 ### 6.2 Running Tests
 
@@ -264,7 +287,19 @@ Variant traits follow the same schema as regular traits and are available for se
 - **Effect Processor** integration will further centralise logic—update §3 Step 4 when landed.
 - **Schema-driven forms** may auto-render trait editors using this document's file maps.
 
+## 10 DC20 v0.10.5 Notes
+
+- Core runtime scope is limited to the 11 core v0.10.5 ancestries: Human, Elf, Dwarf, Halfling, Gnome, Orc, Dragonborn, Giantborn, Angelborn, Fiendborn, and Beastborn.
+- Magazine/non-core ancestries are not in runtime data: Gremlin, Goblin, Terraborn, Shadowborn, and Psyborn.
+- `npm run ancestries:generate:0105` parses `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md` and writes `docs/migration/ancestries-v0105-report.json`.
+- `npm run ancestries:validate:0105` re-parses the source and fails if the generated report is stale.
+- `ancestries.test.ts` compares every runtime core ancestry's exposed trait names and costs against the generated source report. Runtime descriptions/effects remain human-reviewed.
+- `Hazardous Hide` is present under the stable `beastborn_hazardous_hide` ID and source-confirmed as a returned v0.10.5 Beastborn Body trait.
+- `Additional Limb` and `Capable Limb` keep their stable Beastborn IDs while matching v0.10.5 wording. `Capable Limb` costs 2 points and allows Weapons, Shields, Spell Focuses, and Somatic Components once per Additional Limb.
+- `beastborn_natural_weapon_style` is the current v0.10.5 Beastborn Natural Weapon trait. `beastborn_natural_weapon_passive` and `beastborn_prehensile_appendage` are not core v0.10.5 traits.
+- No trait alias was required for this pass; saved trait IDs remain stable.
+
 ---
 
-> _Last updated: 2026-02-06_  
+> _Last updated: 2026-06-19_
 > Maintainer: @DC20Clean-Team

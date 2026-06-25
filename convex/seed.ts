@@ -26,239 +26,239 @@ const OFFICIAL_FEATURES = [
 		id: 'feat_d4e5f678-1234-4abc-9def-012345678901',
 		name: 'Keen Smell',
 		description: 'ADV on Awareness Checks using smell.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_a1b2c3d4-5678-4ef0-1234-567890abcdef',
 		name: 'Keen Sight',
 		description: 'ADV on Awareness Checks using sight.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_b2c3d4e5-6789-4f01-2345-678901bcdefa',
 		name: 'Large Lungs',
 		description: 'Can hold breath for up to 1 hour.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_c3d4e5f6-789a-4012-3456-789012cdefab',
 		name: 'False Appearance',
 		description: 'Indistinguishable from regular object/terrain while motionless.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_d4e5f6a7-89ab-4123-4567-890123defabc',
 		name: 'Hover',
 		description: 'Hovers above the ground; immune to prone from non-magic.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_e5f6a7b8-9abc-4234-5678-901234efabcd',
 		name: 'Bright Energy',
 		description: 'Body provides Bright Light in 4-space radius.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_f6a7b8c9-abcd-4345-6789-012345fabcde',
 		name: 'Forest Stride',
 		description: 'Difficult terrain from plants does not slow movement.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_a7b8c9d0-bcde-4456-789a-123456abcdef',
 		name: 'Amorphous',
 		description: 'Can move through spaces as narrow as 1 inch.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_b8c9d0e1-cdef-4567-89ab-234567bcdefa',
 		name: 'Keen Senses',
 		description: 'ADV on Awareness Checks using hearing or smell.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_v3b1c2d3-1111-4111-1111-111111111111',
 		name: 'Troop Tactics',
 		description: 'Help Dice granted start as a d10.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_v3b2c3d4-2222-4222-2222-222222222222',
 		name: 'Drawn to Sound',
 		description:
 			'Taunted by high-pitched sounds (music, screams, verbal components) within 10 spaces.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	{
 		id: 'feat_v3b3c4d5-3333-4333-3333-333333333333',
 		name: 'Sweet Scent',
 		description: '5 Space Aura: Allies gain +1 to Attacks.',
-		pointCost: 1,
+		pointCost: 1
 	},
 	// 2-Point Features
 	{
 		id: 'feat_c9d0e1f2-def0-4678-9abc-345678cdefab',
 		name: 'Incorporeal Movement',
 		description: 'Can move through creatures and objects (takes damage if ending turn in object).',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_d0e1f2a3-ef01-4789-abcd-456789defabc',
 		name: 'Wispy Form',
 		description: 'Resistance to non-magical physical damage.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_e1f2a3b4-f012-489a-bcde-567890efabcd',
 		name: 'Fiery Retribution',
 		description: 'When hit by melee attack, attacker takes 1 Fire damage.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_f2a3b4c5-0123-49ab-cdef-678901fabcde',
 		name: 'Forceful',
 		description: 'Attacks push target 1 space on hit.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_a3b4c5d6-1234-4abc-def0-789012abcdef',
 		name: 'Pack Tactics',
 		description: 'ADV on attacks when ally is adjacent to target.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_b4c5d6e7-2345-4bcd-ef01-890123bcdefa',
 		name: 'Telepathic Link',
 		description: 'Telepathic link with master at any distance on the same plane.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_c5d6e7f8-3456-4cde-f012-901234cdefab',
 		name: 'Tunneler',
 		description: 'Burrow through solid stone leaving a 1-space tunnel.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_d6e7f8a9-4567-4def-0123-012345defabc',
 		name: 'Spider Climb',
 		description: 'Walk on ceilings and vertical surfaces normally.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_e7f8a9b0-5678-4ef0-1234-123456efabcd',
 		name: 'Web Walk',
 		description: 'Walk through webs unimpeded; know location of creatures on same web.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c1d2e3-4444-4444-4444-444444444444',
 		name: 'Reconstitution',
 		description: 'Reaction: Self or Thrall within 15 spaces gains 2 Temp HP on damage.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c2d3e4-5555-4555-5555-555555555555',
 		name: 'Invisibility',
 		description: 'Invisible while in Dim Light or Darkness.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c3d4e5-6666-4666-6666-666666666666',
 		name: 'Shadow Merge',
 		description: 'Become Invisible when taking the Hide action in Dim Light.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c4d5e6-7777-4777-7777-777777777777',
 		name: 'Fiery Wake',
 		description: 'Leaves a trail of flames that deal 1 Fire damage.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c5d6e7-8888-4888-8888-888888888888',
 		name: 'Elemental Siphon',
 		description: 'Reaction: Split lightning damage with a nearby creature.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c6d7e8-9999-4999-9999-999999999999',
 		name: 'Plague Body',
 		description: 'Creatures ending turn nearby contract Rot Plague.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c7d8e9-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
 		name: 'Frost Aura',
 		description: 'Regain 1 HP and slow nearby enemies at start of turn.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c8d9e0-bbbb-4bbb-bbbb-bbbbbbbbbbbb',
 		name: 'Telepathic Lure',
 		description: '10 Space Aura: Humanoids must Save or be Taunted by familiar voices.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3c9d0e1-cccc-4ccc-cccc-cccccccccccc',
 		name: 'Toxic Growth',
 		description: 'Gain Toxic Mass stacks from Corrosion/Poison damage; +1 to Attacks per stack.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3d0e1f2-dddd-4ddd-dddd-dddddddddddd',
 		name: 'Toxic Vines',
 		description: 'Creatures with conditions from you take 1 Poison damage at start of turn.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	{
 		id: 'feat_v3d1e2f3-eeee-4eee-eeee-eeeeeeeeeeee',
 		name: 'Wrangling Vines',
 		description: 'Can Grapple up to 4 different creatures at once.',
-		pointCost: 2,
+		pointCost: 2
 	},
 	// 3-Point Features
 	{
 		id: 'feat_f8a9b0c1-6789-4f01-2345-234567fabcde',
 		name: 'Spellcaster',
 		description: '+2 bonus to Spell Duels.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_a9b0c1d2-789a-4012-3456-345678abcdef',
 		name: 'Unrelenting',
 		description: 'Only reduced below 1 HP by Heavy Hits or Radiant damage.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_b0c1d2e3-89ab-4123-4567-456789bcdefa',
 		name: 'Stress',
 		description: 'Loses DR and -5 Defenses at 3 Stress points.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_c1d2e3f4-9abc-4234-5678-567890cdefab',
 		name: 'Dimensional Disruption',
 		description: 'Radiant damage prevents Engulf until next turn.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_d2e3f4a5-abcd-4345-6789-678901defabc',
 		name: 'Immutable Form',
 		description: 'Immune to any spell or effect that would alter form.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_v3e1f2a3-ffff-4fff-ffff-ffffffffffff',
 		name: 'Soul Collector',
 		description: 'Collects souls of those who die within 5 spaces.',
-		pointCost: 3,
+		pointCost: 3
 	},
 	{
 		id: 'feat_v3e2f3a4-0000-4000-0000-000000000000',
 		name: 'Water Body',
 		description: 'Occupy same space as others. Creatures inside take 2 Corrosion and are Slowed.',
-		pointCost: 3,
-	},
+		pointCost: 3
+	}
 ];
 
 // ============================================================================
@@ -282,7 +282,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 16,
 		finalBaseDamage: 3,
 		attributes: { might: 3, agility: 1, charisma: -1, intelligence: -2 },
-		featureIds: ['feat_d4e5f678-1234-4abc-9def-012345678901', 'feat_b2c3d4e5-6789-4f01-2345-678901bcdefa'],
+		featureIds: [
+			'feat_d4e5f678-1234-4abc-9def-012345678901',
+			'feat_b2c3d4e5-6789-4f01-2345-678901bcdefa'
+		],
 		featurePointsSpent: 2,
 		featurePointsMax: 4,
 		actions: [
@@ -294,7 +297,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'physical',
-				description: 'Heavy Hit (+1)',
+				description: 'Heavy Hit (+1)'
 			},
 			{
 				id: 'act_chimera_crash',
@@ -303,7 +306,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 3,
-				description: '2 Space Line',
+				description: '2 Space Line'
 			},
 			{
 				id: 'act_chimera_spray',
@@ -312,10 +315,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 2,
-				description: '5 Space Line, Knockdown',
-			},
+				description: '5 Space Line, Knockdown'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_necro_002',
@@ -332,7 +335,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 16,
 		finalBaseDamage: 2,
 		attributes: { might: -1, agility: 1, charisma: 2, intelligence: 3 },
-		featureIds: ['feat_f8a9b0c1-6789-4f01-2345-234567fabcde', 'feat_v3c1d2e3-4444-4444-4444-444444444444'],
+		featureIds: [
+			'feat_f8a9b0c1-6789-4f01-2345-234567fabcde',
+			'feat_v3c1d2e3-4444-4444-4444-444444444444'
+		],
 		featurePointsSpent: 5,
 		featurePointsMax: 4,
 		actions: [
@@ -344,7 +350,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'umbral',
-				description: 'Sap Enhancement',
+				description: 'Sap Enhancement'
 			},
 			{
 				id: 'act_necro_command',
@@ -353,7 +359,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'One Thrall moves and attacks with ADV.',
+				description: 'One Thrall moves and attacks with ADV.'
 			},
 			{
 				id: 'act_necro_create',
@@ -362,10 +368,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Summon 1 Thrall within 5 spaces.',
-			},
+				description: 'Summon 1 Thrall within 5 spaces.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_collector_003',
@@ -382,7 +388,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 18,
 		finalBaseDamage: 3,
 		attributes: { might: 2, agility: 0, charisma: 3, intelligence: 2 },
-		featureIds: ['feat_v3e1f2a3-ffff-4fff-ffff-ffffffffffff', 'feat_v3c2d3e4-5555-4555-5555-555555555555'],
+		featureIds: [
+			'feat_v3e1f2a3-ffff-4fff-ffff-ffffffffffff',
+			'feat_v3c2d3e4-5555-4555-5555-555555555555'
+		],
 		featurePointsSpent: 5,
 		featurePointsMax: 5,
 		actions: [
@@ -394,7 +403,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'physical',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_collector_doom',
@@ -403,10 +412,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '5 Space Aura, Doomed',
-			},
+				description: '5 Space Aura, Doomed'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_penguin_004',
@@ -435,7 +444,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_penguin_stare',
@@ -444,10 +453,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 2,
-				description: '10 Space Line, Immobilized',
-			},
+				description: '10 Space Line, Immobilized'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_blightq_005',
@@ -476,7 +485,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: 'Grapple',
+				description: 'Grapple'
 			},
 			{
 				id: 'act_blight_spray',
@@ -485,10 +494,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '5 Space Cone, Burning',
-			},
+				description: '5 Space Cone, Burning'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_shadow_006',
@@ -517,7 +526,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'umbral',
-				description: 'Doomed',
+				description: 'Doomed'
 			},
 			{
 				id: 'act_shadow_stride',
@@ -526,10 +535,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Teleport 5 spaces between shadows.',
-			},
+				description: 'Teleport 5 spaces between shadows.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_cinder_007',
@@ -558,7 +567,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'fire',
-				description: 'Fire/Umbral',
+				description: 'Fire/Umbral'
 			},
 			{
 				id: 'act_cinder_drift',
@@ -567,10 +576,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 0,
-				description: 'Fly 5 spaces, applying Burning and Blinded.',
-			},
+				description: 'Fly 5 spaces, applying Burning and Blinded.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_serpent_008',
@@ -599,7 +608,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'fire',
-				description: 'Fire',
+				description: 'Fire'
 			},
 			{
 				id: 'act_serpent_coil',
@@ -608,10 +617,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '3 Space Aura, Burning',
-			},
+				description: '3 Space Aura, Burning'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_gargoyle_009',
@@ -640,7 +649,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_gargoyle_ram',
@@ -649,10 +658,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 0,
-				description: 'Move and Strike, pushing target 1 space.',
-			},
+				description: 'Move and Strike, pushing target 1 space.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_lbug_010',
@@ -681,7 +690,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'lightning',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_lbug_burst',
@@ -690,10 +699,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '3 Space Aura, Teleport',
-			},
+				description: '3 Space Aura, Teleport'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_phound_011',
@@ -722,7 +731,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'poison',
-				description: 'Poisoned',
+				description: 'Poisoned'
 			},
 			{
 				id: 'act_phound_breath',
@@ -731,10 +740,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 2,
-				description: '3 Space Cone',
-			},
+				description: '3 Space Cone'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_sentinel_012',
@@ -763,7 +772,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'cold',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_sentinel_winds',
@@ -772,10 +781,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: 'Frost Aura Area',
-			},
+				description: 'Frost Aura Area'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_rug_013',
@@ -803,7 +812,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 0,
-				description: 'Grapple',
+				description: 'Grapple'
 			},
 			{
 				id: 'act_rug_squeeze',
@@ -812,10 +821,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: 'ADV vs Grappled',
-			},
+				description: 'ADV vs Grappled'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_wardrobe_014',
@@ -844,7 +853,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: 'Dazed',
+				description: 'Dazed'
 			},
 			{
 				id: 'act_wardrobe_grasping',
@@ -853,10 +862,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Contest, Grapple',
-			},
+				description: 'Contest, Grapple'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_twig_015',
@@ -885,7 +894,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Grapple',
+				description: 'Grapple'
 			},
 			{
 				id: 'act_twig_vines',
@@ -894,10 +903,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Creates difficult terrain in a 2-space sphere.',
-			},
+				description: 'Creates difficult terrain in a 2-space sphere.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_cwisp_016',
@@ -926,7 +935,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'radiant',
-				description: 'Exposed',
+				description: 'Exposed'
 			},
 			{
 				id: 'act_cwisp_heal',
@@ -935,10 +944,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Target regains 1-2 HP.',
-			},
+				description: 'Target regains 1-2 HP.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_corwisp_017',
@@ -967,7 +976,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'umbral',
-				description: 'Necrosis',
+				description: 'Necrosis'
 			},
 			{
 				id: 'act_corwisp_manip',
@@ -976,10 +985,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Force target to move or attack.',
-			},
+				description: 'Force target to move or attack.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_zombie_018',
@@ -1008,7 +1017,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Infect',
+				description: 'Infect'
 			},
 			{
 				id: 'act_zombie_slam',
@@ -1017,10 +1026,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '',
-			},
+				description: ''
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_goblin_019',
@@ -1049,7 +1058,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_goblin_bow',
@@ -1059,10 +1068,10 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: '',
-			},
+				description: ''
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_kobold_020',
@@ -1091,7 +1100,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Extend Attack',
+				description: 'Extend Attack'
 			},
 			{
 				id: 'act_kobold_trap',
@@ -1100,10 +1109,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Set a hidden trap within 5 spaces.',
-			},
+				description: 'Set a hidden trap within 5 spaces.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_dummy_021',
@@ -1132,7 +1141,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Grab',
+				description: 'Grab'
 			},
 			{
 				id: 'act_dummy_whirl',
@@ -1141,10 +1150,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '1 Space Aura',
-			},
+				description: '1 Space Aura'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_rat_022',
@@ -1173,7 +1182,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Impair',
+				description: 'Impair'
 			},
 			{
 				id: 'act_rat_dart',
@@ -1182,10 +1191,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Take Disengage and Move actions.',
-			},
+				description: 'Take Disengage and Move actions.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_hhound_023',
@@ -1214,7 +1223,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Pin',
+				description: 'Pin'
 			},
 			{
 				id: 'act_hhound_intim',
@@ -1223,10 +1232,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Contest to Intimidate target.',
-			},
+				description: 'Contest to Intimidate target.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_thief_024',
@@ -1255,7 +1264,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 0,
 				damageType: 'physical',
-				description: 'Hinder',
+				description: 'Hinder'
 			},
 			{
 				id: 'act_thief_dagger',
@@ -1265,10 +1274,10 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: '',
-			},
+				description: ''
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_thug_025',
@@ -1297,7 +1306,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Trip, Grapple',
+				description: 'Trip, Grapple'
 			},
 			{
 				id: 'act_thug_slam',
@@ -1306,10 +1315,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '',
-			},
+				description: ''
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_thrall_026',
@@ -1338,10 +1347,10 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Physical or Umbral',
-			},
+				description: 'Physical or Umbral'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_penguin_basic_027',
@@ -1370,7 +1379,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: '',
+				description: ''
 			},
 			{
 				id: 'act_penguin_slide',
@@ -1379,10 +1388,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Move up to swim speed while prone.',
-			},
+				description: 'Move up to swim speed while prone.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v2_mmaker_028',
@@ -1410,7 +1419,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Target is Taunted for 1 minute.',
+				description: 'Target is Taunted for 1 minute.'
 			},
 			{
 				id: 'act_mmaker_disp',
@@ -1419,10 +1428,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '1 Space Aura, Teleport',
-			},
+				description: '1 Space Aura, Teleport'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	// Volume 3 Monsters
 	{
@@ -1440,7 +1449,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 14,
 		finalBaseDamage: 2,
 		attributes: { might: -1, agility: 3, charisma: 0, intelligence: 1 },
-		featureIds: ['feat_a1b2c3d4-5678-4ef0-1234-567890abcdef', 'feat_b4c5d6e7-2345-4bcd-ef01-890123bcdefa'],
+		featureIds: [
+			'feat_a1b2c3d4-5678-4ef0-1234-567890abcdef',
+			'feat_b4c5d6e7-2345-4bcd-ef01-890123bcdefa'
+		],
 		featurePointsSpent: 3,
 		featurePointsMax: 1,
 		actions: [
@@ -1452,7 +1464,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: 'Blinded Enhancement',
+				description: 'Blinded Enhancement'
 			},
 			{
 				id: 'act_oculoth_beam',
@@ -1462,7 +1474,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'fire',
-				description: 'Fire, Heavy Hit (+1)',
+				description: 'Fire, Heavy Hit (+1)'
 			},
 			{
 				id: 'act_oculoth_ray',
@@ -1471,10 +1483,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '10 Space Line, Fire',
-			},
+				description: '10 Space Line, Fire'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_screecher_030',
@@ -1503,7 +1515,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Bleed, Grab',
+				description: 'Bleed, Grab'
 			},
 			{
 				id: 'act_screecher_bite',
@@ -1512,7 +1524,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: 'Requires Grappled, Doomed 1',
+				description: 'Requires Grappled, Doomed 1'
 			},
 			{
 				id: 'act_screecher_screech',
@@ -1521,10 +1533,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '5 Space Cone, Dazed',
-			},
+				description: '5 Space Cone, Dazed'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_mawworm_031',
@@ -1541,7 +1553,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 15,
 		finalBaseDamage: 2,
 		attributes: { might: 2, agility: 0, charisma: -2, intelligence: 0 },
-		featureIds: ['feat_c1d2e3f4-9abc-4234-5678-567890cdefab', 'feat_c5d6e7f8-3456-4cde-f012-901234cdefab'],
+		featureIds: [
+			'feat_c1d2e3f4-9abc-4234-5678-567890cdefab',
+			'feat_c5d6e7f8-3456-4cde-f012-901234cdefab'
+		],
 		featurePointsSpent: 5,
 		featurePointsMax: 3,
 		actions: [
@@ -1553,7 +1568,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: 'Grapple',
+				description: 'Grapple'
 			},
 			{
 				id: 'act_mawworm_sweep',
@@ -1562,7 +1577,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '1 Space Arc, Prone',
+				description: '1 Space Arc, Prone'
 			},
 			{
 				id: 'act_mawworm_engulf',
@@ -1571,10 +1586,11 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Target Grappled must make Might Save or be Swallowed into interdimensional space.',
-			},
+				description:
+					'Target Grappled must make Might Save or be Swallowed into interdimensional space.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_mreaper_032',
@@ -1591,7 +1607,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 18,
 		finalBaseDamage: 3,
 		attributes: { might: 1, agility: 3, charisma: -1, intelligence: 0 },
-		featureIds: ['feat_d6e7f8a9-4567-4def-0123-012345defabc', 'feat_e7f8a9b0-5678-4ef0-1234-123456efabcd'],
+		featureIds: [
+			'feat_d6e7f8a9-4567-4def-0123-012345defabc',
+			'feat_e7f8a9b0-5678-4ef0-1234-123456efabcd'
+		],
 		featurePointsSpent: 4,
 		featurePointsMax: 5,
 		actions: [
@@ -1603,7 +1622,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'poison',
-				description: 'Corrosion, Poisoned (Limb Effects)',
+				description: 'Corrosion, Poisoned (Limb Effects)'
 			},
 			{
 				id: 'act_mreaper_leg',
@@ -1613,7 +1632,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'physical',
-				description: '3 Space Range, Pull',
+				description: '3 Space Range, Pull'
 			},
 			{
 				id: 'act_mreaper_drain',
@@ -1623,10 +1642,10 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'umbral',
-				description: 'Requires Poisoned, Heal',
-			},
+				description: 'Requires Poisoned, Heal'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_psymanta_033',
@@ -1655,7 +1674,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'psychic',
-				description: 'Psychic, Dazed',
+				description: 'Psychic, Dazed'
 			},
 			{
 				id: 'act_psymanta_pulse',
@@ -1664,10 +1683,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '2 Space Aura, Force Movement',
-			},
+				description: '2 Space Aura, Force Movement'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_aooze_034',
@@ -1684,7 +1703,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 15,
 		finalBaseDamage: 1,
 		attributes: { might: 2, agility: -1, charisma: -3, intelligence: -3 },
-		featureIds: ['feat_v3e2f3a4-0000-4000-0000-000000000000', 'feat_c3d4e5f6-789a-4012-3456-789012cdefab'],
+		featureIds: [
+			'feat_v3e2f3a4-0000-4000-0000-000000000000',
+			'feat_c3d4e5f6-789a-4012-3456-789012cdefab'
+		],
 		featurePointsSpent: 4,
 		featurePointsMax: 4,
 		actions: [
@@ -1696,7 +1718,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: '3 Space Range, Pull',
+				description: '3 Space Range, Pull'
 			},
 			{
 				id: 'act_aooze_drown',
@@ -1705,10 +1727,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: 'Targets in Space, Suffocating',
-			},
+				description: 'Targets in Space, Suffocating'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_tslime_035',
@@ -1737,7 +1759,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 4,
 				damageType: 'corrosion',
-				description: 'Corrosion',
+				description: 'Corrosion'
 			},
 			{
 				id: 'act_tslime_spit',
@@ -1747,7 +1769,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'corrosion',
-				description: 'Summon Mini Slime',
+				description: 'Summon Mini Slime'
 			},
 			{
 				id: 'act_tslime_decay',
@@ -1756,10 +1778,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 2,
-				description: '2 Space Aura, Poisoned',
-			},
+				description: '2 Space Aura, Poisoned'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_cooze_036',
@@ -1788,7 +1810,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'umbral',
-				description: 'Umbral, Heal if target Bleeding',
+				description: 'Umbral, Heal if target Bleeding'
 			},
 			{
 				id: 'act_cooze_split',
@@ -1797,7 +1819,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Spend 7 HP to create an exact copy of self with 7 HP.',
+				description: 'Spend 7 HP to create an exact copy of self with 7 HP.'
 			},
 			{
 				id: 'act_cooze_pulse',
@@ -1806,10 +1828,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 1,
-				description: '2 Space Aura, Bleeding',
-			},
+				description: '2 Space Aura, Bleeding'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_pshambler_037',
@@ -1838,7 +1860,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 3,
 				damageType: 'physical',
-				description: 'Knockback',
+				description: 'Knockback'
 			},
 			{
 				id: 'act_pshambler_vine',
@@ -1848,7 +1870,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 2,
 				damageType: 'physical',
-				description: '10 Space Range, Tethered',
+				description: '10 Space Range, Tethered'
 			},
 			{
 				id: 'act_pshambler_terrain',
@@ -1857,10 +1879,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: '5 Space Sphere: Targets make Save or are Restrained.',
-			},
+				description: '5 Space Sphere: Targets make Save or are Restrained.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_cbloom_038',
@@ -1877,7 +1899,10 @@ const OFFICIAL_MONSTERS = [
 		finalSaveDC: 14,
 		finalBaseDamage: 1,
 		attributes: { might: 1, agility: 0, charisma: 0, intelligence: -2 },
-		featureIds: ['feat_v3b3c4d5-3333-4333-3333-333333333333', 'feat_v3d1e2f3-eeee-4eee-eeee-eeeeeeeeeeee'],
+		featureIds: [
+			'feat_v3b3c4d5-3333-4333-3333-333333333333',
+			'feat_v3d1e2f3-eeee-4eee-eeee-eeeeeeeeeeee'
+		],
 		featurePointsSpent: 3,
 		featurePointsMax: 2,
 		actions: [
@@ -1889,7 +1914,7 @@ const OFFICIAL_MONSTERS = [
 				targetDefense: 'pd',
 				damage: 1,
 				damageType: 'physical',
-				description: 'Grapple',
+				description: 'Grapple'
 			},
 			{
 				id: 'act_cbloom_swallow',
@@ -1898,7 +1923,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Grappled target makes Save or is Swallowed; takes Corrosion damage.',
+				description: 'Grappled target makes Save or is Swallowed; takes Corrosion damage.'
 			},
 			{
 				id: 'act_cbloom_sap',
@@ -1907,10 +1932,10 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Ally gains 2 Temp HP and ADV on next attack.',
-			},
+				description: 'Ally gains 2 Temp HP and ADV on next attack.'
+			}
 		],
-		schemaVersion: '1.0.0',
+		schemaVersion: '1.0.0'
 	},
 	{
 		id: 'mon_v3_sporebloom_039',
@@ -1938,7 +1963,7 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'ad',
 				damage: 2,
-				description: '2 Space Aura, Poison, Stunned',
+				description: '2 Space Aura, Poison, Stunned'
 			},
 			{
 				id: 'act_sporebloom_cloud',
@@ -1947,11 +1972,11 @@ const OFFICIAL_MONSTERS = [
 				type: 'special',
 				targetDefense: 'pd',
 				damage: 0,
-				description: 'Create 5 Space Aura of spores; area is Heavily Obscured.',
-			},
+				description: 'Create 5 Space Aura of spores; area is Heavily Obscured.'
+			}
 		],
-		schemaVersion: '1.0.0',
-	},
+		schemaVersion: '1.0.0'
+	}
 ];
 
 // ============================================================================
@@ -1968,16 +1993,14 @@ export const _seedFeatures = internalMutation({
 		for (const feature of OFFICIAL_FEATURES) {
 			const existing = await ctx.db
 				.query('features')
-				.filter((q) =>
-					q.and(q.eq(q.field('id'), feature.id), q.eq(q.field('isOfficial'), true))
-				)
+				.filter((q) => q.and(q.eq(q.field('id'), feature.id), q.eq(q.field('isOfficial'), true)))
 				.first();
 
 			if (existing) {
 				await ctx.db.patch(existing._id, {
 					...feature,
 					isOfficial: true,
-					lastModified: now,
+					lastModified: now
 				});
 				updated++;
 			} else {
@@ -1990,14 +2013,14 @@ export const _seedFeatures = internalMutation({
 					isHomebrew: false,
 					createdAt: now,
 					lastModified: now,
-					schemaVersion: '1.0.0',
+					schemaVersion: '1.0.0'
 				});
 				created++;
 			}
 		}
 
 		return { created, updated, total: OFFICIAL_FEATURES.length };
-	},
+	}
 });
 
 export const _seedMonsters = internalMutation({
@@ -2010,16 +2033,14 @@ export const _seedMonsters = internalMutation({
 		for (const monster of OFFICIAL_MONSTERS) {
 			const existing = await ctx.db
 				.query('monsters')
-				.filter((q) =>
-					q.and(q.eq(q.field('id'), monster.id), q.eq(q.field('isOfficial'), true))
-				)
+				.filter((q) => q.and(q.eq(q.field('id'), monster.id), q.eq(q.field('isOfficial'), true)))
 				.first();
 
 			if (existing) {
 				await ctx.db.patch(existing._id, {
 					...monster,
 					isOfficial: true,
-					lastModified: now,
+					lastModified: now
 				});
 				updated++;
 			} else {
@@ -2031,14 +2052,14 @@ export const _seedMonsters = internalMutation({
 					approvalStatus: 'approved',
 					isHomebrew: false,
 					createdAt: now,
-					lastModified: now,
+					lastModified: now
 				});
 				created++;
 			}
 		}
 
 		return { created, updated, total: OFFICIAL_MONSTERS.length };
-	},
+	}
 });
 
 // ============================================================================
@@ -2055,7 +2076,7 @@ export const seedOfficialFeatures = internalAction({
 		const result = await ctx.runMutation(internal.seed._seedFeatures);
 		console.log(`✅ Features seeded: ${result.created} created, ${result.updated} updated`);
 		return result;
-	},
+	}
 });
 
 /**
@@ -2068,7 +2089,7 @@ export const seedOfficialMonsters = internalAction({
 		const result = await ctx.runMutation(internal.seed._seedMonsters);
 		console.log(`✅ Monsters seeded: ${result.created} created, ${result.updated} updated`);
 		return result;
-	},
+	}
 });
 
 /**
@@ -2090,7 +2111,7 @@ export const seedAllOfficialData = internalAction({
 
 		return {
 			features: featuresResult,
-			monsters: monstersResult,
+			monsters: monstersResult
 		};
-	},
+	}
 });

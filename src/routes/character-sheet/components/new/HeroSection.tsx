@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { StatCard } from './StatCard';
 import DeathExhaustion from '../DeathExhaustion';
-import { ConditionBadge } from '../ConditionBadge';
+import { ConditionBadge, type ConditionBadgeType } from '../ConditionBadge';
 import CompactUtility from './CompactUtility';
 import { getConditionBadgesForAttribute } from '../../../../lib/services/conditionEffectsAnalyzer';
 
@@ -298,8 +298,8 @@ const RageLabel = styled.span`
 `;
 
 const RageToggleButton = styled.button<{ $active: boolean }>`
-	border: 1px solid ${(props) =>
-		props.$active ? theme.colors.accent.danger : theme.colors.border.default};
+	border: 1px solid
+		${(props) => (props.$active ? theme.colors.accent.danger : theme.colors.border.default)};
 	background: ${(props) => (props.$active ? theme.colors.accent.danger : theme.colors.bg.tertiary)};
 	color: ${theme.colors.text.primary};
 	font-size: ${theme.typography.fontSize.xs};
@@ -316,6 +316,13 @@ const RageNote = styled.div`
 	color: ${theme.colors.accent.warning};
 	font-weight: ${theme.typography.fontWeight.medium};
 `;
+
+const HERO_BADGE_TYPES = new Set<ConditionBadgeType>([
+	'disadvantage',
+	'advantage',
+	'speed-penalty',
+	'immobilized'
+]);
 
 const DefenseSubtext = styled.div`
 	margin-top: ${theme.spacing[1]};
@@ -387,7 +394,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
 	const { t } = useTranslation();
 	// Calculate condition badges
-	const attackBadges = getConditionBadgesForAttribute(activeConditions, 'attack');
+	const attackBadges = getConditionBadgesForAttribute(activeConditions, 'attack').filter(
+		(badge): badge is typeof badge & { type: ConditionBadgeType } =>
+			HERO_BADGE_TYPES.has(badge.type as ConditionBadgeType)
+	);
 
 	return (
 		<Container
@@ -544,7 +554,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				transition={{ delay: 0.4 }}
 			>
 				<BoxTitle>
-				<span>{t('characterSheet.heroCombatStats')}</span>
+					<span>{t('characterSheet.heroCombatStats')}</span>
 					{hasCombatStatsOverride && onCombatStatsReset && (
 						<BoxResetButton
 							onClick={onCombatStatsReset}
@@ -569,7 +579,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 								disabled={!onPrecisionADChange}
 							/>
 							<DefenseSubtext>
-								Heavy {precisionADHeavyThreshold ?? precisionAD + 5} | Brutal {precisionADBrutalThreshold ?? precisionAD + 10}
+								Heavy {precisionADHeavyThreshold ?? precisionAD + 5} | Brutal{' '}
+								{precisionADBrutalThreshold ?? precisionAD + 10}
 							</DefenseSubtext>
 						</DefenseItem>
 						<DefenseItem
@@ -605,7 +616,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							onMouseEnter={onAttackMouseEnter}
 							onMouseLeave={onAttackMouseLeave}
 						>
-					<DefenseLabel>{t('characterSheet.heroAttackSpell')}</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroAttackSpell')}</DefenseLabel>
 							<DefenseValue $isPrimary>+{attackBonus}</DefenseValue>
 							{attackBadges.length > 0 && (
 								<BadgesContainer>
@@ -621,7 +632,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							)}
 						</DefenseItem>
 						<DefenseItem whileHover={{ scale: 1.05 }}>
-					<DefenseLabel>{t('characterSheet.heroSaveDC')}</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroSaveDC')}</DefenseLabel>
 							<DefenseValue $isPrimary>{saveDC}</DefenseValue>
 						</DefenseItem>
 						<DefenseItem
@@ -629,7 +640,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							$clickable
 							onClick={() => onSkillClick?.('Initiative', initiative)}
 						>
-					<DefenseLabel>{t('characterSheet.heroInitiative')}</DefenseLabel>
+							<DefenseLabel>{t('characterSheet.heroInitiative')}</DefenseLabel>
 							<DefenseValue $isPrimary>+{initiative}</DefenseValue>
 						</DefenseItem>
 					</DefensesGrid>

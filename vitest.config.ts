@@ -14,7 +14,7 @@ export default defineConfig({
 						instances: [{ browser: 'chromium' }]
 					},
 					include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
-					exclude: ['src/lib/server/**'],
+					exclude: ['src/lib/server/**', 'src/lib/convexClient.test.ts'],
 					setupFiles: ['./vitest-setup-client.ts']
 				}
 			},

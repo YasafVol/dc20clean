@@ -2,7 +2,7 @@
 // Handles the completion flow with proper stat calculation, snackbar, and navigation
 
 import { assignSpellsToCharacter } from './spellAssignment';
-import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
+import { ALL_SPELLS as allSpells, getSpellById } from '../rulesdata/spells-data';
 import { allManeuvers } from '../rulesdata/martials/maneuvers';
 import {
 	convertToEnhancedBuildData,
@@ -13,6 +13,7 @@ import { getDefaultStorage } from '../storage';
 import type { SavedCharacter } from '../types/dataContracts';
 import { denormalizeMastery } from './denormalizeMastery';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
+import { CURRENT_RULES_VERSION } from '../rulesdata/versioning/rulesVersion';
 import { logger } from '../utils/logger';
 
 /**
@@ -55,6 +56,15 @@ function processMovementsToStructure(
 	return movement;
 }
 
+function sourceName(source: unknown): string {
+	if (typeof source === 'string') return source;
+	if (source && typeof source === 'object' && 'name' in source) {
+		const name = (source as { name?: unknown }).name;
+		if (typeof name === 'string' && name.length > 0) return name;
+	}
+	return 'Unknown Source';
+}
+
 /**
  * Converts count-based talents Record to array format for database storage.
  * Example: {talent1: 2, talent2: 1} → ['talent1', 'talent1', 'talent2']
@@ -75,13 +85,14 @@ function convertTalentsToArray(talents: Record<string, number> | string[] | unde
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
-	onNavigateToLoad: () => void;
+	onNavigateToLoad?: (character: SavedCharacter) => void;
+	navigateDelayMs?: number;
 }
 
 export const completeCharacter = async (
 	characterState: any,
 	callbacks: CharacterCompletionCallbacks
-): Promise<void> => {
+): Promise<SavedCharacter | null> => {
 	try {
 		// Build the enhanced data for calculation using native objects
 		const enhancedData = convertToEnhancedBuildData({
@@ -192,6 +203,25 @@ export const completeCharacter = async (
 				calculationResult.stats.finalMoveSpeed
 			),
 			holdBreath: calculationResult.stats.finalMight,
+			resistances: calculationResult.resistances.map((resistance) => ({
+				type: resistance.type,
+				value: resistance.value,
+				source: sourceName(resistance.source)
+			})),
+			vulnerabilities: calculationResult.vulnerabilities.map((vulnerability) => ({
+				type: vulnerability.type,
+				value: vulnerability.value,
+				source: sourceName(vulnerability.source)
+			})),
+			senses: calculationResult.senses.map((sense) => ({
+				type: sense.type,
+				range: sense.range,
+				source: sourceName(sense.source)
+			})),
+			combatTraining: calculationResult.combatTraining.map((training) => ({
+				type: training.type,
+				source: sourceName(training.source)
+			})),
 
 			// Derived thresholds and bloodied values
 			finalPDHeavyThreshold: calculationResult.stats.finalPD + 5,
@@ -259,7 +289,8 @@ export const completeCharacter = async (
 			createdAt: new Date().toISOString(),
 			lastModified: new Date().toISOString(),
 			completedAt: new Date().toISOString(),
-			schemaVersion: CURRENT_SCHEMA_VERSION
+			schemaVersion: CURRENT_SCHEMA_VERSION,
+			rulesVersion: CURRENT_RULES_VERSION
 		};
 
 		logger.debug('calculation', 'Character stats calculated', {
@@ -303,8 +334,7 @@ export const completeCharacter = async (
 						.map((spellIdOrName: string) => {
 							// Try to find by ID first, then by name
 							const fullSpell =
-								allSpells.find((s) => s.id === spellIdOrName) ||
-								allSpells.find((s) => s.name === spellIdOrName);
+								getSpellById(spellIdOrName) || allSpells.find((s) => s.name === spellIdOrName);
 							if (fullSpell) {
 								return {
 									id: `spell_${Date.now()}_${Math.random()}`,
@@ -372,8 +402,11 @@ export const completeCharacter = async (
 									name: fullManeuver.name,
 									type: fullManeuver.type,
 									cost: fullManeuver.cost,
+									range: fullManeuver.range,
 									description: fullManeuver.description,
 									isReaction: fullManeuver.isReaction,
+									trigger: fullManeuver.trigger,
+									enhancements: fullManeuver.enhancements,
 									notes: ''
 								};
 							}
@@ -418,16 +451,20 @@ export const completeCharacter = async (
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');
 
-		// Navigate to load characters page after a short delay
-		setTimeout(() => {
-			logger.debug('ui', 'Navigating to character load page');
-			callbacks.onNavigateToLoad();
-		}, 1500);
+		if (callbacks.onNavigateToLoad) {
+			setTimeout(() => {
+				logger.debug('ui', 'Navigating after character completion');
+				callbacks.onNavigateToLoad?.(completedCharacter);
+			}, callbacks.navigateDelayMs ?? 1500);
+		}
+
+		return completedCharacter;
 	} catch (error) {
 		logger.error('ui', 'Error completing character', {
 			error: error instanceof Error ? error.message : String(error),
 			stack: error instanceof Error ? error.stack : undefined
 		});
 		callbacks.onShowSnackbar('Error creating character. Please try again.');
+		return null;
 	}
 };

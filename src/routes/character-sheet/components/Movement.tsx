@@ -154,6 +154,16 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 	const vulnerabilities = calculation.vulnerabilities || [];
 	const combatTraining = calculation.combatTraining || [];
 
+	const formatResistance = (type: string, value: string) => {
+		const normalizedType = type.toLowerCase();
+		if (value === 'true') {
+			if (normalizedType === 'physical') return 'PDR';
+			if (normalizedType === 'elemental') return 'EDR';
+			if (normalizedType === 'mystical' || normalizedType === 'mental') return 'MDR';
+		}
+		return `Resist ${value === 'half' ? '(Half)' : `(${value})`}`;
+	};
+
 	// Split movements: always show climb/swim, only show others if granted
 	const alwaysShowTypes = ['climb', 'swim'];
 	const optionalTypes = ['fly', 'burrow', 'glide'];
@@ -171,7 +181,9 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 		<StyledMovementContainer $isMobile={effectiveIsMobile}>
 			<StyledMovementGrid $isMobile={effectiveIsMobile}>
 				<StyledMovementStat $isMobile={effectiveIsMobile}>
-					<StyledMovementLabel $isMobile={effectiveIsMobile}>{t('characterSheet.movementMoveSpeed')}</StyledMovementLabel>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>
+						{t('characterSheet.movementMoveSpeed')}
+					</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.move_speed
@@ -184,7 +196,9 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 					</Tooltip>
 				</StyledMovementStat>
 				<StyledMovementStat $isMobile={effectiveIsMobile}>
-					<StyledMovementLabel $isMobile={effectiveIsMobile}>{t('characterSheet.movementJumpDistance')}</StyledMovementLabel>
+					<StyledMovementLabel $isMobile={effectiveIsMobile}>
+						{t('characterSheet.movementJumpDistance')}
+					</StyledMovementLabel>
 					<Tooltip
 						content={
 							breakdowns?.jump_distance
@@ -207,11 +221,7 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 					{climbSwimMovements.map((m) => {
 						const isDefault = (m as any).isDefault;
 						return (
-							<Tooltip
-								key={m.type}
-								content={`Source: ${m.source.name}`}
-								position="top"
-							>
+							<Tooltip key={m.type} content={`Source: ${m.source.name}`} position="top">
 								<AltMovementRow $isDefault={isDefault}>
 									<AltMovementType $isDefault={isDefault}>{m.type}</AltMovementType>
 									<AltMovementSpeed $isDefault={isDefault}>
@@ -225,11 +235,7 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 
 					{/* Fly, Burrow, Glide — only if granted */}
 					{grantedOptionalMovements.map((m) => (
-						<Tooltip
-							key={m.type}
-							content={`Source: ${m.source.name}`}
-							position="top"
-						>
+						<Tooltip key={m.type} content={`Source: ${m.source.name}`} position="top">
 							<AltMovementRow>
 								<AltMovementType>{m.type}</AltMovementType>
 								<AltMovementSpeed>{m.speed} Spaces</AltMovementSpeed>
@@ -262,9 +268,7 @@ const Movement: React.FC<MovementProps> = ({ isMobile }) => {
 						<Tooltip key={r.type} content={`Source: ${r.source.name}`} position="top">
 							<InfoRow>
 								<InfoType>{r.type}</InfoType>
-								<ResistanceValue>
-									Resist {r.value === 'half' ? '(Half)' : `(${r.value})`}
-								</ResistanceValue>
+								<ResistanceValue>{formatResistance(r.type, r.value)}</ResistanceValue>
 							</InfoRow>
 						</Tooltip>
 					))}

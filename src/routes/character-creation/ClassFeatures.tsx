@@ -19,6 +19,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 function ClassFeatures() {
 	const { state, dispatch } = useCharacter();
 
+	const formatEquipmentValue = (value?: string | string[]) =>
+		Array.isArray(value) ? value.join(', ') : value;
+	const optionTestId = (choiceId: string, value: string) =>
+		`feature-choice-${choiceId}-${value.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
 	// Helper function to render a single choice card
 	const renderChoiceCard = (choice: any) => (
 		<Card key={choice.id} className="mb-4 border-2">
@@ -59,6 +64,9 @@ function ClassFeatures() {
 										value={option.value}
 										checked={isSelected}
 										onChange={() => handleFeatureChoice(choice.id, option.value)}
+										data-testid={optionTestId(choice.id, option.value)}
+										data-choice-id={choice.id}
+										data-option-id={option.value}
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">
@@ -113,6 +121,9 @@ function ClassFeatures() {
 										onChange={(e) =>
 											handleMultipleFeatureChoice(choice.id, option.value, e.target.checked)
 										}
+										data-testid={optionTestId(choice.id, option.value)}
+										data-choice-id={choice.id}
+										data-option-id={option.value}
 										className="accent-primary mt-1 h-4 w-4 shrink-0 cursor-pointer"
 									/>
 									<div className="flex flex-col gap-1">
@@ -239,6 +250,41 @@ function ClassFeatures() {
 	if (!selectedClass || !selectedClassFeatures) {
 		return null; // Don't render anything when no class is selected
 	}
+
+	const startingEquipmentItems = selectedClassFeatures.startingEquipment
+		? [
+				{
+					label: 'Arsenal',
+					value:
+						selectedClassFeatures.startingEquipment.arsenal ??
+						selectedClassFeatures.startingEquipment.weaponsOrShields
+				},
+				{
+					label: 'Ranged Weapons',
+					value:
+						selectedClassFeatures.startingEquipment.rangedWeapons ??
+						selectedClassFeatures.startingEquipment.rangedWeapon
+				},
+				{
+					label: 'Spell Focuses',
+					value:
+						selectedClassFeatures.startingEquipment.spellFocuses ??
+						selectedClassFeatures.startingEquipment.spellFocus
+				},
+				{
+					label: 'Armor',
+					value: selectedClassFeatures.startingEquipment.armor
+				},
+				{
+					label: 'Trade Tools',
+					value: selectedClassFeatures.startingEquipment.tradeTools
+				},
+				{
+					label: 'Adventuring Pack',
+					value: selectedClassFeatures.startingEquipment.packs
+				}
+			].filter((item): item is { label: string; value: string | string[] } => Boolean(item.value))
+		: [];
 
 	// Get features up to current level, grouped by level
 	const featuresByLevel: Record<number, typeof selectedClassFeatures.coreFeatures> = {};
@@ -469,40 +515,18 @@ function ClassFeatures() {
 					<div className="hover:border-primary mb-4 rounded-lg border border-white/50 bg-transparent p-6 transition-colors">
 						<h4 className="text-primary mb-2 text-xl font-bold">Equipment Package</h4>
 						<div className="border-t border-white/10 pt-3">
-							{selectedClassFeatures.startingEquipment.weaponsOrShields && (
-								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-									<h6 className="text-primary text-sm font-semibold">Weapons/Shields</h6>
-									<p className="text-foreground/70 text-sm">
-										{Array.isArray(selectedClassFeatures.startingEquipment.weaponsOrShields)
-											? selectedClassFeatures.startingEquipment.weaponsOrShields.join(', ')
-											: selectedClassFeatures.startingEquipment.weaponsOrShields}
-									</p>
+							{startingEquipmentItems.map((item, index) => (
+								<div
+									key={item.label}
+									className={cn(
+										'border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2',
+										index < startingEquipmentItems.length - 1 && 'mb-2'
+									)}
+								>
+									<h6 className="text-primary text-sm font-semibold">{item.label}</h6>
+									<p className="text-foreground/70 text-sm">{formatEquipmentValue(item.value)}</p>
 								</div>
-							)}
-							{selectedClassFeatures.startingEquipment.rangedWeapon && (
-								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-									<h6 className="text-primary text-sm font-semibold">Ranged Weapon</h6>
-									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.startingEquipment.rangedWeapon}
-									</p>
-								</div>
-							)}
-							{selectedClassFeatures.startingEquipment.armor && (
-								<div className="border-primary/40 mb-2 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-									<h6 className="text-primary text-sm font-semibold">Armor</h6>
-									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.startingEquipment.armor}
-									</p>
-								</div>
-							)}
-							{selectedClassFeatures.startingEquipment.packs && (
-								<div className="border-primary/40 rounded border-l-2 bg-amber-900/10 px-3 py-2">
-									<h6 className="text-primary text-sm font-semibold">Adventure Packs</h6>
-									<p className="text-foreground/70 text-sm">
-										{selectedClassFeatures.startingEquipment.packs}
-									</p>
-								</div>
-							)}
+							))}
 						</div>
 					</div>
 				</section>

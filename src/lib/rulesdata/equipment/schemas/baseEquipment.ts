@@ -1,10 +1,23 @@
 /**
  * @file src/lib/rulesdata/equipment/schemas/baseEquipment.ts
  * @description Base schemas and types for all equipment customization.
- * DC20 Rules Version: 0.10
+ * DC20 Rules Version: 0.10.5
  */
 
-export const EQUIPMENT_RULES_VERSION = '0.10';
+import type { Effect } from '../../schemas/character.schema';
+
+export const EQUIPMENT_RULES_VERSION = '0.10.5';
+export const EQUIPMENT_RULES_SOURCE = {
+	version: EQUIPMENT_RULES_VERSION,
+	name: 'DC20 RPG 0.10.5 Beta v1',
+	path: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
+	sections: {
+		weapons: 'Equipment > Weapon Properties / Creating Weapons',
+		spellFocuses: 'Equipment > Spell Focus Properties / Creating Spell Focuses',
+		armor: 'Equipment > Armor Properties / Creating Armor',
+		shields: 'Equipment > Shield Properties / Creating Shields'
+	}
+} as const;
 
 // ================================================================= //
 // SHARED TYPES
@@ -21,10 +34,16 @@ export interface BaseProperty {
 	cost: PropertyCost;
 	/** Properties that must be present before this can be added */
 	requires?: string[];
+	/** At least one of these properties must be present before this can be added */
+	requiresOneOf?: string[];
 	/** Properties that cannot coexist with this one */
 	excludes?: string[];
 	/** Maximum times this property can be taken (default: 1) */
 	maxStacks?: number;
+	/** Canonical mechanical effects contributed when the equipment is equipped/wielded */
+	effects?: Effect[];
+	/** Legacy display text for properties that are not yet numeric calculator effects */
+	effect?: string;
 }
 
 /** Base interface for all custom equipment */
@@ -35,6 +54,8 @@ export interface BaseEquipment {
 	properties: string[]; // Array of property IDs
 	pointsSpent: number;
 	maxPoints: number;
+	/** Canonical effects this item contributes when equipped/wielded */
+	effects?: Effect[];
 	createdAt: string;
 	updatedAt: string;
 }

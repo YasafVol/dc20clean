@@ -9,16 +9,16 @@ export const championClass: ClassDefinition = {
 	className: 'Champion',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons or Shields'],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
-		armor: ['1 set of any Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal: 'Choose 3 of any of the following items: Weapon or Shield.',
+		armor: '1 set of Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Carpenter's Tools, Cartographer's Tools, Gaming Kit, or Mason's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['All_Armors'],
+			armor: ['All_Armor'],
 			shields: ['All_Shields']
 		},
 		maneuvers: {
@@ -40,7 +40,7 @@ export const championClass: ClassDefinition = {
 			description: 'You gain extensive combat training.',
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armors', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
 				{
 					type: 'GRANT_ABILITY',
@@ -91,13 +91,13 @@ export const championClass: ClassDefinition = {
 				{
 					name: 'Combat Readiness',
 					description:
-						'At the start of your first turn in Combat, you gain one of the following benefits: Brace (Dodge Action + ADV on next Save) or Advance (Move Action + ADV on next Physical Check).',
+						'At the start of your first turn in Combat, you gain one of the following benefits: Fortify (Dodge Action + ADV on next Save) or Advance (Move Action + ADV on next Martial Attack or Physical Check).',
 					effects: [
 						{
 							type: 'GRANT_ABILITY',
-							target: 'combat_readiness_brace',
+							target: 'combat_readiness_fortify',
 							value:
-								'First turn in Combat: choose Brace (Dodge + ADV on Save) or Advance (Move + ADV on Physical Check).'
+								'First turn in Combat: choose Fortify (Dodge + ADV on next Save) or Advance (Move + ADV on next Martial Attack or Physical Check).'
 						}
 					]
 				},
@@ -148,17 +148,38 @@ export const championClass: ClassDefinition = {
 		},
 		{
 			id: 'champion_level_5_placeholder',
-			featureName: 'Veteran Tactics (Placeholder)',
+			featureName: 'Expert Champion',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'champion_level_8_capstone_placeholder',
-			featureName: 'Unbreakable (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Champion Class Features.',
+			benefits: [
+				{
+					name: 'Master-at-Arms',
+					description: 'You learn 2 additional Maneuvers.',
+					effects: [{ type: 'GRANT_MANEUVERS', target: 'any_maneuver', value: 2 }]
+				},
+				{
+					name: 'Fighting Spirit',
+					description: 'Second Wind restores an additional 2 HP and 2 SP.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_champion_fighting_spirit',
+							value: 'Second Wind restores an additional 2 HP and 2 SP.'
+						}
+					]
+				},
+				{
+					name: 'Adaptive Tactics',
+					description: 'Your Tactical Die is a d10.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_champion_adaptive_tactics',
+							value: 'Your Tactical Die is d10.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [

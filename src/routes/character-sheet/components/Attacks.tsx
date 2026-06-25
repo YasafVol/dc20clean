@@ -186,7 +186,9 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	return (
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
-				<StyledAttacksTitle $isMobile={effectiveIsMobile}>{t('characterSheet.attacksTitle')}</StyledAttacksTitle>
+				<StyledAttacksTitle $isMobile={effectiveIsMobile}>
+					{t('characterSheet.attacksTitle')}
+				</StyledAttacksTitle>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<FilterToggleRow>
 						<input
@@ -212,30 +214,38 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
 				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-					<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.attacksColumnWeapon')}</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						{t('characterSheet.attacksColumnBaseDmg').split(' ').map((word, i) => (
-							<React.Fragment key={i}>
-								{word}
-								{i === 0 && <br />}
-							</React.Fragment>
-						))}
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.attacksColumnWeapon')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						{t('characterSheet.attacksColumnHeavyDmg').split(' ').map((word, i) => (
-							<React.Fragment key={i}>
-								{word}
-								{i === 0 && <br />}
-							</React.Fragment>
-						))}
+						{t('characterSheet.attacksColumnBaseDmg')
+							.split(' ')
+							.map((word, i) => (
+								<React.Fragment key={i}>
+									{word}
+									{i === 0 && <br />}
+								</React.Fragment>
+							))}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
-						{t('characterSheet.attacksColumnBrutalDmg').split(' ').map((word, i) => (
-							<React.Fragment key={i}>
-								{word}
-								{i === 0 && <br />}
-							</React.Fragment>
-						))}
+						{t('characterSheet.attacksColumnHeavyDmg')
+							.split(' ')
+							.map((word, i) => (
+								<React.Fragment key={i}>
+									{word}
+									{i === 0 && <br />}
+								</React.Fragment>
+							))}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+						{t('characterSheet.attacksColumnBrutalDmg')
+							.split(' ')
+							.map((word, i) => (
+								<React.Fragment key={i}>
+									{word}
+									{i === 0 && <br />}
+								</React.Fragment>
+							))}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
 						{t('characterSheet.attacksColumnType')}

@@ -322,8 +322,11 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 						{(rollMode === 'advantage' || rollMode === 'disadvantage') && (
 							<StyledCountControlsContainer>
 								<StyledCountLabel>
-									{t('characterSheet.diceCountLabel', { 
-										mode: rollMode === 'advantage' ? t('characterSheet.diceAdvantage') : t('characterSheet.diceDisadvantage')
+									{t('characterSheet.diceCountLabel', {
+										mode:
+											rollMode === 'advantage'
+												? t('characterSheet.diceAdvantage')
+												: t('characterSheet.diceDisadvantage')
 									})}
 								</StyledCountLabel>
 								<StyledCountButton
@@ -352,10 +355,11 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 									+
 								</StyledCountButton>
 								<StyledCountDescription>
-									({rollMode === 'advantage' 
+									(
+									{rollMode === 'advantage'
 										? t('characterSheet.diceRollTakeHighest', { count: advantageCount })
-										: t('characterSheet.diceRollTakeLowest', { count: disadvantageCount })
-									})
+										: t('characterSheet.diceRollTakeLowest', { count: disadvantageCount })}
+									)
 								</StyledCountDescription>
 							</StyledCountControlsContainer>
 						)}
@@ -387,7 +391,9 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 									</StyledRemoveDiceButton>
 								</StyledDiceItem>
 							))}
-							<StyledClearAllButton onClick={clearDice}>{t('characterSheet.diceClearAll')}</StyledClearAllButton>
+							<StyledClearAllButton onClick={clearDice}>
+								{t('characterSheet.diceClearAll')}
+							</StyledClearAllButton>
 						</StyledDiceList>
 					)}
 
@@ -400,14 +406,18 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 								</StyledDiceIcon>
 								{rollMode !== 'normal' && (
 									<StyledRollModeText>
-										{rollMode === 'advantage' && t('characterSheet.diceAdvantageCount', { count: advantageCount })}
-										{rollMode === 'disadvantage' && t('characterSheet.diceDisadvantageCount', { count: disadvantageCount })}
+										{rollMode === 'advantage' &&
+											t('characterSheet.diceAdvantageCount', { count: advantageCount })}
+										{rollMode === 'disadvantage' &&
+											t('characterSheet.diceDisadvantageCount', { count: disadvantageCount })}
 									</StyledRollModeText>
 								)}
 							</>
 						)}
 						{rollMode === 'no-d20' && additionalDice.length === 0 && (
-							<StyledEmptyStateMessage>{t('characterSheet.diceEmptyState')}</StyledEmptyStateMessage>
+							<StyledEmptyStateMessage>
+								{t('characterSheet.diceEmptyState')}
+							</StyledEmptyStateMessage>
 						)}
 						{additionalDice.map(({ type, count }) => (
 							<StyledAdditionalDiceContainer key={type}>
@@ -468,7 +478,8 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 							<div className="section-label">{t('characterSheet.diceRecentRolls')}</div>
 							{rollHistory.slice(0, 3).map((roll, index) => (
 								<StyledHistoryEntry key={index}>
-									{roll.mode !== 'normal' && `${roll.mode} `}{t('characterSheet.diceTotal', { total: roll.total })}
+									{roll.mode !== 'normal' && `${roll.mode} `}
+									{t('characterSheet.diceTotal', { total: roll.total })}
 								</StyledHistoryEntry>
 							))}
 						</StyledDiceHistory>

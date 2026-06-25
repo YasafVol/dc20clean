@@ -7,15 +7,16 @@ import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter'
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
 import Spellbook from './routes/spellbook/Spellbook.tsx';
+import MartialManual from './routes/martial-manual/MartialManual.tsx';
 import CustomEquipment from './routes/custom-equipment/CustomEquipment.tsx';
 import Conditions from './routes/conditions/Conditions.tsx';
 import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
 import { EncounterList, EncounterPlanner } from './routes/dm/encounters';
-import SystemsExplorer from './routes/systems/SystemsExplorer.tsx';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
 import TopLeftToolbar from './components/TopLeftToolbar.tsx';
+import LanguageSwitcher from './components/LanguageSwitcher.tsx';
 
 // Import fonts for GlobalStyle
 
@@ -93,9 +94,10 @@ function App() {
 				{/* Fixed top-right auth status on all pages */}
 				<FixedAuthStatus>
 					<AuthStatus />
+					<LanguageSwitcher />
 				</FixedAuthStatus>
 				<BrowserRouter>
-					{/* Fixed top-left toolbar with language switcher and back button */}
+					{/* Fixed top-left toolbar with back button */}
 					<TopLeftToolbar />
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
@@ -110,6 +112,7 @@ function App() {
 						/>
 						<Route path="/load-character" element={<LoadCharacter />} />
 						<Route path="/spellbook" element={<Spellbook />} />
+						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
 						<Route path="/custom-equipment" element={<CustomEquipment />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />
@@ -127,7 +130,6 @@ function App() {
 						<Route path="/dm/monsters/:id" element={<MonsterDesigner />} />
 						<Route path="/dm/encounters" element={<EncounterList />} />
 						<Route path="/dm/encounters/:id" element={<EncounterPlanner />} />
-						<Route path="/systems" element={<SystemsExplorer />} />
 					</Routes>
 				</BrowserRouter>
 			</StyledApp>

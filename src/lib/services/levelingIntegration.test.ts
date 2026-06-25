@@ -44,8 +44,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Verify budgets (levelBudgets is optional)
 			expect(result.levelBudgets?.totalTalents).toBe(1);
-			// Note: pathPoints is not accumulated (uses pathProgression: true flag)
-			expect(result.levelBudgets?.totalPathPoints).toBe(0);
+			expect(result.levelBudgets?.totalPathPoints).toBe(1);
 
 			// Verify path bonuses applied
 			expect(result.stats.finalSPMax).toBeGreaterThanOrEqual(2); // Base + path bonus
@@ -147,8 +146,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
 			expect(result.levelBudgets?.totalTalents).toBe(1);
-			// Note: pathPoints not tracked numerically in progression (uses boolean flag)
-			expect(result.levelBudgets?.totalPathPoints).toBe(0);
+			expect(result.levelBudgets?.totalPathPoints).toBe(1);
 			// Verify levelBudgets exists
 			expect(result.levelBudgets).toBeDefined();
 		});
@@ -182,7 +180,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Note: talentsUsed/pathPointsUsed are not tracked in current implementation
 			// Verify basic calculation success and budget totals
-			// DC20 v0.10: Talents gained at L2, L4, L7, L10. At L3: only 1 talent (from L2)
+			// DC20 v0.10.5: Talents gained at L2, L4, L6, L8. At L3: only 1 talent (from L2)
 			expect(result.levelBudgets?.totalTalents).toBe(1);
 
 			// Verify effects applied
@@ -303,10 +301,9 @@ describe('Leveling System Integration (M4.1f)', () => {
 			const enhanced = convertToEnhancedBuildData(character);
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
-			// DC20 v0.10: Talents gained at L2, L4, L7, L10. At L3: only 1 talent (from L2)
+			// DC20 v0.10.5: Talents gained at L2, L4, L6, L8. At L3: only 1 talent (from L2)
 			expect(result.levelBudgets?.totalTalents).toBe(1);
-			// Note: pathPoints not tracked numerically (uses boolean flag)
-			expect(result.levelBudgets?.totalPathPoints).toBe(0);
+			expect(result.levelBudgets?.totalPathPoints).toBe(1);
 			// Verify levelBudgets exists
 			expect(result.levelBudgets).toBeDefined();
 		});
@@ -443,7 +440,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Verify calculation successful with talents specified
 			expect(result).toBeDefined();
-			// DC20 v0.10: Talents gained at L2, L4. At L4: 2 talents total
+			// DC20 v0.10.5: Talents gained at L2, L4. At L4: 2 talents total
 			expect(result.levelBudgets?.totalTalents).toBe(2);
 			expect(result.levelBudgets?.totalSkillPoints).toBeGreaterThanOrEqual(0);
 		});
@@ -478,7 +475,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Verify calculation successful with mixed talents
 			expect(result).toBeDefined();
-			// DC20 v0.10: Talents gained at L2, L4. At L3: 1 talent
+			// DC20 v0.10.5: Talents gained at L2, L4. At L3: 1 talent
 			expect(result.levelBudgets?.totalTalents).toBe(1);
 		});
 
@@ -544,7 +541,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
 			// Note: talentsRemaining/pathPointsRemaining not tracked in current implementation
-			// DC20 v0.10: Talents gained at L2, L4. At L3: 1 talent
+			// DC20 v0.10.5: Talents gained at L2, L4. At L3: 1 talent
 			expect(result.levelBudgets?.totalTalents).toBe(1);
 		});
 
@@ -574,9 +571,9 @@ describe('Leveling System Integration (M4.1f)', () => {
 			const result = calculateCharacterWithBreakdowns(enhanced);
 
 			// Note: talentsRemaining/pathPointsRemaining not tracked in current implementation
-			// DC20 v0.10: Talents gained at L2, L4. At L3: 1 talent
+			// DC20 v0.10.5: Talents gained at L2, L4. At L3: 1 talent
 			expect(result.levelBudgets?.totalTalents).toBe(1);
-			expect(result.levelBudgets?.totalPathPoints).toBe(0); // pathPoints not tracked numerically
+			expect(result.levelBudgets?.totalPathPoints).toBe(1);
 		});
 
 		it('should enforce mastery caps for level', () => {
@@ -644,11 +641,10 @@ describe('Leveling System Integration (M4.1f)', () => {
 
 			// Level 3 should have more HP than Level 1
 			expect(level3.stats.finalHPMax).toBeGreaterThan(level1.stats.finalHPMax);
-			// Level 3 should have more talents (L1: 0, L3: 2)
+			// Level 3 should have more talents (L1: 0, L3: 1)
 			expect(level3.levelBudgets?.totalTalents).toBeGreaterThan(
 				level1.levelBudgets?.totalTalents ?? 0
 			);
-			// Note: pathPoints not tracked numerically (uses boolean flag)
 			expect(level3.resolvedFeatures?.unlockedFeatures?.length ?? 0).toBeGreaterThan(
 				level1.resolvedFeatures?.unlockedFeatures?.length ?? 0
 			);
@@ -696,7 +692,7 @@ describe('Leveling System Integration (M4.1f)', () => {
 				})
 			);
 
-			// DC20 v0.10: Talents gained at L2, L4, L7, L10
+			// DC20 v0.10.5: Talents gained at L2, L4, L6, L8
 			// L1->L2: +1 talent, L2->L3: +0 talents (subclass level, no talent)
 			expect(
 				(level2.levelBudgets?.totalTalents ?? 0) - (level1.levelBudgets?.totalTalents ?? 0)
@@ -705,11 +701,9 @@ describe('Leveling System Integration (M4.1f)', () => {
 				(level3.levelBudgets?.totalTalents ?? 0) - (level2.levelBudgets?.totalTalents ?? 0)
 			).toBe(0);
 
-			// Note: pathPoints not tracked numerically (uses pathProgression: true flag)
-			// All pathPoints values are 0
 			expect(level1.levelBudgets?.totalPathPoints).toBe(0);
-			expect(level2.levelBudgets?.totalPathPoints).toBe(0);
-			expect(level3.levelBudgets?.totalPathPoints).toBe(0);
+			expect(level2.levelBudgets?.totalPathPoints).toBe(1);
+			expect(level3.levelBudgets?.totalPathPoints).toBe(1);
 		});
 	});
 });

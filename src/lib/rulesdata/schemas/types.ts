@@ -124,10 +124,15 @@ export interface ITradeData {
 	tools?: string; // Required tools for the trade
 }
 
+export type LanguageFamily = 'mortal' | 'exotic' | 'divine' | 'outer';
+
 // Interface for Language Data
 export interface ILanguageData {
 	id: string;
 	name: string;
-	type: 'standard' | 'exotic'; // Type of language
+	family: LanguageFamily;
 	description: string;
+	typicalSpeakers: string;
+	checkDc: 10 | 15 | 20;
+	legacyIds?: string[];
 }

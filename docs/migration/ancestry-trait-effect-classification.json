@@ -1,0 +1,2026 @@
+{
+	"generated": "2026-06-19",
+	"counts": {
+		"sheet": 56,
+		"mixed": 11,
+		"ingame": 111,
+		"flavor": 0
+	},
+	"scoreCounts": {
+		"1": 4,
+		"2": 12,
+		"3": 100,
+		"4": 36,
+		"5": 26
+	},
+	"records": [
+		{
+			"ancestry": "Human",
+			"id": "human_attribute_increase",
+			"name": "Attribute Increase",
+			"cost": 2,
+			"effects": ["MODIFY_STAT:attributePoints:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_skill_expertise",
+			"name": "Skill Expertise",
+			"cost": 2,
+			"effects": ["INCREASE_SKILL_MASTERY_CAP:1:1", "MODIFY_STAT:skillPoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"skillPoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_resolve",
+			"name": "Human Resolve",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:deathThresholdModifier:1"],
+			"category": "ingame",
+			"score": 1,
+			"notes": ["deathThresholdModifier modifier is not calculator-backed today"]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_undying",
+			"name": "Undying",
+			"cost": 0,
+			"effects": ["GRANT_ADV_ON_SAVE:Doomed:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"effects": ["INCREASE_TRADE_MASTERY_CAP:1:1", "MODIFY_STAT:tradePoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"tradePoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_determination",
+			"name": "Human Determination",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:determination:Once per Combat, you can give yourself ADV on an Attack Check or Spell Check while Bloodied."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_unbreakable",
+			"name": "Unbreakable",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_SAVE:Death_Save:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Human",
+			"id": "human_attribute_decrease",
+			"name": "Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_elven_will",
+			"name": "Elven Will",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_SAVE:Charmed:ADV", "GRANT_ADV_ON_SAVE:Sleep_Magic:ADV"],
+			"category": "ingame",
+			"score": 2,
+			"notes": [
+				"condition/save advantage is summarized, not roll-automated",
+				"save advantage is manual; target is not a canonical condition key"
+			]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_nimble",
+			"name": "Nimble",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:nimble:When you take the Dodge Action, you gain the benefits of the Full Dodge Action."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_agile_explorer",
+			"name": "Agile Explorer",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:agile_explorer:You are not affected by Difficult Terrain."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_discerning_sight",
+			"name": "Discerning Sight",
+			"cost": 0,
+			"effects": ["GRANT_ADV_ON_CHECK:Discern Visual Illusions:ADV"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_quick_reactions",
+			"name": "Quick Reactions",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:pd:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional pd modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_peerless_sight",
+			"name": "Peerless Sight",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:peerless_sight:You do not have DisADV on Ranged Weapon Attacks at Long Range."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_climb_speed",
+			"name": "Climb Speed",
+			"cost": 1,
+			"effects": ["GRANT_MOVEMENT:climb:equal_to_speed"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_speed_increase",
+			"name": "Speed Increase",
+			"cost": 2,
+			"effects": ["MODIFY_STAT:moveSpeed:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_trade_expertise_elf",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"effects": ["INCREASE_TRADE_MASTERY_CAP:1:1", "MODIFY_STAT:tradePoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"tradePoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_plant_knowledge",
+			"name": "Plant Knowledge",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:plant_knowledge:You have ADV on Survival Checks in forests, jungles, and swamps, and ADV on Nature Checks about plants."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_brittle",
+			"name": "Brittle",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:ad:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["ad is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_frail",
+			"name": "Frail",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:hpMax:-2"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["hpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Elf",
+			"id": "elf_might_decrease",
+			"name": "Might Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_tough",
+			"name": "Tough",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:hpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["hpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_toxic_fortitude",
+			"name": "Toxic Fortitude",
+			"cost": 2,
+			"effects": ["GRANT_RESISTANCE:Poison:half", "GRANT_ADV_ON_SAVE:Poisoned:ADV"],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"GRANT_RESISTANCE is collected for sheet display",
+				"condition/save advantage is summarized, not roll-automated"
+			]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_physically_sturdy",
+			"name": "Physically Sturdy",
+			"cost": 2,
+			"effects": [
+				"GRANT_ADV_ON_SAVE:Impaired:ADV",
+				"GRANT_ADV_ON_SAVE:Deafened:ADV",
+				"GRANT_ADV_ON_SAVE:Petrified:ADV"
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_iron_stomach",
+			"name": "Iron Stomach",
+			"cost": 0,
+			"effects": [
+				"GRANT_ABILITY:iron_stomach:You have ADV on Saves against effects from consuming food or liquids."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_thick_skinned",
+			"name": "Thick-Skinned",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:ad:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional ad modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_natural_combatant",
+			"name": "Natural Combatant",
+			"cost": 1,
+			"effects": [
+				"GRANT_COMBAT_TRAINING:Heavy_Armor:true",
+				"GRANT_COMBAT_TRAINING:All_Shields:true"
+			],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_COMBAT_TRAINING is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_stone_blood",
+			"name": "Stone Blood",
+			"cost": 1,
+			"effects": [
+				"GRANT_ADV_ON_SAVE:Bleeding:ADV",
+				"GRANT_ABILITY:stone_blood:You can spend 1 AP to end the Bleeding Condition on yourself."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": [
+				"condition/save advantage is summarized, not roll-automated",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_minor_tremorsense",
+			"name": "Minor Tremorsense",
+			"cost": 1,
+			"effects": ["GRANT_SENSE:tremorsense:3"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_SENSE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_stubborn",
+			"name": "Stubborn",
+			"cost": 2,
+			"effects": [
+				"GRANT_ADV_ON_SAVE:Taunted:ADV",
+				"GRANT_ABILITY:stubborn:You have ADV on Saves against being forcibly moved."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": [
+				"condition/save advantage is summarized, not roll-automated",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_earthen_knowledge",
+			"name": "Earthen Knowledge",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:earthen_knowledge:You have ADV on Survival Checks in mountainous and subterranean environments and ADV on Nature Checks about stones, gems, and metals."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_charisma_attribute_decrease",
+			"name": "Charisma Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_short_legged",
+			"name": "Short-Legged",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:moveSpeed:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_small_sized",
+			"name": "Small-Sized",
+			"cost": -1,
+			"effects": ["SET_VALUE:size:small"],
+			"category": "ingame",
+			"score": 1,
+			"notes": ["size set-value is not calculator-backed today"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_elusive",
+			"name": "Elusive",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:elusive:When you take the Disengage Action, you gain the benefits of the Full Disengage Action."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_bravery",
+			"name": "Halfling Bravery",
+			"cost": 2,
+			"effects": [
+				"GRANT_ADV_ON_SAVE:Intimidated:ADV",
+				"GRANT_ADV_ON_SAVE:Terrified:ADV",
+				"GRANT_ADV_ON_SAVE:Frightened:ADV"
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_endurance",
+			"name": "Halfling Endurance",
+			"cost": 1,
+			"effects": ["GRANT_RESISTANCE:Exhaustion:condition"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_RESISTANCE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_deft_footwork",
+			"name": "Deft Footwork",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:deft_footwork:You can move through the space of a hostile creature 1 size larger as if it were Difficult Terrain."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_beast_whisperer",
+			"name": "Beast Whisperer",
+			"cost": 0,
+			"effects": ["GRANT_ABILITY:beast_whisperer:You can speak to Beasts in a limited manner."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_beast_insight",
+			"name": "Beast Insight",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:beast_insight:You can understand Beasts in a limited manner."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_burst_of_bravery",
+			"name": "Burst of Bravery",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:burst_of_bravery:Once per Combat: end Intimidated, Terrified, or Frightened on yourself for free."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"effects": ["INCREASE_TRADE_MASTERY_CAP:1:1", "MODIFY_STAT:tradePoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"tradePoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_critter_knowledge",
+			"name": "Critter Knowledge",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:critter_knowledge:You have ADV on Nature, Survival, and Animal Checks involving Small creatures."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_brittle",
+			"name": "Brittle",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:ad:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["ad is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_intelligence_attribute_decrease",
+			"name": "Intelligence Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Halfling",
+			"id": "halfling_short_legged",
+			"name": "Short-Legged",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:moveSpeed:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_small_sized",
+			"name": "Small-Sized",
+			"cost": -1,
+			"effects": ["SET_VALUE:size:small"],
+			"category": "ingame",
+			"score": 1,
+			"notes": ["size set-value is not calculator-backed today"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_escape_artist",
+			"name": "Escape Artist",
+			"cost": 2,
+			"effects": [
+				"GRANT_ADV_ON_CHECK:Avoid_or_Escape_Grapple_Restrained:ADV",
+				"GRANT_ADV_ON_SAVE:Avoid_or_Escape_Grapple_Restrained:ADV"
+			],
+			"category": "ingame",
+			"score": 2,
+			"notes": [
+				"check advantage is manual; no roll integration",
+				"save advantage is manual; target is not a canonical condition key"
+			]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_magnified_vision",
+			"name": "Magnified Vision",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:magnified_vision:You have ADV on Investigation Checks on things you are holding or touching."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_mental_clarity",
+			"name": "Mental Clarity",
+			"cost": 2,
+			"effects": ["GRANT_ADV_ON_SAVE:Dazed:ADV", "GRANT_ADV_ON_SAVE:Stunned:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_strong_minded",
+			"name": "Strong-Minded",
+			"cost": 1,
+			"effects": ["GRANT_RESISTANCE:Psychic:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_RESISTANCE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_predict_weather",
+			"name": "Predict Weather",
+			"cost": 0,
+			"effects": [
+				"GRANT_ABILITY:predict_weather:You can predict weather within 1 mile for the next hour and ignore DisADV from natural weather."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_mana_increase",
+			"name": "Mana Increase",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:mpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["mpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_trapper",
+			"name": "Trapper",
+			"cost": 1,
+			"effects": [
+				"GRANT_ADV_ON_CHECK:Investigation_to_spot_Traps:ADV",
+				"GRANT_ADV_ON_CHECK:Trickery_to_Hide_Traps:ADV"
+			],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_lightning_insulation",
+			"name": "Lightning Insulation",
+			"cost": 2,
+			"effects": [
+				"GRANT_RESISTANCE:Lightning:half",
+				"GRANT_ABILITY:lightning_insulation:You can't be struck by natural lightning."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"GRANT_RESISTANCE is collected for sheet display",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"effects": ["INCREASE_TRADE_MASTERY_CAP:1:1", "MODIFY_STAT:tradePoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"tradePoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_cursed_mind",
+			"name": "Cursed Mind",
+			"cost": -1,
+			"effects": ["GRANT_VULNERABILITY:Psychic:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_VULNERABILITY is collected for sheet display"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_rush",
+			"name": "Orc Rush",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:orc_rush:Once per Combat: spend 1 AP to gain Temp HP equal to Prime Modifier when moving toward enemy."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_brutal_strikes",
+			"name": "Brutal Strikes",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:brutal_strikes:+1 damage on Brutal or Critical Hits with Melee Attacks."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_tough",
+			"name": "Tough",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:hpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["hpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_reckless",
+			"name": "Reckless",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:pd:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["pd is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_darkvision",
+			"name": "Darkvision",
+			"cost": 1,
+			"effects": ["GRANT_SENSE:darkvision:10"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_SENSE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_draconic_resistance",
+			"name": "Draconic Resistance",
+			"cost": 2,
+			"effects": ["GRANT_RESISTANCE:Draconic_damage_type:half"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_RESISTANCE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_draconic_breath_weapon",
+			"name": "Draconic Breath Weapon",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:draconic_breath:Breath Weapon: 2 AP, once per Long Rest, regain on Initiative."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_thick_skinned",
+			"name": "Thick-Skinned",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:ad:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional ad modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_tough",
+			"name": "Tough",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:hpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["hpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_darkvision",
+			"name": "Darkvision",
+			"cost": 1,
+			"effects": ["GRANT_SENSE:darkvision:10"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_SENSE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_natural_weapon",
+			"name": "Natural Weapon",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:natural_weapon:2 Natural Weapons for Unarmed Strikes (1 damage, chosen type)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_radiant_resistance",
+			"name": "Radiant Resistance",
+			"cost": 1,
+			"effects": ["GRANT_RESISTANCE:Radiant:half"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_RESISTANCE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_celestial_magic",
+			"name": "Celestial Magic",
+			"cost": 2,
+			"effects": [
+				"GRANT_SPELL:Divine_Spell_List:1",
+				"GRANT_ABILITY:reduced_mp_cost:Once per Long Rest, cast chosen spell for 1 less MP (minimum 0)."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"spell grant is consumed by spell slot generation",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_healing_touch",
+			"name": "Healing Touch",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:healing_touch:Once per Combat, 1 AP: Touch heal (DC 10 Spell Check), 2+ HP on success, 1 HP on failure."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_divine_glow",
+			"name": "Divine Glow",
+			"cost": 0,
+			"effects": ["GRANT_ABILITY:divine_glow:Emit Bright Light in 5 Space radius at will."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_mana_increase",
+			"name": "Mana Increase",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:mpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["mpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_celestial_clarity",
+			"name": "Celestial Clarity",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_SAVE:Blinded:ADV", "GRANT_ADV_ON_SAVE:Deafened:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_angelic_insight",
+			"name": "Angelic Insight",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:angelic_insight:Once per Long Rest: ADV on Insight Check to detect lies."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_gift_of_the_angels",
+			"name": "Gift of the Angels",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:gift_of_angels:Once per Combat, 1 AP + 1 MP: Touch heal over time (1 HP/turn for 5 rounds)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_blinding_light",
+			"name": "Blinding Light",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:blinding_light:Once per Combat, 1 AP: Spell Check vs Physical Save to Blind target (5 Spaces, until end of next turn)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_glide_speed",
+			"name": "Glide Speed",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:glide:wings"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_pacifist",
+			"name": "Pacifist",
+			"cost": -1,
+			"effects": [
+				"GRANT_ABILITY:pacifist:-1 penalty to all Checks and Saves during first round of Combat."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Angelborn",
+			"id": "angelborn_umbral_weakness",
+			"name": "Umbral Weakness",
+			"cost": -1,
+			"effects": ["GRANT_VULNERABILITY:Umbral:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_VULNERABILITY is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dwarf",
+			"id": "dwarf_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"effects": ["INCREASE_TRADE_MASTERY_CAP:1:1", "MODIFY_STAT:tradePoints:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": [
+				"mastery cap validation recognizes this effect; paired point grant is calculator-backed when present",
+				"tradePoints is calculator-backed and appears in derived sheet/budget data"
+			]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_agility_attribute_decrease",
+			"name": "Agility Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_short_legged",
+			"name": "Short-Legged",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:moveSpeed:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Gnome",
+			"id": "gnome_storm_knowledge",
+			"name": "Storm Knowledge",
+			"cost": 1,
+			"effects": [
+				"GRANT_ADV_ON_CHECK:Survival:rainy_snowy_stormy_environments",
+				"GRANT_ADV_ON_CHECK:Knowledge:rain_snow_storms_information"
+			],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_already_cursed",
+			"name": "Already Cursed",
+			"cost": 0,
+			"effects": ["GRANT_ADV_ON_SAVE:Curses:ADV"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["save advantage is manual; target is not a canonical condition key"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_dash",
+			"name": "Orc Dash",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:orc_dash:Once per Combat: Use Minor Action to move toward enemy."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_finishing_blow",
+			"name": "Finishing Blow",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:finishing_blow:+1 damage to Well-Bloodied creatures."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_imposing_presence",
+			"name": "Imposing Presence",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:imposing_presence:Once per Combat: Force attacker to retarget (Charisma Save)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_intimidating_shout",
+			"name": "Intimidating Shout",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:intimidating_shout:Once per Combat, 1 AP: AoE Hinder effect (5 Spaces, Charisma Save vs Attack Check)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_orcish_resolve",
+			"name": "Orcish Resolve",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:orcish_resolve:+1 AP while on Death's Door."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Orc",
+			"id": "orc_provocation",
+			"name": "Provocation",
+			"cost": -1,
+			"effects": ["GRANT_ABILITY:provocation:DisADV on Checks and Saves vs Taunted."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_concussive_breath",
+			"name": "Concussive Breath",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:concussive_breath:Draconic Breath pushes targets (Physical Save, 1+ Spaces)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_draconic_affinity",
+			"name": "Draconic Affinity",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:draconic_affinity:+1 damage on next Draconic Breath when taking same damage type."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_draconic_protection",
+			"name": "Draconic Protection",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:draconic_protection:Once per Combat: +5 PD/AD to ally on Death's Door (20 Spaces)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_draconic_ward",
+			"name": "Draconic Ward",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:draconic_ward:Death's Door: +2 Temp HP, attackers take 1 Draconic damage."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_dying_breath",
+			"name": "Dying Breath",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:dying_breath:Death's Door: Regain and use Draconic Breath as Reaction (0 AP)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_glide_speed",
+			"name": "Glide Speed",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:glide:wings"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_guardians_bond",
+			"name": "Guardian's Bond",
+			"cost": -1,
+			"effects": [
+				"GRANT_ABILITY:guardians_bond:Take True damage (Prime Modifier) when ally enters Death's Door."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_mana_increase",
+			"name": "Mana Increase",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:mpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["mpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_reptilian_superiority",
+			"name": "Reptilian Superiority",
+			"cost": 0,
+			"effects": ["GRANT_ADV_ON_CHECK:Intimidation:vs_reptilian_medium_small"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Dragonborn",
+			"id": "dragonborn_second_breath",
+			"name": "Second Breath",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:second_breath:Draconic Breath twice per Combat, enhanced damage option."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_charming_gaze",
+			"name": "Charming Gaze",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:charming_gaze:Once per Long Rest, 1 AP: Charm target (Spell Check vs Charisma Save, 10 Spaces, 1 minute)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_divine_dampening",
+			"name": "Divine Dampening",
+			"cost": -1,
+			"effects": ["GRANT_ABILITY:divine_dampening:-1 HP from divine healing sources."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_fiendish_aura",
+			"name": "Fiendish Aura",
+			"cost": 1,
+			"effects": [
+				"GRANT_CANTRIP:Sorcery:1",
+				"GRANT_ABILITY:sorcery_energy_type:Must match Fiendish Origin energy type."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"spell grant creates a slot, but source/restriction is weakly encoded",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_fiendish_magic",
+			"name": "Fiendish Magic",
+			"cost": 2,
+			"effects": [
+				"GRANT_SPELL:Arcane_Destruction_Enchantment:1",
+				"GRANT_ABILITY:reduced_mp_cost:Once per Long Rest, cast chosen spell for 1 less MP (minimum 0)."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"spell grant creates a slot, but source/restriction is weakly encoded",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_fiendish_resistance",
+			"name": "Fiendish Resistance",
+			"cost": 2,
+			"effects": ["GRANT_RESISTANCE:Fiendish_damage_type:half"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_RESISTANCE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_glide_speed",
+			"name": "Glide Speed",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:glide:wings"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_infernal_bravery",
+			"name": "Infernal Bravery",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_SAVE:Intimidated:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_intimidator",
+			"name": "Intimidator",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:intimidator:Once per Combat: Intimidate as Minor Action."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_lights_bane",
+			"name": "Light's Bane",
+			"cost": 0,
+			"effects": ["GRANT_ABILITY:lights_bane:1 AP: Snuff out mundane light source (5 Spaces)."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_mana_increase",
+			"name": "Mana Increase",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:mpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["mpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_radiant_weakness",
+			"name": "Radiant Weakness",
+			"cost": -1,
+			"effects": ["GRANT_VULNERABILITY:Radiant:1"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_VULNERABILITY is collected for sheet display"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_silver_tongued",
+			"name": "Silver-Tongued",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:silver_tongued:Once per Long Rest: ADV on Influence Check to deceive."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Fiendborn",
+			"id": "fiendborn_superior_darkvision",
+			"name": "Superior Darkvision",
+			"cost": 1,
+			"effects": ["GRANT_SENSE:darkvision:20"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_SENSE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_brute",
+			"name": "Brute",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:brute:Once per Combat: Shove or Grapple as Minor Action."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_clumsiness",
+			"name": "Clumsiness",
+			"cost": -1,
+			"effects": ["GRANT_ABILITY:clumsiness:DisADV on Agility Checks."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_giants_fortitude",
+			"name": "Giant's Fortitude",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:giants_fortitude:Giant's Resolve benefits also apply while Well-Bloodied."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_giants_resolve",
+			"name": "Giant's Resolve",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:giants_resolve:Reduce all damage by 1 while on Death's Door."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_heavy_riser",
+			"name": "Heavy Riser",
+			"cost": -1,
+			"effects": ["GRANT_ABILITY:heavy_riser:4 Spaces of movement to stand up from Prone."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_intelligence_attribute_decrease",
+			"name": "Intelligence Attribute Decrease",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:attributePoints:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["attributePoints is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_mighty_hurl",
+			"name": "Mighty Hurl",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:mighty_hurl:Throw creatures +1 Space, objects +5 Spaces farther."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_mighty_leap",
+			"name": "Mighty Leap",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:mighty_leap:Use Might for Jump Distance and Falling damage."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_powerful_build",
+			"name": "Powerful Build",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:powerful_build:+1 Size but occupy 1 Size smaller space."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_strong_body",
+			"name": "Strong Body",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:strong_body:Once per Combat: Reduce damage by Might or Agility."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_titanic_toss",
+			"name": "Titanic Toss",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:titanic_toss:ADV on throwing creatures, no DisADV for long-range thrown weapons."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_unstoppable",
+			"name": "Unstoppable",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_SAVE:Slowed:ADV", "GRANT_ADV_ON_SAVE:Stunned:ADV"],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["condition/save advantage is summarized, not roll-automated"]
+		},
+		{
+			"ancestry": "Giantborn",
+			"id": "giantborn_unyielding_movement",
+			"name": "Unyielding Movement",
+			"cost": 0,
+			"effects": ["GRANT_ABILITY:unyielding_movement:Immune to Slowed 2 or higher."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_burrow_speed",
+			"name": "Burrow Speed",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:burrow:half_speed"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_camouflage",
+			"name": "Camouflage",
+			"cost": 2,
+			"effects": ["GRANT_ADV_ON_CHECK:Stealth:while_motionless"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_charge",
+			"name": "Charge",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:charge:+1 damage on Melee Attack after moving 2+ Spaces straight."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_climb_speed",
+			"name": "Climb Speed",
+			"cost": 1,
+			"effects": ["GRANT_MOVEMENT:climb:equal_to_speed"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_cold_resistance",
+			"name": "Cold Resistance",
+			"cost": 2,
+			"effects": [
+				"GRANT_RESISTANCE:Cold:half",
+				"GRANT_ABILITY:cold_exhaustion_resistance:Resistance to cold temperature Exhaustion."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"GRANT_RESISTANCE is collected for sheet display",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_darkvision",
+			"name": "Darkvision",
+			"cost": 1,
+			"effects": ["GRANT_SENSE:darkvision:10"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_SENSE is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_echolocation",
+			"name": "Echolocation",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:echolocation:1 AP: Blindsight 10 Spaces until next turn (100 Spaces audible)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_swim_speed",
+			"name": "Swim Speed",
+			"cost": 1,
+			"effects": ["GRANT_MOVEMENT:swim:equal_to_speed"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_fire_resistance",
+			"name": "Fire Resistance",
+			"cost": 2,
+			"effects": [
+				"GRANT_RESISTANCE:Fire:half",
+				"GRANT_ABILITY:heat_exhaustion_resistance:Resistance to hot temperature Exhaustion."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"GRANT_RESISTANCE is collected for sheet display",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_natural_armor",
+			"name": "Natural Armor",
+			"cost": 2,
+			"effects": ["MODIFY_STAT:ad:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional ad modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_keen_sense",
+			"name": "Keen Sense",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_CHECK:Awareness:chosen_sense"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_small_sized",
+			"name": "Small-Sized",
+			"cost": -1,
+			"effects": ["SET_VALUE:size:small"],
+			"category": "ingame",
+			"score": 1,
+			"notes": ["size set-value is not calculator-backed today"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_sunlight_sensitivity",
+			"name": "Sunlight Sensitivity",
+			"cost": -2,
+			"effects": [
+				"GRANT_ABILITY:sunlight_sensitivity:DisADV on Attacks and sight-based Awareness in sunlight."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_speed_increase",
+			"name": "Speed Increase",
+			"cost": 2,
+			"effects": ["MODIFY_STAT:moveSpeed:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_extended_natural_weapon",
+			"name": "Extended Natural Weapon",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:extended_natural_weapon:Natural Weapon gains Reach Property."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_fast_reflexes",
+			"name": "Fast Reflexes",
+			"cost": 2,
+			"effects": [
+				"GRANT_ADV_ON_CHECK:Initiative:ADV",
+				"GRANT_ABILITY:first_attack_adv:ADV on first Attack Check in Combat."
+			],
+			"category": "ingame",
+			"score": 2,
+			"notes": [
+				"check advantage is manual; no roll integration",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_flyby",
+			"name": "Flyby",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:flyby:No Opportunity Attacks when flying out of reach."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_full_flight",
+			"name": "Full Flight",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:fly:equal_to_speed"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_glide_speed",
+			"name": "Glide Speed",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:glide:wings"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_hard_shell",
+			"name": "Hard Shell",
+			"cost": 1,
+			"effects": [
+				"MODIFY_STAT:ad:1",
+				"MODIFY_STAT:moveSpeed:-1",
+				"GRANT_ABILITY:immune_flanking:Immune to being Flanked."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"conditional ad modifier is represented, but not automatically toggled by equipment/state",
+				"moveSpeed is calculator-backed and appears in derived sheet/budget data",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_hazardous_hide",
+			"name": "Hazardous Hide",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:hazardous_hide:Choose Corrosion, Piercing, or Poison. While physically Grappled, your Grappler takes 1 damage of the chosen type at the start of each of its turns; creatures Grappled by you take the same damage at the start of their turns."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_intimidating_shout",
+			"name": "Intimidating Shout",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:intimidating_shout:Once per Combat, 1 AP: AoE Hinder effect (5 Spaces)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_jumper",
+			"name": "Jumper",
+			"cost": 1,
+			"effects": [
+				"MODIFY_STAT:jumpDistance:2",
+				"GRANT_ABILITY:jump_minor_action:Jump Action as Minor Action."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"jumpDistance is calculator-backed and appears in derived sheet/budget data",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_limited_flight",
+			"name": "Limited Flight",
+			"cost": 2,
+			"effects": ["GRANT_MOVEMENT:limited_flight:vertical_ascent_hover"],
+			"category": "sheet",
+			"score": 4,
+			"notes": ["GRANT_MOVEMENT is collected for sheet display"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_long_limbed",
+			"name": "Long-Limbed",
+			"cost": 3,
+			"effects": ["GRANT_ABILITY:long_limbed:Melee reach +1 Space."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_mimicry",
+			"name": "Mimicry",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:mimicry:Mimic simple sounds and 3-word phrases (Trickery vs Insight)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_natural_projectile",
+			"name": "Natural Projectile",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:natural_projectile:Natural Weapon ranged attack (10 Spaces)."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_natural_weapon_style",
+			"name": "Natural Weapon Style",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:natural_weapon_style:Natural Weapon can use the chosen Style's Weapon Enhancement."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_powerful_build",
+			"name": "Powerful Build",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:powerful_build:+1 Size but occupy smaller space."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_prowler",
+			"name": "Prowler",
+			"cost": 1,
+			"effects": ["GRANT_ADV_ON_CHECK:Stealth:while_in_darkness"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_quick_reactions",
+			"name": "Quick Reactions",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:pd:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional pd modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_reckless",
+			"name": "Reckless",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:pd:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["pd is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_rend",
+			"name": "Rend",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:rend:1 AP: Natural Weapon causes Bleeding (Physical Save)."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_retractable_natural_weapon",
+			"name": "Retractable Natural Weapon",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:retractable_weapon:Natural Weapon gains Concealable Property."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_additional_limb",
+			"name": "Additional Limb",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:additional_limb:Additional limb with 1 Space range can lift, hold, drop, push, pull, or grapple. It can't wield Weapons, Shields, or Spell Focuses, or perform Somatic Components."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_capable_limb",
+			"name": "Capable Limb",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:capable_limb:Additional Limb can wield Weapons, Shields, or Spell Focuses, and perform Somatic Components. Choose once per Additional Limb."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_spider_climb",
+			"name": "Spider Climb",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:spider_climb:Walk on vertical surfaces and ceilings."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_sprint",
+			"name": "Sprint",
+			"cost": 2,
+			"effects": ["GRANT_ABILITY:sprint:Move Action as Minor Action (cooldown: no Move Action)."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_thick_skinned",
+			"name": "Thick-Skinned",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:ad:1"],
+			"category": "ingame",
+			"score": 4,
+			"notes": [
+				"conditional ad modifier is represented, but not automatically toggled by equipment/state"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_tough",
+			"name": "Tough",
+			"cost": 1,
+			"effects": ["MODIFY_STAT:hpMax:1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["hpMax is calculator-backed and appears in derived sheet/budget data"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_toxic_fortitude",
+			"name": "Toxic Fortitude",
+			"cost": 2,
+			"effects": ["GRANT_RESISTANCE:Poison:half", "GRANT_ADV_ON_SAVE:Poisoned:ADV"],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"GRANT_RESISTANCE is collected for sheet display",
+				"condition/save advantage is summarized, not roll-automated"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_venomous_natural_weapon",
+			"name": "Venomous Natural Weapon",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:venomous_weapon:1 AP: Natural Weapon causes Impaired (Physical Save, 1 minute)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_water_breathing",
+			"name": "Water Breathing",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:water_breathing:Breathe air and water."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_web_walk",
+			"name": "Web Walk",
+			"cost": 1,
+			"effects": ["GRANT_ABILITY:web_walk:Ignore web movement restrictions."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_winged_arms",
+			"name": "Winged Arms",
+			"cost": -1,
+			"effects": ["GRANT_ABILITY:winged_arms:Arms are wings (can't hold items while flying)."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_beastkind",
+			"name": "Beastkind",
+			"cost": 0,
+			"effects": ["GRANT_ABILITY:beastkind:You bear physical traits of your chosen beast type."],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_strong_jumper",
+			"name": "Strong Jumper",
+			"cost": 1,
+			"effects": [
+				"MODIFY_STAT:jumpDistance:2",
+				"GRANT_ABILITY:strong_jumper:Jump Action as Minor Action."
+			],
+			"category": "mixed",
+			"score": 3,
+			"notes": [
+				"jumpDistance is calculator-backed and appears in derived sheet/budget data",
+				"ability text is collected/displayed, but the rule is manual"
+			]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_stealth_feathers",
+			"name": "Stealth Feathers",
+			"cost": 2,
+			"effects": ["GRANT_ADV_ON_CHECK:Stealth:while_flying"],
+			"category": "ingame",
+			"score": 2,
+			"notes": ["check advantage is manual; no roll integration"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_shell_retreat",
+			"name": "Shell Retreat",
+			"cost": 1,
+			"effects": [
+				"GRANT_ABILITY:shell_retreat:Retreat into shell (Minor Action): +2 AD, Speed 0, no hand Actions. Emerge as Minor Action."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_shoot_webs",
+			"name": "Shoot Webs",
+			"cost": 2,
+			"effects": [
+				"GRANT_ABILITY:shoot_webs:1 AP: Web attack (5 Spaces, Attack vs PD). Hit: Restrained (Athletics Check to break free)."
+			],
+			"category": "ingame",
+			"score": 3,
+			"notes": ["ability text is collected/displayed, but the rule is manual"]
+		},
+		{
+			"ancestry": "Beastborn",
+			"id": "beastborn_short_legged",
+			"name": "Short-Legged",
+			"cost": -1,
+			"effects": ["MODIFY_STAT:moveSpeed:-1"],
+			"category": "sheet",
+			"score": 5,
+			"notes": ["moveSpeed is calculator-backed and appears in derived sheet/budget data"]
+		}
+	]
+}

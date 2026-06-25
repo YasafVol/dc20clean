@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/weaponOptions.ts
- * @description Weapon types, styles, properties, and presets from DC20 0.10.
+ * @description Weapon types, styles, properties, and presets from DC20 0.10.5.
  */
 
 import {
@@ -207,6 +207,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description:
 			"Drawing the Weapon doesn't provoke Opportunity Attacks. If you draw the Weapon as part of an Attack, you have ADV on the Attack. You can only gain this benefit once against each creature per Combat.",
 		cost: 1,
+		weaponTypes: ['melee'],
 		meleeOnly: true
 	},
 	{
@@ -214,8 +215,10 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Guard',
 		description: 'You gain +1 PD while wielding the Weapon.',
 		cost: 1,
+		weaponTypes: ['melee'],
 		meleeOnly: true,
-		effect: '+1 PD'
+		effect: '+1 PD',
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1 }]
 	},
 	{
 		id: 'heavy',
@@ -223,6 +226,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description: "The Weapon's damage increases by 1.",
 		cost: 2,
 		requires: ['two-handed'],
+		weaponTypes: ['melee'],
 		meleeOnly: true,
 		effect: '+1 damage'
 	},
@@ -245,6 +249,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Reach',
 		description: 'This Weapon adds 1 Space to your Melee Range when you Attack with it.',
 		cost: 1,
+		weaponTypes: ['melee'],
 		meleeOnly: true,
 		effect: '+1 Space melee range'
 	},
@@ -253,7 +258,8 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Returning',
 		description: 'When you Miss a Ranged Attack with the Weapon, it returns to your hand.',
 		cost: 1,
-		requires: ['toss'],
+		requiresOneOf: ['toss', 'thrown'],
+		weaponTypes: ['melee'],
 		meleeOnly: true
 	},
 	{
@@ -268,7 +274,8 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Toss',
 		description:
 			"You can throw the Weapon to make a Ranged Martial Attack (5/10). If you throw it further than this range it's considered an Improvised Weapon.",
-		cost: 0, // Free property
+		cost: 1,
+		weaponTypes: ['melee'],
 		meleeOnly: true,
 		effect: 'Range: 5/10 when thrown'
 	},
@@ -277,7 +284,8 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Thrown',
 		description:
 			"You can throw the Weapon to make a Ranged Martial Attack (10/20). If you throw it further than this range it's considered an Improvised Weapon.",
-		cost: 0, // Free property
+		cost: 2,
+		weaponTypes: ['melee'],
 		meleeOnly: true,
 		effect: 'Range: 10/20 when thrown'
 	},
@@ -304,6 +312,7 @@ export const MELEE_WEAPON_PROPERTIES: WeaponProperty[] = [
 			'This Weapon can be wielded with 1 or 2 hands. When you wield the Weapon with 2 hands, you gain a +2 bonus to Hit using it.',
 		cost: 1,
 		excludes: ['two-handed'],
+		weaponTypes: ['melee'],
 		meleeOnly: true,
 		effect: '+2 to Hit when wielded with 2 hands'
 	}
@@ -320,6 +329,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description:
 			'This Weapon requires ammunition to make Attacks. You can load a Weapon as part of an Attack made with it.',
 		cost: 0, // Inherent to ranged weapons
+		weaponTypes: ['ranged'],
 		rangedOnly: true
 	},
 	{
@@ -327,6 +337,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Cumbersome',
 		description: 'It takes 1 AP to draw, stow, or pick up this Weapon.',
 		cost: -1,
+		weaponTypes: ['ranged'],
 		rangedOnly: true,
 		effect: '1 AP to draw/stow/pick up'
 	},
@@ -336,6 +347,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description:
 			"Ranged Attacks with this Weapon don't have DisADV as a result of you being Prone.",
 		cost: 1,
+		weaponTypes: ['ranged'],
 		rangedOnly: true
 	},
 	{
@@ -344,6 +356,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description: "The Weapon's damage increases by 1.",
 		cost: 2,
 		requires: ['two-handed'],
+		weaponTypes: ['ranged'],
 		rangedOnly: true,
 		effect: '+1 damage'
 	},
@@ -359,6 +372,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		name: 'Long-Ranged',
 		description: "The Weapon's Range increases to 30/90.",
 		cost: 1,
+		weaponTypes: ['ranged'],
 		rangedOnly: true,
 		effect: 'Range: 30/90'
 	},
@@ -375,6 +389,7 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		description:
 			"The Weapon's damage increases by 1, but you must spend 1 AP or 1 SP and use a free hand to reload the Weapon. If the Weapon stops being held, it must be loaded again.",
 		cost: -1,
+		weaponTypes: ['ranged'],
 		rangedOnly: true,
 		effect: '+1 damage, requires reload'
 	},
@@ -389,7 +404,8 @@ export const RANGED_WEAPON_PROPERTIES: WeaponProperty[] = [
 		id: 'two-handed',
 		name: 'Two-Handed',
 		description: 'The Weapon requires 2 hands when you Attack with it.',
-		cost: 0, // Inherent to ranged weapons, costs 1 to remove
+		cost: -1,
+		weaponTypes: ['ranged'],
 		rangedOnly: true,
 		effect: 'Requires 2 hands'
 	}
@@ -941,8 +957,9 @@ export const getStylesForWeaponType = (weaponType: 'melee' | 'ranged'): WeaponSt
 	);
 
 export const getPropertiesForWeaponType = (weaponType: 'melee' | 'ranged'): WeaponProperty[] => {
-	if (weaponType === 'melee') {
-		return ALL_WEAPON_PROPERTIES.filter((p) => !p.rangedOnly);
-	}
-	return ALL_WEAPON_PROPERTIES.filter((p) => !p.meleeOnly);
+	return ALL_WEAPON_PROPERTIES.filter((p) => {
+		if (p.weaponTypes) return p.weaponTypes.includes(weaponType);
+		if (weaponType === 'melee') return !p.rangedOnly;
+		return !p.meleeOnly;
+	});
 };

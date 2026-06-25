@@ -78,11 +78,15 @@ export const StyledDMGrid = styled.div`
 	}
 `;
 
-// Tools section - 3 columns
+// Tools section - 4 columns
 export const StyledToolsGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	gap: 1rem;
+
+	@media (max-width: 899px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
 
 	@media (max-width: 599px) {
 		grid-template-columns: 1fr;
@@ -146,10 +150,10 @@ export const StyledMenuCard = styled.button<{ $variant?: 'character' | 'dm' | 't
 	backdrop-filter: blur(4px);
 	height: 90px;
 	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+	flex-direction: ${(props) => (props.$variant === 'tools' ? 'column' : 'row')};
+	justify-content: ${(props) => (props.$variant === 'tools' ? 'center' : 'space-between')};
 	align-items: center;
-	gap: 0.75rem;
+	gap: ${(props) => (props.$variant === 'tools' ? '0.5rem' : '0.75rem')};
 
 	&:hover {
 		border-color: ${(props) =>
@@ -202,7 +206,7 @@ export const StyledCardTitle = styled.h2<{ $variant?: 'character' | 'dm' | 'tool
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 	transition: all 0.3s ease;
-	text-align: left;
+	text-align: ${(props) => (props.$variant === 'tools' ? 'center' : 'left')};
 	letter-spacing: 0.5px;
 	line-height: 1.2;
 
@@ -225,10 +229,10 @@ export const StyledCardDescription = styled.p`
 	letter-spacing: 1px;
 `;
 
-export const StyledTextContent = styled.div`
+export const StyledTextContent = styled.div<{ $center?: boolean }>`
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	flex: 1;
+	align-items: ${(props) => (props.$center ? 'center' : 'flex-start')};
+	flex: ${(props) => (props.$center ? '0 1 auto' : '1')};
 	min-width: 0;
 `;

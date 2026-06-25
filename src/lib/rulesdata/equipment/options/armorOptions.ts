@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/armorOptions.ts
- * @description Armor types, properties, and presets from DC20 0.10.
+ * @description Armor types, properties, and presets from DC20 0.10.5.
  */
 
 import { ArmorTypeDefinition, ArmorProperty, PresetArmor } from '../schemas/armorSchema';
@@ -47,25 +47,31 @@ export const LIGHT_ARMOR_PROPERTIES: ArmorProperty[] = [
 		name: 'PD Increase',
 		description: "The Armor's PD Bonus increases by 1.",
 		cost: 1,
+		armorTypes: ['light'],
 		lightOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'pd', value: 1 }
+		modifies: { stat: 'pd', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1 }]
 	},
 	{
 		id: 'ad-increase',
 		name: 'AD Increase',
 		description: "The Armor's AD Bonus increases by 1.",
 		cost: 1,
+		armorTypes: ['light'],
 		lightOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'ad', value: 1 }
+		modifies: { stat: 'ad', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
 	},
 	{
 		id: 'edr-light',
 		name: 'EDR',
 		description: 'The Armor grants Elemental Damage Reduction.',
 		cost: 2,
-		lightOnly: true
+		armorTypes: ['light'],
+		lightOnly: true,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	}
 ];
 
@@ -75,47 +81,65 @@ export const HEAVY_ARMOR_PROPERTIES: ArmorProperty[] = [
 		name: 'PD Increase',
 		description: "The Armor's PD Bonus increases by 1.",
 		cost: 1,
+		armorTypes: ['heavy'],
 		heavyOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'pd', value: 1 }
+		modifies: { stat: 'pd', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1 }]
 	},
 	{
 		id: 'ad-increase-heavy',
 		name: 'AD Increase',
 		description: "The Armor's AD Bonus increases by 1.",
 		cost: 1,
+		armorTypes: ['heavy'],
 		heavyOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'ad', value: 1 }
+		modifies: { stat: 'ad', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
 	},
 	{
 		id: 'pdr',
 		name: 'PDR',
 		description: 'The Armor grants Physical Damage Reduction.',
 		cost: 2,
-		heavyOnly: true
+		armorTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: true }]
 	},
 	{
 		id: 'edr-heavy',
 		name: 'EDR',
 		description: 'The Armor grants Elemental Damage Reduction.',
 		cost: 2,
-		heavyOnly: true
+		armorTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	},
 	{
 		id: 'bulky',
 		name: 'Bulky',
 		description: 'Your Speed is reduced by 1.',
 		cost: -1,
+		armorTypes: ['heavy'],
 		heavyOnly: true,
-		modifies: { stat: 'speed', value: -1 }
+		modifies: { stat: 'speed', value: -1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	},
 	{
 		id: 'rigid',
 		name: 'Rigid',
 		description: 'You have DisADV on Agility Checks.',
 		cost: -1,
-		heavyOnly: true
+		armorTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'rigid_armor',
+				value: 'You have DisADV on Agility Checks while wearing this Armor.'
+			}
+		]
 	}
 ];
 

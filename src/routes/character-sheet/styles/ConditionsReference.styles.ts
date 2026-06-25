@@ -1,8 +1,5 @@
 import styled from 'styled-components';
-import type {
-	ConditionType,
-	ConditionTag
-} from '../../../lib/rulesdata/conditions/conditions.types';
+import type { ConditionTag } from '../../../lib/rulesdata/conditions/conditions.types';
 import { theme } from './theme';
 
 export const StyledConditionsReferenceContainer = styled.div<{ $isMobile?: boolean }>`
@@ -144,35 +141,6 @@ export const StyledConditionName = styled.span<{ $isMobile?: boolean }>`
 	font-weight: ${theme.typography.fontWeight.semibold};
 	font-size: ${theme.typography.fontSize.base};
 	color: ${theme.colors.text.primary};
-`;
-
-export const StyledConditionTypeBadge = styled.span<{ $type: ConditionType; $isMobile?: boolean }>`
-	font-size: ${theme.typography.fontSize.xs};
-	padding: ${theme.spacing[1]} ${theme.spacing[2]};
-	border-radius: ${theme.borderRadius.md};
-	font-weight: ${theme.typography.fontWeight.medium};
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-	background: ${(props) => {
-		switch (props.$type) {
-			case 'stacking':
-				return 'rgba(224, 175, 104, 0.15)';
-			case 'overlapping':
-				return 'rgba(125, 207, 255, 0.15)';
-			case 'absolute':
-				return 'rgba(187, 154, 247, 0.15)';
-		}
-	}};
-	color: ${(props) => {
-		switch (props.$type) {
-			case 'stacking':
-				return theme.colors.accent.warning;
-			case 'overlapping':
-				return theme.colors.accent.primary;
-			case 'absolute':
-				return theme.colors.accent.secondary;
-		}
-	}};
 `;
 
 export const StyledConditionDescription = styled.div<{ $isMobile?: boolean }>`

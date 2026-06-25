@@ -1,14 +1,14 @@
 /**
- * DC20 v0.10 Spellblade Class Progression Template
+ * DC20 v0.10.5 Spellblade Class Progression Template
  *
- * Spellblade is a unique hybrid class with its own progression table.
- * It doesn't follow the standard Martial or Caster template.
+ * Hybrid classes use a distinct progression table that combines martial and caster resources.
+ * Spellblade is currently the only bundled hybrid class.
  *
  * Changes from 0.9.5:
  * - HP: +8 at level 1, then alternating +2/+1 pattern
  * - SP progression: 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 (total 3)
  * - Maneuvers: 1, 0, 1, 0, 0, 0, 1, 0, 0, 1 (total 4)
- * - MP progression: 2, 0, 2, 0, 1, 0, 2, 0, 1, 1 (total 9)
+ * - MP progression: 3, 0, 2, 0, 1, 0, 2, 0, 1, 2 (total 11)
  * - Spells Known: 2, 0, 0, 0, 1, 0, 0, 0, 1, 0 (total 4)
  * - Techniques: REMOVED from game
  * - Cantrips: REMOVED from game (no longer a classification)
@@ -26,16 +26,10 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedTradePoints: 0,
 		gainedStaminaPoints: 1,
 		gainedManeuversKnown: 1,
-		gainedManaPoints: 2,
+		gainedManaPoints: 3,
 		gainedSpellsKnown: 2,
 		gains: {
-			classFeatures: [
-				'spellblade_martial_path',
-				'spellblade_spellcasting_path',
-				'spellblade_bound_weapon',
-				'spellblade_disciplines',
-				'spellblade_sense_magic'
-			]
+			classFeatures: [] // Add class-specific level 1 features
 		}
 	},
 	{
@@ -51,7 +45,7 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gains: {
 			talents: 1,
 			pathProgression: true,
-			classFeatures: ['spellblade_spellstrike']
+			classFeatures: [] // Add class-specific level 2 features
 		}
 	},
 	{
@@ -109,8 +103,8 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
-			pathProgression: true,
-			subclassFeatureChoice: true
+			talents: 1,
+			pathProgression: true
 		}
 	},
 	{
@@ -124,8 +118,7 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 2,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			ancestryPoints: 2
+			subclassFeatureChoice: true
 		}
 	},
 	{
@@ -139,8 +132,9 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 0,
 		gainedSpellsKnown: 0,
 		gains: {
+			talents: 1,
 			pathProgression: true,
-			classFeatures: [] // Add class capstone feature
+			ancestryPoints: 2
 		}
 	},
 	{
@@ -154,7 +148,7 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedManaPoints: 1,
 		gainedSpellsKnown: 1,
 		gains: {
-			subclassFeatureChoice: true // Subclass capstone
+			classFeatures: []
 		}
 	},
 	{
@@ -165,11 +159,10 @@ export const spellbladeProgressionTemplate: ClassProgressionLevel[] = [
 		gainedTradePoints: 1,
 		gainedStaminaPoints: 0,
 		gainedManeuversKnown: 1,
-		gainedManaPoints: 1,
+		gainedManaPoints: 2,
 		gainedSpellsKnown: 0,
 		gains: {
-			talents: 1,
-			epicBoon: true
+			subclassFeatureChoice: true
 		}
 	}
 ];

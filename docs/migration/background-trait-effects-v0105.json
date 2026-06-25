@@ -1,0 +1,91 @@
+{
+	"rulesVersion": "dc20-0.10.5",
+	"scope": "background-affecting-trait-effects",
+	"traitCount": 6,
+	"traits": [
+		{
+			"id": "human_skill_expertise",
+			"name": "Skill Expertise",
+			"cost": 2,
+			"impacts": [
+				{
+					"kind": "skill-mastery-cap",
+					"effectType": "INCREASE_SKILL_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "skillPoints", "value": 1 }
+			]
+		},
+		{
+			"id": "human_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"impacts": [
+				{
+					"kind": "trade-mastery-cap",
+					"effectType": "INCREASE_TRADE_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "tradePoints", "value": 1 }
+			]
+		},
+		{
+			"id": "elf_trade_expertise_elf",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"impacts": [
+				{
+					"kind": "trade-mastery-cap",
+					"effectType": "INCREASE_TRADE_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "tradePoints", "value": 1 }
+			]
+		},
+		{
+			"id": "halfling_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"impacts": [
+				{
+					"kind": "trade-mastery-cap",
+					"effectType": "INCREASE_TRADE_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "tradePoints", "value": 1 }
+			]
+		},
+		{
+			"id": "gnome_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"impacts": [
+				{
+					"kind": "trade-mastery-cap",
+					"effectType": "INCREASE_TRADE_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "tradePoints", "value": 1 }
+			]
+		},
+		{
+			"id": "dwarf_trade_expertise",
+			"name": "Trade Expertise",
+			"cost": 1,
+			"impacts": [
+				{
+					"kind": "trade-mastery-cap",
+					"effectType": "INCREASE_TRADE_MASTERY_CAP",
+					"value": 1,
+					"count": 1
+				},
+				{ "kind": "point-pool", "effectType": "MODIFY_STAT", "target": "tradePoints", "value": 1 }
+			]
+		}
+	]
+}

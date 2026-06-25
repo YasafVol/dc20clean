@@ -21,7 +21,13 @@ export interface BudgetResult {
 		languagePointsUsed: number;
 		conversions: { skillToTrade: number; tradeToSkill: number; tradeToLanguage: number };
 		breakdown: {
-			skillPoints: { base: number; intelligence: number; progression: number; talents: number; total: number };
+			skillPoints: {
+				base: number;
+				intelligence: number;
+				progression: number;
+				talents: number;
+				total: number;
+			};
 			tradePoints: { base: number; progression: number; talents: number; total: number };
 			languagePoints: { base: number; talents: number; total: number };
 		};
@@ -119,14 +125,17 @@ export function calculateBudgets(
 		});
 	}
 
-	const {
-		skillToTrade = 0,
-		tradeToSkill = 0,
-		tradeToLanguage = 0
-	} = (buildData as any).conversions || {};
+	const rawConversions = (buildData as any).conversions || {};
+	const skillToTrade = Math.max(0, Number(rawConversions.skillToTrade || 0));
+	const tradeToSkillUndo = Math.min(
+		Math.max(0, Number(rawConversions.tradeToSkill || 0)),
+		skillToTrade * 2
+	);
+	const tradeToLanguage = Math.max(0, Number(rawConversions.tradeToLanguage || 0));
+	const effectiveSkillToTrade = skillToTrade - Math.floor(tradeToSkillUndo / 2);
 
-	const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
-	const availableTradePoints = baseTradePoints - tradeToSkill + skillToTrade * 2 - tradeToLanguage;
+	const availableSkillPoints = baseSkillPoints - effectiveSkillToTrade;
+	const availableTradePoints = baseTradePoints + effectiveSkillToTrade * 2 - tradeToLanguage;
 	const availableLanguagePoints = baseLanguagePoints + tradeToLanguage * 2;
 
 	// Calculate ancestry points
@@ -150,7 +159,7 @@ export function calculateBudgets(
 			skillPointsUsed,
 			tradePointsUsed,
 			languagePointsUsed,
-			conversions: { skillToTrade, tradeToSkill, tradeToLanguage },
+			conversions: { skillToTrade: effectiveSkillToTrade, tradeToSkill: 0, tradeToLanguage },
 			breakdown: {
 				skillPoints: {
 					base: 5,

@@ -1,12 +1,16 @@
 // Filename: conditions.types.ts
 
 /**
- * Defines the core mechanical behavior of a condition.
- * - stacking: Effects intensify with multiple applications (e.g., Exhaustion X).
- * - overlapping: Can be applied by multiple sources, but effects don't intensify. Lasts until all sources are gone.
- * - absolute: A simple on/off state that doesn't stack or overlap (e.g., Blinded).
+ * Indicates whether a condition is part of the universal rules catalog or is
+ * only used as effect-specific affliction text.
  */
-export type ConditionType = 'stacking' | 'overlapping' | 'absolute';
+export type ConditionScope = 'universal' | 'effect-specific';
+
+/**
+ * Source-audit metadata tags from the v0.10.5 condition rules section.
+ * These tags are descriptive provenance, not runtime behavior categories.
+ */
+export type ConditionSourceTag = 'stacking' | 'overlapping' | 'excluded' | 'catalog-only';
 
 /**
  * Optional tags for filtering and categorization in your UI.
@@ -23,13 +27,25 @@ export interface ConditionDefinition {
 	name: string;
 	/** The full rules description of the condition. */
 	description: string;
-	/**
-	 * The core mechanical type that governs its behavior.
-	 * If type is 'stacking', it implies the condition uses an "X" value.
-	 */
-	type: ConditionType;
+	/** Whether active instances use numeric stack controls such as Slowed 2. */
+	usesStacks: boolean;
+	/** Source-audit metadata tags. Not used as mechanical categories. */
+	sourceTags?: ConditionSourceTag[];
 	/** An array of descriptive tags for easier filtering. */
 	tags: ConditionTag[];
+	/** Whether the entry is part of the universal condition catalog. */
+	scope?: ConditionScope;
+}
+
+export interface ResolvedConditionDefinition {
+	/** The original condition ID that was requested. */
+	inputId: string;
+	/** The normalized ID matched against the catalog. */
+	normalizedId: string;
+	/** The resolved condition definition, if one exists. */
+	definition?: ConditionDefinition;
+	/** Numeric stack value when the input used an active stacked ID such as slowed-2. */
+	stackValue?: number;
 }
 
 /**

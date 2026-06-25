@@ -46,7 +46,7 @@ export enum SpellSource {
  *
  * Categories:
  * - Physical Damage: Bludgeoning, Piercing, Slashing
- * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Water
+ * - Elemental: Air, Cold, Corrosion, Earth, Fire, Lightning, Poison, Water
  * - Energy: Psychic, Radiant, Umbral, True (damage type)
  * - Conditions: Blinded, Bleeding, Burning, Charmed, Dazed, Deafened, Disoriented,
  *               Doomed, Exhaustion, Exposed, Frightened, Hindered, Immobilized,
@@ -66,7 +66,6 @@ export enum SpellSource {
  * - Thunder → use Sound
  * - Sonic → use Sound
  * - Acid → use Corrosion
- * - Poison → use Ailment (or keep for damage type)
  * - Necrotic → use Death or Umbral
  * - Force → use True
  * - Detection → use Sense
@@ -83,6 +82,7 @@ export type SpellTag =
 	| 'Earth'
 	| 'Fire'
 	| 'Lightning'
+	| 'Poison'
 	| 'Water'
 	// Energy
 	| 'Psychic'
@@ -157,7 +157,20 @@ export type SpellTag =
 	| 'Weapon'
 	// Creature Types
 	| 'Aberration'
+	| 'Beast'
+	| 'Celestial'
+	| 'Construct'
+	| 'Dragon'
+	| 'Elemental'
+	| 'Fey'
+	| 'Fiend'
+	| 'Ooze'
+	| 'Plant'
 	| 'Undead'
+	// Additional v0.10.5 conditions and taxonomy terms
+	| 'Emotion'
+	| 'Prone'
+	| 'Surprised'
 	// Mechanical
 	| 'Antimagic'
 	| 'Concentration'
@@ -166,7 +179,6 @@ export type SpellTag =
 	| 'Thunder' // → Sound
 	| 'Sonic' // → Sound
 	| 'Acid' // → Corrosion
-	| 'Poison' // kept for damage type distinction
 	| 'Necrotic' // → Death or Umbral
 	| 'Force' // → True
 	| 'Detection'; // → Sense
@@ -190,8 +202,19 @@ export enum SpellcasterClass {
 export interface SpellCost {
 	/** Action Points required */
 	ap: number;
-	/** Mana Points required (optional) */
-	mp?: number;
+	/** Mana Points required (optional, X for a variable cost) */
+	mp?: number | 'X';
+	/** Minimum MP spend when the MP cost is variable */
+	minimumMp?: number;
+	/** Source text retained when the cost has additional rules */
+	raw?: string;
+}
+
+export type SpellResourceAmount = number | 'X';
+
+export interface SpellResourceCost {
+	ap?: SpellResourceAmount;
+	mp?: SpellResourceAmount;
 }
 
 /**
@@ -251,10 +274,19 @@ export interface SpellEffect {
 export interface SpellEnhancement {
 	/** Unique ID for this enhancement (for dependency tracking) */
 	id?: string;
-	/** Resource type: AP or MP */
-	type: 'AP' | 'MP';
-	/** Cost in that resource */
-	cost: number;
+	/**
+	 * Legacy single-resource display field. Generated v0.10.5 data uses
+	 * structured costs instead.
+	 */
+	type?: 'AP' | 'MP';
+	/** Legacy numeric cost or the canonical structured resource cost */
+	cost: number | SpellResourceCost;
+	/** Alternative costs when the rules use "or" */
+	alternativeCosts?: SpellResourceCost[];
+	/** Exact resource expression, excluding modifiers such as Repeatable */
+	costText?: string;
+	/** Exact text inside the source cost parentheses */
+	rawCost?: string;
 	/** Enhancement name */
 	name: string;
 	/** Description of what it does */
@@ -263,6 +295,8 @@ export interface SpellEnhancement {
 	repeatable?: boolean;
 	/** Variable cost (X MP)? */
 	variable?: boolean;
+	/** Choosing the enhancement makes the spell sustained */
+	sustained?: boolean;
 	/**
 	 * IDs of prerequisite enhancements that must be selected first.
 	 * Example: Black Hole requires Lingering enhancement.
@@ -288,6 +322,8 @@ export interface Spell {
 	isRitual?: boolean;
 	/** Base cost to cast */
 	cost: SpellCost;
+	/** AP-only spells are cantrips unless the source explicitly says otherwise */
+	isCantrip?: boolean;
 	/** Range description */
 	range: string;
 	/** Duration description */

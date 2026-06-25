@@ -71,9 +71,12 @@ function getCustomEquipmentInfo(customEquipmentId: string): InventoryItemInfo[] 
 			const f = equipment as CustomSpellFocus;
 			info.push({ label: 'Category', value: 'Custom Spell Focus' });
 			info.push({ label: 'Hands', value: f.hands });
-			if (f.spellCheckBonus) info.push({ label: 'Spell Check Bonus', value: `+${f.spellCheckBonus}` });
-			if (f.spellAttackBonus) info.push({ label: 'Spell Attack Bonus', value: `+${f.spellAttackBonus}` });
-			if (f.spellDamageBonus) info.push({ label: 'Spell Damage Bonus', value: `+${f.spellDamageBonus}` });
+			if (f.spellCheckBonus)
+				info.push({ label: 'Spell Check Bonus', value: `+${f.spellCheckBonus}` });
+			if (f.spellAttackBonus)
+				info.push({ label: 'Spell Attack Bonus', value: `+${f.spellAttackBonus}` });
+			if (f.spellDamageBonus)
+				info.push({ label: 'Spell Damage Bonus', value: `+${f.spellDamageBonus}` });
 			if (f.adBonus) info.push({ label: 'AD Bonus', value: f.adBonus });
 			if (f.hasMdr) info.push({ label: 'MDR', value: 'Yes' });
 			if (f.properties.length > 0)
@@ -101,7 +104,10 @@ export function getInventoryItemInfo(
 				info.push(...equipmentInfo);
 			} else {
 				// Item was deleted from Equipage
-				info.push({ label: 'Note', value: 'Equipment details no longer available (deleted from Equipage)' });
+				info.push({
+					label: 'Note',
+					value: 'Equipment details no longer available (deleted from Equipage)'
+				});
 			}
 		} else {
 			// Freeform custom item — show basic label

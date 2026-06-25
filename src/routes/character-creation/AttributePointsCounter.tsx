@@ -25,7 +25,9 @@ function AttributePointsCounter({ totalAttributePoints }: { totalAttributePoints
 			</h2>
 			<div className="text-muted-foreground mt-2 text-sm">
 				{t('characterCreation.spent')}: {spent} | {t('characterCreation.remaining')}: {remaining}
-				{isOverBudget && <span className="text-destructive"> {t('characterCreation.overBudget')}</span>}
+				{isOverBudget && (
+					<span className="text-destructive"> {t('characterCreation.overBudget')}</span>
+				)}
 			</div>
 		</div>
 	);

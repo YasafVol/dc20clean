@@ -3,6 +3,10 @@ import { useTranslation } from 'react-i18next';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
+import {
+	formatManeuverCost,
+	formatManeuverEnhancementCost
+} from '../../../lib/rulesdata/martials/maneuverFormatting';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import { theme } from '../styles/theme';
@@ -29,6 +33,10 @@ import {
 	StyledManeuverToggleButton,
 	StyledManeuverDescriptionText,
 	StyledManeuverMetaInfo,
+	StyledManeuverEnhancement,
+	StyledManeuverEnhancementCost,
+	StyledManeuverEnhancementHeader,
+	StyledManeuverEnhancements,
 	StyledManeuverDescriptionCollapsed,
 	StyledClickableNameCell,
 	StyledTimingCell
@@ -89,7 +97,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 			type: 'Attack',
 			cost: { ap: 0 },
 			description: '',
+			range: '',
 			isReaction: false,
+			enhancements: [],
 			notes: ''
 		};
 		addManeuver(newManeuver);
@@ -115,8 +125,11 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 					name: selectedManeuver.name,
 					type: selectedManeuver.type,
 					cost: selectedManeuver.cost,
+					range: selectedManeuver.range,
 					description: selectedManeuver.description,
-					isReaction: selectedManeuver.isReaction
+					isReaction: selectedManeuver.isReaction,
+					trigger: selectedManeuver.trigger,
+					enhancements: selectedManeuver.enhancements
 				};
 				// Remove old and add updated
 				removeManeuver(maneuverToUpdate.id);
@@ -218,37 +231,39 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
 					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnName')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnType')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnCost')}
-				</StyledManeuverHeaderColumn>
-				<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
-					{t('characterSheet.maneuversColumnTiming')}
-				</StyledManeuverHeaderColumn>
-			</StyledManeuversHeaderRow>
+						{t('characterSheet.maneuversColumnName')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnType')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnCost')}
+					</StyledManeuverHeaderColumn>
+					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.maneuversColumnTiming')}
+					</StyledManeuverHeaderColumn>
+				</StyledManeuversHeaderRow>
 
-			{filteredCharacterManeuvers.length === 0 ? (
+				{filteredCharacterManeuvers.length === 0 ? (
 					<StyledManeuverEmptyState $isMobile={effectiveIsMobile}>
 						{typeFilter !== 'all'
-						? t('characterSheet.maneuversNoManeuversFilter', { 
-								type: typeFilter, 
-								action: readOnly ? '' : t('characterSheet.maneuversClickToAdd') 
-							})
-						: readOnly
-							? ''
-							: t('characterSheet.maneuversNoManeuvers')}
+							? t('characterSheet.maneuversNoManeuversFilter', {
+									type: typeFilter,
+									action: readOnly ? '' : t('characterSheet.maneuversClickToAdd')
+								})
+							: readOnly
+								? ''
+								: t('characterSheet.maneuversNoManeuvers')}
 					</StyledManeuverEmptyState>
 				) : (
 					filteredCharacterManeuvers.map((maneuver) => {
 						// Get the original index for update operations
 						const originalIndex = maneuvers.findIndex((m) => m.id === maneuver.id);
 						const selectedManeuver = maneuver.name
-							? allManeuvers.find((m) => m.name === maneuver.name)
+							? allManeuvers.find((m) => m.name === maneuver.name || m.id === maneuver.id)
 							: null;
+						const maneuverDetails = selectedManeuver ?? maneuver;
+						const maneuverEnhancements = maneuverDetails.enhancements ?? [];
 
 						return (
 							<React.Fragment key={maneuver.id}>
@@ -311,54 +326,79 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 
 									{/* Cost */}
 									<StyledManeuverCell $isMobile={effectiveIsMobile}>
-										{maneuver.cost?.ap ? `${maneuver.cost.ap} AP` : '-'}
+										{formatManeuverCost(maneuverDetails.cost)}
 									</StyledManeuverCell>
 
 									{/* Range/Reaction */}
 									<StyledTimingCell $isMobile={effectiveIsMobile}>
-									{selectedManeuver?.isReaction ? t('characterSheet.maneuversReaction') : t('characterSheet.maneuversAction')}
+										{maneuverDetails.isReaction
+											? t('characterSheet.maneuversReaction')
+											: t('characterSheet.maneuversAction')}
+										{maneuverDetails.range ? ` • ${maneuverDetails.range}` : ''}
 									</StyledTimingCell>
 								</StyledManeuverRow>
 
 								{/* Expandable Description Section */}
-								{selectedManeuver && expandedManeuvers.has(maneuver.id) && (
+								{maneuverDetails.name && expandedManeuvers.has(maneuver.id) && (
 									<StyledManeuverDescriptionContainer $isMobile={effectiveIsMobile}>
 										<StyledManeuverDescriptionHeader $isMobile={effectiveIsMobile}>
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
-											{t('characterSheet.maneuversDescription')}
-										</StyledManeuverDescriptionLabel>
-										<StyledManeuverToggleButton
-											$isMobile={effectiveIsMobile}
-											onClick={() => toggleManeuverExpansion(maneuver.id)}
-										>
-											{t('characterSheet.maneuversHideDescription')}
+												{t('characterSheet.maneuversDescription')}
+											</StyledManeuverDescriptionLabel>
+											<StyledManeuverToggleButton
+												$isMobile={effectiveIsMobile}
+												onClick={() => toggleManeuverExpansion(maneuver.id)}
+											>
+												{t('characterSheet.maneuversHideDescription')}
 											</StyledManeuverToggleButton>
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
-											<strong>{selectedManeuver.name}:</strong>
+											<strong>{maneuverDetails.name}:</strong>
 											<br />
-											<RichDescription text={selectedManeuver.description} />
+											<RichDescription text={maneuverDetails.description || ''} />
 										</StyledManeuverDescriptionText>
 										{/* Requirements */}
-										{selectedManeuver.requirement && (
+										{(maneuverDetails as any).requirement && (
 											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversRequirements')}</strong>{' '}
-											<RichDescription text={selectedManeuver.requirement} />
-										</StyledManeuverMetaInfo>
-									)}
-
-									{/* Trigger */}
-									{selectedManeuver.trigger && (
-										<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
-											<strong>{t('characterSheet.maneuversTrigger')}</strong>{' '}
-											<RichDescription text={selectedManeuver.trigger} />
+												<strong>{t('characterSheet.maneuversRequirements')}</strong>{' '}
+												<RichDescription text={(maneuverDetails as any).requirement} />
 											</StyledManeuverMetaInfo>
+										)}
+
+										{/* Trigger */}
+										{maneuverDetails.trigger && (
+											<StyledManeuverMetaInfo $isMobile={effectiveIsMobile}>
+												<strong>{t('characterSheet.maneuversTrigger')}</strong>{' '}
+												<RichDescription text={maneuverDetails.trigger} />
+											</StyledManeuverMetaInfo>
+										)}
+										{maneuverEnhancements.length > 0 && (
+											<StyledManeuverEnhancements $isMobile={effectiveIsMobile}>
+												<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
+													Enhancements
+												</StyledManeuverDescriptionLabel>
+												{maneuverEnhancements.map((enhancement) => (
+													<StyledManeuverEnhancement
+														key={enhancement.name}
+														$isMobile={effectiveIsMobile}
+													>
+														<StyledManeuverEnhancementHeader $isMobile={effectiveIsMobile}>
+															<StyledManeuverEnhancementCost $isMobile={effectiveIsMobile}>
+																{formatManeuverEnhancementCost(enhancement)}
+															</StyledManeuverEnhancementCost>
+															<strong>{enhancement.name}</strong>
+															{enhancement.repeatable && <span>Repeatable</span>}
+														</StyledManeuverEnhancementHeader>
+														<RichDescription text={enhancement.description} />
+													</StyledManeuverEnhancement>
+												))}
+											</StyledManeuverEnhancements>
 										)}
 									</StyledManeuverDescriptionContainer>
 								)}
 
 								{/* Show Description Button (when collapsed) */}
-								{selectedManeuver && !expandedManeuvers.has(maneuver.id) && (
+								{maneuverDetails.name && !expandedManeuvers.has(maneuver.id) && (
 									<StyledManeuverDescriptionCollapsed $isMobile={effectiveIsMobile}>
 										<StyledManeuverToggleButton
 											$isMobile={effectiveIsMobile}

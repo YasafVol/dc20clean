@@ -56,7 +56,7 @@ export const fieldMap_dc20_010: FieldMapItem[] = [
 	{ path: 'defense.mentalBrutalThreshold', field: 'MD Brutal Threshold', type: 'text' },
 	{ path: 'reduction.physical', field: 'Physical-Damage-Reduction', type: 'checkbox' },
 	{ path: 'reduction.elemental', field: 'Elemantal-Damage-Reduction', type: 'checkbox' },
-	{ path: 'reduction.mental', field: 'Mental-Damage-Reduction', type: 'checkbox' },
+	{ path: 'reduction.mystical', field: 'Mental-Damage-Reduction', type: 'checkbox' },
 
 	// =========================================================================
 	// RESOURCES

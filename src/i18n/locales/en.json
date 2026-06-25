@@ -1,22 +1,22 @@
 {
-  "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "delete": "Delete",
-    "edit": "Edit",
-    "save": "Save",
-    "close": "Close",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "complete": "Complete",
-    "restart": "Restart",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
-    "backToMenu": "Back to Menu"
+	"common": {
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"delete": "Delete",
+		"edit": "Edit",
+		"save": "Save",
+		"close": "Close",
+		"back": "Back",
+		"next": "Next",
+		"previous": "Previous",
+		"complete": "Complete",
+		"restart": "Restart",
+		"yes": "Yes",
+		"no": "No",
+		"loading": "Loading...",
+		"error": "Error",
+		"success": "Success",
+		"backToMenu": "Back to Menu"
 	},
 	"menu": {
 		"title": "DC20 Character Creator",
@@ -30,9 +30,10 @@
 		"laboratory": "Laboratory",
 		"referenceToolsSection": "Reference Tools",
 		"spellbook": "Spellbook",
+		"martialManual": "Martial Manual",
 		"conditions": "Conditions",
 		"equipage": "Equipage",
-		"rulesVersion": "Rules: DC20 v0.10"
+		"rulesVersion": "Rules: DC20 v0.10.5"
 	},
 	"auth": {
 		"signIn": "Sign In",
@@ -61,6 +62,8 @@
 		"previous": "Previous",
 		"next": "Next",
 		"complete": "Complete",
+		"finishAndGoToSheet": "Finish & Go to Sheet",
+		"printPdf": "Print PDF",
 		"restart": "Restart",
 		"restartTooltip": "Clear all progress and start over",
 		"editCharacter": "Edit Character",
@@ -203,6 +206,28 @@
 		"actionPoints": "Action Points",
 		"manaPoints": "Mana Points"
 	},
+	"martialManual": {
+		"title": "Martial Manual",
+		"subtitle": "Browse all maneuvers in the DC20 system",
+		"searchPlaceholder": "Search by maneuver, enhancement, or description...",
+		"type": "Type",
+		"cost": "Cost",
+		"reactionOnly": "Reactions only",
+		"reaction": "Reaction",
+		"activeFilters": "Active filters:",
+		"clearAll": "Clear all",
+		"clearFilters": "Clear Filters",
+		"showing": "Showing",
+		"of": "of",
+		"maneuvers": "maneuvers",
+		"noManeuversFound": "No Maneuvers Found",
+		"adjustFilters": "Try adjusting your filters to see more maneuvers.",
+		"trigger": "Trigger",
+		"enhancements": "Enhancements",
+		"repeatable": "Repeatable",
+		"clickToExpand": "Click to expand",
+		"clickToCollapse": "Click to collapse"
+	},
 	"conditions": {
 		"title": "Conditions Reference",
 		"subtitle": "A comprehensive guide to status conditions",
@@ -242,6 +267,7 @@
 		"rulebookOpenNewTab": "Open in new tab",
 		"rulebookSearchHint": "Tip: press {{shortcut}} to search inside the rulebook",
 		"copy": "Copy",
+		"downloadJson": "Download JSON",
 		"exportPdf": "Export PDF",
 		"tabAttacks": "Attacks",
 		"tabSpells": "Spells",
@@ -539,7 +565,32 @@
 		"infoDuplicateId": "Character with ID \"{{id}}\" already exists. Importing as new character with ID \"{{newId}}\"",
 		"successImported": "Successfully imported character \"{{name}}\"!",
 		"errorImportFailed": "Failed to import character: {{error}}",
-		"errorExportPdfFailed": "Failed to export PDF"
+		"errorExportPdfFailed": "Failed to export PDF",
+		"errorCopyJsonFailed": "Failed to copy JSON",
+		"errorDownloadJsonFailed": "Failed to download JSON",
+		"copyJson": "Copy JSON",
+		"downloadJson": "Download JSON",
+		"upgradeRequired": "v0.10 upgrade required",
+		"upgradeBlocked": "Upgrade blocked",
+		"needsReview": "Needs review",
+		"legacyBackup": "Legacy backup",
+		"updateToCurrentVersion": "Update to current version",
+		"openCurrentCopy": "Open current version",
+		"createAnotherCopy": "Create another copy",
+		"reviewUpgrade": "Review update blockers",
+		"upgradeModalTitle": "Update Character Rules",
+		"upgradeModalDescription": "Create a current-version copy of {{name}} from {{from}} to {{to}}.",
+		"upgradeBackupNote": "A new current-version draft will be created. The original character stays locked and unchanged.",
+		"automaticRenames": "Automatic renames",
+		"reworkedSelections": "Reworked selections to accept",
+		"deprecatedRemoved": "Deprecated selections requiring review",
+		"upgradeBlockers": "Manual decisions required",
+		"upgradeBlockedDescription": "This character cannot be upgraded automatically until these selections have an approved v0.10.5 replacement.",
+		"noSelectionChanges": "No saved selection IDs need to change. Derived values will use current rules in the new copy.",
+		"confirmUpgrade": "Create Current Copy",
+		"upgrading": "Creating...",
+		"upgradeSuccess": "Created current-rules draft \"{{name}}\".",
+		"upgradeError": "Character update failed: {{error}}"
 	},
 	"dmTools": {
 		"encounters": "Encounters",
@@ -548,5 +599,5 @@
 	},
 	"snackbar": {
 		"closeAriaLabel": "Close"
-    }
+	}
 }

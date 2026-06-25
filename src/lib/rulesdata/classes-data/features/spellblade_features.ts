@@ -4,20 +4,19 @@ export const spellbladeClass: ClassDefinition = {
 	className: 'Spellblade',
 	classCategory: 'hybrid',
 	startingEquipment: {
-		weaponsOrShields: [
-			'3 Weapons or Light Shields',
-			'Heavy Shields (if you learn the Warrior Discipline)'
-		],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with the Toss or Thrown Property'],
-		armor: ['Light Armor', 'Heavy Armor (if you learn the Warrior Discipline)'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'X or Y Packs (Adventuring Packs Coming Soon)'
+		arsenal:
+			'Choose 3 of any of the following items: Spell Focus, Weapon, or Light Shield. You can also choose Heavy Shield if you choose the Warrior Discipline option of the Spellblade Disciplines Feature.',
+		armor:
+			'1 set of Light Armor. You can choose 1 set of Heavy Armor instead if you choose the Warrior Discipline option of the Spellblade Disciplines Feature.',
+		tradeTools:
+			"Choose 1 of any of the following items: Blacksmith's Tools, Jeweler's Tools, Leatherworker's Tools, or Tinkerer's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
 			weapons: ['Weapons'],
-			armor: ['Light Armor'],
-			shields: ['Light Shields']
+			armor: ['Light_Armor'],
+			shields: ['Light_Shields']
 		},
 		maneuvers: {
 			learnsAllAttack: true,
@@ -55,12 +54,13 @@ export const spellbladeClass: ClassDefinition = {
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description:
-				'You gain combat training in weapons, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+				'You gain combat training in weapons, spell focuses, light armor, and light shields. You learn all Attack Maneuvers plus additional maneuvers.',
+			isProgressionDerived: true,
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Shields', value: true }
 			]
 		},
 		{
@@ -69,6 +69,7 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			description:
 				'You gain the ability to cast spells. Choose 2 Spell Schools; you can learn spells from those Schools or with Weapon/Ward tags.',
+			isProgressionDerived: true,
 			effects: []
 		},
 		{
@@ -77,7 +78,15 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.'
+				'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_source_of_power',
+					value:
+						'Spellblades wield magic drawn from patrons, oaths, bloodlines, personal study, artistic expression, or mysterious relics.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_bound_weapon',
@@ -96,6 +105,18 @@ export const spellbladeClass: ClassDefinition = {
 							target: 'spellblade_bound_weapon_smite',
 							value:
 								'Spend 1+ SP on a Martial Attack with bound weapon: +1 Bound Damage per SP, and gain 1 Martial Enhancement free.'
+						}
+					]
+				},
+				{
+					name: 'Somatic Weapon',
+					description:
+						'You can use your Bound Weapon to perform the Somatic Components of a Spell.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'spellblade_bound_weapon_somatic_weapon',
+							value: 'Use your Bound Weapon to perform Somatic Components of Spells.'
 						}
 					]
 				},
@@ -148,11 +169,11 @@ export const spellbladeClass: ClassDefinition = {
 						},
 						{
 							name: 'Warrior',
-							description: 'Gain heavy armor and shield training and additional maneuvers.',
+							description: 'Gain heavy armor and shield training and learn 1 Maneuver.',
 							effects: [
 								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Armor', value: true },
 								{ type: 'GRANT_COMBAT_TRAINING', target: 'Heavy_Shields', value: true },
-								{ type: 'GRANT_MANEUVERS', target: 'spellblade_warrior_maneuvers', value: 2 }
+								{ type: 'GRANT_MANEUVERS', target: 'spellblade_warrior_maneuvers', value: 1 }
 							]
 						},
 						{
@@ -181,13 +202,13 @@ export const spellbladeClass: ClassDefinition = {
 						},
 						{
 							name: 'Spell Breaker',
-							description: 'Duel spell attacks with martial skill.',
+							description: 'Initiate Spell Duels with your weapon and martial skill.',
 							effects: [
 								{
 									type: 'GRANT_ABILITY',
 									target: 'spellblade_spell_breaker',
 									value:
-										'Spend 2 AP to initiate a Spell Duel using your weapon against a spell attack within range. Make an Attack Check, adding SP and MP spent (up to your mana spend limit) as a bonus; gain ADV if within 1 space of the spell’s initiator.'
+										'Initiate a Spell Duel as the Challenger without spending MP using a weapon you wield if the caster or a target is within weapon range or you are between them. Make a Martial Check instead of a Spell Check. Spend SP for +1 bonus per SP and MP as normal for +2 bonus per MP. You have ADV if within 1 Space of the caster.'
 								}
 							]
 						},
@@ -199,7 +220,7 @@ export const spellbladeClass: ClassDefinition = {
 									type: 'GRANT_ABILITY',
 									target: 'spellblade_spell_warder',
 									value:
-										'When you deal Elemental or Mystical damage with an attack, gain Resistance (1) to that damage type until the start of your next turn; replace or maintain the resistance on subsequent triggers.'
+										'When you deal Elemental or Mystical damage with an Attack, gain Resistance (1) to that damage type for 1 Round; replace or maintain the resistance on subsequent triggers.'
 								}
 							]
 						},
@@ -225,36 +246,75 @@ export const spellbladeClass: ClassDefinition = {
 			levelGained: 1,
 			isFlavor: true,
 			description:
-				'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.'
+				'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_sense_magic',
+					value:
+						'Focus for 1 minute to detect certain creature types within 20 spaces; Spell Checks reveal their nature and location until the end of your next turn.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_spellstrike',
 			featureName: 'Spellstrike',
 			levelGained: 2,
 			description:
-				'Once per turn, combine a Martial Attack with a spell, reducing the spell’s AP cost and resolving them as one harmonic strike.'
-		},
-		{
-			id: 'spellblade_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. You must meet any prerequisites to select it.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
+				'Once on each of your turns when you make a Martial Attack, you can also cast a Spell as part of the same Action, spending 1 AP less than normal. Converged Action: the Spell can only target 1 creature who must be a target of the Attack, and the range of the Attack cannot exceed the range of the Spell. If the Spell requires a Check, it uses your Attack Check instead; Saves use your Save DC. Harmonic Strike: the Martial Attack and Spell are treated as 1 Attack and can benefit from Martial Enhancements and Spell Enhancements; the Spell does not require Somatic Components.',
+			effects: [
+				{
+					type: 'GRANT_ABILITY',
+					target: 'spellblade_spellstrike',
+					value:
+						'Once per turn when making a Martial Attack, cast a Spell as part of the same Action for 1 AP less. The Spell must target 1 creature targeted by the Attack, cannot exceed the Spell range, uses the Attack Check if it requires a Check, and uses your Save DC for Saves. The combined attack can benefit from Martial and Spell Enhancements and does not require Somatic Components.'
+				}
+			]
 		},
 		{
 			id: 'spellblade_level_5_placeholder',
-			featureName: 'Martial Arcana (Placeholder)',
+			featureName: 'Expert Spellblade',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'spellblade_level_8_capstone_placeholder',
-			featureName: 'Arcane Apex (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Spellblade Class Features.',
+			benefits: [
+				{
+					name: 'Bound Weapon',
+					description: 'Your Bound Damage ignores Resistance to its damage type.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_bound_weapon',
+							value: 'Bound Damage ignores Resistance to its damage type.'
+						}
+					]
+				},
+				{
+					name: 'Spellblade Discipline',
+					description:
+						'You gain 1 additional Discipline. Acolyte healing increases by +2 per additional MP, Hex Warrior damage increases by +1 per MP, and Spell Warder can spend 1 MP to gain Resistance Half.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_discipline',
+							value:
+								'Choose 1 additional Discipline; Acolyte +2 healing per MP, Hex Warrior +1 damage per MP, Spell Warder can spend 1 MP for Resistance Half.'
+						}
+					]
+				},
+				{
+					name: 'Spellstrike',
+					description:
+						'The Spell cast as part of Spellstrike can target multiple creatures or an Area if at least 1 Spell target is also a Martial Attack target.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_spellblade_spellstrike',
+							value:
+								'Spellstrike Spell can target multiple creatures or an Area when at least 1 Spell target is also a Martial Attack target.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [
@@ -313,7 +373,14 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You swear tenets such as Heart of Bravery, Light in the Darkness, Instill Pain, Peacekeeper, Protect the Weak, Unrelenting Effort, or Vengeance. While upholding your oath, you have ADV on Checks to rally non-hostile allies to your cause.'
+						'You swear tenets such as Heart of Bravery, Light in the Darkness, Instill Pain, Peacekeeper, Protect the Weak, Unrelenting Effort, or Vengeance. While upholding your oath, you have ADV on Checks to rally non-hostile allies to your cause.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'rally_non_hostile_allies',
+							value: 'ADV'
+						}
+					]
 				}
 			]
 		},
@@ -449,7 +516,14 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'You have ADV on checks to interpret or understand magical runes you can see.'
+						'You have ADV on checks to interpret or understand magical runes you can see.',
+					effects: [
+						{
+							type: 'GRANT_ADV_ON_CHECK',
+							target: 'interpret_magical_runes',
+							value: 'ADV'
+						}
+					]
 				},
 				{
 					id: 'spellblade_rune_names',
@@ -457,7 +531,15 @@ export const spellbladeClass: ClassDefinition = {
 					levelGained: 3,
 					isFlavor: true,
 					description:
-						'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).'
+						'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'spellblade_rune_names',
+							value:
+								'Common rune names include: Earth (Uruz/Terra), Flame (Ild/Ignis), Frost (Isaz/Frigus), Lightning (Thurisaz/Fulmen), Water (Laquz/Aqua), Wind (Ansuz/Ventus).'
+						}
+					]
 				}
 			]
 		}

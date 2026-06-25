@@ -21,33 +21,32 @@ function escapeRegex(s: string): string {
 }
 
 /** Build a sorted catalog (longest names first) so e.g. "Dazed 2" beats "Dazed". */
-const CONDITION_INDEX: { regexSource: string; lookup: Record<string, ConditionMatch> } =
-	(() => {
-		const lookup: Record<string, ConditionMatch> = {};
-		const patterns: string[] = [];
+const CONDITION_INDEX: { regexSource: string; lookup: Record<string, ConditionMatch> } = (() => {
+	const lookup: Record<string, ConditionMatch> = {};
+	const patterns: string[] = [];
 
-		const seen = new Set<string>();
-		const sorted = [...ALL_CONDITIONS].sort((a, b) => b.name.length - a.name.length);
+	const seen = new Set<string>();
+	const sorted = [...ALL_CONDITIONS].sort((a, b) => b.name.length - a.name.length);
 
-		for (const cond of sorted) {
-			const isStacking = / X$/.test(cond.name);
-			const base = isStacking ? cond.name.replace(/ X$/, '') : cond.name;
-			const key = base.toLowerCase();
-			if (seen.has(key)) continue;
-			seen.add(key);
+	for (const cond of sorted) {
+		const isStacking = / X$/.test(cond.name);
+		const base = isStacking ? cond.name.replace(/ X$/, '') : cond.name;
+		const key = base.toLowerCase();
+		if (seen.has(key)) continue;
+		seen.add(key);
 
-			lookup[key] = { canonicalName: base, description: cond.description };
+		lookup[key] = { canonicalName: base, description: cond.description };
 
-			// Word-boundary match, case-insensitive (handled by regex flags below).
-			// For stacking conditions we allow an optional trailing number, e.g. "Slowed 2".
-			const pat = isStacking
-				? `\\b${escapeRegex(base)}(?:\\s+\\d+)?\\b`
-				: `\\b${escapeRegex(base)}\\b`;
-			patterns.push(pat);
-		}
+		// Word-boundary match, case-insensitive (handled by regex flags below).
+		// For stacking conditions we allow an optional trailing number, e.g. "Slowed 2".
+		const pat = isStacking
+			? `\\b${escapeRegex(base)}(?:\\s+\\d+)?\\b`
+			: `\\b${escapeRegex(base)}\\b`;
+		patterns.push(pat);
+	}
 
-		return { regexSource: patterns.join('|'), lookup };
-	})();
+	return { regexSource: patterns.join('|'), lookup };
+})();
 
 const ConditionToken = styled.button`
 	display: inline;

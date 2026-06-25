@@ -6,9 +6,51 @@
  */
 
 import { SavedCharacter, CharacterState } from '../types/dataContracts';
+import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
+import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
 import { logger } from './logger';
 
-const CURRENT_SCHEMA_VERSION = 2;
+function parseMaybeJson<T>(value: unknown, fallback: T): T {
+	if (typeof value !== 'string') return (value as T) ?? fallback;
+	try {
+		return JSON.parse(value) as T;
+	} catch {
+		return fallback;
+	}
+}
+
+function normalizeArray(value: unknown): string[] {
+	const parsed = parseMaybeJson<unknown>(value, value);
+	return Array.isArray(parsed)
+		? parsed.filter((item): item is string => typeof item === 'string')
+		: [];
+}
+
+function normalizeRecord<T>(value: unknown, fallback: Record<string, T>): Record<string, T> {
+	const parsed = parseMaybeJson<unknown>(value, value);
+	return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+		? (parsed as Record<string, T>)
+		: fallback;
+}
+
+export function normalizeSelectedTalents(
+	talents: Record<string, number> | string[] | undefined
+): Record<string, number> {
+	if (!talents) return {};
+	if (Array.isArray(talents)) {
+		return talents.reduce<Record<string, number>>((acc, talentId) => {
+			if (typeof talentId === 'string' && talentId.length > 0) {
+				acc[talentId] = (acc[talentId] || 0) + 1;
+			}
+			return acc;
+		}, {});
+	}
+	return Object.fromEntries(
+		Object.entries(talents)
+			.filter(([talentId, count]) => talentId.length > 0 && Number(count) > 0)
+			.map(([talentId, count]) => [talentId, Number(count)])
+	);
+}
 
 /**
  * Centralized JSON serialization for localStorage
@@ -17,6 +59,8 @@ const CURRENT_SCHEMA_VERSION = 2;
 export const serializeCharacterForStorage = (character: SavedCharacter): string => {
 	return JSON.stringify({
 		...character,
+		selectedTalents: normalizeSelectedTalents(character.selectedTalents as any),
+		rulesVersion: normalizeRulesVersion(character.rulesVersion),
 		schemaVersion: CURRENT_SCHEMA_VERSION
 	});
 };
@@ -39,11 +83,13 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 		// Migrate character to v2 format
 		const migratedCharacter = {
 			...data,
-			selectedTraitIds: data.selectedTraitIds || [],
-			selectedFeatureChoices: data.selectedFeatureChoices || {},
-			skillsData: data.skillsData || {},
-			tradesData: data.tradesData || {},
-			languagesData: data.languagesData || { common: { fluency: 'fluent' } },
+			selectedTraitIds: normalizeArray(data.selectedTraitIds),
+			selectedTraitChoices: normalizeRecord<string>(data.selectedTraitChoices, {}),
+			selectedFeatureChoices: normalizeRecord<string>(data.selectedFeatureChoices, {}),
+			skillsData: normalizeRecord<number>(data.skillsData, {}),
+			tradesData: normalizeRecord<number>(data.tradesData, {}),
+			languagesData: normalizeRecord(data.languagesData, { common: { fluency: 'fluent' } }),
+			selectedTalents: normalizeSelectedTalents(data.selectedTalents),
 			spells: data.spells || [],
 			maneuvers: data.maneuvers || [],
 			characterState: {
@@ -67,6 +113,7 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 					}
 				}
 			},
+			rulesVersion: normalizeRulesVersion(data.rulesVersion),
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
 		} as SavedCharacter;
 
@@ -320,17 +367,17 @@ export const saveCharacterState = (characterId: string, state: CharacterState): 
 export const saveCharacter = (character: SavedCharacter): void => {
 	const characters = getAllSavedCharacters();
 	const characterIndex = characters.findIndex((char) => char.id === character.id);
-
-	if (characterIndex === -1) {
-		logger.warn('storage', 'Character not found for update', { characterId: character.id });
-		return;
-	}
-
-	// Update the entire character with new lastModified timestamp
-	characters[characterIndex] = {
+	const characterToSave = {
 		...character,
 		lastModified: new Date().toISOString()
 	};
+
+	if (characterIndex === -1) {
+		characters.push(characterToSave);
+		logger.info('storage', 'Creating character', { characterId: character.id });
+	} else {
+		characters[characterIndex] = characterToSave;
+	}
 
 	saveAllCharacters(characters);
 };
@@ -435,5 +482,3 @@ export const runMigrationIfRequested = (force = false): boolean => {
 	}
 	return false;
 };
-
-

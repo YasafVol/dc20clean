@@ -4,13 +4,18 @@ export const sorcererClass: ClassDefinition = {
 	className: 'Sorcerer',
 	classCategory: 'spellcaster',
 	startingEquipment: {
-		weaponsOrShields: ['1 Weapon'],
-		armor: '1 set of Light Armor',
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'X or Y "Packs" (Adventuring Packs Coming Soon)'
+		spellFocuses: '2 Spell Focuses.',
+		armor: '1 set of Light Armor.',
+		tradeTools:
+			"Choose 2 of any of the following items: Alchemist's Supplies, Calligrapher's Supplies, Jeweler's Tools, or Weaver's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	spellcasterPath: {
-		spellList: ['Arcane', 'Divine', 'Primal'],
+		spellList: {
+			type: 'any',
+			description:
+				'Choose 1 Spell Source (Arcane, Divine, or Primal). When you learn a new Spell, you can choose any Spell from the chosen Spell Source.'
+		},
 		cantrips: {
 			description:
 				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.'
@@ -29,8 +34,11 @@ export const sorcererClass: ClassDefinition = {
 			featureName: 'Spellcasting Path',
 			levelGained: 1,
 			description:
-				'You gain the ability to cast spells from the Arcane, Divine, or Primal spell lists.',
-			effects: [{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }]
+				'You gain the ability to cast spells. Choose 1 Spell Source (Arcane, Divine, or Primal). You gain Combat Training with Spell Focuses and Light Armor.',
+			effects: [
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Spell_Focuses', value: true },
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'Light_Armor', value: true }
+			]
 		},
 		{
 			id: 'sorcerer_innate_power',
@@ -157,79 +165,138 @@ export const sorcererClass: ClassDefinition = {
 							name: 'Careful Spell',
 							description:
 								"(1 MP) When you Cast a Spell that targets an area, choose to exclude creatures of your choice from the Spell's damage and effects.",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_careful_spell',
+									value:
+										"1 MP: When casting an area Spell, exclude creatures of your choice from the Spell's damage and effects."
+								}
+							]
 						},
 						{
 							name: 'Distant Spell',
 							description:
 								"(1 MP) Increase a Spell's range by 2 Spaces (if 1 Space) or 10 Spaces (if greater).",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_distant_spell',
+									value:
+										"1 MP: Increase a Spell's range by 2 Spaces if 1 Space, or 10 Spaces if greater."
+								}
+							]
 						},
 						{
 							name: 'Quickened Spell',
 							description: '(1 MP) Reduce the AP cost of a Spell by 1 (minimum of 1 AP).',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_quickened_spell',
+									value: '1 MP: Reduce the AP cost of a Spell by 1, minimum 1 AP.'
+								}
+							]
 						},
 						{
 							name: 'Subtle Spell',
 							description:
 								'(1 MP) Cast the Spell without requiring any Somatic and Verbal Components.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_subtle_spell',
+									value: '1 MP: Cast the Spell without requiring Somatic or Verbal Components.'
+								}
+							]
 						},
 						{
 							name: 'Transmuted Spell',
 							description:
 								"(1 MP) Change a Spell's damage type to any other damage type (except True damage).",
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_transmuted_spell',
+									value:
+										"1 MP: Change a Spell's damage type to any other damage type except True damage."
+								}
+							]
 						},
 						{
 							name: 'Vicious Spell',
 							description:
 								'(1 MP) When casting a Spell that forces a Save, 1 target of your choice has DisADV on its first Save against the Spell.',
-							effects: []
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'sorcerer_meta_magic_vicious_spell',
+									value:
+										'1 MP: When casting a Spell that forces a Save, 1 target has DisADV on its first Save against the Spell.'
+								}
+							]
 						}
 					]
 				}
 			]
 		},
 		{
-			id: 'sorcerer_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [
+			id: 'sorcerer_level_5_placeholder',
+			featureName: 'Expert Sorcerer',
+			levelGained: 5,
+			description: 'You gain the following benefits for your Sorcerer Class Features.',
+			benefits: [
 				{
-					type: 'GRANT_CHOICE',
-					target: 'talent',
-					value: 1,
-					userChoice: { prompt: 'Choose 1 Talent' }
+					name: 'Innate Power',
+					description:
+						'Your maximum MP increases by 1. You also gain an additional 1-point Focus Property choice and can change either or both chosen properties on a Long Rest.',
+					effects: [
+						{ type: 'MODIFY_STAT', target: 'mpMax', value: 1 },
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_innate_power',
+							value:
+								'Gain an additional 1-point Focus Property choice; change either or both chosen properties on a Long Rest.'
+						}
+					]
+				},
+				{
+					name: 'Overload Magic',
+					description:
+						'You no longer need to make an Attribute Save when you use Overload, but you still make the save at the start of each turn while Overloaded.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_overload_magic',
+							value:
+								'No Attribute Save when you use Overload; still save at the start of each turn while Overloaded.'
+						}
+					]
+				},
+				{
+					name: 'Meta Magic',
+					description:
+						'You learn 1 additional Meta Magic option and can use 2 different Meta Magic Spell Enhancements at a time.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_sorcerer_meta_magic',
+							value:
+								'Learn 1 additional Meta Magic option and use 2 different Meta Magic Spell Enhancements at a time.'
+						}
+					]
 				}
 			]
-		},
-		{
-			id: 'sorcerer_level_5_placeholder',
-			featureName: 'Arcane Surge (Placeholder)',
-			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'sorcerer_level_8_capstone_placeholder',
-			featureName: 'Reality Shaper (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
 		}
 	],
 	subclasses: [
 		{
 			subclassName: 'Angelic',
 			features: [
-			{
-				featureName: 'Celestial Spark',
-				levelGained: 3,
-				description:
+				{
+					featureName: 'Celestial Spark',
+					levelGained: 3,
+					description:
 						'You can use a Minor Action to emit Bright Light within a 5 Space Radius and can end the effect at any time. You also gain the following abilities:',
 					benefits: [
 						{
@@ -269,9 +336,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				featureName: 'Celestial Appearance (Flavor Feature)',
-				levelGained: 3,
+				{
+					featureName: 'Celestial Appearance (Flavor Feature)',
+					levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional angelic features such as sparkling skin, feathers, a faint halo, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, if you're already Fluent in Celestial, you gain 1 level of Language Mastery in another Language of your choice.",
@@ -289,9 +356,9 @@ export const sorcererClass: ClassDefinition = {
 		{
 			subclassName: 'Draconic',
 			features: [
-			{
-				featureName: 'Draconic Spark',
-				levelGained: 3,
+				{
+					featureName: 'Draconic Spark',
+					levelGained: 3,
 					description: 'You gain the following abilities:',
 					benefits: [
 						{
@@ -338,9 +405,9 @@ export const sorcererClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				featureName: 'Draconic Appearance (Flavor Feature)',
-				levelGained: 3,
+				{
+					featureName: 'Draconic Appearance (Flavor Feature)',
+					levelGained: 3,
 					isFlavor: true,
 					description:
 						"You gain additional draconic features such as scales, fangs, claws, or other changes of your choice. If you already have these features, they're enhanced or expanded upon. Additionally, you gain 1 level of Language Mastery in Draconic. If you're already Fluent in Draconic, you gain 1 level of Language Mastery in another Language of your choice.",

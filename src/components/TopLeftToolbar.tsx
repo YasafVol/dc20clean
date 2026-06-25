@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { theme } from '../routes/character-sheet/styles/theme';
-import LanguageSwitcher from './LanguageSwitcher';
 
 const ToolbarContainer = styled.div`
 	position: fixed;
@@ -58,7 +57,6 @@ export const TopLeftToolbar: React.FC = () => {
 
 	return (
 		<ToolbarContainer>
-			<LanguageSwitcher />
 			{showBackButton && (
 				<BackButton onClick={() => navigate('/menu')} title={t('common.backToMenu')}>
 					← {t('common.backToMenu')}

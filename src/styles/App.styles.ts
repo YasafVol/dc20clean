@@ -68,4 +68,8 @@ export const FixedAuthStatus = styled.div`
 	border: 1px solid rgba(125, 207, 255, 0.2);
 	backdrop-filter: blur(8px);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.5rem;
 `;

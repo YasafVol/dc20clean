@@ -1,25 +1,44 @@
-# DC20Clean – Spells System (v0.10)
+# DC20Clean – Spells System (v0.10.5)
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-19
 
 ---
 
 ## 1. Key Files & Roles
 
-- `src/lib/rulesdata/spells-data/<school>/*.ts`: 125 spell definitions organized by school
-- `src/lib/rulesdata/spells-data/index.ts`: Main export with utility functions
+- `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`: authoritative v0.10.5 spell source
+- `scripts/spells/dc20-0105-spells.mjs`: deterministic parser, validator, report writer, and TypeScript generator
+- `src/lib/rulesdata/spells-data/generated/v0105.generated.ts`: generated 160-spell selectable catalog; never edit manually
+- `src/lib/rulesdata/spells-data/index.ts`: main export with generated current catalog and alias-aware lookup utilities
+- `src/lib/rulesdata/versioning/aliases.ts`: stable ID routing policy for old saved spell IDs and display names
+- `src/lib/rulesdata/versioning/characterUpgrade.ts`: explicit saved-character conversion planner and deterministic ID rewriter
 - `src/lib/rulesdata/schemas/spell.schema.ts`: Spell TypeScript types and enums
-- `src/lib/services/spellAssignment.ts`: Assignment logic (availability, limits, helpers)
+- `src/lib/services/spellAssignment.ts`: Legacy fallback auto-assignment helper; not canonical for real player choices
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
 - UI selection and display:
   - `src/routes/character-creation/*` (spell pickers where applicable)
   - `src/routes/character-sheet/*` (spell list, filters, actions)
 
+### Equipage Integration TODO
+
+Equipped Spell Focus properties should be reflected in spell viewing wherever possible:
+
+- `Powerful`: show Spell Attack damage as increased by `+1`.
+- `Reach`: flag or adjust spells with Range `1` to show `+1 Space`.
+- `Long-Ranged`: flag or adjust spells with Range greater than `1` to show `+5 Spaces`.
+- `Vicious`: include the equipped focus bonus in spell attack/to-hit display once the
+  sheet exposes a distinct spell attack bonus.
+- `Channeling`: include the equipped focus bonus in spell check display once spell
+  checks are modeled separately from the generic attack/spell check.
+
+This belongs with the Equipage effect pipeline: the focus effects should come from
+equipped inventory rows, not from every saved focus in Equipage storage.
+
 ---
 
-## 2. Data Shapes (v0.10)
+## 2. Data Shapes (v0.10.5)
 
 ### Spell Schema
 
@@ -30,15 +49,15 @@ interface Spell {
 	sources: SpellSource[]; // Arcane, Divine, Primal
 	school: SpellSchool; // 8 schools
 	tags: SpellTag[]; // Burning, Cold, Healing, etc.
-	isCantrip: boolean;
+	isCantrip?: boolean;
 	isRitual?: boolean;
-	cost: SpellCost; // { ap: number; mp?: number }
+	cost: SpellCost; // numeric AP; numeric or variable MP with an optional minimum
 	range: string;
 	duration: string;
 	sustained: boolean; // Maintain action each turn
 	effects: SpellEffect[];
 	cantripPassive?: string;
-	enhancements: SpellEnhancement[];
+	enhancements: SpellEnhancement[]; // structured mixed/variable/alternative costs
 }
 ```
 
@@ -65,28 +84,23 @@ interface Spell {
 
 ### Spell Tags (Examples)
 
-`Burning`, `Cold`, `Lightning`, `Acid`, `Fire`, `Radiant`, `Necrotic`, `Poison`, `Psychic`, `Force`, `Healing`, `Teleportation`, `Summoning`, `Illusion`, `Embolden`, `Enfeeble`, `Sound`
+`Burning`, `Cold`, `Lightning`, `Corrosion`, `Fire`, `Radiant`, `Umbral`, `Poison`, `Psychic`, `True`, `Healing`, `Teleportation`, `Summoning`, `Illusion`, `Embolden`, `Enfeeble`, `Sound`
 
 ### File Structure
 
 ```
 src/lib/rulesdata/spells-data/
-├── astromancy/          # 10 spells
-├── conjuration/         # 14 spells
-├── divination/          # 2 spells
-├── elemental/           # 41 spells
-├── enchantment/         # 12 spells
-├── invocation/          # 14 spells
-├── nullification/       # 16 spells
-├── transmutation/       # 16 spells
-└── index.ts             # Main export + utilities
+├── generated/
+│   └── v0105.generated.ts # current v0.10.5 catalog
+├── spellCost.ts           # canonical cost formatting helpers
+└── index.ts               # main export + utilities
 ```
 
 ### Utility Functions
 
 ```typescript
 // Get all spells
-import { allSpells } from './spells-data';
+import { ALL_SPELLS } from './spells-data';
 
 // Lookup functions
 getSpellById(id: string): Spell | undefined
@@ -107,7 +121,7 @@ getNonCantrips(): Spell[]
 - **Sources Added**: Arcane/Divine/Primal determine class access
 - **Tags System**: Flexible tagging for filtering and class access
 - **Enhancement System**: Spells have enhancement options with AP/MP costs
-- **125 Spells**: Complete extraction from v0.10 rules (counts per school updated 2026-02-06)
+- **160 Spells / 709 Enhancements**: Deterministically generated from the v0.10.5 source
 
 **Class Access Changes:**
 
@@ -116,6 +130,57 @@ getNonCantrips(): Spell[]
 - **Sustained Property**: Added `sustained` flag to all spells (maintain action each turn).
 - **Spellbook App**: New dedicated route for managing character spellbooks.
 - **Smart Pockets**: UI redesigned with individual spell slots that support specialized filtering.
+
+## 3.1 v0.10.5 Taxonomy Notes
+
+- `Poison` is a canonical spell tag and damage tag, not a legacy alias.
+- `Blight Bomb` carries both `Ailment` and `Poison` tags for structured filtering.
+- The current selectable catalog is generated directly from the clean v0.10.5 Markdown source.
+- Generation recognizes spell boundaries through metadata-qualified headings, so nested headings and summon statblocks remain attached to their parent spell.
+- Validation fails unless the source produces exactly 160 unique spells and 709 enhancements with known schools, sources, tags, and cost grammar.
+- Source exceptions are explicit and reported: `Dispel Magic` uses `See Effect` for its omitted duration, and the OCR-spaced `Nature ' s Tether` heading is normalized to `Nature's Tether`.
+- Enhancement costs retain mixed AP/MP costs, variable `X` costs, alternatives, repeatability, sustained state, prerequisites, and the original cost text.
+- Verified pure spell renames route through `getSpellById()` via `RULES_ALIASES`; saved IDs are not rewritten during lookup.
+- Spell changes that may alter function, cost, range, tags, or rules meaning must be classified as `reworked`, not `alias`. Reworked spells render from stored legacy data until the explicit character migration flow creates a current-rules copy.
+- Changelog-confirmed new v0.10.5 spells are present in the generated source catalog.
+- Removed spells and source-list moves are applied only to the current selectable catalog. Historical saved spell objects remain renderable/exportable from saved character data.
+- Reworked spell identities are never silently remapped during normal load. The explicit character upgrade reports and maps approved reworks such as `gravity-sink-hole` to `gravity-well`, and both `force-dome` and `wall-of-force` to `forcefield`.
+- Character completion and PDF export use alias-aware spell lookup for legacy spell IDs before falling back to saved display text.
+- The upgrade creates a current-rules copy and rewrites approved spell IDs/display-name forms across slot selections, top-level spell arrays, and `characterState.spells`; the legacy source character remains locked and unchanged.
+
+### 3.2 Generation Workflow
+
+```bash
+# Parse and print the validation report without writing files
+npm run spells:extract:0105
+
+# Regenerate the committed catalog and migration report
+npm run spells:generate:0105
+
+# Fail when the source is invalid or committed output is stale
+npm run spells:validate:0105
+```
+
+Generated output and `docs/migration/spells-v0105-report.json` are committed. The report is
+the deterministic audit artifact: it includes counts, school totals, parser exceptions, and
+one entry per spell with ID, source, school, tags, cost, range, duration, sustained/cantrip
+flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
+overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
+
+### 3.3 Deterministic Audit Boundary
+
+Code can deterministically verify:
+
+- Generated output is current with the checked-in v0.10.5 Markdown source.
+- Spell and enhancement counts match the expected source inventory.
+- IDs are unique.
+- Sources, schools, tags, costs, duration presence, and enhancement grammar are valid.
+- Alias and rework targets point to current spell IDs or names.
+- `alias` entries are limited to verified pure identity renames.
+
+Human review is still required for semantic equivalence: if function, cost, range, tags,
+or rules meaning may have changed, the mapping belongs in `reworked` and must go through
+explicit character migration.
 
 ---
 
@@ -131,11 +196,14 @@ getNonCantrips(): Spell[]
 - Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.
+- Exact class grants such as `Charm` and `Call Familiar` resolve to canonical generated spell IDs instead of broad unrestricted slots.
+- `GRANT_SPELL` / `GRANT_CANTRIP` effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school.
+- Tag-targeted grants such as Warlock Eldritch `any_psychic_tag` create tag-restricted slots rather than falling back to the global profile.
 
 ### 4.3 Validation Rules
 
 - **Type Mismatch**: Cantrips cannot fit into Spell slots and vice-versa.
-- **Restriction Mismatch**: Selected spells must match both the specific slot restrictions AND the Global Magic Profile.
+- **Restriction Mismatch**: Selected spells must match slot restrictions and the Global Magic Profile. Source restrictions narrow only when present; school and tag restrictions are OR-based, so a spell can qualify by matching an allowed school or an allowed tag. Exact spell restrictions remain exact-only.
 - **Exhaustion**: All available slots must be validly filled.
 
 ---
@@ -146,9 +214,10 @@ getNonCantrips(): Spell[]
 
 - The Spells stage appears conditionally only when the calculator reports `spellsKnownSlots.length > 0`.
 - Each slot is an individual spell picker that respects:
-  - Slot-level restrictions (specific school, source, or tag requirements)
-  - Global Magic Profile (character's general spellcasting bounds)
+  - Slot-level restrictions (specific school/source/tag requirements, with school/tag as OR)
+  - Global Magic Profile (source if present, then school or tag)
   - Type matching (cantrip slots only accept cantrips, spell slots only accept spells)
+- Source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters continue to narrow the result set.
 - Spell selection is tracked as `Record<SlotID, SpellID>` in `characterContext.tsx`.
 
 ### Sheet (`character-sheet/components/Spells.tsx`)
@@ -160,7 +229,7 @@ getNonCantrips(): Spell[]
 ### Spellbook (`routes/spellbook/Spellbook.tsx`)
 
 - Dedicated route for browsing all spells
-- Filterable by school, source, tags, and cantrip/spell type
+- Filterable by class, source, school, tags, cost, and sustained status. Class/source/school/tag filters are OR-based across selected facets; cost and sustained filters narrow the result set.
 
 ### Cross-Path Spell List
 
@@ -174,16 +243,18 @@ getNonCantrips(): Spell[]
 
 - `e2e/09-spells.e2e.spec.ts` — Adds a spell, filters, and deletes; validates mobile/desktop fallbacks.
 - `e2e/12-exhaustion-info.e2e.spec.ts` — Feature info buttons include class feature info affecting spells.
+- `e2e/13-character-upgrade.e2e.spec.ts` — Exercises the explicit v0.10 to v0.10.5 upgrade, approved spell rewrites, deprecated-selection review, current-rules copy creation, reload persistence, and unsupported-version blockers.
 
 ---
 
 ## 7. Troubleshooting
 
-- Spell not visible: confirm it's exported via the school's `index.ts` and main `index.ts`.
+- Spell not visible: run `npm run spells:validate:0105`, then confirm the source entry is
+  present in `generated/v0105.generated.ts` and exported through the main `index.ts`.
 - MP not matching: ensure effects target `mpMax`; calculator aggregates into `finalMpMax`.
 - Class access issues: verify class spell access rules match source/school/tag combinations.
 
 ---
 
-> Last updated: 2026-02-06
+> Last updated: 2026-06-13
 > Maintainer: @DC20Clean-Team

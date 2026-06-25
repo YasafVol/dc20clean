@@ -98,6 +98,25 @@ export const ConditionsIcon = () => (
 	</svg>
 );
 
+export const MartialManualIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		width="64"
+		height="64"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.5"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		<path d="M14.5 4.5 19.5 2l-2.5 5L8 16l-2-2z" />
+		<path d="m7 13 4 4" />
+		<path d="m5 15-2 2 4 4 2-2" />
+		<path d="m4 20-1 1" />
+	</svg>
+);
+
 export const MonsterIcon = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -281,8 +300,17 @@ function Menu() {
 						<StyledIcon $variant="tools">
 							<SpellbookIcon />
 						</StyledIcon>
-						<StyledTextContent>
+						<StyledTextContent $center>
 							<StyledCardTitle $variant="tools">{t('menu.spellbook')}</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+
+					<StyledMenuCard $variant="tools" onClick={() => navigate('/martial-manual')}>
+						<StyledIcon $variant="tools">
+							<MartialManualIcon />
+						</StyledIcon>
+						<StyledTextContent $center>
+							<StyledCardTitle $variant="tools">{t('menu.martialManual')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 
@@ -290,7 +318,7 @@ function Menu() {
 						<StyledIcon $variant="tools">
 							<ConditionsIcon />
 						</StyledIcon>
-						<StyledTextContent>
+						<StyledTextContent $center>
 							<StyledCardTitle $variant="tools">{t('menu.conditions')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
@@ -299,7 +327,7 @@ function Menu() {
 						<StyledIcon $variant="tools">
 							<EquipmentIcon />
 						</StyledIcon>
-						<StyledTextContent>
+						<StyledTextContent $center>
 							<StyledCardTitle $variant="tools">{t('menu.equipage')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
@@ -307,7 +335,9 @@ function Menu() {
 			</StyledMenuSection>
 
 			{/* Rules Version Note */}
-			<div className="absolute right-4 bottom-4 text-xs text-white/50">{t('menu.rulesVersion')}</div>
+			<div className="absolute right-4 bottom-4 text-xs text-white/50">
+				{t('menu.rulesVersion')}
+			</div>
 		</StyledContainer>
 	);
 }

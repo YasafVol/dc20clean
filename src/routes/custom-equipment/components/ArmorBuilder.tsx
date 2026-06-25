@@ -12,6 +12,7 @@ import {
 } from '../../../lib/rulesdata/equipment/options/armorOptions';
 import { validateArmor } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomArmor } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
+import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type { CustomArmor, ArmorType } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
 import {
 	BuilderContainer,
@@ -151,7 +152,7 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 		const stats = calculateStats();
 		const armorTypeData = ARMOR_TYPES.find((t) => t.id === armorType);
 
-		return {
+		const armor: CustomArmor = {
 			id: `custom-armor-${Date.now()}`,
 			category: 'armor',
 			name: name || 'Custom Armor',
@@ -170,6 +171,8 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString()
 		};
+
+		return withEquipmentEffects(armor);
 	};
 
 	const handleSave = () => {

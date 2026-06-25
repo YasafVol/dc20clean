@@ -38,7 +38,9 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 
 	return (
 		<StyledFeaturesContainer $isMobile={effectiveIsMobile}>
-			<StyledFeaturesTitle $isMobile={effectiveIsMobile}>{t('characterSheet.featuresTitle')}</StyledFeaturesTitle>
+			<StyledFeaturesTitle $isMobile={effectiveIsMobile}>
+				{t('characterSheet.featuresTitle')}
+			</StyledFeaturesTitle>
 
 			<StyledFeaturesContent $isMobile={effectiveIsMobile}>
 				{/* Ancestry Traits */}

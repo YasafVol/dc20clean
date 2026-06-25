@@ -7,6 +7,8 @@
 
 export type MulticlassTier = 'novice' | 'adept' | 'expert' | 'master' | 'grandmaster' | 'legendary';
 
+export const SUBCLASS_FEATURE_LEVELS = [3, 7, 10] as const;
+
 export interface MulticlassTierDefinition {
 	id: MulticlassTier;
 	name: string;
@@ -21,8 +23,9 @@ export interface MulticlassTierDefinition {
 }
 
 /**
- * All multiclass talent tiers, in order of level requirement.
- * Each tier defines what level features can be selected and what prerequisites are needed.
+ * Current v0.10.5 multiclass talent tiers, in order of level requirement.
+ * Grandmaster and Legendary remain in the legacy lookup catalog below so old
+ * characters can still be inspected without exposing removed choices.
  */
 export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 	{
@@ -48,7 +51,7 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 	{
 		id: 'expert',
 		name: 'Expert Multiclass',
-		levelRequired: 7,
+		levelRequired: 6,
 		description:
 			'Choose a 5th Level Class Feature OR a 3rd Level Subclass Feature from a class you have at least 1 Class Feature from.',
 		targetLevel: 5,
@@ -60,16 +63,19 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 	{
 		id: 'master',
 		name: 'Master Multiclass',
-		levelRequired: 10,
+		levelRequired: 8,
 		description:
-			'Choose a 6th Level Subclass Feature from a Subclass you have at least 1 Subclass Feature from.',
-		targetLevel: 6,
+			'Choose a 7th Level Subclass Expert Feature from a Subclass you have its 3rd Level Subclass Feature from.',
+		targetLevel: 7,
 		includeSubclass: true,
-		subclassLevel: 6,
+		subclassLevel: 7,
 		subclassOnly: true,
 		minClassFeatures: 0,
 		minSubclassFeatures: 1 // Must have 1+ subclass features from target subclass
-	},
+	}
+];
+
+export const LEGACY_MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 	{
 		id: 'grandmaster',
 		name: 'Grandmaster Multiclass',
@@ -96,11 +102,16 @@ export const MULTICLASS_TIERS: MulticlassTierDefinition[] = [
 	}
 ];
 
+export const ALL_MULTICLASS_TIERS: MulticlassTierDefinition[] = [
+	...MULTICLASS_TIERS,
+	...LEGACY_MULTICLASS_TIERS
+];
+
 /**
- * Get a multiclass tier definition by its ID
+ * Get a current or legacy multiclass tier definition by its ID.
  */
 export function getMulticlassTier(tierId: MulticlassTier): MulticlassTierDefinition | undefined {
-	return MULTICLASS_TIERS.find((t) => t.id === tierId);
+	return ALL_MULTICLASS_TIERS.find((tier) => tier.id === tierId);
 }
 
 /**
@@ -108,4 +119,8 @@ export function getMulticlassTier(tierId: MulticlassTier): MulticlassTierDefinit
  */
 export function getAvailableMulticlassTiers(characterLevel: number): MulticlassTierDefinition[] {
 	return MULTICLASS_TIERS.filter((tier) => characterLevel >= tier.levelRequired);
+}
+
+export function countOwnedSubclassFeatures(characterLevel: number): number {
+	return SUBCLASS_FEATURE_LEVELS.filter((level) => level <= characterLevel).length;
 }

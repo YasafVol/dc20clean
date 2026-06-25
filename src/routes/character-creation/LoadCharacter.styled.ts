@@ -27,7 +27,11 @@ export const CharacterGrid = styled.div`
 
 // Character card
 export const CharacterCard = styled(motion.div)`
-	background: linear-gradient(135deg, ${theme.colors.bg.secondary} 0%, ${theme.colors.bg.primary} 100%);
+	background: linear-gradient(
+		135deg,
+		${theme.colors.bg.secondary} 0%,
+		${theme.colors.bg.primary} 100%
+	);
 	border: 2px solid ${theme.colors.bg.tertiary};
 	border-radius: 12px;
 	padding: ${theme.spacing[6]};
@@ -71,6 +75,31 @@ export const CharacterName = styled.h2`
 	text-align: center;
 	margin: 0 0 ${theme.spacing[4]} 0;
 	text-shadow: 0 0 10px ${theme.colors.crystal.primaryAlpha30};
+`;
+
+export const CompatibilityBadge = styled.div<{ $variant?: 'warning' | 'blocked' | 'backup' }>`
+	width: fit-content;
+	margin: 0 auto ${theme.spacing[3]};
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	border: 1px solid
+		${(props) =>
+			props.$variant === 'blocked'
+				? theme.colors.accent.danger
+				: props.$variant === 'backup'
+					? theme.colors.text.muted
+					: theme.colors.crystal.secondary};
+	border-radius: 999px;
+	color: ${(props) =>
+		props.$variant === 'blocked'
+			? theme.colors.accent.danger
+			: props.$variant === 'backup'
+				? theme.colors.text.muted
+				: theme.colors.crystal.secondary};
+	font-family: ${theme.typography.fontFamily};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 `;
 
 // Player name
@@ -234,4 +263,32 @@ export const CardButton = styled(motion.button)<{ $variant?: 'primary' | 'second
 // Full-width button (for delete action)
 export const FullWidthButton = styled(CardButton)`
 	grid-column: 1 / -1;
+`;
+
+export const UpgradeSummary = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: ${theme.spacing[4]};
+	color: ${theme.colors.text.secondary};
+	font-family: ${theme.typography.fontFamily};
+	font-size: ${theme.typography.fontSize.sm};
+
+	h3 {
+		margin: 0 0 ${theme.spacing[2]};
+		color: ${theme.colors.text.primary};
+		font-size: ${theme.typography.fontSize.base};
+	}
+
+	p {
+		margin: 0;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: ${theme.spacing[5]};
+	}
+
+	li + li {
+		margin-top: ${theme.spacing[1]};
+	}
 `;

@@ -24,11 +24,15 @@ function AncestryPointsCounter() {
 					isOverBudget ? 'text-destructive' : 'text-primary'
 				)}
 			>
-				{t('characterCreation.ancestryPoints')}: {ancestryPointsRemaining}/{ancestryPointsSpent + ancestryPointsRemaining}
+				{t('characterCreation.ancestryPoints')}: {ancestryPointsRemaining}/
+				{ancestryPointsSpent + ancestryPointsRemaining}
 			</h2>
 			<div className="text-muted-foreground mt-2 text-sm">
-				{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}: {ancestryPointsRemaining}
-				{isOverBudget && <span className="text-destructive"> {t('characterCreation.overBudget')}</span>}
+				{t('characterCreation.spent')}: {ancestryPointsSpent} | {t('characterCreation.remaining')}:{' '}
+				{ancestryPointsRemaining}
+				{isOverBudget && (
+					<span className="text-destructive"> {t('characterCreation.overBudget')}</span>
+				)}
 			</div>
 		</div>
 	);

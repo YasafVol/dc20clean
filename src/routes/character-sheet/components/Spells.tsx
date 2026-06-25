@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
-import { ALL_SPELLS as allSpells } from '../../../lib/rulesdata/spells-data';
+import { ALL_SPELLS as allSpells, getSpellById } from '../../../lib/rulesdata/spells-data';
+import { RULES_ALIASES } from '../../../lib/rulesdata/versioning/aliases';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
+import { formatSpellEnhancementCost } from '../../../lib/rulesdata/spells-data/spellCost';
 import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
@@ -37,6 +39,33 @@ import RichDescription from './RichDescription';
 
 /** Sentinel dropdown value that switches a spell row into freeform custom mode. */
 const CUSTOM_SPELL_VALUE = '__custom_spell__';
+
+export function resolveCatalogSpell(spellName: string | null | undefined): Spell | undefined {
+	const candidate = spellName?.trim();
+	if (!candidate) return undefined;
+
+	const directMatch =
+		getSpellById(candidate) ??
+		allSpells.find((spell) => spell.name.toLowerCase() === candidate.toLowerCase());
+	if (directMatch) return directMatch;
+
+	const spellAlias = RULES_ALIASES.find(
+		(alias) =>
+			alias.domain === 'spell' &&
+			alias.toId &&
+			alias.fromId.toLowerCase() === candidate.toLowerCase()
+	);
+	if (!spellAlias?.toId) return undefined;
+
+	return (
+		getSpellById(spellAlias.toId) ??
+		allSpells.find((spell) => spell.name.toLowerCase() === spellAlias.toId?.toLowerCase())
+	);
+}
+
+export function isCustomSpellName(spellName: string | null | undefined): boolean {
+	return !!spellName?.trim() && !resolveCatalogSpell(spellName);
+}
 
 // Compact cell inputs used by custom spell rows. Sized to match the surrounding
 // table cells so the row keeps the same column widths as catalog spells.
@@ -113,7 +142,7 @@ const Spells: React.FC<SpellsProps> = ({
 	const [customSpellIds, setCustomSpellIds] = useState<Set<string>>(() => {
 		const ids = new Set<string>();
 		spells.forEach((spell) => {
-			if (spell.spellName && !allSpells.find((s) => s.name === spell.spellName)) {
+			if (isCustomSpellName(spell.spellName)) {
 				ids.add(spell.id);
 			}
 		});
@@ -124,7 +153,7 @@ const Spells: React.FC<SpellsProps> = ({
 		setCustomSpellIds((prev) => {
 			const next = new Set(prev);
 			spells.forEach((spell) => {
-				if (spell.spellName && !allSpells.find((s) => s.name === spell.spellName)) {
+				if (isCustomSpellName(spell.spellName)) {
 					next.add(spell.id);
 				}
 			});
@@ -195,7 +224,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 		if (field === 'spellName' && value) {
 			// When spell is selected, populate all fields from spell data
-			const selectedSpell = allSpells.find((spell) => spell.name === value);
+			const selectedSpell = resolveCatalogSpell(value);
 			if (selectedSpell) {
 				// Make sure we're not in custom mode anymore for this row
 				setCustomSpellIds((prev) => {
@@ -331,33 +360,43 @@ const Spells: React.FC<SpellsProps> = ({
 			<StyledSpellsContainer $isMobile={effectiveIsMobile} data-testid="spells-container">
 				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
 					<span></span> {/* Empty column for remove button */}
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnName')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnSchool')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnDuration')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnAP')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnMP')}</StyledHeaderColumn>
-			<StyledHeaderColumn $isMobile={effectiveIsMobile}>{t('characterSheet.spellsColumnRange')}</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnName')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnSchool')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnDuration')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnAP')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnMP')}
+					</StyledHeaderColumn>
+					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
+						{t('characterSheet.spellsColumnRange')}
+					</StyledHeaderColumn>
 				</StyledSpellsHeaderRow>
 
 				{filteredCharacterSpells.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{schoolFilter !== 'all'
-						? t('characterSheet.spellsNoSpellsFilter', { 
-								school: schoolFilter, 
-								action: readOnly ? '' : t('characterSheet.spellsClickToAdd') 
-							})
-						: readOnly
-							? t('characterSheet.spellsNoSpellsKnown')
-							: t('characterSheet.spellsNoSpellsSelected')}
+							? t('characterSheet.spellsNoSpellsFilter', {
+									school: schoolFilter,
+									action: readOnly ? '' : t('characterSheet.spellsClickToAdd')
+								})
+							: readOnly
+								? t('characterSheet.spellsNoSpellsKnown')
+								: t('characterSheet.spellsNoSpellsSelected')}
 					</StyledEmptyState>
 				) : (
 					filteredCharacterSpells.map((spell) => {
 						// Get the original index for update operations
 						const originalIndex = spells.findIndex((s) => s.id === spell.id);
 						// Get the selected spell details for info display
-						const selectedSpell = spell.spellName
-							? allSpells.find((s) => s.name === spell.spellName)
-							: null;
+						const selectedSpell = resolveCatalogSpell(spell.spellName) ?? null;
 						const isCustom = customSpellIds.has(spell.id);
 
 						return (
@@ -382,9 +421,7 @@ const Spells: React.FC<SpellsProps> = ({
 											type="text"
 											value={spell.spellName}
 											placeholder={t('characterSheet.spellsCustomNamePlaceholder')}
-											onChange={(e) =>
-												updateSpell(spell.id, 'spellName', e.target.value)
-											}
+											onChange={(e) => updateSpell(spell.id, 'spellName', e.target.value)}
 											autoFocus={!spell.spellName}
 										/>
 									) : (
@@ -532,8 +569,8 @@ const Spells: React.FC<SpellsProps> = ({
 													<strong>Enhancements:</strong>
 													{selectedSpell.enhancements.map((enhancement, enhancementIndex) => (
 														<StyledSpellEnhancement key={enhancementIndex}>
-															<strong>{enhancement.name}</strong> ({enhancement.type}{' '}
-															{enhancement.cost})
+															<strong>{enhancement.name}</strong> (
+															{formatSpellEnhancementCost(enhancement)})
 															<br />
 															<RichDescription text={enhancement.description} />
 														</StyledSpellEnhancement>
@@ -560,9 +597,7 @@ const Spells: React.FC<SpellsProps> = ({
 												<SpellDescriptionTextarea
 													value={spell.effects?.[0]?.description || ''}
 													placeholder={t('characterSheet.spellsCustomDescriptionPlaceholder')}
-													onChange={(e) =>
-														updateCustomSpellDescription(spell.id, e.target.value)
-													}
+													onChange={(e) => updateCustomSpellDescription(spell.id, e.target.value)}
 												/>
 											)}
 										</StyledSpellDescriptionContent>

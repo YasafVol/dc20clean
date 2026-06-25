@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { allManeuvers, ManeuverType } from '../../lib/rulesdata/martials/maneuvers';
+import { formatManeuverEnhancementCost } from '../../lib/rulesdata/martials/maneuverFormatting';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { Sword, Filter } from 'lucide-react';
 import { debug } from '../../lib/utils/debug';
@@ -22,6 +23,10 @@ import {
 	ManeuverName,
 	TypeBadge,
 	ManeuverDescription,
+	ManeuverEnhancementCost,
+	ManeuverEnhancementItem,
+	ManeuverEnhancements,
+	ManeuverEnhancementsTitle,
 	EmptyState,
 	EmptyStateIcon,
 	EmptyStateTitle,
@@ -29,6 +34,7 @@ import {
 	SelectedBadge,
 	CostBadgesContainer,
 	CostBadge,
+	ManeuverTrigger,
 	ButtonFooter,
 	FilterText,
 	FilterTextRemaining,
@@ -179,8 +185,8 @@ const Maneuvers: React.FC = () => {
 			<Header>
 				<Title>Learn Maneuvers</Title>
 				<Subtitle>
-					Master martial techniques. Choose the maneuvers that will define your character's
-					combat prowess.
+					Master martial techniques. Choose the maneuvers that will define your character's combat
+					prowess.
 				</Subtitle>
 			</Header>
 
@@ -245,6 +251,9 @@ const Maneuvers: React.FC = () => {
 									<ManeuverCard
 										key={maneuver.name}
 										$isSelected={isSelected}
+										data-testid={`maneuver-card-${maneuver.id}`}
+										data-maneuver-id={maneuver.id}
+										data-option-id={maneuver.id}
 										whileHover={{ y: -4 }}
 										whileTap={{ scale: 0.98 }}
 									>
@@ -258,14 +267,39 @@ const Maneuvers: React.FC = () => {
 												{maneuver.cost.sp && maneuver.cost.sp > 0 && (
 													<CostBadge $variant="sp">{maneuver.cost.sp} SP</CostBadge>
 												)}
+												<CostBadge $variant="range">{maneuver.range}</CostBadge>
+												{maneuver.isReaction && <CostBadge $variant="reaction">Reaction</CostBadge>}
 											</CostBadgesContainer>
 											<ManeuverDescription>{maneuver.description}</ManeuverDescription>
+											{maneuver.trigger && (
+												<ManeuverTrigger>
+													<strong>Trigger:</strong> {maneuver.trigger}
+												</ManeuverTrigger>
+											)}
+											{maneuver.enhancements.length > 0 && (
+												<ManeuverEnhancements>
+													<ManeuverEnhancementsTitle>Enhancements</ManeuverEnhancementsTitle>
+													{maneuver.enhancements.map((enhancement) => (
+														<ManeuverEnhancementItem key={enhancement.name}>
+															<ManeuverEnhancementCost>
+																{formatManeuverEnhancementCost(enhancement)}
+															</ManeuverEnhancementCost>
+															<span>
+																<strong>{enhancement.name}</strong>: {enhancement.description}
+															</span>
+														</ManeuverEnhancementItem>
+													))}
+												</ManeuverEnhancements>
+											)}
 										</CardContent>
 										<ButtonFooter>
 											<ManeuverButton
 												$variant={isSelected ? 'forget' : 'learn'}
 												onClick={() => handleManeuverToggle(maneuver.name)}
 												disabled={!isSelected && !canSelect}
+												data-testid={`maneuver-${maneuver.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-action-id={`maneuver-${maneuver.id}-${isSelected ? 'forget' : 'learn'}`}
+												data-maneuver-id={maneuver.id}
 											>
 												{isSelected ? 'FORGET' : 'LEARN'}
 											</ManeuverButton>

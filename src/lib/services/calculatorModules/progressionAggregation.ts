@@ -5,9 +5,7 @@
  * auto-grant logic. Extracted from enhancedCharacterCalculator.ts.
  */
 
-import {
-	resolveSubclassFeatures
-} from '../../rulesdata/classes-data/classProgressionResolver';
+import { resolveSubclassFeatures } from '../../rulesdata/classes-data/classProgressionResolver';
 import { findClassByName } from '../../rulesdata/loaders/class-features.loader';
 import { CHARACTER_PATHS } from '../../rulesdata/progression/paths/paths.data';
 
@@ -152,6 +150,11 @@ export function checkFlavorFeatureAutoGrant(
 ): { featureId: string; featureName: string; classId: string } | null {
 	const classDefinition = findClassByName(classId);
 	if (!classDefinition) return null;
+	const introOnlyFlavorFeatureIds = new Set([
+		'monk_source_of_power',
+		'rogue_source_of_power',
+		'spellblade_source_of_power'
+	]);
 
 	const classFeatures = (classDefinition as any).coreFeatures.filter((f: any) => !f.isFlavor);
 
@@ -182,7 +185,9 @@ export function checkFlavorFeatureAutoGrant(
 	});
 
 	if (featureCount >= 2) {
-		const flavorFeature = (classDefinition as any).coreFeatures.find((f: any) => f.isFlavor);
+		const flavorFeature = (classDefinition as any).coreFeatures.find(
+			(f: any) => f.isFlavor && !introOnlyFlavorFeatureIds.has(f.id || f.featureName)
+		);
 		if (flavorFeature) {
 			return {
 				featureId: flavorFeature.id || flavorFeature.featureName,

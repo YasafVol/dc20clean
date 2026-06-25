@@ -18,6 +18,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import type { SavedCharacter } from '../../../../lib/types/dataContracts';
 import { theme } from '../../styles/theme';
 import {
 	useCharacterSheet,
@@ -165,22 +166,74 @@ const Chip = styled.span<{ $tone?: 'default' | 'resist' | 'vuln' }>`
 // Replace underscores with spaces so the chip reads naturally; capitalize is applied via CSS.
 const formatLabel = (value: string): string => value.replace(/_/g, ' ');
 
+const formatResistanceChip = (type: string, value: string): string => {
+	const normalizedType = type.toLowerCase();
+	if (value === 'true') {
+		if (normalizedType === 'physical') return 'PDR';
+		if (normalizedType === 'elemental') return 'EDR';
+		if (normalizedType === 'mystical' || normalizedType === 'mental') return 'MDR';
+	}
+	return `${formatLabel(type)} ${value === 'half' ? '(½)' : `(${value})`}`;
+};
+
+interface CompactUtilityCalculationData {
+	stats?: {
+		finalMoveSpeed?: number;
+		finalJumpDistance?: number;
+	};
+	movements?: any[];
+	senses?: any[];
+	resistances?: any[];
+	vulnerabilities?: any[];
+	combatTraining?: any[];
+}
+
+export function getCompactUtilityDisplayData(
+	character: Pick<SavedCharacter, 'finalMoveSpeed' | 'finalJumpDistance'> | null | undefined,
+	calculation: CompactUtilityCalculationData | null | undefined
+) {
+	return {
+		speed: calculation?.stats?.finalMoveSpeed ?? character?.finalMoveSpeed ?? 0,
+		jumpDistance: calculation?.stats?.finalJumpDistance ?? character?.finalJumpDistance ?? 0,
+		movements: calculation?.movements || [],
+		senses: calculation?.senses || [],
+		resistances: calculation?.resistances || [],
+		vulnerabilities: calculation?.vulnerabilities || [],
+		combatTraining: calculation?.combatTraining || []
+	};
+}
+
+export function getCompactUtilityCurrencyValues(currency: any) {
+	return {
+		gp: 'goldPieces' in currency ? currency.goldPieces : 'gold' in currency ? currency.gold : 0,
+		sp:
+			'silverPieces' in currency
+				? currency.silverPieces
+				: 'silver' in currency
+					? currency.silver
+					: 0,
+		cp:
+			'copperPieces' in currency
+				? currency.copperPieces
+				: 'copper' in currency
+					? currency.copper
+					: 0
+	};
+}
+
 const CompactUtility: React.FC = () => {
 	const { t } = useTranslation();
-	const { updateCurrency } = useCharacterSheet();
+	const {
+		state: { character },
+		updateCurrency
+	} = useCharacterSheet();
 	const calculation = useCharacterCalculatedData();
 	const inventory = useCharacterInventory();
 
-	if (!calculation) return null;
+	if (!calculation && !character) return null;
 
-	const speed = calculation.stats.finalMoveSpeed;
-	const jumpDistance = calculation.stats.finalJumpDistance;
-
-	const movements = calculation.movements || [];
-	const senses = calculation.senses || [];
-	const resistances = calculation.resistances || [];
-	const vulnerabilities = calculation.vulnerabilities || [];
-	const combatTraining = calculation.combatTraining || [];
+	const { speed, jumpDistance, movements, senses, resistances, vulnerabilities, combatTraining } =
+		getCompactUtilityDisplayData(character, calculation);
 
 	// Only show alt movements explicitly granted (skip the default "ground" if injected).
 	const altMovements = movements.filter(
@@ -189,24 +242,7 @@ const CompactUtility: React.FC = () => {
 
 	// Currency: support both canonical (goldPieces/silverPieces/copperPieces) and legacy (gold/silver/copper).
 	const currency: any = inventory?.currency ?? {};
-	const gp =
-		'goldPieces' in currency
-			? currency.goldPieces
-			: 'gold' in currency
-				? currency.gold
-				: 0;
-	const sp =
-		'silverPieces' in currency
-			? currency.silverPieces
-			: 'silver' in currency
-				? currency.silver
-				: 0;
-	const cp =
-		'copperPieces' in currency
-			? currency.copperPieces
-			: 'copper' in currency
-				? currency.copper
-				: 0;
+	const { gp, sp, cp } = getCompactUtilityCurrencyValues(currency);
 
 	const handleCoinChange = (kind: 'gp' | 'sp' | 'cp', value: string) => {
 		const n = parseInt(value, 10) || 0;
@@ -274,7 +310,11 @@ const CompactUtility: React.FC = () => {
 			{hasChips && (
 				<Chips>
 					{altMovements.map((m: any) => (
-						<Tooltip key={`mv-${m.type}`} content={`Source: ${m.source?.name ?? ''}`} position="top">
+						<Tooltip
+							key={`mv-${m.type}`}
+							content={`Source: ${m.source?.name ?? ''}`}
+							position="top"
+						>
 							<Chip>
 								{formatLabel(m.type)} {m.speed}
 							</Chip>
@@ -289,9 +329,7 @@ const CompactUtility: React.FC = () => {
 					))}
 					{resistances.map((r: any) => (
 						<Tooltip key={`r-${r.type}`} content={`Source: ${r.source?.name ?? ''}`} position="top">
-							<Chip $tone="resist">
-								{formatLabel(r.type)} {r.value === 'half' ? '(½)' : `(${r.value})`}
-							</Chip>
+							<Chip $tone="resist">{formatResistanceChip(r.type, r.value)}</Chip>
 						</Tooltip>
 					))}
 					{vulnerabilities.map((v: any) => (
@@ -302,7 +340,11 @@ const CompactUtility: React.FC = () => {
 						</Tooltip>
 					))}
 					{combatTraining.map((ct: any) => (
-						<Tooltip key={`ct-${ct.type}`} content={`Source: ${ct.source?.name ?? ''}`} position="top">
+						<Tooltip
+							key={`ct-${ct.type}`}
+							content={`Source: ${ct.source?.name ?? ''}`}
+							position="top"
+						>
 							<Chip>{formatLabel(ct.type)}</Chip>
 						</Tooltip>
 					))}

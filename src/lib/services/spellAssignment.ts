@@ -6,6 +6,14 @@ import { classesData } from '../rulesdata/loaders/class.loader';
 import { parseJsonSafe } from '../utils/storageUtils';
 import { debug } from '../utils/debug';
 
+/**
+ * Legacy fallback auto-assignment.
+ *
+ * The canonical v0.10.5 spell flow is slot-based: the calculator produces
+ * `spellsKnownSlots`, the user selects a spell per slot, and completion stores
+ * those selected spells. This helper must not be used to silently choose real
+ * player spells when valid slot selections are required.
+ */
 export interface SpellAssignmentOptions {
 	className: string;
 	level: number;

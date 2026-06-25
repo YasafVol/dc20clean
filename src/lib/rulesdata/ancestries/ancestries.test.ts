@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import ancestryReport from '../../../../docs/migration/ancestries-v0105-report.json';
 import { ancestriesData } from './ancestries';
 import { traitsData } from './traits';
 import type { Ancestry, Trait, Effect } from '../schemas/character.schema';
@@ -17,6 +18,18 @@ import type { Ancestry, Trait, Effect } from '../schemas/character.schema';
  * 5. Cost & Budget Calculations
  * 6. Schema Compliance
  */
+
+const CORE_ANCESTRY_IDS = ancestryReport.ancestries.map((ancestry) => ancestry.id);
+const NON_CORE_ANCESTRY_IDS = ['gremlin', 'goblin', 'terraborn', 'shadowborn', 'psyborn'];
+
+const normalizeSourceName = (value: string) =>
+	value
+		.toLowerCase()
+		.normalize('NFKD')
+		.replace(/[’']/g, '')
+		.replace(/&/g, ' and ')
+		.replace(/[^a-z0-9]+/g, ' ')
+		.trim();
 
 describe('Ancestry & Trait System', () => {
 	// ============================================================================
@@ -79,15 +92,6 @@ describe('Ancestry & Trait System', () => {
 		});
 
 		it('should have valid rulesSource values', () => {
-			const validSources = [
-				'DC20Beta0.10',
-				'DC20Beta0.95',
-				'DC20Beta0.9',
-				'Custom',
-				'Homebrew',
-				'DC20Magazine14',
-				'DC20Magazine01'
-			];
 			ancestriesData.forEach((ancestry: Ancestry) => {
 				// Should at least have a non-empty string
 				expect(ancestry.rulesSource.length).toBeGreaterThan(0);
@@ -599,5 +603,74 @@ describe('Ancestry & Trait System', () => {
 				console.log(`  Cost ${cost}: ${count} traits`);
 			});
 		});
+	});
+});
+
+describe('DC20 v0.10.5 source ancestry audit', () => {
+	it('exposes only core rules ancestries', () => {
+		expect(ancestriesData.map((ancestry) => ancestry.id)).toEqual(CORE_ANCESTRY_IDS);
+
+		for (const ancestryId of NON_CORE_ANCESTRY_IDS) {
+			expect(ancestriesData.some((ancestry) => ancestry.id === ancestryId)).toBe(false);
+			expect(traitsData.some((trait) => trait.id.startsWith(`${ancestryId}_`))).toBe(false);
+		}
+	});
+
+	it('matches source trait names and costs for every core ancestry', () => {
+		for (const sourceAncestry of ancestryReport.ancestries) {
+			const ancestry = ancestriesData.find((entry) => entry.id === sourceAncestry.id);
+			expect(ancestry, sourceAncestry.name).toBeDefined();
+
+			const runtimeTraits = [...ancestry!.defaultTraitIds, ...ancestry!.expandedTraitIds].map(
+				(traitId) => {
+					const trait = traitsData.find((entry) => entry.id === traitId);
+					expect(trait, traitId).toBeDefined();
+					return trait!;
+				}
+			);
+			runtimeTraits.push(...(ancestry!.variantTraits ?? []));
+
+			const normalizeTrait = (trait: { name: string; cost: number }) => ({
+				name: normalizeSourceName(trait.name),
+				cost: trait.cost
+			});
+
+			expect(
+				runtimeTraits.map(normalizeTrait).sort((a, b) => a.name.localeCompare(b.name))
+			).toEqual(
+				sourceAncestry.traits.map(normalizeTrait).sort((a, b) => a.name.localeCompare(b.name))
+			);
+		}
+	});
+});
+
+describe('DC20 v0.10.5 ancestry trait deltas', () => {
+	it('keeps Hazardous Hide returned with the v0.10.5 grapple damage contract', () => {
+		const hazardousHide = traitsData.find((trait) => trait.id === 'beastborn_hazardous_hide');
+
+		expect(hazardousHide).toBeDefined();
+		expect(hazardousHide?.cost).toBe(1);
+		expect(hazardousHide?.description).toContain('Corrosion, Piercing, or Poison');
+		expect(hazardousHide?.description).toContain('While you');
+		expect(hazardousHide?.description).toContain('physically Grappled');
+		expect(hazardousHide?.description).toContain('Creatures that start their turn Grappled by you');
+		expect(hazardousHide?.effects?.[0]?.value).toContain('Corrosion, Piercing, or Poison');
+		expect(hazardousHide?.effects?.[0]?.value).toContain('Grappled by you');
+	});
+
+	it('uses v0.10.5 Additional Limb and Capable Limb wording and costs', () => {
+		const additionalLimb = traitsData.find((trait) => trait.id === 'beastborn_additional_limb');
+		const capableLimb = traitsData.find((trait) => trait.id === 'beastborn_capable_limb');
+
+		expect(additionalLimb?.cost).toBe(1);
+		expect(additionalLimb?.description).toContain('range of 1 Space');
+		expect(additionalLimb?.description).toContain("can't wield Weapons, Shields, or Spell Focuses");
+		expect(additionalLimb?.description).toContain("can't use it to perform the Somatic Components");
+
+		expect(capableLimb?.cost).toBe(2);
+		expect(capableLimb?.description).toContain('Weapons, Shields, or Spell Focuses');
+		expect(capableLimb?.description).toContain('Somatic Components');
+		expect(capableLimb?.description).toContain('only once per Additional Limb');
+		expect(capableLimb?.prerequisites).toEqual(['beastborn_additional_limb']);
 	});
 });

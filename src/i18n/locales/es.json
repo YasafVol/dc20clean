@@ -1,21 +1,21 @@
 {
-  "common": {
-    "cancel": "Cancelar",
-    "confirm": "Confirmar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "save": "Guardar",
-    "close": "Cerrar",
-    "back": "Atrás",
-    "next": "Siguiente",
-    "previous": "Anterior",
-    "complete": "Completar",
-    "restart": "Reiniciar",
-    "yes": "Sí",
-    "no": "No",
-    "loading": "Cargando...",
-    "error": "Error",
-    "success": "Éxito"
+	"common": {
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"save": "Guardar",
+		"close": "Cerrar",
+		"back": "Atrás",
+		"next": "Siguiente",
+		"previous": "Anterior",
+		"complete": "Completar",
+		"restart": "Reiniciar",
+		"yes": "Sí",
+		"no": "No",
+		"loading": "Cargando...",
+		"error": "Error",
+		"success": "Éxito"
 	},
 	"menu": {
 		"title": "Creador de Personajes DC20",
@@ -29,9 +29,10 @@
 		"laboratory": "Laboratorio",
 		"referenceToolsSection": "Herramientas de Referencia",
 		"spellbook": "Libro de Hechizos",
+		"martialManual": "Manual Marcial",
 		"conditions": "Condiciones",
 		"equipage": "Equipaje",
-		"rulesVersion": "Reglas: DC20 v0.10"
+		"rulesVersion": "Reglas: DC20 v0.10.5"
 	},
 	"auth": {
 		"signIn": "Iniciar Sesión",
@@ -60,6 +61,8 @@
 		"previous": "Anterior",
 		"next": "Siguiente",
 		"complete": "Completar",
+		"finishAndGoToSheet": "Finalizar e ir a la hoja",
+		"printPdf": "Imprimir PDF",
 		"restart": "Reiniciar",
 		"restartTooltip": "Borrar todo el progreso y empezar de nuevo",
 		"editCharacter": "Editar Personaje",
@@ -202,6 +205,28 @@
 		"actionPoints": "Puntos de Acción",
 		"manaPoints": "Puntos de Maná"
 	},
+	"martialManual": {
+		"title": "Manual Marcial",
+		"subtitle": "Explora todas las maniobras del sistema DC20",
+		"searchPlaceholder": "Buscar por maniobra, mejora o descripción...",
+		"type": "Tipo",
+		"cost": "Costo",
+		"reactionOnly": "Solo reacciones",
+		"reaction": "Reacción",
+		"activeFilters": "Filtros activos:",
+		"clearAll": "Limpiar todo",
+		"clearFilters": "Limpiar Filtros",
+		"showing": "Mostrando",
+		"of": "de",
+		"maneuvers": "maniobras",
+		"noManeuversFound": "No se Encontraron Maniobras",
+		"adjustFilters": "Intenta ajustar tus filtros para ver más maniobras.",
+		"trigger": "Disparador",
+		"enhancements": "Mejoras",
+		"repeatable": "Repetible",
+		"clickToExpand": "Click para expandir",
+		"clickToCollapse": "Click para contraer"
+	},
 	"conditions": {
 		"title": "Referencia de Condiciones",
 		"subtitle": "Una guía completa de condiciones de estado",
@@ -241,6 +266,7 @@
 		"rulebookOpenNewTab": "Abrir en nueva pestaña",
 		"rulebookSearchHint": "Consejo: pulsa {{shortcut}} para buscar dentro del reglamento",
 		"copy": "Copiar",
+		"downloadJson": "Descargar JSON",
 		"exportPdf": "Exportar PDF",
 		"tabAttacks": "Ataques",
 		"tabSpells": "Hechizos",
@@ -538,7 +564,32 @@
 		"infoDuplicateId": "El personaje con ID \"{{id}}\" ya existe. Importando como nuevo personaje con ID \"{{newId}}\"",
 		"successImported": "¡Personaje \"{{name}}\" importado exitosamente!",
 		"errorImportFailed": "Error al importar personaje: {{error}}",
-		"errorExportPdfFailed": "Error al exportar PDF"
+		"errorExportPdfFailed": "Error al exportar PDF",
+		"errorCopyJsonFailed": "Error al copiar JSON",
+		"errorDownloadJsonFailed": "Error al descargar JSON",
+		"copyJson": "Copiar JSON",
+		"downloadJson": "Descargar JSON",
+		"upgradeRequired": "Requiere actualización de v0.10",
+		"upgradeBlocked": "Actualización bloqueada",
+		"needsReview": "Requiere revisión",
+		"legacyBackup": "Copia de seguridad antigua",
+		"updateToCurrentVersion": "Actualizar a versión actual",
+		"openCurrentCopy": "Abrir versión actual",
+		"createAnotherCopy": "Crear otra copia",
+		"reviewUpgrade": "Revisar bloqueos",
+		"upgradeModalTitle": "Actualizar Reglas del Personaje",
+		"upgradeModalDescription": "Crea una copia actual de {{name}} desde {{from}} hasta {{to}}.",
+		"upgradeBackupNote": "Se creará un nuevo borrador con la versión actual. El personaje original queda bloqueado y sin cambios.",
+		"automaticRenames": "Cambios de nombre automáticos",
+		"reworkedSelections": "Selecciones rediseñadas para aceptar",
+		"deprecatedRemoved": "Selecciones obsoletas que requieren revisión",
+		"upgradeBlockers": "Se requieren decisiones manuales",
+		"upgradeBlockedDescription": "Este personaje no se puede actualizar automáticamente hasta que estas selecciones tengan un reemplazo aprobado en v0.10.5.",
+		"noSelectionChanges": "No es necesario cambiar identificadores guardados. Los valores derivados usarán las reglas actuales en la nueva copia.",
+		"confirmUpgrade": "Crear Copia Actual",
+		"upgrading": "Creando...",
+		"upgradeSuccess": "Se creó el borrador con reglas actuales \"{{name}}\".",
+		"upgradeError": "Error al actualizar el personaje: {{error}}"
 	},
 	"dmTools": {
 		"encounters": "Encuentros",
@@ -547,5 +598,5 @@
 	},
 	"snackbar": {
 		"closeAriaLabel": "Cerrar"
-    }
+	}
 }

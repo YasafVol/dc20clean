@@ -36,7 +36,9 @@ export interface EffectSource {
 		| 'base'
 		| 'ancestry_default'
 		| 'talent'
-		| 'subclass_feature_choice';
+		| 'subclass_feature_choice'
+		| 'equipment'
+		| 'multiclass_feature';
 	id: string;
 	name: string;
 	description?: string;
@@ -405,6 +407,15 @@ export interface EnhancedCharacterBuildData {
 	manualPDR?: number;
 	// In-game condition toggles (e.g., raging)
 	activeConditions?: string[];
+	// Character inventory rows; equipped rows can contribute equipment effects.
+	equipmentInventory?: Array<{
+		id?: string;
+		itemType?: string;
+		itemName?: string;
+		customEquipmentId?: string;
+		customEquipmentCategory?: string;
+		isEquipped?: boolean;
+	}>;
 
 	// Selections (M3.20 Slot Based)
 	selectedSpells: Record<string, string>; // SlotID -> SpellID

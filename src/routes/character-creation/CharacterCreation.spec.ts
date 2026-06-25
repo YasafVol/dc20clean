@@ -217,25 +217,24 @@ describe('CharacterCreation - Skill Points Calculation', () => {
 		it('should handle skill-to-trade conversions correctly', () => {
 			// This would test the conversion logic:
 			// 1 skill point = 2 trade points
-			// 2 trade points = 1 skill point
 
 			const baseSkillPoints = 7; // Human Grasslands Urban base
 			const skillToTrade = 2; // Convert 2 skill points
-			const tradeToSkill = 0;
 
-			const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
+			const availableSkillPoints = baseSkillPoints - skillToTrade;
 			const expectedAvailableSkillPoints = 5; // 7 - 2 + 0
 
 			expect(availableSkillPoints).toBe(expectedAvailableSkillPoints);
 		});
 
-		it('should handle trade-to-skill conversions correctly', () => {
+		it('should only allow trade-to-skill as an undo of skill-to-trade conversions', () => {
 			const baseSkillPoints = 7; // Human Grasslands Urban base
-			const skillToTrade = 0;
-			const tradeToSkill = 4; // Convert 4 trade points (2 skills worth)
+			const skillToTrade = 2;
+			const tradeToSkill = 2; // Undo 1 skill point worth of prior skill-to-trade conversion
 
-			const availableSkillPoints = baseSkillPoints - skillToTrade + Math.floor(tradeToSkill / 2);
-			const expectedAvailableSkillPoints = 9; // 7 - 0 + Math.floor(4 / 2) = 7 + 2
+			const effectiveSkillToTrade = skillToTrade - Math.floor(tradeToSkill / 2);
+			const availableSkillPoints = baseSkillPoints - effectiveSkillToTrade;
+			const expectedAvailableSkillPoints = 6; // 7 - 1
 
 			expect(availableSkillPoints).toBe(expectedAvailableSkillPoints);
 		});

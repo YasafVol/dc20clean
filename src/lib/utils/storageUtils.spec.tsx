@@ -11,6 +11,7 @@ describe('storageUtils', () => {
 		const oldCharacterJson = JSON.stringify({
 			id: 'test-char',
 			schemaVersion: 1,
+			rulesVersion: 'dc20-0.10',
 			selectedTraitIds: '["trait1"]', // Old stringified format
 			finalName: 'Test Character'
 		});
@@ -18,15 +19,17 @@ describe('storageUtils', () => {
 		const result = deserializeCharacterFromStorage(oldCharacterJson);
 
 		expect(result).not.toBeNull(); // Should auto-migrate, not drop
-		expect(result?.schemaVersion).toBe(2); // Should be migrated to current version
+		expect(result?.schemaVersion).toBe('2.2.0'); // Should be migrated to current version
+		expect(result?.rulesVersion).toBe('dc20-0.10'); // Rules interpretation is preserved
 		expect(result?.id).toBe('test-char');
 		expect(result?.finalName).toBe('Test Character');
+		expect(result?.selectedTraitIds).toEqual(['trait1']);
 	});
 
 	test('deserializeCharacterFromStorage handles current schema', () => {
 		const currentCharacterJson = JSON.stringify({
 			id: 'test-char',
-			schemaVersion: 2,
+			schemaVersion: '2.2.0',
 			selectedTraitIds: ['trait1'], // New native array format
 			selectedFeatureChoices: { choice1: 'value1' },
 			skillsData: { athletics: 2 },
@@ -37,14 +40,16 @@ describe('storageUtils', () => {
 
 		expect(result).not.toBeNull();
 		expect(result?.id).toBe('test-char');
+		expect(result?.rulesVersion).toBe('dc20-0.10');
 		expect(result?.selectedTraitIds).toEqual(['trait1']);
 		expect(result?.selectedFeatureChoices).toEqual({ choice1: 'value1' });
 		expect(result?.skillsData).toEqual({ athletics: 2 });
 	});
 
-	test('serializeCharacterForStorage adds schemaVersion', () => {
+	test('serializeCharacterForStorage adds schemaVersion and preserves rulesVersion', () => {
 		const character = {
 			id: 'test-char',
+			rulesVersion: 'dc20-0.10',
 			selectedTraitIds: ['trait1'],
 			selectedFeatureChoices: {},
 			skillsData: {},
@@ -55,7 +60,8 @@ describe('storageUtils', () => {
 		const serialized = serializeCharacterForStorage(character);
 		const parsed = JSON.parse(serialized);
 
-		expect(parsed.schemaVersion).toBe(2);
+		expect(parsed.schemaVersion).toBe('2.2.0');
+		expect(parsed.rulesVersion).toBe('dc20-0.10');
 		expect(parsed.selectedTraitIds).toEqual(['trait1']);
 	});
 });

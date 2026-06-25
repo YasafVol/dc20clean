@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
-import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
-import { allTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
+import {
+	resolveClassProgression,
+	type ResolvedProgression
+} from '../../lib/rulesdata/classes-data/classProgressionResolver';
+import { selectableTalents } from '../../lib/rulesdata/classes-data/talents/talent.loader';
 import { generalTalents } from '../../lib/rulesdata/classes-data/talents/talents.data';
 import { CHARACTER_PATHS } from '../../lib/rulesdata/progression/paths/paths.data';
-import { MULTICLASS_TIERS, type MulticlassTier } from '../../lib/rulesdata/progression/multiclass';
+import {
+	MULTICLASS_TIERS,
+	countOwnedSubclassFeatures,
+	type MulticlassTier
+} from '../../lib/rulesdata/progression/multiclass';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import { findClassByName } from '../../lib/rulesdata/loaders/class-features.loader';
 import { getFeatureChoiceKey } from '../../lib/rulesdata/classes-data/classUtils';
@@ -22,6 +29,7 @@ import {
 } from '../../components/ui/select';
 import { cn } from '../../lib/utils';
 import { Check, Plus, Minus } from 'lucide-react';
+import { debug } from '../../lib/utils/debug';
 
 type ActiveTab = 'talents' | 'pathPoints';
 
@@ -35,7 +43,7 @@ function LevelingChoices() {
 	const [pathPoints, setPathPoints] = useState(
 		state.pathPointAllocations || { martial: 0, spellcasting: 0 }
 	);
-	const [resolvedProgression, setResolvedProgression] = useState<any>(null);
+	const [resolvedProgression, setResolvedProgression] = useState<ResolvedProgression | null>(null);
 
 	// Multiclass state - restore from context if available (UI3 fix)
 	const [selectedMulticlassOption, setSelectedMulticlassOption] = useState<MulticlassTier | null>(
@@ -60,7 +68,7 @@ function LevelingChoices() {
 				const progression = resolveClassProgression(state.classId, state.level);
 				setResolvedProgression(progression);
 			} catch (error) {
-				console.error('Failed to resolve progression:', error);
+				debug.error('Calculation', 'Failed to resolve progression', error);
 			}
 		}
 	}, [state.classId, state.level]);
@@ -78,7 +86,9 @@ function LevelingChoices() {
 	if (!resolvedProgression) {
 		return (
 			<div className="mx-auto max-w-4xl p-8 text-center">
-				<p className="text-muted-foreground text-lg italic">{t('characterCreation.loadingLevelingOptions')}</p>
+				<p className="text-muted-foreground text-lg italic">
+					{t('characterCreation.loadingLevelingOptions')}
+				</p>
 			</div>
 		);
 	}
@@ -99,13 +109,13 @@ function LevelingChoices() {
 
 	// General talents are now imported from canonical source (talents.data.ts)
 	// This ensures DC20 v0.10 correct values: Ancestry +4, Attribute +2, Skill +4
-	console.log('🎯 LevelingChoices: Using canonical generalTalents', {
+	debug.calculation('LevelingChoices using canonical general talents', {
 		count: generalTalents.length,
 		talents: generalTalents.map((t) => t.name)
 	});
 
 	// Filter class talents
-	const classTalents = allTalents.filter(
+	const classTalents = selectableTalents.filter(
 		(t) =>
 			t.category === 'Class' &&
 			t.prerequisites?.classId === state.classId &&
@@ -126,7 +136,7 @@ function LevelingChoices() {
 		// If we have a multiclass feature selected for this class, add it to the count
 		if (state.selectedMulticlassClass === targetClassId && state.selectedMulticlassFeature) {
 			count += 1;
-			console.log('🔢 Multiclass feature counted:', {
+			debug.calculation('Multiclass feature counted', {
 				targetClassId,
 				feature: state.selectedMulticlassFeature,
 				totalCount: count
@@ -139,10 +149,7 @@ function LevelingChoices() {
 	const getOwnedSubclassFeatures = (targetClassId: string): number => {
 		if (!state.classId || !state.level) return 0;
 		if (targetClassId === state.classId && state.selectedSubclass && resolvedProgression) {
-			if (state.level >= 3) {
-				const subclassLevels = [3, 6, 9, 12, 15, 18].filter((lvl) => lvl <= state.level);
-				return subclassLevels.length;
-			}
+			return countOwnedSubclassFeatures(state.level);
 		}
 		return 0;
 	};
@@ -315,12 +322,14 @@ function LevelingChoices() {
 				<TabsList className="border-border mx-auto mb-8 grid w-full max-w-md grid-cols-2 border bg-black/40">
 					<TabsTrigger
 						value="talents"
+						data-testid="leveling-talents-tab"
 						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Talents ({totalTalentsUsed} / {availableTalentPoints})
 					</TabsTrigger>
 					<TabsTrigger
 						value="pathPoints"
+						data-testid="leveling-path-points-tab"
 						className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-cinzel text-base"
 					>
 						Path Points ({usedPathPoints} / {availablePathPoints})
@@ -339,6 +348,8 @@ function LevelingChoices() {
 								return (
 									<Card
 										key={talent.id}
+										data-testid={`talent-card-${talent.id}`}
+										data-talent-id={talent.id}
 										className={cn(
 											'border-l-4 transition-all',
 											count > 0
@@ -370,6 +381,8 @@ function LevelingChoices() {
 													size="icon"
 													onClick={() => handleGeneralTalentDecrement(talent.id)}
 													disabled={count === 0}
+													data-testid={`talent-${talent.id}-decrease`}
+													data-action-id={`talent-${talent.id}-decrease`}
 													className="h-8 w-8"
 												>
 													<Minus className="h-4 w-4" />
@@ -379,6 +392,8 @@ function LevelingChoices() {
 													size="icon"
 													onClick={() => handleGeneralTalentIncrement(talent.id)}
 													disabled={totalTalentsUsed >= availableTalentPoints}
+													data-testid={`talent-${talent.id}-increase`}
+													data-action-id={`talent-${talent.id}-increase`}
 													className="ml-auto h-8 w-8"
 												>
 													<Plus className="h-4 w-4" />
@@ -405,6 +420,8 @@ function LevelingChoices() {
 									return (
 										<Card
 											key={talent.id}
+											data-testid={`talent-card-${talent.id}`}
+											data-talent-id={talent.id}
 											className={cn(
 												'hover:border-primary/50 cursor-pointer border-l-4 transition-all',
 												isSelected
@@ -707,7 +724,7 @@ function LevelingChoices() {
 											onValueChange={(value) => {
 												setSelectedCrossPathSpellList(value);
 												dispatch({ type: 'SET_CROSS_PATH_SPELL_LIST', spellList: value });
-												console.log('✨ Cross-path Spell List selected:', value);
+												debug.spells('Cross-path spell list selected', { value });
 											}}
 										>
 											<SelectTrigger className="w-full">
@@ -752,7 +769,12 @@ function LevelingChoices() {
 								path.id === 'martial_path' ? pathPoints.martial || 0 : pathPoints.spellcasting || 0;
 
 							return (
-								<Card key={path.id} className="border-border bg-black/20">
+								<Card
+									key={path.id}
+									className="border-border bg-black/20"
+									data-testid={`path-card-${path.id}`}
+									data-path-id={path.id}
+								>
 									<CardHeader>
 										<div className="flex items-center justify-between">
 											<CardTitle className="font-cinzel text-primary text-2xl">
@@ -768,6 +790,8 @@ function LevelingChoices() {
 														)
 													}
 													disabled={currentLevel === 0}
+													data-testid={`path-${path.id}-decrease`}
+													data-action-id={`path-${path.id}-decrease`}
 													className="h-8 w-8"
 												>
 													<Minus className="h-4 w-4" />
@@ -782,6 +806,8 @@ function LevelingChoices() {
 														)
 													}
 													disabled={usedPathPoints >= availablePathPoints}
+													data-testid={`path-${path.id}-increase`}
+													data-action-id={`path-${path.id}-increase`}
 													className="h-8 w-8"
 												>
 													<Plus className="h-4 w-4" />

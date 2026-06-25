@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/spellFocusOptions.ts
- * @description Spell focus properties and presets from DC20 0.10.
+ * @description Spell focus properties and presets from DC20 0.10.5.
  */
 
 import { SpellFocusProperty, PresetSpellFocus } from '../schemas/spellFocusSchema';
@@ -29,7 +29,14 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		name: 'Channeling',
 		description: 'You gain a +1 bonus to Spell Checks.',
 		cost: 1,
-		effect: '+1 to Spell Checks'
+		effect: '+1 to Spell Checks',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'channeling_focus',
+				value: 'You gain a +1 bonus to Spell Checks while wielding this Spell Focus.'
+			}
+		]
 	},
 	{
 		id: 'close-quarters',
@@ -37,7 +44,15 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		description:
 			"Your Ranged Spell Attacks don't have DisADV if you're within the Melee Range of enemies.",
 		cost: 1,
-		effect: 'No DisADV on Ranged Spell Attacks in melee'
+		effect: 'No DisADV on Ranged Spell Attacks in melee',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'close_quarters_focus',
+				value:
+					"Your Ranged Spell Attacks don't have DisADV if you're within the Melee Range of enemies."
+			}
+		]
 	},
 	{
 		id: 'long-ranged-focus',
@@ -45,35 +60,64 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		description:
 			'Spells you cast with a Range greater than 1 have their range increase by 5 Spaces.',
 		cost: 1,
-		effect: '+5 Spaces range for spells with range > 1'
+		effect: '+5 Spaces range for spells with range > 1',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'long_ranged_focus',
+				value: 'Spells you cast with a Range greater than 1 have their range increase by 5 Spaces.'
+			}
+		]
 	},
 	{
 		id: 'muffled',
 		name: 'Muffled',
 		description: 'Verbal Components of Spells you cast can only be heard within 5 Spaces of you.',
 		cost: 1,
-		effect: 'Verbal Components heard only within 5 Spaces'
+		effect: 'Verbal Components heard only within 5 Spaces',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'muffled_focus',
+				value: 'Verbal Components of Spells you cast can only be heard within 5 Spaces of you.'
+			}
+		]
 	},
 	{
 		id: 'powerful',
 		name: 'Powerful',
 		description: 'Your Spell Attacks deal +1 damage to all targets.',
 		cost: 2,
-		effect: '+1 Spell Attack damage'
+		effect: '+1 Spell Attack damage',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'powerful_focus',
+				value: 'Your Spell Attacks deal +1 damage to all targets.'
+			}
+		]
 	},
 	{
 		id: 'protective',
 		name: 'Protective',
 		description: 'Your AD increases by 1.',
 		cost: 1,
-		effect: '+1 AD'
+		effect: '+1 AD',
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
 	},
 	{
 		id: 'reach-focus',
 		name: 'Reach',
 		description: 'Spells you cast with a Range of 1 have their range increase by 1 Space.',
 		cost: 1,
-		effect: '+1 Space range for spells with range 1'
+		effect: '+1 Space range for spells with range 1',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'reach_focus',
+				value: 'Spells you cast with a Range of 1 have their range increase by 1 Space.'
+			}
+		]
 	},
 	{
 		id: 'reactive',
@@ -81,13 +125,22 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		description:
 			'When you are the Challenger or a Participant helping the Challenger in a Spell Duel, they gain ADV on their Check to stop the Spell.',
 		cost: 1,
-		effect: 'ADV on Spell Duel checks as Challenger'
+		effect: 'ADV on Spell Duel checks as Challenger',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'reactive_focus',
+				value:
+					'When you are the Challenger or a Participant helping the Challenger in a Spell Duel, they gain ADV on their Check to stop the Spell.'
+			}
+		]
 	},
 	{
 		id: 'two-handed-focus',
 		name: 'Two-Handed',
 		description: 'The Spell Focus requires 2 hands to benefit from its properties.',
 		cost: -1,
+		focusHands: ['two-handed'],
 		effect: 'Requires 2 hands'
 	},
 	{
@@ -95,14 +148,22 @@ export const SPELL_FOCUS_PROPERTIES: SpellFocusProperty[] = [
 		name: 'Vicious',
 		description: 'You gain a +1 bonus to hit with Spell Attacks.',
 		cost: 1,
-		effect: '+1 to hit with Spell Attacks'
+		effect: '+1 to hit with Spell Attacks',
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'vicious_focus',
+				value: 'You gain a +1 bonus to hit with Spell Attacks.'
+			}
+		]
 	},
 	{
 		id: 'warded',
 		name: 'Warded',
 		description: 'You have MDR (Mystical Damage Reduction).',
 		cost: 1,
-		effect: 'MDR'
+		effect: 'MDR',
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'mystical', value: true }]
 	}
 ];
 

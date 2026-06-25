@@ -9,11 +9,11 @@ export const commanderClass: ClassDefinition = {
 	className: 'Commander',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons or Shields'],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
-		armor: ['1 set of any Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal: 'Choose 3 of any of the following items: Weapon or Shield.',
+		armor: '1 set of Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Cartographer's Tools, Calligrapher's, Cryptographer's Tools, or Gaming Set.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
@@ -42,19 +42,16 @@ export const commanderClass: ClassDefinition = {
 			effects: [
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
 				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
+				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true }
 			],
 			benefits: [
 				{
 					name: 'Combat Training',
-					description: 'Proficiency with all weapons, armor, and shields.',
-					effects: []
+					description: 'Proficiency with all weapons, armor, and shields.'
 				},
 				{
 					name: 'Maneuver Training',
-					description: 'You learn all Attack Maneuvers plus additional maneuvers.',
-					effects: []
+					description: 'You learn all Attack Maneuvers plus additional maneuvers.'
 				},
 				{
 					name: 'Stamina Regeneration',
@@ -74,13 +71,14 @@ export const commanderClass: ClassDefinition = {
 			id: 'commander_inspiring_presence',
 			featureName: 'Inspiring Presence',
 			levelGained: 1,
-			description: 'Whenever you spend SP while in Combat, you can restore HP to nearby allies.',
+			description:
+				"Once per Round during Combat, when you spend SP you can restore 1 HP to a creature of your choice within 10 Spaces (including yourself) that can see or hear you. If the creature is on Death's Door, they regain 1 additional HP.",
 			effects: [
 				{
 					type: 'GRANT_ABILITY',
 					target: 'inspiring_presence',
 					value:
-						'When spending SP in combat: restore HP equal to SP spent, divide among allies within 5 Spaces.'
+						"Once per Round in combat when you spend SP: restore 1 HP to a creature within 10 Spaces that can see or hear you; Death's Door targets regain 1 additional HP."
 				}
 			]
 		},
@@ -132,7 +130,7 @@ export const commanderClass: ClassDefinition = {
 			featureName: 'Natural Leader',
 			levelGained: 1,
 			description:
-				'You have ADV on Checks made to convince creatures that you are an authority figure.',
+				'You have ADV on Checks made to convince creatures that you are an authority figure. Additionally, you have ADV on the first Charisma Check made to interact with non-hostile members of military groups (such as soldiers, guards, etc.).',
 			isFlavor: true,
 			effects: [
 				{ type: 'GRANT_ADV_ON_CHECK', target: 'authority_figure', value: 'ADV' },
@@ -181,26 +179,49 @@ export const commanderClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'commander_talent_level_2',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'commander_level_5_placeholder',
-			featureName: 'Tactical Mastery (Placeholder)',
+			featureName: 'Expert Commander',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'commander_level_8_capstone_placeholder',
-			featureName: 'Supreme Commander (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Commander Class Features.',
+			benefits: [
+				{
+					name: "Commander's Call",
+					description:
+						"Commander's Call range increases to 10 Spaces. You can spend 2 additional SP to issue 1 additional command.",
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_commanders_call',
+							value:
+								"Commander's Call range 10 Spaces; spend 2 additional SP to issue 1 additional command."
+						}
+					]
+				},
+				{
+					name: 'Inspiring Presence',
+					description: 'Inspiring Presence restores 1 additional HP.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_inspiring_presence',
+							value: 'Inspiring Presence restores 1 additional HP.'
+						}
+					]
+				},
+				{
+					name: 'Commanding Aura',
+					description:
+						'Your Help Die starts at d10. Rally grants +1 temp HP per 2 SP spent. Reinforce can spend 1 SP to grant ADV on Saves made as part of the Attack.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_commander_commanding_aura',
+							value:
+								'Help Die starts at d10; Rally grants +1 temp HP per 2 SP; Reinforce can spend 1 SP to grant ADV on Saves made as part of the Attack.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [
@@ -208,10 +229,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Crusader',
 			description: 'Holy warriors who protect and inspire their allies.',
 			features: [
-			{
-				id: 'commander_crusader_virtuous_vanguard',
-				featureName: 'Virtuous Vanguard',
-				levelGained: 3,
+				{
+					id: 'commander_crusader_virtuous_vanguard',
+					featureName: 'Virtuous Vanguard',
+					levelGained: 3,
 					description: 'You become a beacon of courage and protection.',
 					benefits: [
 						{
@@ -251,10 +272,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'commander_crusader_gallant_hero',
-				featureName: 'Gallant Hero',
-				levelGained: 3,
+				{
+					id: 'commander_crusader_gallant_hero',
+					featureName: 'Gallant Hero',
+					levelGained: 3,
 					description: 'Your presence is a symbol of hope and safety.',
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'convince_not_afraid', value: 'ADV' }]
@@ -265,10 +286,10 @@ export const commanderClass: ClassDefinition = {
 			subclassName: 'Warlord',
 			description: 'Tactical masters who excel at aggressive battlefield control.',
 			features: [
-			{
-				id: 'commander_warlord_offensive_tactics',
-				featureName: 'Offensive Tactics',
-				levelGained: 3,
+				{
+					id: 'commander_warlord_offensive_tactics',
+					featureName: 'Offensive Tactics',
+					levelGained: 3,
 					description: 'You gain aggressive battlefield abilities.',
 					benefits: [
 						{
@@ -311,10 +332,10 @@ export const commanderClass: ClassDefinition = {
 						}
 					]
 				},
-			{
-				id: 'commander_warlord_battlefield_tactician',
-				featureName: 'Battlefield Tactician',
-				levelGained: 3,
+				{
+					id: 'commander_warlord_battlefield_tactician',
+					featureName: 'Battlefield Tactician',
+					levelGained: 3,
 					description: "You've mastered military history and strategy.",
 					isFlavor: true,
 					effects: [{ type: 'GRANT_ADV_ON_CHECK', target: 'military_knowledge', value: 'ADV' }]

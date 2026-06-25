@@ -47,6 +47,7 @@ export type SheetAction =
 	| { type: 'UPDATE_CURRENT_GRIT_POINTS'; grit: number }
 	| { type: 'UPDATE_CURRENT_REST_POINTS'; rest: number }
 	| { type: 'TOGGLE_ACTIVE_CONDITION'; conditionId: string }
+	| { type: 'SET_ACTIVE_CONDITION_STACKS'; conditionId: string; stacks: number }
 	| {
 			type: 'UPDATE_DEFENSE_OVERRIDES';
 			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
@@ -558,37 +559,42 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
-			case 'UPDATE_DEFENSE_OVERRIDES':
-				if (!state.character) return state;
-				return {
-					...state,
-					character: {
-						...state.character,
-						characterState: {
-							...state.character.characterState,
-							defenseOverrides: action.overrides
-						}
-					}
-				};
+		case 'SET_ACTIVE_CONDITION_STACKS':
+			if (!state.character) return state;
+			const baseConditionId = action.conditionId;
+			const stackPrefix = baseConditionId.replace(/-x$/, '');
+			const nextConditions = (state.character.characterState.activeConditions || []).filter(
+				(id) => id !== baseConditionId && !id.startsWith(`${stackPrefix}-`)
+			);
+			const nextStacks = Math.max(0, Math.floor(action.stacks));
+			const nextConditionId =
+				nextStacks > 0 ? baseConditionId.replace(/-x$/, `-${nextStacks}`) : undefined;
 
-			case 'SET_RAGE_ACTIVE':
-				if (!state.character) return state;
-				return {
-					...state,
-					character: {
-						...state.character,
-						characterState: {
-							...state.character.characterState,
-							ui: {
-								...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
-								combatToggles: {
-									...state.character.characterState.ui?.combatToggles,
-									isRaging: action.isRaging
-								}
-							}
-						}
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						activeConditions: nextConditionId
+							? [...nextConditions, nextConditionId]
+							: nextConditions
 					}
-				};
+				}
+			};
+
+		case 'UPDATE_DEFENSE_OVERRIDES':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						defenseOverrides: action.overrides
+					}
+				}
+			};
 
 		case 'SET_RAGE_ACTIVE':
 			if (!state.character) return state;
@@ -600,6 +606,10 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 						...state.character.characterState,
 						ui: {
 							...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+							activeConditions: {
+								...(state.character.characterState.ui?.activeConditions || {}),
+								while_raging: action.isRaging
+							},
 							combatToggles: {
 								...state.character.characterState.ui?.combatToggles,
 								isRaging: action.isRaging
@@ -730,6 +740,10 @@ export function useCharacterSheetReducer() {
 		dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
 	}, []);
 
+	const setActiveConditionStacks = useCallback((conditionId: string, stacks: number) => {
+		dispatch({ type: 'SET_ACTIVE_CONDITION_STACKS', conditionId, stacks });
+	}, []);
+
 	const updateDefenseOverrides = useCallback(
 		(overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number }) => {
 			dispatch({ type: 'UPDATE_DEFENSE_OVERRIDES', overrides });
@@ -772,8 +786,8 @@ export function useCharacterSheetReducer() {
 		updateGritPoints,
 		updateRestPoints,
 		toggleActiveCondition,
+		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive
 	};
 }
-

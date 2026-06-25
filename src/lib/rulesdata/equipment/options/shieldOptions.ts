@@ -1,6 +1,6 @@
 /**
  * @file src/lib/rulesdata/equipment/options/shieldOptions.ts
- * @description Shield types, properties, and presets from DC20 0.10.
+ * @description Shield types, properties, and presets from DC20 0.10.5.
  */
 
 import { ShieldTypeDefinition, ShieldProperty, PresetShield } from '../schemas/shieldSchema';
@@ -48,16 +48,20 @@ export const LIGHT_SHIELD_PROPERTIES: ShieldProperty[] = [
 		name: 'PD Increase',
 		description: "The Shield's PD Bonus increases by 1.",
 		cost: 1,
+		shieldTypes: ['light'],
 		lightOnly: true,
-		modifies: { stat: 'pd', value: 1 }
+		modifies: { stat: 'pd', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1 }]
 	},
 	{
 		id: 'ad-increase-light',
 		name: 'AD Increase',
 		description: "The Shield's AD Bonus increases by 1.",
 		cost: 1,
+		shieldTypes: ['light'],
 		lightOnly: true,
-		modifies: { stat: 'ad', value: 1 }
+		modifies: { stat: 'ad', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
 	},
 	{
 		id: 'grasp',
@@ -65,7 +69,16 @@ export const LIGHT_SHIELD_PROPERTIES: ShieldProperty[] = [
 		description:
 			'The Shield is considered to be a free hand when Grappling, Reloading a Weapon, or Attacking with a Versatile Weapon.',
 		cost: 1,
-		lightOnly: true
+		shieldTypes: ['light'],
+		lightOnly: true,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'grasp_shield',
+				value:
+					'The Shield is considered to be a free hand when Grappling, Reloading a Weapon, or Attacking with a Versatile Weapon.'
+			}
+		]
 	},
 	{
 		id: 'toss-shield',
@@ -73,7 +86,15 @@ export const LIGHT_SHIELD_PROPERTIES: ShieldProperty[] = [
 		description:
 			"You can throw the Shield to make a Ranged Martial Attack (5/10). If you throw it further than this range it's considered an Improvised Weapon.",
 		cost: 1,
-		lightOnly: true
+		shieldTypes: ['light'],
+		lightOnly: true,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'toss_shield',
+				value: 'You can throw the Shield to make a Ranged Martial Attack (5/10).'
+			}
+		]
 	}
 ];
 
@@ -83,54 +104,80 @@ export const HEAVY_SHIELD_PROPERTIES: ShieldProperty[] = [
 		name: 'PD Increase',
 		description: "The Shield's PD Bonus increases by 1.",
 		cost: 1,
+		shieldTypes: ['heavy'],
 		heavyOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'pd', value: 1 }
+		modifies: { stat: 'pd', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'pd', value: 1 }]
 	},
 	{
 		id: 'ad-increase-heavy',
 		name: 'AD Increase',
 		description: "The Shield's AD Bonus increases by 1.",
 		cost: 1,
+		shieldTypes: ['heavy'],
 		heavyOnly: true,
 		maxStacks: 2,
-		modifies: { stat: 'ad', value: 1 }
+		modifies: { stat: 'ad', value: 1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'ad', value: 1 }]
 	},
 	{
 		id: 'mounted',
 		name: 'Mounted',
 		description: "The Shield's PD and AD Bonuses also apply to your Mount's Defenses.",
 		cost: 1,
-		heavyOnly: true
+		shieldTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'mounted_shield',
+				value: "The Shield's PD and AD Bonuses also apply to your Mount's Defenses."
+			}
+		]
 	},
 	{
 		id: 'pdr-shield',
 		name: 'PDR',
 		description: 'The Shield grants Physical Damage Reduction.',
 		cost: 2,
-		heavyOnly: true
+		shieldTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'physical', value: true }]
 	},
 	{
 		id: 'edr-shield',
 		name: 'EDR',
 		description: 'The Shield grants Elemental Damage Reduction.',
 		cost: 2,
-		heavyOnly: true
+		shieldTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [{ type: 'GRANT_RESISTANCE', target: 'elemental', value: true }]
 	},
 	{
 		id: 'bulky-shield',
 		name: 'Bulky',
 		description: 'Your Speed is reduced by 1.',
 		cost: -1,
+		shieldTypes: ['heavy'],
 		heavyOnly: true,
-		modifies: { stat: 'speed', value: -1 }
+		modifies: { stat: 'speed', value: -1 },
+		effects: [{ type: 'MODIFY_STAT', target: 'moveSpeed', value: -1 }]
 	},
 	{
 		id: 'rigid-shield',
 		name: 'Rigid',
 		description: 'You have DisADV on Agility Checks.',
 		cost: -1,
-		heavyOnly: true
+		shieldTypes: ['heavy'],
+		heavyOnly: true,
+		effects: [
+			{
+				type: 'GRANT_ABILITY',
+				target: 'rigid_shield',
+				value: 'You have DisADV on Agility Checks while wielding this Shield.'
+			}
+		]
 	}
 ];
 

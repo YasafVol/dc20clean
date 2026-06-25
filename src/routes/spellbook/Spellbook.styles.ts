@@ -115,8 +115,10 @@ type FilterChipProps = {
 export const FilterChip = styled.button<FilterChipProps>`
 	padding: ${theme.spacing[2]} ${theme.spacing[4]};
 	border-radius: ${theme.borderRadius.md};
-	border: 1px solid ${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
-	background: ${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.bg.tertiary)};
+	border: 1px solid
+		${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
+	background: ${(props) =>
+		props.$selected ? theme.colors.accent.primary : theme.colors.bg.tertiary};
 	color: ${(props) => (props.$selected ? theme.colors.text.inverse : theme.colors.text.primary)};
 	font-size: ${theme.typography.fontSize.sm};
 	font-weight: ${theme.typography.fontWeight.medium};
@@ -125,7 +127,8 @@ export const FilterChip = styled.button<FilterChipProps>`
 	box-shadow: ${(props) => (props.$selected ? theme.shadows.md : 'none')};
 
 	&:hover {
-		background: ${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.bg.elevated)};
+		background: ${(props) =>
+			props.$selected ? theme.colors.accent.primary : theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
 	}
 

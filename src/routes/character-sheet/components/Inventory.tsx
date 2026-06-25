@@ -19,7 +19,8 @@ import {
 	StyledInventoryTextInput,
 	StyledInventoryInfoIcon,
 	StyledInventoryCost,
-	StyledEmptyInventory
+	StyledEmptyInventory,
+	StyledInventoryCheckbox
 } from '../styles/Inventory';
 import { theme } from '../styles/theme';
 
@@ -58,6 +59,23 @@ const StyledInventoryInfoIconAccent = styled(StyledInventoryInfoIcon)`
 
 /** Sentinel value used in the Custom name dropdown to trigger freeform text input */
 const CUSTOM_FREEFORM_VALUE = '__custom_freeform__';
+
+function formatCustomEquipmentCategory(
+	category?: InventoryItemData['customEquipmentCategory']
+): string {
+	switch (category) {
+		case 'weapon':
+			return 'Custom Weapon';
+		case 'armor':
+			return 'Custom Armor';
+		case 'shield':
+			return 'Custom Shield';
+		case 'spellFocus':
+			return 'Custom Spell Focus';
+		default:
+			return 'Custom';
+	}
+}
 
 export interface InventoryProps {
 	onItemClick: (inventoryData: InventoryItemData, item: InventoryItem | null) => void;
@@ -99,7 +117,8 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			itemType: '',
 			itemName: '',
 			count: 1,
-			cost: '-'
+			cost: '-',
+			isEquipped: false
 		};
 		updateInventory([...inventory, newInventoryItem]);
 	};
@@ -128,7 +147,15 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			const itemType = itemTypeOrName as InventoryItemData['itemType'];
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex
-					? { ...item, itemType, itemName: '', cost: '-', customEquipmentId: undefined }
+					? {
+							...item,
+							itemType,
+							itemName: '',
+							cost: '-',
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							isEquipped: false
+						}
 					: item
 			);
 			updateInventory(updatedInventory);
@@ -151,7 +178,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 							itemName: itemTypeOrName,
 							itemType: selectedItem?.itemType || item.itemType,
 							cost: getItemCost(selectedItem),
-							customEquipmentId: undefined
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							isEquipped: false
 						}
 					: item
 			);
@@ -171,7 +200,14 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			// Clear any previous name/link
 			const updatedInventory = inventory.map((item, index) =>
 				index === inventoryIndex
-					? { ...item, itemName: '', customEquipmentId: undefined, cost: '-' }
+					? {
+							...item,
+							itemName: '',
+							customEquipmentId: undefined,
+							customEquipmentCategory: undefined,
+							cost: '-',
+							isEquipped: false
+						}
 					: item
 			);
 			updateInventory(updatedInventory);
@@ -185,7 +221,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								...item,
 								itemName: equipment.name,
 								customEquipmentId: equipment.id,
-								cost: '-'
+								customEquipmentCategory: equipment.category,
+								cost: '-',
+								isEquipped: false
 							}
 						: item
 				);
@@ -206,7 +244,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	const handleCustomNameChange = (inventoryIndex: number, name: string) => {
 		const updatedInventory = inventory.map((item, index) =>
 			index === inventoryIndex
-				? { ...item, itemName: name, customEquipmentId: undefined }
+				? {
+						...item,
+						itemName: name,
+						customEquipmentId: undefined,
+						customEquipmentCategory: undefined,
+						isEquipped: false
+					}
 				: item
 		);
 		updateInventory(updatedInventory);
@@ -215,6 +259,13 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	const handleInventoryCountChange = (inventoryIndex: number, count: number) => {
 		const updatedInventory = inventory.map((item, index) =>
 			index === inventoryIndex ? { ...item, count: Math.max(1, count) } : item
+		);
+		updateInventory(updatedInventory);
+	};
+
+	const handleEquippedChange = (inventoryIndex: number, isEquipped: boolean) => {
+		const updatedInventory = inventory.map((item, index) =>
+			index === inventoryIndex ? { ...item, isEquipped } : item
 		);
 		updateInventory(updatedInventory);
 	};
@@ -256,10 +307,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 	// Build a short single-line summary shown right under the item name. Keeps
 	// the most useful stats per item type so players don't have to open the
 	// popup just to remember what a weapon does.
-	const buildInlineSummary = (
-		item: InventoryItem | null,
-		invData: InventoryItemData
-	): string => {
+	const buildInlineSummary = (item: InventoryItem | null, invData: InventoryItemData): string => {
 		// Custom items: prefer freeform description, fall back to Equipage description
 		if (invData.itemType === 'Custom') {
 			if (invData.description) {
@@ -270,6 +318,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 				const eq = customEquipment.find((e) => e.id === invData.customEquipmentId);
 				if (eq) {
 					const bits: string[] = [];
+					bits.push(formatCustomEquipmentCategory(eq.category));
 					if ((eq as any).finalDamage) bits.push(String((eq as any).finalDamage));
 					if ((eq as any).pdBonus !== undefined) bits.push(`PD +${(eq as any).pdBonus}`);
 					if ((eq as any).adBonus !== undefined) bits.push(`AD +${(eq as any).adBonus}`);
@@ -352,20 +401,20 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 		if (isCustomFreeform(item)) {
 			// Freeform text input mode
 			return (
-			<StyledInventoryTextInput
-				$isMobile={isMobile}
-				type="text"
-				placeholder="Enter item name..."
-				value={item.itemName}
-				onChange={(e) => handleCustomNameChange(index, e.target.value)}
-				onKeyDown={(e) => {
-					if (e.key === 'Enter') {
-						(e.target as HTMLInputElement).blur();
-					}
-				}}
-				data-testid="item-name"
-				autoFocus
-			/>
+				<StyledInventoryTextInput
+					$isMobile={isMobile}
+					type="text"
+					placeholder="Enter item name..."
+					value={item.itemName}
+					onChange={(e) => handleCustomNameChange(index, e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							(e.target as HTMLInputElement).blur();
+						}
+					}}
+					data-testid="item-name"
+					autoFocus
+				/>
 			);
 		}
 
@@ -394,7 +443,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 	return (
 		<StyledInventorySection $isMobile={isMobile}>
-			<StyledInventoryTitle $isMobile={isMobile}>{t('characterSheet.inventoryTitle')}</StyledInventoryTitle>
+			<StyledInventoryTitle $isMobile={isMobile}>
+				{t('characterSheet.inventoryTitle')}
+			</StyledInventoryTitle>
 
 			{/* Add Item Button */}
 			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
@@ -404,25 +455,33 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			<StyledInventoryContainer $isMobile={isMobile}>
 				<StyledInventoryHeaderRow>
 					<span></span> {/* Empty column for remove button */}
-					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnType')}</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn>{t('characterSheet.inventoryColumnItem')}</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCount')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">Eq.</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>
+						{t('characterSheet.inventoryColumnType')}
+					</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn>
+						{t('characterSheet.inventoryColumnItem')}
+					</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">
+						{t('characterSheet.inventoryColumnCount')}
+					</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">
 						<StyledInventoryInfoIcon>i</StyledInventoryInfoIcon>
 					</StyledInventoryHeaderColumn>
-					<StyledInventoryHeaderColumn align="center">{t('characterSheet.inventoryColumnCost')}</StyledInventoryHeaderColumn>
+					<StyledInventoryHeaderColumn align="center">
+						{t('characterSheet.inventoryColumnCost')}
+					</StyledInventoryHeaderColumn>
 				</StyledInventoryHeaderRow>
 
 				{inventory.length === 0 ? (
-					<StyledEmptyInventory>
-						{t('characterSheet.inventoryNoItems')}
-					</StyledEmptyInventory>
+					<StyledEmptyInventory>{t('characterSheet.inventoryNoItems')}</StyledEmptyInventory>
 				) : (
 					inventory.map((item, index) => {
 						const isCustomType = item.itemType === 'Custom';
-						const selectedItem = (!isCustomType && item.itemName)
-							? allItems.find((i) => i.name === item.itemName)
-							: null;
+						const selectedItem =
+							!isCustomType && item.itemName
+								? allItems.find((i) => i.name === item.itemName)
+								: null;
 
 						// For Custom items, determine if the info icon should be clickable
 						const hasCustomInfo = isCustomType && !!item.itemName;
@@ -434,6 +493,16 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									onClick={() => removeInventorySlot(index)}
 									title={t('characterSheet.inventoryRemoveItem')}
 									$isMobile={isMobile}
+								/>
+
+								<StyledInventoryCheckbox
+									$isMobile={isMobile}
+									type="checkbox"
+									checked={!!item.isEquipped}
+									disabled={!item.itemName}
+									onChange={(e) => handleEquippedChange(index, e.target.checked)}
+									title="Equipped"
+									aria-label={`item-equipped-${index + 1}`}
 								/>
 
 								{/* Item Type */}
@@ -448,7 +517,11 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 									<option value="Shield">Shield</option>
 									<option value="Adventuring Supply">Adventuring Supply</option>
 									<option value="Potion">Healing Potion</option>
-									<option value="Custom">Custom</option>
+									<option value="Custom">
+										{isCustomType
+											? formatCustomEquipmentCategory(item.customEquipmentCategory)
+											: 'Custom'}
+									</option>
 								</StyledInventorySelect>
 
 								{/* Item Name + inline summary stacked in the same grid cell */}
@@ -532,7 +605,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								</div>
 
 								{/* Cost */}
-								<StyledInventoryCost>{isCustomType ? (item.cost || '-') : getItemCost(selectedItem, item.count)}</StyledInventoryCost>
+								<StyledInventoryCost>
+									{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
+								</StyledInventoryCost>
 							</StyledInventoryRow>
 						);
 					})

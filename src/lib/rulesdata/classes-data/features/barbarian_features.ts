@@ -4,11 +4,11 @@ export const barbarianClass: ClassDefinition = {
 	className: 'Barbarian',
 	classCategory: 'martial',
 	startingEquipment: {
-		weaponsOrShields: ['3 Weapons or Shields'],
-		rangedWeapons: ['Ranged Weapon with 20 Ammo', '3 Weapons with Toss or Thrown Property'],
-		armor: ['1 set of Light Armor or Heavy Armor'],
-		tradeTools: ['1 set of Trade Tools'],
-		packs: 'Adventuring Pack (Coming Soon)'
+		arsenal: 'Choose 3 of any of the following items: Weapon or Shield.',
+		armor: '1 set of Armor.',
+		tradeTools:
+			"Choose 1 of any of the following items: Brewer's Supplies, Cooking Utensils, Leatherworker's Tools, or Sculptor's Tools.",
+		packs: 'Choose 1 of the following packs: (Adventuring Packs Coming Soon).'
 	},
 	martialPath: {
 		combatTraining: {
@@ -33,12 +33,6 @@ export const barbarianClass: ClassDefinition = {
 			featureName: 'Martial Path',
 			levelGained: 1,
 			description: 'You gain combat training and martial prowess.',
-			effects: [
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'Weapons', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Armor', value: true },
-				{ type: 'GRANT_COMBAT_TRAINING', target: 'All_Shields', value: true },
-				{ type: 'GRANT_MANEUVERS', target: 'all_attack', value: 4 }
-			],
 			benefits: [
 				{
 					name: 'Combat Training',
@@ -52,8 +46,7 @@ export const barbarianClass: ClassDefinition = {
 				{
 					name: 'Maneuver Knowledge',
 					description:
-						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.',
-					effects: []
+						'You learn all Attack maneuvers plus additional maneuvers as shown on the Barbarian Class Table.'
 				},
 				{
 					name: 'Stamina Regeneration',
@@ -109,7 +102,7 @@ export const barbarianClass: ClassDefinition = {
 							type: 'MODIFY_STAT',
 							target: 'pd',
 							value: -5,
-							condition: 'raging'
+							condition: 'while_raging'
 						}
 					]
 				},
@@ -221,26 +214,49 @@ export const barbarianClass: ClassDefinition = {
 			]
 		},
 		{
-			id: 'barbarian_level_2_talent',
-			featureName: 'Talent',
-			levelGained: 2,
-			description:
-				'You gain 1 Talent of your choice. If the Talent has any prerequisites, you must meet those prerequisites to choose that Talent.',
-			effects: [{ type: 'GRANT_CHOICE', target: 'talent', value: 1 }]
-		},
-		{
 			id: 'barbarian_level_5_placeholder',
-			featureName: 'Primal Fury (Placeholder)',
+			featureName: 'Expert Barbarian',
 			levelGained: 5,
-			isFlavor: true,
-			description: 'Placeholder feature for Level 5. See CH6 for final design.'
-		},
-		{
-			id: 'barbarian_level_8_capstone_placeholder',
-			featureName: 'Savage Apex (Placeholder)',
-			levelGained: 8,
-			isFlavor: true,
-			description: 'Placeholder capstone for Level 8. See CH6 for final design.'
+			description: 'You gain the following benefits for your Barbarian Class Features.',
+			benefits: [
+				{
+					name: 'Rage',
+					description:
+						'You can immediately enter Rage for free as a Reaction upon rolling for Initiative.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_rage',
+							value: 'Reaction on Initiative: enter Rage for free.'
+						}
+					]
+				},
+				{
+					name: 'Berserker',
+					description:
+						'Charge now grants 3 Spaces of movement, and that movement ignores Difficult Terrain.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_berserker',
+							value: 'Charge grants 3 Spaces of movement and ignores Difficult Terrain.'
+						}
+					]
+				},
+				{
+					name: 'Battlecry',
+					description:
+						'Battlecry range increases to 10 Spaces. You can spend additional SP to enhance Fortitude Shout, Fury Shout, or Urgent Shout.',
+					effects: [
+						{
+							type: 'GRANT_ABILITY',
+							target: 'expert_barbarian_battlecry',
+							value:
+								'Battlecry range 10 Spaces; Fortitude Shout can grant Resistance Half for 1 SP, Fury Shout can add +1 damage for 3 SP, and Urgent Shout can add +2 Speed per SP up to 2 SP.'
+						}
+					]
+				}
+			]
 		}
 	],
 	subclasses: [
@@ -253,6 +269,34 @@ export const barbarianClass: ClassDefinition = {
 					featureName: 'Raging Elements',
 					levelGained: 3,
 					description: 'You can surround yourself with the elements while raging.',
+					benefits: [
+						{
+							name: 'Erupting Elements',
+							description:
+								'When a creature within your Aura deals damage to you, they immediately take 1 Elemental Rage damage.',
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'elemental_fury_erupting_elements',
+									value:
+										'While Raging, creatures in your Aura that damage you immediately take 1 Elemental Rage damage.'
+								}
+							]
+						},
+						{
+							name: 'Elemental Blast',
+							description:
+								"You can spend 1 AP and 1 SP to make an Area Spell Attack against the AD of creatures of your choice within your Aura. Hit: 1 Elemental Rage damage. Single Target: If the Attack only targets 1 creature, it targets the target's PD and deals 2 damage.",
+							effects: [
+								{
+									type: 'GRANT_ABILITY',
+									target: 'elemental_fury_elemental_blast',
+									value:
+										"Spend 1 AP and 1 SP to make an Area Spell Attack against chosen creatures in your Aura. Hit: 1 Elemental Rage damage. Single target attacks the target's PD and deals 2 damage."
+								}
+							]
+						}
+					],
 					choices: [
 						{
 							id: 'barbarian_elemental_rage_damage_type',
@@ -468,7 +512,3 @@ export const barbarianClass: ClassDefinition = {
 		}
 	]
 };
-
-
-
-

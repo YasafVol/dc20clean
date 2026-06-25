@@ -17,6 +17,7 @@ import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
 import TopLeftToolbar from './components/TopLeftToolbar.tsx';
 import LanguageSwitcher from './components/LanguageSwitcher.tsx';
+import UserbackFeedback from './components/UserbackFeedback.tsx';
 
 // Import fonts for GlobalStyle
 
@@ -97,6 +98,7 @@ function App() {
 					<LanguageSwitcher />
 				</FixedAuthStatus>
 				<BrowserRouter>
+					<UserbackFeedback />
 					{/* Fixed top-left toolbar with back button */}
 					<TopLeftToolbar />
 					<Routes>

@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-25
+> Last Updated: 2026-06-26
 
 ## Tech Stack
 
@@ -13,6 +13,7 @@
 - Persistence: Hybrid storage
   - localStorage is active by default (anonymous/offline-first)
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
+- User Feedback: Userback widget when `VITE_USERBACK_ACCESS_TOKEN` is set
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -125,6 +126,7 @@ src/
 │   └── spellbook/                 # Spell reference browser
 ├── lib/
 │   ├── config/                    # Feature flags
+│   ├── feedback/                  # Userback script loading and feedback context helpers
 │   ├── hooks/                     # Custom React hooks (useCharacterBuilder, useMonsters, etc.)
 │   ├── pdf/                       # PDF export pipeline (transformers, field maps, templates)
 │   ├── rulesdata/                 # DC20 rules data

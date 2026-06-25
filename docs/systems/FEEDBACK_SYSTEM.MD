@@ -16,7 +16,8 @@ data is sent.
 
 | File                                  | Role                                                                                      |
 | ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `src/lib/feedback/userback.ts`        | Loads the Userback script and writes flat custom data                                     |
+| `index.html`                          | Bootstraps the Userback snippet early enough for static install verification              |
+| `src/lib/feedback/userback.ts`        | Idempotent Userback script loader and flat custom data writer                             |
 | `src/components/UserbackFeedback.tsx` | React route listener; attaches page, auth, storage, character, and target-element context |
 | `.env.local`                          | Local untracked Userback access token                                                     |
 | `.env.example`                        | Documents the required env var without a token                                            |

@@ -2,7 +2,7 @@
 
 > Purpose: Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.
 > Status: Active
-> Last Updated: 2026-06-25
+> Last Updated: 2026-06-26
 
 ---
 
@@ -132,6 +132,39 @@ Implementation notes:
 1. Use Playwright downloads for JSON/PDF assertions.
 2. Keep field-level PDF assertions in unit tests against `transformSavedCharacterToPdfData`; E2E only proves the user flow downloads a valid file.
 3. Prefer fixture import for determinism unless the test specifically targets creation flow.
+
+## 5.1 Planned Creation Final-Actions E2E
+
+Recommended spec:
+
+```text
+e2e/16-character-creation-final-actions.e2e.spec.ts
+```
+
+Minimum acceptance cases:
+
+1. Complete a deterministic character through the wizard and assert the final step exposes:
+   1. primary `Finish & Go to Sheet`;
+   2. secondary `Print PDF` with `data-testid="creation-print-pdf"`;
+   3. secondary inline name-generation action beside the character-name input.
+2. Click `Print PDF` and verify:
+   1. the character is autosaved before export;
+   2. the downloaded file is a non-empty PDF with a DC20 rules-version filename;
+   3. the app navigates to the saved character sheet.
+3. Click `Finish & Go to Sheet` in a separate run and verify:
+   1. no PDF download is triggered;
+   2. the saved character sheet opens from the persisted character ID.
+
+## 5.2 Planned Load Character Ordering E2E
+
+Recommended coverage:
+
+1. Seed or import three deterministic saved characters with distinct `createdAt`, `completedAt`, and `lastModified` values.
+2. Open load character and assert cards render newest first by:
+   1. `lastModified`;
+   2. fallback `completedAt`;
+   3. fallback `createdAt`.
+3. After importing or rules-upgrading a character, assert the refreshed list remains newest first without requiring page reload.
 
 ---
 

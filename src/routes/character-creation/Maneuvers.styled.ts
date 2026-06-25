@@ -225,23 +225,68 @@ export const SelectedBadge = styled.div`
 
 export const CostBadgesContainer = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	gap: ${theme.spacing[2]};
 `;
 
-export const CostBadge = styled.span<{ $variant: 'ap' | 'sp' }>`
-	background: ${(props) =>
-		props.$variant === 'ap' ? 'rgba(247, 118, 142, 0.1)' : 'rgba(224, 175, 104, 0.1)'};
-	color: ${(props) =>
-		props.$variant === 'ap' ? theme.colors.accent.danger : theme.colors.accent.warning};
+export const CostBadge = styled.span<{ $variant: 'ap' | 'sp' | 'range' | 'reaction' }>`
+	background: ${(props) => {
+		switch (props.$variant) {
+			case 'ap':
+				return 'rgba(247, 118, 142, 0.1)';
+			case 'sp':
+				return 'rgba(224, 175, 104, 0.1)';
+			case 'reaction':
+				return theme.colors.accent.infoAlpha20;
+			default:
+				return theme.colors.bg.elevated;
+		}
+	}};
+	color: ${(props) => {
+		switch (props.$variant) {
+			case 'ap':
+				return theme.colors.accent.danger;
+			case 'sp':
+				return theme.colors.accent.warning;
+			case 'reaction':
+				return theme.colors.accent.info;
+			default:
+				return theme.colors.text.secondary;
+		}
+	}};
 	border: 1px solid
-		${(props) =>
-			props.$variant === 'ap' ? 'rgba(247, 118, 142, 0.3)' : 'rgba(224, 175, 104, 0.3)'};
+		${(props) => {
+			switch (props.$variant) {
+				case 'ap':
+					return 'rgba(247, 118, 142, 0.3)';
+				case 'sp':
+					return 'rgba(224, 175, 104, 0.3)';
+				case 'reaction':
+					return theme.colors.accent.info;
+				default:
+					return theme.colors.bg.tertiary;
+			}
+		}};
 	padding: 0.125rem 0.5rem;
 	border-radius: ${theme.spacing[1]};
 	font-size: ${theme.typography.fontSize.xs};
 	font-weight: ${theme.typography.fontWeight.semibold};
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
+`;
+
+export const ManeuverTrigger = styled.div`
+	font-size: ${theme.typography.fontSize.xs};
+	color: ${theme.colors.text.secondary};
+	line-height: 1.4;
+	padding: ${theme.spacing[2]};
+	border: 1px solid rgba(169, 177, 214, 0.12);
+	border-radius: ${theme.spacing[1]};
+	background: rgba(0, 0, 0, 0.16);
+
+	strong {
+		color: ${theme.colors.text.primary};
+	}
 `;
 
 export const ButtonFooter = styled.div`

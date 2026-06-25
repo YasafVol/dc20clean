@@ -26,9 +26,13 @@ import {
 } from '../../lib/services/enhancedCharacterCalculator';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
+import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
 import { ALL_SPELLS } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
-import { matchesGlobalMagicProfile, matchesSpellRestrictions } from '../../lib/services/spellFiltering';
+import {
+	matchesGlobalMagicProfile,
+	matchesSpellRestrictions
+} from '../../lib/services/spellFiltering';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SecondaryButton, PrimaryButton } from '../../components/styled/index';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
@@ -52,6 +56,8 @@ import {
 	MainContent,
 	RestartButton
 } from './CharacterCreation.styled';
+
+type CompletionAction = 'sheet' | 'pdf';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -110,7 +116,9 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [showSnackbar, setShowSnackbar] = useState(false);
 	const [showAuthDialog, setShowAuthDialog] = useState(false);
-	const [pendingSave, setPendingSave] = useState(false); // Track if we're waiting for auth to save
+	const [pendingCompletionAction, setPendingCompletionAction] = useState<CompletionAction | null>(
+		null
+	);
 	const [showRestartModal, setShowRestartModal] = useState(false);
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const isAuthenticated = useIsAuthenticated();
@@ -136,13 +144,13 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 	// Auto-save after authentication completes (when user was waiting to save)
 	useEffect(() => {
-		if (pendingSave && isAuthenticated && isUsingConvex) {
+		if (pendingCompletionAction && isAuthenticated && isUsingConvex) {
 			debug.character('Auth completed, triggering pending save');
-			setPendingSave(false);
-			// Trigger the save by calling handleNext
-			handleNext();
+			const action = pendingCompletionAction;
+			setPendingCompletionAction(null);
+			void completeCurrentCharacter(action);
 		}
-	}, [isAuthenticated, pendingSave, isUsingConvex]);
+	}, [isAuthenticated, pendingCompletionAction, isUsingConvex]);
 
 	// NOTE: Draft clearing and flow validation is now handled in characterContext.tsx
 	// via getCurrentFlowType() and smart initialization logic. We no longer need
@@ -288,22 +296,22 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			maneuversKnown: calculationResult?.levelBudgets?.totalManeuversKnown ?? 0
 		});
 
-			return buildCharacterCreationSteps({
-				level: state.level,
-				hasSpells,
-				hasManeuvers,
-				labels: {
-					class: t('characterCreation.stepClass'),
-					leveling: t('characterCreation.stepLeveling'),
-					ancestry: t('characterCreation.stepAncestry'),
-					attributes: t('characterCreation.stepAttributes'),
-					background: t('characterCreation.stepBackground'),
-					spells: t('characterCreation.stepSpells'),
-					maneuvers: t('characterCreation.stepManeuvers'),
-					name: t('characterCreation.stepName')
-				}
-			});
-		};
+		return buildCharacterCreationSteps({
+			level: state.level,
+			hasSpells,
+			hasManeuvers,
+			labels: {
+				class: t('characterCreation.stepClass'),
+				leveling: t('characterCreation.stepLeveling'),
+				ancestry: t('characterCreation.stepAncestry'),
+				attributes: t('characterCreation.stepAttributes'),
+				background: t('characterCreation.stepBackground'),
+				spells: t('characterCreation.stepSpells'),
+				maneuvers: t('characterCreation.stepManeuvers'),
+				name: t('characterCreation.stepName')
+			}
+		});
+	};
 
 	const steps = getSteps();
 	const maxStep = steps[steps.length - 1].number;
@@ -323,6 +331,136 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		dispatch({ type: 'SET_STEP', step, maxStep });
 	};
 
+	const getSafeCharacterFileName = (character: SavedCharacter, extension: string) => {
+		const safeName = (character.finalName || character.id || 'Character')
+			.replace(/[^A-Za-z0-9]+/g, '_')
+			.replace(/^_+|_+$/g, '')
+			.slice(0, 60);
+		return `${safeName || 'Character'}_vDC20-${(character.rulesVersion || '').replace('dc20-', '')}.${extension}`;
+	};
+
+	const exportSavedCharacterPdf = async (character: SavedCharacter) => {
+		const pdf = await import('../../lib/pdf/transformers');
+		const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
+		const pdfData = pdf.transformSavedCharacterToPdfData(character);
+		const blob = await fillPdfFromData(pdfData, {
+			flatten: false,
+			version: getPdfVersionForCharacter(character)
+		});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = getSafeCharacterFileName(character, 'pdf');
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	};
+
+	const completeCurrentCharacter = async (action: CompletionAction) => {
+		if (!areAllStepsCompleted()) {
+			setSnackbarMessage('Please complete all requirements before finishing.');
+			setShowSnackbar(true);
+			return;
+		}
+
+		if (isUsingConvex && !isAuthenticated) {
+			setSnackbarMessage(t('characterCreation.signInToSave'));
+			setShowSnackbar(true);
+			setPendingCompletionAction(action);
+			setShowAuthDialog(true);
+			return;
+		}
+
+		let savedCharacter: SavedCharacter | null = null;
+
+		if (state.isLevelUpMode && state.sourceCharacterId) {
+			debug.character('Completing level-up for character:', state.sourceCharacterId);
+
+			const originalId = state.sourceCharacterId;
+			const allChars = await storage.getAllCharacters();
+			const originalCharacter = allChars.find((c) => c.id === originalId);
+			const createdCharacter = await completeCharacter(state, {
+				onShowSnackbar: (_message: string) => {
+					setSnackbarMessage(t('characterCreation.leveledUpSuccess'));
+					setShowSnackbar(true);
+				}
+			});
+
+			if (!createdCharacter) return;
+
+			savedCharacter = {
+				...createdCharacter,
+				id: originalId,
+				createdAt: originalCharacter?.createdAt || createdCharacter.createdAt
+			};
+			const updatedChars = (await storage.getAllCharacters())
+				.filter((character) => character.id !== createdCharacter.id)
+				.map((character) => (character.id === originalId ? savedCharacter! : character));
+
+			await storage.saveAllCharacters(updatedChars);
+			debug.character('Character updated via level-up', originalId);
+		} else if (editChar) {
+			const supportedClasses = [
+				'barbarian',
+				'cleric',
+				'hunter',
+				'champion',
+				'wizard',
+				'monk',
+				'rogue',
+				'sorcerer',
+				'spellblade',
+				'warlock',
+				'bard',
+				'druid',
+				'commander'
+			];
+
+			if (!supportedClasses.includes(state.classId || '')) {
+				throw new Error(
+					`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`
+				);
+			}
+
+			const enhancedData = convertToEnhancedBuildData(state);
+			const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
+			const enhancedCalculatorFn = async () => ({
+				...enhancedResult.stats,
+				grantedAbilities: enhancedResult.grantedAbilities,
+				conditionalModifiers: enhancedResult.conditionalModifiers,
+				breakdowns: enhancedResult.breakdowns,
+				movement: processMovementsToStructure(
+					enhancedResult.movements || [],
+					enhancedResult.stats.finalMoveSpeed
+				),
+				holdBreath: enhancedResult.stats.finalMight
+			});
+			await completeCharacterEdit(editChar.id, state, enhancedCalculatorFn);
+			localStorage.setItem('dc20_reload', String(Date.now()));
+			savedCharacter =
+				(await storage.getAllCharacters()).find((character) => character.id === editChar.id) ||
+				null;
+			setSnackbarMessage(t('characterCreation.updateSuccess'));
+			setShowSnackbar(true);
+		} else {
+			savedCharacter = await completeCharacter(state, {
+				onShowSnackbar: (message: string) => {
+					setSnackbarMessage(message);
+					setShowSnackbar(true);
+				}
+			});
+		}
+
+		if (!savedCharacter) return;
+
+		if (action === 'pdf') {
+			await exportSavedCharacterPdf(savedCharacter);
+		}
+
+		navigate(`/character/${savedCharacter.id}`);
+	};
+
 	const handleNext = async () => {
 		// Check if current step is completed before allowing advancement
 		if (!isStepCompleted(state.currentStep)) {
@@ -332,107 +470,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 
 		if (state.currentStep === maxStep && areAllStepsCompleted()) {
-			if (isUsingConvex && !isAuthenticated) {
-				setSnackbarMessage(t('characterCreation.signInToSave'));
-				setShowSnackbar(true);
-				setPendingSave(true); // Mark that we want to save after auth
-				setShowAuthDialog(true);
-				return;
-			}
-			// Character is complete - check if we're editing, leveling up, or creating new
-			if (state.isLevelUpMode && state.sourceCharacterId) {
-				// Level-up mode: complete character then update existing
-				debug.character('Completing level-up for character:', state.sourceCharacterId);
-
-				// Create a custom onNavigateToLoad that updates instead of creates
-				const originalId = state.sourceCharacterId;
-				const allChars = await storage.getAllCharacters();
-				const originalCreatedAt = allChars.find((c) => c.id === originalId)?.createdAt;
-
-				await completeCharacter(state, {
-					onShowSnackbar: (_message: string) => {
-						setSnackbarMessage(t('characterCreation.leveledUpSuccess'));
-						setShowSnackbar(true);
-					},
-					onNavigateToLoad: async () => {
-						// completeCharacter adds a new character, we need to replace it with updated original
-						const updatedChars = await storage.getAllCharacters();
-						const newChar = updatedChars[updatedChars.length - 1]; // Last one added
-
-						// Update the original character, remove the new one
-						const final = updatedChars
-							.filter((c) => c.id !== newChar.id) // Remove newly created
-							.map((char) => {
-								if (char.id === originalId) {
-									// Replace original with updated data
-									return {
-										...newChar,
-										id: originalId,
-										createdAt: originalCreatedAt || char.createdAt
-									};
-								}
-								return char;
-							});
-
-						await storage.saveAllCharacters(final);
-						debug.character('Character updated via level-up', originalId);
-						navigate(`/character/${originalId}`);
-					}
-				});
-			} else if (editChar) {
-				// Edit mode: use the enhanced completion that preserves manual modifications
-				// Use enhanced calculator for character editing
-				const supportedClasses = [
-					'barbarian',
-					'cleric',
-					'hunter',
-					'champion',
-					'wizard',
-					'monk',
-					'rogue',
-					'sorcerer',
-					'spellblade',
-					'warlock',
-					'bard',
-					'druid',
-					'commander'
-				];
-
-				if (supportedClasses.includes(state.classId || '')) {
-					const enhancedData = convertToEnhancedBuildData(state);
-					const enhancedResult = calculateCharacterWithBreakdowns(enhancedData);
-					const enhancedCalculatorFn = async () => ({
-						...enhancedResult.stats,
-						grantedAbilities: enhancedResult.grantedAbilities,
-						conditionalModifiers: enhancedResult.conditionalModifiers,
-						breakdowns: enhancedResult.breakdowns,
-						movement: processMovementsToStructure(
-							enhancedResult.movements || [],
-							enhancedResult.stats.finalMoveSpeed
-						),
-						holdBreath: enhancedResult.stats.finalMight
-					});
-					await completeCharacterEdit(editChar.id, state, enhancedCalculatorFn);
-					// Force reload of saved characters in LoadCharacter
-					localStorage.setItem('dc20_reload', String(Date.now()));
-				} else {
-					throw new Error(
-						`Class "${state.classId}" is not supported. All classes should be migrated to the enhanced calculator.`
-					);
-				}
-				setSnackbarMessage(t('characterCreation.updateSuccess'));
-				setShowSnackbar(true);
-				setTimeout(() => navigate('/load-character'), 2000);
-			} else {
-				// Create mode: use standard completion
-				await completeCharacter(state, {
-					onShowSnackbar: (message: string) => {
-						setSnackbarMessage(message);
-						setShowSnackbar(true);
-					},
-					onNavigateToLoad: () => navigate('/load-character')
-				});
-			}
+			await completeCurrentCharacter('sheet');
 			return;
 		} else {
 			dispatch({ type: 'NEXT_STEP', maxStep });
@@ -472,7 +510,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		const selectedSpells = state.selectedSpells || {};
 		const slotIds = new Set(spellSlots.map((slot: any) => slot.id));
 		const entries = Object.entries(selectedSpells).filter(
-			([slotId, spellId]) => slotIds.has(slotId) && typeof spellId === 'string' && spellId.length > 0
+			([slotId, spellId]) =>
+				slotIds.has(slotId) && typeof spellId === 'string' && spellId.length > 0
 		);
 		const uniqueSpellIds = new Set(entries.map(([, spellId]) => spellId));
 
@@ -480,7 +519,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			const slot = spellSlots.find((candidate: any) => candidate.id === slotId) as any;
 			const spell = ALL_SPELLS.find((candidate) => candidate.id === spellId);
 			if (!slot || !spell) return false;
-			if (slot.specificRestrictions && !matchesSpellRestrictions(spell, slot.specificRestrictions)) {
+			if (
+				slot.specificRestrictions &&
+				!matchesSpellRestrictions(spell, slot.specificRestrictions)
+			) {
 				return false;
 			}
 			if (slot.isGlobal && calculationResult?.globalMagicProfile) {
@@ -627,11 +669,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			case 'leveling': {
 				// L2: Validation bypass controlled by environment variable
-					const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
-					if (skipLevelingValidation) {
-						debug.warn('State', 'Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
-						return true;
-					}
+				const skipLevelingValidation = import.meta.env.VITE_SKIP_LEVELING_VALIDATION === 'true';
+				if (skipLevelingValidation) {
+					debug.warn('State', 'Leveling validation skipped (VITE_SKIP_LEVELING_VALIDATION=true)');
+					return true;
+				}
 
 				// Get available budgets from progression resolver
 				if (!state.classId || state.level <= 1) {
@@ -684,11 +726,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					}
 
 					return true;
-					} catch (error) {
-						debug.error('State', 'Failed to resolve progression for validation', error);
-						return true; // Allow progression if validation fails to avoid blocking
-					}
+				} catch (error) {
+					debug.error('State', 'Failed to resolve progression for validation', error);
+					return true; // Allow progression if validation fails to avoid blocking
 				}
+			}
 
 			case 'ancestry': {
 				// Use centralized calculator for ancestry points validation
@@ -709,11 +751,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 			case 'background': {
 				// Use calculator's background data instead of recalculating
-					const background = calculationResult?.background;
-					if (!background) {
-						debug.warn('State', 'Background validation: calculator result not available');
-						return false;
-					}
+				const background = calculationResult?.background;
+				if (!background) {
+					debug.warn('State', 'Background validation: calculator result not available');
+					return false;
+				}
 
 				// Calculate current usage
 				let skillPointsUsed = 0;
@@ -785,41 +827,41 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				return isValid;
 			}
 
-				case 'spells': {
-					const spellSelections = getValidSpellSelections();
+			case 'spells': {
+				const spellSelections = getValidSpellSelections();
 
-					const isValid =
-						spellSelections.selectedCount === spellSelections.totalSlots &&
-						spellSelections.validCount === spellSelections.totalSlots &&
-						!spellSelections.hasDuplicates;
-					debug.spells('Spells step validation:', {
-						totalSlots: spellSelections.totalSlots,
-						selectedCount: spellSelections.selectedCount,
-						validCount: spellSelections.validCount,
-						hasDuplicates: spellSelections.hasDuplicates,
-						isValid
-					});
-					return isValid;
-				}
+				const isValid =
+					spellSelections.selectedCount === spellSelections.totalSlots &&
+					spellSelections.validCount === spellSelections.totalSlots &&
+					!spellSelections.hasDuplicates;
+				debug.spells('Spells step validation:', {
+					totalSlots: spellSelections.totalSlots,
+					selectedCount: spellSelections.selectedCount,
+					validCount: spellSelections.validCount,
+					hasDuplicates: spellSelections.hasDuplicates,
+					isValid
+				});
+				return isValid;
+			}
 
-				case 'maneuvers': {
-					// Validate selected maneuvers equals totalManeuversKnown
-					const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
-					const maneuverSelections = getValidManeuverSelections();
+			case 'maneuvers': {
+				// Validate selected maneuvers equals totalManeuversKnown
+				const totalManeuversKnown = calculationResult?.levelBudgets?.totalManeuversKnown || 0;
+				const maneuverSelections = getValidManeuverSelections();
 
-					const isValid =
-						maneuverSelections.selectedCount === totalManeuversKnown &&
-						maneuverSelections.validCount === totalManeuversKnown &&
-						!maneuverSelections.hasDuplicates;
-					debug.calculation('Maneuvers step validation:', {
-						totalManeuversKnown,
-						selectedCount: maneuverSelections.selectedCount,
-						validCount: maneuverSelections.validCount,
-						hasDuplicates: maneuverSelections.hasDuplicates,
-						isValid
-					});
-					return isValid;
-				}
+				const isValid =
+					maneuverSelections.selectedCount === totalManeuversKnown &&
+					maneuverSelections.validCount === totalManeuversKnown &&
+					!maneuverSelections.hasDuplicates;
+				debug.calculation('Maneuvers step validation:', {
+					totalManeuversKnown,
+					selectedCount: maneuverSelections.selectedCount,
+					validCount: maneuverSelections.validCount,
+					hasDuplicates: maneuverSelections.hasDuplicates,
+					isValid
+				});
+				return isValid;
+			}
 
 			case 'name':
 				return (
@@ -904,15 +946,15 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 				<HeaderContent>
 					{/* Left: Previous Button and Restart */}
-						<NavSection $align="start">
-							<SecondaryButton
-								onClick={handlePrevious}
-								disabled={state.currentStep === 1}
-								data-testid="creation-previous"
-							>
-								{t('characterCreation.previous')}
-							</SecondaryButton>
-						</NavSection>
+					<NavSection $align="start">
+						<SecondaryButton
+							onClick={handlePrevious}
+							disabled={state.currentStep === 1}
+							data-testid="creation-previous"
+						>
+							{t('characterCreation.previous')}
+						</SecondaryButton>
+					</NavSection>
 
 					{/* Center: Stepper (Desktop) or Title (Mobile) */}
 					<NavSection $align="center" style={{ flex: 1, minWidth: 0 }}>
@@ -923,30 +965,30 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 								: t('characterCreation.createCharacter')}
 						</MobileTitle>
 
-							{/* Desktop Stepper */}
-							<StepperContainer>
-								{steps.map(({ number, id, label }, index) => {
-									const isActive = state.currentStep === number;
-									const isCompleted = isStepCompleted(number);
-									const isLast = index === steps.length - 1;
+						{/* Desktop Stepper */}
+						<StepperContainer>
+							{steps.map(({ number, id, label }, index) => {
+								const isActive = state.currentStep === number;
+								const isCompleted = isStepCompleted(number);
+								const isLast = index === steps.length - 1;
 
 								return (
 									<React.Fragment key={number}>
-											<StepItem
+										<StepItem
+											$isActive={isActive}
+											$isCompleted={isCompleted}
+											data-testid={`creation-step-${id}`}
+											data-step-id={id}
+											aria-current={isActive ? 'step' : undefined}
+											onClick={() => handleStepClick(number)}
+											whileHover={{ scale: 1.02 }}
+											whileTap={{ scale: 0.98 }}
+										>
+											<StepNumber
 												$isActive={isActive}
 												$isCompleted={isCompleted}
-												data-testid={`creation-step-${id}`}
-												data-step-id={id}
-												aria-current={isActive ? 'step' : undefined}
-												onClick={() => handleStepClick(number)}
-												whileHover={{ scale: 1.02 }}
-												whileTap={{ scale: 0.98 }}
-										>
-												<StepNumber
-													$isActive={isActive}
-													$isCompleted={isCompleted}
-													data-testid={`creation-step-number-${id}`}
-												>
+												data-testid={`creation-step-number-${id}`}
+											>
 												{isCompleted && !isActive ? <Check size={14} /> : number}
 											</StepNumber>
 											<StepLabel $isActive={isActive}>{label}</StepLabel>
@@ -962,12 +1004,20 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						</StepperContainer>
 					</NavSection>
 
-						{/* Right: Next Button */}
-						<NavSection $align="end">
-							<PrimaryButton onClick={handleNext} data-testid="creation-next">
+					{/* Right: Next Button */}
+					<NavSection $align="end">
+						{state.currentStep === maxStep && (
+							<SecondaryButton
+								onClick={() => void completeCurrentCharacter('pdf')}
+								data-testid="creation-print-pdf"
+							>
+								{t('characterCreation.printPdf')}
+							</SecondaryButton>
+						)}
+						<PrimaryButton onClick={handleNext} data-testid="creation-next">
 							<span>
 								{state.currentStep === maxStep
-									? t('characterCreation.complete')
+									? t('characterCreation.finishAndGoToSheet')
 									: t('characterCreation.next')}
 							</span>{' '}
 							→
@@ -1003,7 +1053,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				open={showAuthDialog}
 				onOpenChange={(open) => {
 					setShowAuthDialog(open);
-					if (!open) setPendingSave(false); // Clear pending save if dialog dismissed
+					if (!open) setPendingCompletionAction(null);
 				}}
 			>
 				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
@@ -1012,7 +1062,7 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 						onSuccess={() => setShowAuthDialog(false)}
 						onCancel={() => {
 							setShowAuthDialog(false);
-							setPendingSave(false);
+							setPendingCompletionAction(null);
 						}}
 					/>
 				</DialogContent>

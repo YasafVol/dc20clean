@@ -67,6 +67,7 @@
   - Inputs: `ALL_SPELLS`, calculator spell slots/global magic profile, `state.selectedSpells`
   - Completion rule: every current spell slot has a valid selected spell ID, no duplicate selected spells exist, global magic profile restrictions match, and slot-specific restrictions match.
   - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
+  - Spell cards display cost, range, duration, sustained status, school, sources, and first mechanical effect description before selection.
   - Outputs: `state.selectedSpells`
   - Agent/browser hooks: spell cards expose `data-testid="spell-card-{spellId}"`, `data-spell-id`, and `data-option-id`; learn/forget controls expose `data-testid="spell-{spellId}-learn|forget"` and matching `data-action-id`.
   - Character completion resolves spell IDs through `getSpellById()` before falling back to exact display-name matches, so approved legacy v0.10 spell aliases can still produce valid saved spell data when encountered.
@@ -74,7 +75,7 @@
 - **Stage 7 – Maneuvers** (`Maneuvers.tsx`, conditional)
   - Inputs: `allManeuvers`, calculator `levelBudgets.totalManeuversKnown`, `state.selectedManeuvers`
   - Completion rule: selected maneuver names are unique, exist in the current maneuver catalog, and match `totalManeuversKnown`.
-  - Maneuver cards display base AP/SP cost and maneuver enhancements for review before selection.
+  - Maneuver cards display base AP/SP cost, range, reaction flag, trigger text, and maneuver enhancements for review before selection.
   - Outputs: `state.selectedManeuvers`
   - Agent/browser hooks: maneuver cards expose `data-testid="maneuver-card-{maneuverId}"`, `data-maneuver-id`, and `data-option-id`; learn/forget controls expose `data-testid="maneuver-{maneuverId}-learn|forget"` and matching `data-action-id`.
   - Character completion persists selected maneuvers with base cost, range, reaction trigger, and enhancements so the sheet and Martial Manual-style displays do not lose rules text.
@@ -83,6 +84,8 @@
 - **Final Stage – Character Name** (`CharacterName.tsx`)
   - Inputs: `state.finalName`, `state.finalPlayerName`
   - Completion rule: both fields non-empty
+  - UI: name generation is a secondary inline action beside the character name input.
+  - Final actions: `Finish & Go to Sheet` is the primary action; `Print PDF` autosaves the completed character, exports from the saved record, then opens the saved character sheet.
   - Outputs: final naming data for persistence
   - Agent/browser hooks: name fields expose `data-testid="character-name-input"` / `data-field-id="character-name"` and `data-testid="player-name-input"` / `data-field-id="player-name"`.
 

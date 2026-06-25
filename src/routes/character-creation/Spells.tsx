@@ -737,6 +737,7 @@ const Spells: React.FC = () => {
 										<SpellBadges>
 											<Badge $variant="cost">{formatSpellCost(spell.cost)}</Badge>
 											<Badge $variant="range">{spell.range}</Badge>
+											<Badge $variant="duration">{spell.duration}</Badge>
 											{spell.sustained && <Badge $variant="sustained">Sustained</Badge>}
 										</SpellBadges>
 

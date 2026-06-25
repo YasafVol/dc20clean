@@ -50,6 +50,17 @@ export const FormGroup = styled.div`
 	gap: ${theme.spacing[2]};
 `;
 
+export const NameInputRow = styled.div`
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: ${theme.spacing[3]};
+	align-items: end;
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+	}
+`;
+
 export const Label = styled.label`
 	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.semibold};
@@ -79,10 +90,9 @@ export const Input = styled.input`
 `;
 
 export const GeneratorSection = styled.div`
-	background: ${theme.colors.bg.primary};
-	border: 1px solid ${theme.colors.bg.elevated};
-	border-radius: ${theme.spacing[2]};
-	padding: ${theme.spacing[4]};
+	display: flex;
+	flex-direction: column;
+	gap: ${theme.spacing[3]};
 `;
 
 export const GeneratorTitle = styled.h3`

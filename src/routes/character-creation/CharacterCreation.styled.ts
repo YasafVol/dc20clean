@@ -57,10 +57,10 @@ export const HeaderContent = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: ${theme.spacing[4]};
-	padding: ${theme.spacing[2]} 13rem ${theme.spacing[2]} ${theme.spacing[4]};
+	gap: ${theme.spacing[2]};
+	padding: ${theme.spacing[2]} 15rem ${theme.spacing[2]} 12rem;
 	min-height: 80px;
-	max-width: 1460px;
+	max-width: 100%;
 	margin: 0 auto;
 	width: 100%;
 
@@ -73,10 +73,10 @@ export const HeaderContent = styled.div`
 export const NavSection = styled.div<{ $align?: 'start' | 'center' | 'end' }>`
 	display: flex;
 	align-items: center;
-	width: 140px;
+	width: ${(props) => (props.$align === 'end' ? '360px' : '128px')};
 	flex-shrink: 0;
 	justify-content: ${(props) => props.$align || 'start'};
-	gap: ${theme.spacing[3]};
+	gap: ${theme.spacing[2]};
 	position: relative;
 	z-index: 10;
 	overflow: visible; /* Ensure buttons aren't clipped */
@@ -113,7 +113,7 @@ export const StepperContainer = styled.div`
 	display: none;
 	align-items: center;
 	justify-content: center;
-	gap: ${theme.spacing[1]};
+	gap: 2px;
 	flex: 1;
 	min-width: 0;
 	overflow-x: auto;
@@ -128,8 +128,8 @@ export const StepperContainer = styled.div`
 export const StepItem = styled(motion.div)<{ $isActive?: boolean; $isCompleted?: boolean }>`
 	display: flex;
 	align-items: center;
-	gap: ${theme.spacing[2]};
-	padding: ${theme.spacing[1.5]} ${theme.spacing[2]};
+	gap: ${theme.spacing[1]};
+	padding: ${theme.spacing[1]} ${theme.spacing[1.5]};
 	border-radius: 9999px;
 	cursor: pointer;
 	white-space: nowrap;
@@ -198,7 +198,7 @@ export const StepNumber = styled.div<{ $isActive?: boolean; $isCompleted?: boole
 
 // Step label text
 export const StepLabel = styled.span<{ $isActive?: boolean }>`
-	font-size: ${theme.typography.fontSize.sm};
+	font-size: ${theme.typography.fontSize.xs};
 	font-weight: ${(props) =>
 		props.$isActive ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
 `;
@@ -207,7 +207,7 @@ export const StepLabel = styled.span<{ $isActive?: boolean }>`
 export const StepSeparator = styled.div`
 	color: ${theme.colors.text.muted};
 	opacity: 0.3;
-	margin: 0 ${theme.spacing[1]};
+	margin: 0;
 	flex-shrink: 0;
 `;
 

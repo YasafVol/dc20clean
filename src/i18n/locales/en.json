@@ -62,6 +62,8 @@
 		"previous": "Previous",
 		"next": "Next",
 		"complete": "Complete",
+		"finishAndGoToSheet": "Finish & Go to Sheet",
+		"printPdf": "Print PDF",
 		"restart": "Restart",
 		"restartTooltip": "Clear all progress and start over",
 		"editCharacter": "Edit Character",

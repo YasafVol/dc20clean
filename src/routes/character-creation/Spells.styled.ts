@@ -204,7 +204,9 @@ export const SelectedBadge = styled.div`
 	box-shadow: 0 2px 8px ${theme.colors.crystal.primaryAlpha30};
 `;
 
-export const Badge = styled.span<{ $variant?: 'school' | 'cost' | 'range' | 'sustained' }>`
+export const Badge = styled.span<{
+	$variant?: 'school' | 'cost' | 'range' | 'duration' | 'sustained';
+}>`
 	font-size: ${theme.typography.fontSize.xs};
 	padding: ${theme.spacing[1]} ${theme.spacing[2]};
 	border-radius: ${theme.spacing[1]};
@@ -231,6 +233,12 @@ export const Badge = styled.span<{ $variant?: 'school' | 'cost' | 'range' | 'sus
           background: ${theme.colors.bg.elevated};
           border: 1px solid ${theme.colors.bg.tertiary};
           color: ${theme.colors.text.secondary};
+        `;
+			case 'duration':
+				return `
+          background: rgba(187, 154, 247, 0.1);
+          border: 1px solid rgba(187, 154, 247, 0.3);
+          color: #bb9af7;
         `;
 			case 'sustained':
 				return `

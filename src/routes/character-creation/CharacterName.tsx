@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
-import { PrimaryButton } from '../../components/styled/index';
+import { SecondaryButton } from '../../components/styled/index';
 import { useTranslation } from 'react-i18next';
 import {
 	Container,
@@ -11,10 +11,10 @@ import {
 	FormCard,
 	FormGrid,
 	FormGroup,
+	NameInputRow,
 	Label,
 	Input,
 	GeneratorSection,
-	GeneratorTitle,
 	GeneratorText,
 	SuggestionsGrid,
 	SuggestionButton,
@@ -173,27 +173,47 @@ function CharacterName() {
 
 			<FormCard>
 				<FormGrid>
-					<FormGroup>
-						<Label htmlFor="characterName">{t('characterCreation.characterNameLabel')}</Label>
-						<Input
-							id="characterName"
-							type="text"
-							data-field-id="character-name"
-							data-testid="character-name-input"
-							value={characterName}
-							onChange={(e) => {
-								const value = e.target.value;
-								setCharacterName(value);
-								dispatch({
-									type: 'UPDATE_STORE',
-									updates: {
-										finalName: value.trim() || null
-									}
-								});
-							}}
-							placeholder={t('characterCreation.enterCharacterName')}
-						/>
-					</FormGroup>
+					<NameInputRow>
+						<FormGroup>
+							<Label htmlFor="characterName">{t('characterCreation.characterNameLabel')}</Label>
+							<Input
+								id="characterName"
+								type="text"
+								data-field-id="character-name"
+								data-testid="character-name-input"
+								value={characterName}
+								onChange={(e) => {
+									const value = e.target.value;
+									setCharacterName(value);
+									dispatch({
+										type: 'UPDATE_STORE',
+										updates: {
+											finalName: value.trim() || null
+										}
+									});
+								}}
+								placeholder={t('characterCreation.enterCharacterName')}
+							/>
+						</FormGroup>
+						<SecondaryButton onClick={generateNames} disabled={isGenerating}>
+							{isGenerating
+								? t('characterCreation.generating')
+								: t('characterCreation.generateNames')}
+						</SecondaryButton>
+					</NameInputRow>
+
+					<GeneratorSection>
+						<GeneratorText>{t('characterCreation.nameGeneratorDescription')}</GeneratorText>
+						{suggestions.length > 0 ? (
+							<SuggestionsGrid>
+								{suggestions.map((name, index) => (
+									<SuggestionButton key={index} onClick={() => selectSuggestion(name)}>
+										{name}
+									</SuggestionButton>
+								))}
+							</SuggestionsGrid>
+						) : null}
+					</GeneratorSection>
 
 					<FormGroup>
 						<Label htmlFor="playerName">{t('characterCreation.playerNameLabel')}</Label>
@@ -216,26 +236,6 @@ function CharacterName() {
 							placeholder={t('characterCreation.enterYourName')}
 						/>
 					</FormGroup>
-
-					<GeneratorSection>
-						<GeneratorTitle>{t('characterCreation.nameGenerator')}</GeneratorTitle>
-						<GeneratorText>{t('characterCreation.nameGeneratorDescription')}</GeneratorText>
-						<PrimaryButton onClick={generateNames} disabled={isGenerating}>
-							{isGenerating
-								? t('characterCreation.generating')
-								: t('characterCreation.generateNames')}
-						</PrimaryButton>
-
-						{suggestions.length > 0 ? (
-							<SuggestionsGrid>
-								{suggestions.map((name, index) => (
-									<SuggestionButton key={index} onClick={() => selectSuggestion(name)}>
-										{name}
-									</SuggestionButton>
-								))}
-							</SuggestionsGrid>
-						) : null}
-					</GeneratorSection>
 				</FormGrid>
 			</FormCard>
 		</Container>

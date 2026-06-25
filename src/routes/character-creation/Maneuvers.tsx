@@ -34,6 +34,7 @@ import {
 	SelectedBadge,
 	CostBadgesContainer,
 	CostBadge,
+	ManeuverTrigger,
 	ButtonFooter,
 	FilterText,
 	FilterTextRemaining,
@@ -266,8 +267,15 @@ const Maneuvers: React.FC = () => {
 												{maneuver.cost.sp && maneuver.cost.sp > 0 && (
 													<CostBadge $variant="sp">{maneuver.cost.sp} SP</CostBadge>
 												)}
+												<CostBadge $variant="range">{maneuver.range}</CostBadge>
+												{maneuver.isReaction && <CostBadge $variant="reaction">Reaction</CostBadge>}
 											</CostBadgesContainer>
 											<ManeuverDescription>{maneuver.description}</ManeuverDescription>
+											{maneuver.trigger && (
+												<ManeuverTrigger>
+													<strong>Trigger:</strong> {maneuver.trigger}
+												</ManeuverTrigger>
+											)}
 											{maneuver.enhancements.length > 0 && (
 												<ManeuverEnhancements>
 													<ManeuverEnhancementsTitle>Enhancements</ManeuverEnhancementsTitle>

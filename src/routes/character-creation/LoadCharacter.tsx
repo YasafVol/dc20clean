@@ -60,6 +60,15 @@ import {
 	UpgradeSummary
 } from './LoadCharacter.styled';
 
+const getCharacterSortTime = (character: SavedCharacter): number => {
+	const value = character.lastModified || character.completedAt || character.createdAt;
+	const time = value ? new Date(value).getTime() : 0;
+	return Number.isFinite(time) ? time : 0;
+};
+
+const sortCharactersNewestFirst = (characters: SavedCharacter[]): SavedCharacter[] =>
+	[...characters].sort((a, b) => getCharacterSortTime(b) - getCharacterSortTime(a));
+
 function LoadCharacter() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -101,7 +110,7 @@ function LoadCharacter() {
 					count: characters.length,
 					characters: characters.map((c) => ({ id: c.id, name: c.finalName }))
 				});
-				if (isMounted) setSavedCharacters(characters);
+				if (isMounted) setSavedCharacters(sortCharactersNewestFirst(characters));
 			})
 			.catch((error) => {
 				console.error('[GIMLI DEBUG] ❌ LoadCharacter: Failed to load characters', error);
@@ -185,7 +194,7 @@ function LoadCharacter() {
 			const updatedCharacters = savedCharacters.filter(
 				(char: SavedCharacter) => char.id !== characterToDelete.id
 			);
-			setSavedCharacters(updatedCharacters);
+			setSavedCharacters(sortCharactersNewestFirst(updatedCharacters));
 		} catch (error) {
 			console.error('Failed to delete character', error);
 		} finally {
@@ -264,10 +273,12 @@ function LoadCharacter() {
 			await storage.saveCharacter(result.upgradedCharacter);
 
 			setSavedCharacters((characters) =>
-				characters.flatMap((character) =>
-					character.id === characterToUpgrade.id
-						? [character, result.upgradedCharacter]
-						: [character]
+				sortCharactersNewestFirst(
+					characters.flatMap((character) =>
+						character.id === characterToUpgrade.id
+							? [character, result.upgradedCharacter]
+							: [character]
+					)
 				)
 			);
 			setUpgradeMessage({
@@ -394,7 +405,9 @@ function LoadCharacter() {
 			const existingCharacters = await storage.getAllCharacters();
 
 			// Check if character with same ID already exists
-			const existingCharacter = existingCharacters.find((char) => char.id === normalizedCharacter.id);
+			const existingCharacter = existingCharacters.find(
+				(char) => char.id === normalizedCharacter.id
+			);
 
 			let characterToImport = { ...normalizedCharacter };
 
@@ -434,7 +447,7 @@ function LoadCharacter() {
 			// Add to characters list and save
 			const updatedCharacters = [...existingCharacters, characterToImport as SavedCharacter];
 			await storage.saveAllCharacters(updatedCharacters);
-			setSavedCharacters(updatedCharacters);
+			setSavedCharacters(sortCharactersNewestFirst(updatedCharacters));
 
 			setImportMessage({
 				text: t('loadCharacter.successImported', {

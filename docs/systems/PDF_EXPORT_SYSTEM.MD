@@ -40,7 +40,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **PDF Templates**:
   - `src/lib/pdf/010/DC20 Beta 0.10 (fillable) Character Sheet.pdf`
   - `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`
-- **UI Integration** — `src/routes/character-creation/LoadCharacter.tsx` provides the primary entry point via an "Export PDF" CTA.
+- **UI Integration** — `src/routes/character-creation/LoadCharacter.tsx` provides the load-list "Export PDF" CTA. `src/routes/character-creation/CharacterCreation.tsx` also exposes a final-step "Print PDF" secondary action that completes/autosaves the character first, then exports from the saved record.
 - **Character Sheet Integration** — `src/routes/character-sheet/CharacterSheetClean.tsx` and `src/routes/character-sheet/CharacterSheetRedesign.tsx` re-read the saved record by ID before export.
 
 ---
@@ -89,8 +89,8 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 
 ## 4. Runtime Flow
 
-1. **Trigger** — User clicks “Export PDF” in the character sheet UI or load-character list.
-2. **Preparation** — UI reads the stored character record and routes the PDF version from `rulesVersion`.
+1. **Trigger** — User clicks “Export PDF” in the character sheet UI/load-character list, or “Print PDF” on the final character-creation step.
+2. **Preparation** — UI reads the stored character record and routes the PDF version from `rulesVersion`. Character creation must complete/autosave first; export still consumes the saved record, not transient wizard state.
 3. **Transformation** — `transformSavedCharacterToPdfData(character)` produces a validated `PdfExportData` object.
 4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
 5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the rules-version-routed map (default: v0.10), optionally flattens, and returns a Blob for download.

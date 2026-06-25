@@ -85,13 +85,14 @@ function convertTalentsToArray(talents: Record<string, number> | string[] | unde
 
 export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
-	onNavigateToLoad: () => void;
+	onNavigateToLoad?: (character: SavedCharacter) => void;
+	navigateDelayMs?: number;
 }
 
 export const completeCharacter = async (
 	characterState: any,
 	callbacks: CharacterCompletionCallbacks
-): Promise<void> => {
+): Promise<SavedCharacter | null> => {
 	try {
 		// Build the enhanced data for calculation using native objects
 		const enhancedData = convertToEnhancedBuildData({
@@ -450,16 +451,20 @@ export const completeCharacter = async (
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');
 
-		// Navigate to load characters page after a short delay
-		setTimeout(() => {
-			logger.debug('ui', 'Navigating to character load page');
-			callbacks.onNavigateToLoad();
-		}, 1500);
+		if (callbacks.onNavigateToLoad) {
+			setTimeout(() => {
+				logger.debug('ui', 'Navigating after character completion');
+				callbacks.onNavigateToLoad?.(completedCharacter);
+			}, callbacks.navigateDelayMs ?? 1500);
+		}
+
+		return completedCharacter;
 	} catch (error) {
 		logger.error('ui', 'Error completing character', {
 			error: error instanceof Error ? error.message : String(error),
 			stack: error instanceof Error ? error.stack : undefined
 		});
 		callbacks.onShowSnackbar('Error creating character. Please try again.');
+		return null;
 	}
 };

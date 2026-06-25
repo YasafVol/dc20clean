@@ -16,7 +16,7 @@ data is sent.
 
 | File                                  | Role                                                                                      |
 | ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `index.html`                          | Bootstraps the Userback snippet early enough for static install verification              |
+| `index.html`                          | Bootstraps the documented Userback snippet in `<head>` for static install verification    |
 | `src/lib/feedback/userback.ts`        | Idempotent Userback script loader and flat custom data writer                             |
 | `src/components/UserbackFeedback.tsx` | React route listener; attaches page, auth, storage, character, and target-element context |
 | `.env.local`                          | Local untracked Userback access token                                                     |
@@ -54,6 +54,7 @@ Do not commit real Userback tokens to source files or docs. Keep active tokens i
 ## 5. Implementation Notes
 
 Userback custom data is kept flat because the JavaScript SDK expects primitive
-values. Route changes refresh page and character metadata. Pointer events refresh
-the latest target-element metadata so annotated reports have a useful DOM hint in
-addition to Userback's screenshot tools.
+values. Route changes refresh page and character metadata, then call
+`Userback.refresh()` so URL targeting is re-evaluated in the SPA. Pointer events
+refresh the latest target-element metadata so annotated reports have a useful DOM
+hint in addition to Userback's screenshot tools.

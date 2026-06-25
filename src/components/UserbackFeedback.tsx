@@ -6,6 +6,7 @@ import type { SavedCharacter } from '../lib/types/dataContracts';
 import {
 	isUserbackConfigured,
 	loadUserbackWidget,
+	refreshUserbackWidget,
 	setUserbackData
 } from '../lib/feedback/userback';
 
@@ -90,6 +91,7 @@ export default function UserbackFeedback() {
 				target_label: target?.label ?? 'none',
 				target_rect: target?.rect ?? 'none'
 			});
+			refreshUserbackWidget();
 		}
 
 		void syncContext();

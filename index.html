@@ -5,24 +5,22 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>DC20 Character Creator</title>
 		<link rel="icon" href="/favicon.png" />
+		<script>
+			window.Userback = window.Userback || {};
+			Userback.access_token = '%VITE_USERBACK_ACCESS_TOKEN%';
+			if (Userback.access_token && Userback.access_token.charAt(0) !== '%') {
+				(function (d) {
+					var s = d.createElement('script');
+					s.id = 'userback-widget-script';
+					s.async = true;
+					s.src = 'https://static.userback.io/widget/v1.js';
+					(d.head || d.body).appendChild(s);
+				})(document);
+			}
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>
-		<script>
-			window.Userback = window.Userback || {};
-			window.Userback.access_token = '%VITE_USERBACK_ACCESS_TOKEN%';
-			if (
-				window.Userback.access_token &&
-				window.Userback.access_token.charAt(0) !== '%' &&
-				!document.getElementById('userback-widget-script')
-			) {
-				var userbackScript = document.createElement('script');
-				userbackScript.id = 'userback-widget-script';
-				userbackScript.async = true;
-				userbackScript.src = 'https://static.userback.io/widget/v1.js';
-				document.body.appendChild(userbackScript);
-			}
-		</script>
 		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>

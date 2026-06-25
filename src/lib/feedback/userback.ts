@@ -4,6 +4,7 @@ type UserbackData = Record<string, UserbackValue>;
 type UserbackGlobal = {
 	access_token?: string;
 	custom_data?: UserbackData;
+	refresh?: () => void;
 	setData?: (data: UserbackData) => void;
 };
 
@@ -30,7 +31,7 @@ export function loadUserbackWidget(): boolean {
 	window.Userback = window.Userback || {};
 	window.Userback.access_token = accessToken;
 
-	if (document.getElementById(USERBACK_SCRIPT_ID)) {
+	if (document.getElementById(USERBACK_SCRIPT_ID) || findUserbackScript()) {
 		return true;
 	}
 
@@ -56,6 +57,18 @@ export function setUserbackData(data: UserbackData): void {
 	window.Userback.setData?.(data);
 }
 
+export function refreshUserbackWidget(): void {
+	if (!isUserbackConfigured() || typeof window === 'undefined') {
+		return;
+	}
+
+	window.Userback?.refresh?.();
+}
+
 function getUserbackAccessToken(): string {
 	return (import.meta.env.VITE_USERBACK_ACCESS_TOKEN ?? '').trim();
+}
+
+function findUserbackScript(): HTMLScriptElement | null {
+	return document.querySelector(`script[src="${USERBACK_SCRIPT_SRC}"]`);
 }

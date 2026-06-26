@@ -13,7 +13,6 @@ import DeleteButton from './shared/DeleteButton';
 import {
 	parseDamage,
 	getDamageType,
-	calculateAttackBonus,
 	calculateDamage,
 	getVersatileDamage,
 	createEmptyAttackData
@@ -148,16 +147,6 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 			return createEmptyAttackData(weapon?.name);
 		}
 
-		const mightMod = Math.floor((characterData.finalMight - 10) / 2);
-		const agilityMod = Math.floor((characterData.finalAgility - 10) / 2);
-
-		const attackBonus = calculateAttackBonus(
-			weapon,
-			characterData.finalCombatMastery,
-			mightMod,
-			agilityMod
-		);
-
 		const damageType = getDamageType(weapon.damage);
 		const versatileInfo = getVersatileDamage(weapon);
 		const damageString = versatileInfo
@@ -173,7 +162,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 			id: '',
 			weaponName: weapon.name,
 			name: weapon.name,
-			attackBonus,
+			attackBonus: 0,
 			damage: damageString,
 			damageType,
 			critRange,

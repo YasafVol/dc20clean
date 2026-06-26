@@ -2,6 +2,7 @@ import React from 'react';
 import type { AttackData } from '../../../types';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
 import {
+	calculateDamage,
 	getVersatileDamage,
 	getWeaponRange,
 	getWeaponFeatures,
@@ -80,11 +81,11 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 							)}
 							<br />
 							<strong>Damage Calculations:</strong>
-							<br />• <strong>Hit:</strong> {selectedAttack.weapon.damage} + ability modifier
-							<br />• <strong>Heavy Hit (+5):</strong> {selectedAttack.weapon.damage} + 1 + ability
-							modifier
-							<br />• <strong>Brutal Hit (+10):</strong> {selectedAttack.weapon.damage} + 2 +
-							ability modifier
+							<br />• <strong>Hit:</strong> {calculateDamage(selectedAttack.weapon, 'normal')}
+							<br />• <strong>Heavy Hit (+5):</strong>{' '}
+							{calculateDamage(selectedAttack.weapon, 'heavy')}
+							<br />• <strong>Brutal Hit (+10):</strong>{' '}
+							{calculateDamage(selectedAttack.weapon, 'brutal')}
 							<br />
 							<br />
 							{selectedAttack.weapon.properties.length > 0 && (

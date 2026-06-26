@@ -1,7 +1,7 @@
 // weaponUtils.ts
 // Utility functions for working with inventory weapons in the attack system
 
-import { Weapon, WeaponType, WeaponProperty } from '../rulesdata/inventoryItems';
+import { Weapon, WeaponProperty } from '../rulesdata/inventoryItems';
 
 export interface ParsedDamage {
 	amount: number;
@@ -61,13 +61,6 @@ export function getDamageType(damageStr: string): string {
 }
 
 /**
- * Check if weapon is ranged
- */
-export function isRangedWeapon(weapon: Weapon): boolean {
-	return weapon.type === WeaponType.Ranged;
-}
-
-/**
  * Get range from weapon properties (parse "Range (15/45)")
  */
 export function getWeaponRange(weapon: Weapon): { short: number; long: number } | null {
@@ -92,19 +85,6 @@ export function getReloadValue(weapon: Weapon): number | null {
 	// For now, return a default reload value if property exists
 	// Could be enhanced to parse specific reload numbers if they exist in properties
 	return reloadProp ? 1 : null;
-}
-
-/**
- * Calculate attack bonus based on weapon type and character stats
- */
-export function calculateAttackBonus(
-	weapon: Weapon,
-	combatMastery: number,
-	mightMod: number,
-	agilityMod: number
-): number {
-	const statMod = isRangedWeapon(weapon) ? agilityMod : mightMod;
-	return combatMastery + statMod;
 }
 
 /**

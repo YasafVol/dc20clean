@@ -381,6 +381,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const primeAttribute = characterData.finalPrimeModifierAttribute || 'charisma';
 	const primeValue = characterData.finalPrimeModifierValue || 0;
 	const combatMastery = characterData.finalCombatMastery || 0;
+	const primeAttributeLabel =
+		primeAttribute.charAt(0).toUpperCase() + primeAttribute.slice(1).toLowerCase();
 
 	// Rage state (temporary in-combat toggle)
 	const hasRageFeature =
@@ -656,10 +658,17 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			case 'attack':
 				return {
 					title: t('characterSheet.tooltipAttack'),
-					breakdown: calculatedData?.breakdowns?.attackSpellCheck || {
+					breakdown: {
+						statName: 'attackSpellCheck',
+						baseLabel: 'Combat Mastery',
 						base: combatMastery,
 						total: (combatMastery ?? 0) + primeValue,
-						effects: [{ name: `Prime Modifier (${primeAttribute})`, value: primeValue }]
+						effects: [
+							{
+								name: `Prime Attribute (${primeAttributeLabel})`,
+								value: primeValue
+							}
+						]
 					}
 				};
 			case 'precisionAD':

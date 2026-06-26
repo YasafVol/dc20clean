@@ -12,15 +12,17 @@ type EffectSourceLike =
 	  };
 
 interface BreakdownEffect {
-	source: EffectSourceLike;
+	source?: EffectSourceLike;
+	name?: string;
 	value: number;
 	condition?: string;
-	description: string;
-	isActive: boolean;
+	description?: string;
+	isActive?: boolean;
 }
 
 interface StatBreakdown {
 	statName: string;
+	baseLabel?: string;
 	base: number;
 	effects: BreakdownEffect[];
 	total: number;
@@ -115,6 +117,10 @@ function getSourceLabel(source: EffectSourceLike): string {
 	return source.name || source.category || source.type || source.id || 'Effect';
 }
 
+function getEffectLabel(effect: BreakdownEffect): string {
+	return effect.name || getSourceLabel(effect.source);
+}
+
 const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 	title,
 	breakdown,
@@ -130,7 +136,7 @@ const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 
 			<TooltipSection>
 				<TooltipRow>
-					<TooltipLabel>Base Value</TooltipLabel>
+					<TooltipLabel>{breakdown.baseLabel || 'Base Value'}</TooltipLabel>
 					<TooltipValue>{breakdown.base}</TooltipValue>
 				</TooltipRow>
 
@@ -139,7 +145,7 @@ const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 						{breakdown.effects.map((effect, index) => (
 							<TooltipRow key={index}>
 								<TooltipLabel>
-									{getSourceLabel(effect.source)}
+									{getEffectLabel(effect)}
 									{effect.condition && ` (${effect.condition})`}
 								</TooltipLabel>
 								<TooltipValue $isPositive={effect.value > 0}>

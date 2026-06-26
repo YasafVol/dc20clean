@@ -32,7 +32,7 @@ export const StyledDeathTitle = styled.div<MobileStyledProps>`
 
 // Inline status badge (small chip rather than full-width block).
 export const StyledHealthStatus = styled.span<{
-	status: 'healthy' | 'bloodied' | 'well-bloodied' | 'deaths-door' | 'dead';
+	$status: 'healthy' | 'bloodied' | 'well-bloodied' | 'deaths-door' | 'dead';
 }>`
 	display: inline-block;
 	font-size: 0.7rem;
@@ -42,7 +42,7 @@ export const StyledHealthStatus = styled.span<{
 	border-radius: 4px;
 	line-height: 1.2;
 	color: ${(props) => {
-		switch (props.status) {
+		switch (props.$status) {
 			case 'healthy':
 				return '#9ECE6A';
 			case 'bloodied':
@@ -58,7 +58,7 @@ export const StyledHealthStatus = styled.span<{
 		}
 	}};
 	background: ${(props) => {
-		switch (props.status) {
+		switch (props.$status) {
 			case 'healthy':
 				return 'rgba(158, 206, 106, 0.15)';
 			case 'bloodied':
@@ -103,18 +103,18 @@ export const StyledDeathStepsGrid = styled.div<MobileStyledProps>`
 	flex-wrap: wrap;
 `;
 
-export const StyledDeathStep = styled.div<{ filled: boolean; isDead: boolean }>`
+export const StyledDeathStep = styled.div<{ $filled: boolean; $isDead: boolean }>`
 	position: relative;
 	width: 20px;
 	height: 20px;
-	border: 2px solid ${(props) => (props.isDead ? '#7f1d1d' : '#dc2626')};
+	border: 2px solid ${(props) => (props.$isDead ? '#7f1d1d' : '#dc2626')};
 	background: ${(props) => {
-		if (props.isDead) return '#7f1d1d';
-		return props.filled ? '#dc2626' : '#1A1B26';
+		if (props.$isDead) return '#7f1d1d';
+		return props.$filled ? '#dc2626' : '#1A1B26';
 	}};
 	color: ${(props) => {
-		if (props.isDead) return '#c0caf5';
-		return props.filled ? '#c0caf5' : '#dc2626';
+		if (props.$isDead) return '#c0caf5';
+		return props.$filled ? '#c0caf5' : '#dc2626';
 	}};
 	display: flex;
 	align-items: center;
@@ -132,14 +132,14 @@ export const StyledDeathStep = styled.div<{ filled: boolean; isDead: boolean }>`
 
 	&:hover {
 		background: ${(props) => {
-			if (props.isDead) return '#991b1b';
-			return props.filled ? '#b91c1c' : '#24283B';
+			if (props.$isDead) return '#991b1b';
+			return props.$filled ? '#b91c1c' : '#24283B';
 		}};
 		transform: scale(1.1);
 	}
 
 	${(props) =>
-		props.isDead &&
+		props.$isDead &&
 		`
     &::after {
       content: '☠';

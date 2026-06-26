@@ -30,10 +30,7 @@ import {
 
 import { StyledExhaustionImpact } from '../styles/ExhaustionImpact.styles';
 
-import {
-	getHealthStatus,
-	getDeathSteps
-} from '../../../lib/rulesdata/death';
+import { getHealthStatus, getDeathSteps } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
 	isMobile?: boolean;
@@ -106,7 +103,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 					{t('characterSheet.deathHealthStatus')}
 				</StyledDeathTitle>
 				<StyledHealthStatusTooltip data-tooltip={healthStatus.effects.join('\n')}>
-					<StyledHealthStatus status={healthStatus.status}>
+					<StyledHealthStatus $status={healthStatus.status}>
 						{healthStatus.description.toUpperCase()}
 					</StyledHealthStatus>
 				</StyledHealthStatusTooltip>
@@ -129,7 +126,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 					{exhaustionLevels.map(({ level, description }) => (
 						<StyledExhaustionLevel
 							key={level}
-							filled={level <= currentValues.exhaustionLevel}
+							$filled={level <= currentValues.exhaustionLevel}
 							$isMobile={effectiveIsMobile}
 							onClick={() => {
 								// Toggle: clicking same level clears it, clicking different level sets it
@@ -174,8 +171,8 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 								return (
 									<StyledDeathStep
 										key={step}
-										filled={isFilled}
-										isDead={isDead}
+										$filled={isFilled}
+										$isDead={isDead}
 										onClick={() => onDeathStepChange(step)}
 									>
 										{!isDead && step}

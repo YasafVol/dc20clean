@@ -252,7 +252,10 @@ export async function runCharacterCreationRecipe({
 	await page.getByTestId('character-name-input').fill(recipe.characterName);
 	await page.getByTestId('player-name-input').fill(recipe.playerName);
 	await page.getByText(/Complete|Finish/i).click();
-	await page.waitForURL('**/load-character');
+	await page.waitForURL((url) => {
+		const pathname = url.pathname;
+		return pathname.includes('/load-character') || pathname.includes('/character/');
+	});
 
 	const saved = await getSavedCharacterByName(page, recipe.characterName);
 	if (!saved) {

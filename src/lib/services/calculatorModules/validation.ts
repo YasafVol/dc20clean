@@ -319,7 +319,7 @@ export function runValidation(input: ValidationInput): ValidationResult {
 		for (const skillId of Object.keys(buildData.skillsData)) {
 			const hasSpentElevation = skillLimitElevations[skillId]?.source === 'spent_points';
 			const hasFeatureElevation = skillMasteryCapEffects.some(
-				(effect) => !effect.options || effect.options.includes(skillId)
+				(effect) => Array.isArray(effect.options) && effect.options.includes(skillId)
 			);
 			if (hasSpentElevation && hasFeatureElevation) {
 				errors.push({

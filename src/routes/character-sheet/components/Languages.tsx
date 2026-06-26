@@ -58,8 +58,8 @@ const Languages: React.FC<LanguagesProps> = ({ languages, isMobile }) => {
 				<LanguageRow $isMobile={effectiveIsMobile} key={language.id}>
 					<LanguageName $isMobile={effectiveIsMobile}>{language.name.toUpperCase()}</LanguageName>
 					<FluencyContainer $isMobile={effectiveIsMobile}>
-						<FluencyBox $isMobile={effectiveIsMobile} filled={language.fluency === 'limited'} />
-						<FluencyBox $isMobile={effectiveIsMobile} filled={language.fluency === 'fluent'} />
+						<FluencyBox $isMobile={effectiveIsMobile} $filled={language.fluency === 'limited'} />
+						<FluencyBox $isMobile={effectiveIsMobile} $filled={language.fluency === 'fluent'} />
 					</FluencyContainer>
 				</LanguageRow>
 			))}

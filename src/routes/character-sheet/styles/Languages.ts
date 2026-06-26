@@ -44,12 +44,12 @@ export const FluencyContainer = styled.div<MobileStyledProps>`
 	flex-shrink: 0;
 `;
 
-export const FluencyBox = styled.div<{ filled: boolean; $isMobile?: boolean }>`
+export const FluencyBox = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
 	width: 15px;
 	height: 15px;
 	border: 1px solid ${(props) => (props.$isMobile ? '#f5d020' : '#7DCFFF')};
 	background: ${(props) =>
-		props.filled
+		props.$filled
 			? props.$isMobile
 				? '#f5d020'
 				: '#7DCFFF'

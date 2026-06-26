@@ -91,21 +91,21 @@ rules-data, or calculator tests.
 
 ## 4. Current E2E Inventory
 
-| Spec                                         | Coverage                                                                                                  |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `e2e/01-import.e2e.spec.ts`                  | Imports a fixture and opens the character sheet                                                           |
-| `e2e/02-resources.e2e.spec.ts`               | Resource controls and notes                                                                               |
-| `e2e/07-weapons.e2e.spec.ts`                 | Weapon add/update/remove                                                                                  |
-| `e2e/08-items.e2e.spec.ts`                   | Item add/remove                                                                                           |
-| `e2e/09-spells.e2e.spec.ts`                  | Spell add/filter/delete                                                                                   |
-| `e2e/10-maneuvers.e2e.spec.ts`               | Maneuver add/delete when available                                                                        |
-| `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                            |
-| `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                       |
-| `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                           |
-| `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation shell coverage: forward-jump gate and leveled hybrid eight-step discovery |
-| `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                           |
-| `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                |
-| `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                    |
+| Spec                                         | Coverage                                                                                                                                                                     |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `e2e/01-import.e2e.spec.ts`                  | Imports a fixture and opens the character sheet                                                                                                                              |
+| `e2e/02-resources.e2e.spec.ts`               | Resource controls and notes                                                                                                                                                  |
+| `e2e/07-weapons.e2e.spec.ts`                 | Weapon add/update/remove                                                                                                                                                     |
+| `e2e/08-items.e2e.spec.ts`                   | Item add/remove                                                                                                                                                              |
+| `e2e/09-spells.e2e.spec.ts`                  | Spell add/filter/delete                                                                                                                                                      |
+| `e2e/10-maneuvers.e2e.spec.ts`               | Maneuver add/delete when available                                                                                                                                           |
+| `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                                                                                               |
+| `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                                                                                          |
+| `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                                                                                              |
+| `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, and level-1 Human Barbarian creation through Background/Maneuvers to sheet |
+| `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                              |
+| `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                                                                                   |
+| `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                                                                                       |
 
 The files in `docs/e2e/` are descriptive snapshots, not the system source of truth. Keep this file authoritative for testing policy.
 
@@ -259,7 +259,11 @@ Current inventory:
    3. Pins selected spells and maneuvers by catalog ID.
    4. Defines the expected saved-character slice for identity, final stats,
       traits, skills, trades, languages, combat training, spells, and maneuvers.
-2. `e2e/agentic/recipes/clericCanonical.ts`
+2. `e2e/agentic/recipes/humanBarbarianCanonical.ts`
+   1. Canonical level-1 Human Barbarian recipe based on the manual QA path.
+   2. Covers Human ancestry spend, point-buy attributes, Background skill/trade/language budgets, Maneuver learning, saved-character oracle checks, and sheet opening.
+   3. Mirrors the deterministic recipe in `e2e/14-character-creation-flow.e2e.spec.ts`.
+3. `e2e/agentic/recipes/clericCanonical.ts`
    1. Canonical level-3 Cleric recipe.
    2. Covers class feature choices, subclass selection, talent selection,
       cross-path Martial investment, dual ancestry, ancestry calc traits,
@@ -268,16 +272,24 @@ Current inventory:
    3. Asserts exact final stats, selected feature choices, selected talents,
       path allocations, Darkvision range, saved background selections, selected
       spells, selected maneuvers, and combat training.
-3. `e2e/agentic/agentic-character-creation.e2e.spec.ts`
+4. `e2e/agentic/agentic-character-creation.e2e.spec.ts`
    1. Runs smoke recipes through Playwright.
    2. Captures saved character JSON and run artifacts.
    3. Writes `saved-expectation-report.json`.
-   4. Opens the saved character sheet after oracle validation.
+   4. Opens the saved character sheet after oracle validation, or continues if
+      completion already navigated directly to the sheet.
    5. Checks recipe-defined sheet-visible text.
-4. `scripts/e2e/calculateAgenticOracle.ts`
+5. `scripts/e2e/calculateAgenticOracle.ts`
    1. Runs under `vite-node`.
    2. Recalculates saved characters through `calculateCharacterWithBreakdowns`.
    3. Reports stat and selection mismatches.
+
+TODO: decide the gate policy for expensive agentic testing versus cheap automated testing.
+
+1. Automated deterministic checks should stay cheap enough to run on every local change and PR: focused Vitest, focused deterministic Playwright specs, and `git diff --check`.
+2. Agentic browser QA should remain opt-in until the team defines runtime, artifact, and triage thresholds.
+3. Candidate agentic triggers: nightly runs, release candidates, broad character-creation changes, rules-data migrations, Background/Class/Ancestry budget changes, and failures that only appear through full UI persistence.
+4. Do not make `npm run e2e:agentic:*` a required always-run gate until this policy is explicit.
 
 ### 8.2 UI Agent Contract
 
@@ -367,15 +379,16 @@ Status: implemented.
    failure, saved character JSON, oracle output, and `run.json`.
 2. Declarative recipe types live in `e2e/agentic/recipes/types.ts`.
 3. Spellblade hybrid smoke recipe is the first converted full workflow.
-4. Cleric level-3 canonical is the first broad mechanical recipe.
-5. Artifact JSON is saved under `test-results/agentic/<run-id>/`.
-6. `saved-expectation-report.json` compares recipe intent to persisted character
+4. Human Barbarian canonical recipe covers the manual Background-stage regression path.
+5. Cleric level-3 canonical is the first broad mechanical recipe.
+6. Artifact JSON is saved under `test-results/agentic/<run-id>/`.
+7. `saved-expectation-report.json` compares recipe intent to persisted character
    data before calculator validation.
-7. `oracle-report.json` compares saved character output against calculator
+8. `oracle-report.json` compares saved character output against calculator
    outputs for core stats, resources, known spells, and known maneuvers.
-8. Sheet assertions verify the saved character can be opened and key visible
+9. Sheet assertions verify the saved character can be opened and key visible
    identity text appears.
-9. `npm run e2e:agentic:smoke` runs the current agentic recipe set.
+10. `npm run e2e:agentic:smoke` runs the current agentic recipe set.
 
 Next implementation slice:
 

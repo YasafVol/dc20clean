@@ -96,11 +96,25 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		return masteryLimits.skillLimitElevations?.[skillId]?.source === 'spent_points';
 	};
 
+	const hasFeatureCapForTarget = (skillId: string, targetLevel: number): boolean => {
+		if (targetLevel <= masteryLimits.baselineSkillCap) return false;
+		if (targetLevel > masteryLimits.baselineSkillCap + 1) return false;
+
+		const currentLevel = currentSkills[skillId] || 0;
+		const alreadyUsesFeatureCap =
+			currentLevel > masteryLimits.baselineSkillCap && !hasSpentPointsElevation(skillId);
+		if (alreadyUsesFeatureCap) return true;
+
+		const featureCapsUsed = Object.entries(currentSkills).filter(([currentSkillId, level]) => {
+			return level > masteryLimits.baselineSkillCap && !hasSpentPointsElevation(currentSkillId);
+		}).length;
+
+		return featureCapsUsed < masteryLimits.skillFeatureElevationsAvailable;
+	};
+
 	// Check if skill can have limit elevated (not already elevated, and can afford)
 	const canElevateLimitWithPoints = (skillId: string): boolean => {
 		if (hasSpentPointsElevation(skillId)) return false;
-		// Check if there's a feature elevation available (can't stack)
-		// For now, assume no feature elevation - validation will catch conflicts
 		const pointsRemaining = pointsData.availableSkillPoints - pointsData.skillPointsUsed;
 		return pointsRemaining >= 1;
 	};
@@ -121,7 +135,11 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		}
 
 		// If increasing and target exceeds baseline cap
-		if (targetLevel > baselineCap && !hasElevation) {
+		if (
+			targetLevel > baselineCap &&
+			!hasElevation &&
+			!hasFeatureCapForTarget(skillId, targetLevel)
+		) {
 			// Need to pay for elevation (+1) plus the level increase
 			const elevationCost = 1;
 			const levelCost = targetLevel - currentLevel;
@@ -163,8 +181,10 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
 		const baselineCap = masteryLimits.baselineSkillCap;
 		const hasElevation = hasSpentPointsElevation(skillId);
 
-		// If increasing above baseline and no elevation, add one
-		if (targetLevel > baselineCap && !hasElevation && onSkillLimitElevationChange) {
+		const needsPointElevation =
+			targetLevel > baselineCap && !hasElevation && !hasFeatureCapForTarget(skillId, targetLevel);
+
+		if (needsPointElevation && onSkillLimitElevationChange) {
 			const newElevations = {
 				...(masteryLimits.skillLimitElevations || {}),
 				[skillId]: { source: 'spent_points' as const, value: 1 }

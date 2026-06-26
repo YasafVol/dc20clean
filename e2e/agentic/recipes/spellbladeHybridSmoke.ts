@@ -1,5 +1,6 @@
 import type { AgenticCharacterRecipe } from './types';
 import { clericCanonicalRecipe } from './clericCanonical';
+import { humanBarbarianCanonicalRecipe } from './humanBarbarianCanonical';
 
 export const spellbladeHybridSmokeRecipe: AgenticCharacterRecipe = {
 	id: 'spellblade-hybrid-smoke',
@@ -26,18 +27,22 @@ export const spellbladeHybridSmokeRecipe: AgenticCharacterRecipe = {
 		intelligence: 3
 	},
 	background: {
+		conversions: {
+			skillToTrade: 1
+		},
 		skills: {
 			athletics: 2,
 			acrobatics: 1,
 			investigation: 1,
 			awareness: 1,
-			intimidation: 1,
-			stealth: 1
+			intimidation: 1
 		},
 		trades: {
 			blacksmithing: 1,
 			alchemy: 1,
-			herbalism: 1
+			herbalism: 1,
+			leatherworking: 1,
+			cooking: 1
 		},
 		languages: {
 			elvish: 'Fluent'
@@ -89,13 +94,14 @@ export const spellbladeHybridSmokeRecipe: AgenticCharacterRecipe = {
 			acrobatics: 1,
 			investigation: 1,
 			awareness: 1,
-			intimidation: 1,
-			stealth: 1
+			intimidation: 1
 		},
 		tradesData: {
 			blacksmithing: 1,
 			alchemy: 1,
-			herbalism: 1
+			herbalism: 1,
+			leatherworking: 1,
+			cooking: 1
 		},
 		languagesData: {
 			common: 'fluent',
@@ -103,11 +109,19 @@ export const spellbladeHybridSmokeRecipe: AgenticCharacterRecipe = {
 		},
 		spells: ['Reduce Inertia', 'Arcane Barrier'],
 		maneuvers: ['Heroic Bash'],
-		combatTraining: ['Weapons', 'Spell_Focuses', 'Light_Armor', 'Light_Shields']
+		combatTraining: ['Weapons', 'Spell_Focuses', 'Light_Armor', 'Light_Shields'],
+		backgroundConversions: {
+			skillToTrade: 1,
+			tradeToLanguage: 0
+		}
 	},
 	expectedSheet: {
 		visibleText: ['agentic spellblade smoke', 'Spellblade', 'Human']
 	}
 };
 
-export const smokeRecipes = [spellbladeHybridSmokeRecipe, clericCanonicalRecipe];
+export const smokeRecipes = [
+	spellbladeHybridSmokeRecipe,
+	humanBarbarianCanonicalRecipe,
+	clericCanonicalRecipe
+];

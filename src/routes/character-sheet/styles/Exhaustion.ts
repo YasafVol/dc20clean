@@ -11,19 +11,19 @@ export const StyledExhaustionContainer = styled.div<MobileStyledProps>`
 	margin: 0;
 `;
 
-export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: boolean }>`
+export const StyledExhaustionLevel = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
 	position: relative;
 	width: 22px;
 	height: 22px;
 	border: 2px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : 'var(--bg-tertiary)')};
 	background: ${(props) => {
-		if (props.filled) {
+		if (props.$filled) {
 			return props.$isMobile ? 'var(--mobile-accent)' : 'var(--accent-warning)';
 		}
 		return props.$isMobile ? 'var(--mobile-bg-primary)' : 'var(--bg-primary)';
 	}};
 	color: ${(props) => {
-		if (props.filled) {
+		if (props.$filled) {
 			return props.$isMobile ? 'var(--mobile-bg-primary)' : 'var(--bg-primary)';
 		}
 		return props.$isMobile ? 'var(--mobile-accent)' : 'var(--accent-warning)';
@@ -44,7 +44,7 @@ export const StyledExhaustionLevel = styled.div<{ filled: boolean; $isMobile?: b
 
 	&:hover {
 		background: ${(props) => {
-			if (props.filled) {
+			if (props.$filled) {
 				return props.$isMobile ? '#5a9fcf' : '#5a9fcf';
 			}
 			return props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)';

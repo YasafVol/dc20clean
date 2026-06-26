@@ -120,6 +120,7 @@ Within `calculateCharacterWithBreakdowns`:
   - Applies point-bought limit elevations from `skillMasteryLimitElevations` and `tradeMasteryLimitElevations`
   - Collects `MODIFY_SKILL_MASTERY_CAP` and `INCREASE_SKILL_MASTERY_CAP` effects
   - Validates feature/trait/talent increase budget and specific skill coverage
+  - Generic feature cap grants, such as Human Skill Expertise, are allocated to over-baseline selections that do not already have a point-bought elevation; option-specific cap grants still conflict with point-bought elevations on the same Skill/Trade.
   - Emits `MASTERY_CAP_EXCEEDED` and `INVALID_MASTERY_GRANT` errors
   - A level 1 character can raise a Skill from no Mastery to Adept by spending 3 Skill Points: 1 for Novice, 1 to raise that Skill's limit, and 1 to raise the Skill's level to Adept.
 - Validation emits over-budget errors by step.

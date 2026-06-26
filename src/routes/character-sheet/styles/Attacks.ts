@@ -80,9 +80,9 @@ export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
 	}
 `;
 
-export const StyledHeaderColumn = styled.span<{ align?: string; $isMobile?: boolean }>`
+export const StyledHeaderColumn = styled.span<{ $align?: string; $isMobile?: boolean }>`
 	font-weight: ${theme.typography.fontWeight.bold};
-	text-align: ${(props) => props.align || 'left'};
+	text-align: ${(props) => props.$align || 'left'};
 	font-size: ${theme.typography.fontSize.xs};
 	line-height: ${theme.typography.lineHeight.tight};
 	color: ${theme.colors.text.secondary};

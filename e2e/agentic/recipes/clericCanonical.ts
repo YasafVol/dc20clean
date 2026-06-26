@@ -50,7 +50,7 @@ export const clericCanonicalRecipe: AgenticCharacterRecipe = {
 	},
 	background: {
 		conversions: {
-			skillToTrade: 1,
+			skillToTrade: 2,
 			tradeToLanguage: 1
 		},
 		skills: {
@@ -58,18 +58,18 @@ export const clericCanonicalRecipe: AgenticCharacterRecipe = {
 			acrobatics: 1,
 			animal: 1,
 			awareness: 1,
-			insight: 1,
-			intimidation: 1,
+			intimidation: 2,
 			investigation: 1,
-			stealth: 1,
-			survival: 1,
-			trickery: 1
+			stealth: 1
 		},
 		trades: {
-			arcana: 2,
+			arcana: 1,
 			history: 1,
 			blacksmithing: 1,
-			herbalism: 1
+			herbalism: 1,
+			religion: 1,
+			alchemy: 1,
+			leatherworking: 1
 		},
 		languages: {
 			elvish: 'Fluent',
@@ -122,18 +122,18 @@ export const clericCanonicalRecipe: AgenticCharacterRecipe = {
 			acrobatics: 1,
 			animal: 1,
 			awareness: 1,
-			insight: 1,
-			intimidation: 1,
+			intimidation: 2,
 			investigation: 1,
-			stealth: 1,
-			survival: 1,
-			trickery: 1
+			stealth: 1
 		},
 		tradesData: {
-			arcana: 2,
+			arcana: 1,
 			history: 1,
 			blacksmithing: 1,
-			herbalism: 1
+			herbalism: 1,
+			religion: 1,
+			alchemy: 1,
+			leatherworking: 1
 		},
 		languagesData: {
 			common: 'fluent',
@@ -167,7 +167,7 @@ export const clericCanonicalRecipe: AgenticCharacterRecipe = {
 			darkvision: 15
 		},
 		backgroundConversions: {
-			skillToTrade: 1,
+			skillToTrade: 2,
 			tradeToLanguage: 1
 		}
 	},

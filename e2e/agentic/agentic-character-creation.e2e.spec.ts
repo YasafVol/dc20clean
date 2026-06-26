@@ -35,9 +35,11 @@ test.describe('Agentic character creation recipes', () => {
 				assertOraclePassed(oracleReport);
 
 				logger.record('recipe.step', 'Opening saved character sheet');
-				const charCard = page.locator('div', { hasText: recipe.characterName }).first();
-				await charCard.getByRole('button', { name: 'View Sheet' }).click();
-				await page.waitForURL('**/character/**');
+				if (!new URL(page.url()).pathname.includes('/character/')) {
+					const charCard = page.locator('div', { hasText: recipe.characterName }).first();
+					await charCard.getByRole('button', { name: 'View Sheet' }).click();
+					await page.waitForURL('**/character/**');
+				}
 				await assertRecipeSheetExpectations(page, recipe);
 
 				status = 'passed';

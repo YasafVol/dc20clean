@@ -206,7 +206,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksColumnWeapon')}
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						{t('characterSheet.attacksColumnBaseDmg')
 							.split(' ')
 							.map((word, i) => (
@@ -216,7 +216,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 								</React.Fragment>
 							))}
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						{t('characterSheet.attacksColumnHeavyDmg')
 							.split(' ')
 							.map((word, i) => (
@@ -226,7 +226,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 								</React.Fragment>
 							))}
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						{t('characterSheet.attacksColumnBrutalDmg')
 							.split(' ')
 							.map((word, i) => (
@@ -236,10 +236,10 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 								</React.Fragment>
 							))}
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						{t('characterSheet.attacksColumnType')}
 					</StyledHeaderColumn>
-					<StyledHeaderColumn $isMobile={effectiveIsMobile} align="center">
+					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						<StyledInfoIcon $isMobile={effectiveIsMobile}>i</StyledInfoIcon>
 					</StyledHeaderColumn>
 				</StyledAttacksHeaderRow>

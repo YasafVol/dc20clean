@@ -24,6 +24,7 @@ import {
 	convertToEnhancedBuildData,
 	calculateCharacterWithBreakdowns
 } from '../../lib/services/enhancedCharacterCalculator';
+import { BuildStep } from '../../lib/types/effectSystem';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
 import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';

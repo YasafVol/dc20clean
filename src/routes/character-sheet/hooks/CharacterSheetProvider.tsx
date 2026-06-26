@@ -25,6 +25,7 @@ import { assessCharacterCompatibility } from '../../../lib/rulesdata/versioning/
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
+import { getLanguageDisplayName } from '../../../lib/rulesdata/languages';
 import { findTalentById } from '../../../lib/rulesdata/classes-data/talents/talent.loader';
 import {
 	findClassByName,
@@ -1122,7 +1123,7 @@ export function useCharacterLanguages() {
 				.filter(([_, data]: [string, any]) => data.fluency !== 'none')
 				.map(([langId, data]: [string, any]) => ({
 					id: langId,
-					name: data.name || langId.charAt(0).toUpperCase() + langId.slice(1),
+					name: getLanguageDisplayName(langId, data.name),
 					fluency: data.fluency as 'limited' | 'fluent'
 				}));
 		} catch (error) {

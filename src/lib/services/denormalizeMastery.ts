@@ -1,5 +1,6 @@
 import { skillsData as rulesSkills } from '../rulesdata/skills';
 import { tradesData as rulesTrades } from '../rulesdata/trades';
+import { getLanguageDisplayName } from '../rulesdata/languages';
 import type { DenormalizedMasteryEntry, MasteryLadder } from '../types/dataContracts';
 
 export interface FinalAttributes {
@@ -196,10 +197,10 @@ export function denormalizeMastery(input: DenormalizeInput): DenormalizeOutput {
 		const map = (input.languagesData as any) || {};
 		const keys = Object.keys(map);
 		for (let i = 0; i < 4; i++) {
-			const name = keys[i] || '';
-			if (!name) break;
-			const fluency = (map[name]?.fluency as string) || (name ? 'fluent' : '');
-			assignLanguage(i, name, fluency);
+			const languageId = keys[i] || '';
+			if (!languageId) break;
+			const fluency = (map[languageId]?.fluency as string) || (languageId ? 'fluent' : '');
+			assignLanguage(i, getLanguageDisplayName(languageId, map[languageId]?.name), fluency);
 		}
 	}
 

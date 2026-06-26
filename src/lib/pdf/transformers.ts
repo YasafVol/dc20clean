@@ -7,6 +7,7 @@ import { traitsData } from '../rulesdata/ancestries/traits';
 import { findTalentById } from '../rulesdata/classes-data/talents/talent.loader';
 import { findClassByName } from '../rulesdata/loaders/class-features.loader';
 import { ALL_SPELLS } from '../rulesdata/spells-data';
+import { getLanguageDisplayName } from '../rulesdata/languages';
 import { logger } from '../utils/logger';
 import { calculateHoldBreath } from '../utils/holdBreath';
 
@@ -809,18 +810,25 @@ export function transformSavedCharacterToPdfData(character: SavedCharacter): Pdf
 		const b = lm.B || { name: '', limited: false, fluent: false };
 		const c = lm.C || { name: '', limited: false, fluent: false };
 		const d = lm.D || { name: '', limited: false, fluent: false };
+		const displayA = { ...a, name: getLanguageDisplayName(a.name) };
+		const displayB = { ...b, name: getLanguageDisplayName(b.name) };
+		const displayC = { ...c, name: getLanguageDisplayName(c.name) };
+		const displayD = { ...d, name: getLanguageDisplayName(d.name) };
 		// Rule: If Fluent is true, Limited must also be true
 		mastery.LanguageA = { Limited: a.limited || a.fluent, Fluent: a.fluent };
 		mastery.LanguageB = { Limited: b.limited || b.fluent, Fluent: b.fluent };
 		mastery.LanguageC = { Limited: c.limited || c.fluent, Fluent: c.fluent };
 		mastery.LanguageD = { Limited: d.limited || d.fluent, Fluent: d.fluent };
-		languages = [a, b, c, d];
+		languages = [displayA, displayB, displayC, displayD];
 	} else {
 		const langMap = (character as any).languagesData || {};
 		const langKeys = Object.keys(langMap);
 		languages = [0, 1, 2, 3].map((i) => {
-			const name = langKeys[i] || '';
-			const fluency = (langMap?.[name]?.fluency as string) || (name ? 'fluent' : '');
+			const languageId = langKeys[i] || '';
+			const name = languageId
+				? getLanguageDisplayName(languageId, langMap?.[languageId]?.name)
+				: '';
+			const fluency = (langMap?.[languageId]?.fluency as string) || (languageId ? 'fluent' : '');
 			const fluent = fluency === 'fluent';
 			const limited = fluency === 'limited' || fluent; // Rule: Fluent includes Limited
 			if (i === 0) mastery.LanguageA = { Limited: limited, Fluent: fluent };

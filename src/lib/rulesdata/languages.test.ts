@@ -4,6 +4,7 @@ import {
 	getCanonicalLanguageId,
 	getLanguageCompatibilitySelections,
 	getLanguageById,
+	getLanguageDisplayName,
 	getPrimaryLanguageSelectionId,
 	languageCheckDcByFamily,
 	languagesData
@@ -62,7 +63,20 @@ describe('languagesData', () => {
 		expect(getLanguageById('primordial')).toMatchObject({ id: 'elemental', name: 'Elemental' });
 		expect(getLanguageById('abyssal')).toMatchObject({ id: 'fiendish', name: 'Fiendish' });
 		expect(getLanguageById('infernal')).toMatchObject({ id: 'fiendish', name: 'Fiendish' });
+		expect(getLanguageById('Primordial')).toMatchObject({ id: 'elemental', name: 'Elemental' });
+		expect(getLanguageById('deep_speech')).toMatchObject({
+			id: 'deepspeech',
+			name: 'Deep Speech'
+		});
 		expect(getCanonicalLanguageId('undercommon')).toBeUndefined();
+	});
+
+	it('displays canonical names for saved legacy aliases', () => {
+		expect(getLanguageDisplayName('primordial')).toBe('Elemental');
+		expect(getLanguageDisplayName('primordial', 'Primordial')).toBe('Elemental');
+		expect(getLanguageDisplayName('abyssal')).toBe('Fiendish');
+		expect(getLanguageDisplayName('custom-tongue')).toBe('Custom Tongue');
+		expect(getLanguageDisplayName('custom-tongue', 'Custom Tongue')).toBe('Custom Tongue');
 	});
 
 	it('prefers canonical IDs but keeps legacy aliases editable when they are the saved selection', () => {

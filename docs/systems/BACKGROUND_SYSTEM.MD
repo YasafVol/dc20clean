@@ -86,6 +86,7 @@ DC20 0.10.5 language catalog notes:
 - Selectable languages come from the official 0.10.5 families: Mortal, Exotic, Divine, and Outer.
 - Limited-language checks use family DCs from the rules text: Mortal 10, Exotic 15, Divine 15, Outer 20.
 - Legacy save IDs are preserved where practical for unchanged entries, and renamed families may expose alias metadata (`legacyIds`) so the current picker can surface old selections without reintroducing retired names into the catalog.
+- Saved legacy aliases, such as `primordial`, display with the current canonical catalog name (`Elemental`) in creator, sheet, and export surfaces.
 - The explicit v0.10 upgrade reports both sides of consolidated languages before confirmation. When Abyssal and Infernal both convert to Fiendish, the converter keeps the strongest purchased fluency.
 - Unsupported legacy selections (for example `goblin` or `undercommon`) are disclosed as removals before confirmation, excluded from the migrated copy so their points are available for reselection, and preserved on the locked legacy source record.
 

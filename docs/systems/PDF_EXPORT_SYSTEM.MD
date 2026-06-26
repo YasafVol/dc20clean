@@ -29,6 +29,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **v0.10.5 Expert Feature Effects** — level 5 Expert Features keep their legacy placeholder IDs but now contribute modeled effects through the calculator before export, including skill point, HP/MP, speed/jump, spell, and maneuver grants where those mechanics are structured.
 - **Transformation Layer** — `src/lib/pdf/transformers.ts` maps saved character values into a structured DTO that matches the PDF field list. `transformCalculatedCharacterToPdfData` is retained for tests/legacy helpers and is not the runtime export path.
 - **Spell Display Lookup** — PDF export is a pure consumer of stored character data. It may resolve exact current catalog IDs to display names, but it must not apply compatibility aliases or migration decisions. Legacy, reworked, deprecated, or ambiguous spell IDs are exported as the stored value until an explicit rules-upgrade draft changes the saved data.
+- **Language Display Lookup** — PDF export resolves saved language IDs and known legacy aliases through the current language catalog for display only, so saved `primordial` exports as `Elemental` without mutating the stored character.
 - **PDF Field Maps** — Versioned field maps for different PDF versions:
   - `src/lib/pdf/fieldMap.dc20-0.10.ts` — Default v0.10 field map
   - `src/lib/pdf/fieldMap.dc20-0.9.5.ts` — Legacy v0.9.5 field map

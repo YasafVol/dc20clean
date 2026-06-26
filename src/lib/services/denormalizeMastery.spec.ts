@@ -26,10 +26,16 @@ describe('denormalizeMastery', () => {
 			tradesRanks: {},
 			languagesData: {
 				common: { fluency: 'fluent' },
+				primordial: { fluency: 'limited' },
 				elvish: { fluency: 'limited' },
 				dwarvish: { fluency: 'fluent' }
 			}
 		});
 		expect(out.languageMastery.A).toBeDefined();
+		expect(out.languageMastery.B).toMatchObject({
+			name: 'Elemental',
+			limited: true,
+			fluent: false
+		});
 	});
 });

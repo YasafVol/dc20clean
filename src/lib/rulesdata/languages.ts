@@ -149,6 +149,10 @@ export const languagesData: ILanguageData[] = [
 const languageById = new Map<string, ILanguageData>();
 const canonicalLanguageIdById = new Map<string, string>();
 
+function normalizeLanguageLookupId(languageId: string): string {
+	return languageId.trim().toLowerCase().replace(/[\s_-]+/g, '');
+}
+
 for (const language of languagesData) {
 	languageById.set(language.id, language);
 	canonicalLanguageIdById.set(language.id, language.id);
@@ -159,12 +163,28 @@ for (const language of languagesData) {
 }
 
 export function getCanonicalLanguageId(languageId: string): string | undefined {
-	return canonicalLanguageIdById.get(languageId);
+	return (
+		canonicalLanguageIdById.get(languageId) ??
+		canonicalLanguageIdById.get(normalizeLanguageLookupId(languageId))
+	);
 }
 
 export function getLanguageById(languageId: string): ILanguageData | undefined {
 	const canonicalId = getCanonicalLanguageId(languageId) ?? languageId;
 	return languageById.get(canonicalId);
+}
+
+export function getLanguageDisplayName(languageId: string, storedName?: unknown): string {
+	const canonicalLanguage = getLanguageById(languageId);
+	if (canonicalLanguage) {
+		return canonicalLanguage.name;
+	}
+
+	if (typeof storedName === 'string' && storedName.trim().length > 0) {
+		return storedName;
+	}
+
+	return formatLanguageIdDisplayName(languageId);
 }
 
 export function formatLanguageIdDisplayName(languageId: string): string {

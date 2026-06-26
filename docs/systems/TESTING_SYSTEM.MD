@@ -203,6 +203,7 @@ Minimum acceptance cases:
 ## 7. E2E Standards
 
 - Prefer `data-testid` selectors for stable app-owned controls.
+- For Userback/UI feedback changes, validate with `npm run build` and a raw HTML check that production output contains the documented `Userback.access_token` snippet plus `static.userback.io/widget/v1.js`; keep payload checks limited to compact metadata.
 - Recipe-style E2E tests should be written as named user actions and visible assertions. They may use Playwright as the executor, but the test should read as a deterministic user journey rather than DOM plumbing.
 - Add lightweight semantic hooks (`data-testid`, `data-step-id`, `aria-current`) for agent/browser discovery when the visible control is part of a cross-page flow.
 - Assert explicit visible state or saved localStorage state after each meaningful action.

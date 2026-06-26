@@ -1,6 +1,6 @@
 # RPG Systems Mapping — TODO Tracker
 
-Last updated: 2026-01-14
+Last updated: 2026-06-26
 
 Status legend: [ ] not started · [~] in progress · [x] done · [>] blocked
 
@@ -58,7 +58,7 @@ Deep Dive Notes (completed):
 - [ ] Verify subclass unlock levels and map subclass feature IDs (3/6/9).
 - [ ] Audit starting equipment options and training alignment.
 - [ ] Validate spellRestrictions against v0.10 taxonomy per class.
-- [ ] Druid Wild Form: list trait/effect mapping.
+- [~] Druid Wild Form: list trait/effect mapping and implement as the first local-only Character Sheet complex-feature host module. Gate the module by owned feature/effect access (`druid_wild_form` or `GRANT_ABILITY:wild_form`), not by Druid class name, so multiclass/talent-granted Wild Form works. Include source templates plus non-negative Beastborn expanded Beast Traits and Wild Form Traits; do not persist builder state.
 - [x] ONTOLOGY Save DC discrepancy — fixed to 10 + CM + Prime.
 
 #### Discovery Chunks Index — Rules File

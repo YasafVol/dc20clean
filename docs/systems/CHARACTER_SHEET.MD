@@ -106,6 +106,13 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display                                                            |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution                                                    |
 
+#### Complex Feature Host TODO
+
+- Add a reusable Character Sheet complex-feature host that is always present as a sheet section and populates module panels from character-owned features/effects, not hardcoded class names.
+- First module: local-only Druid Wild Form builder. It should render when the character has `druid_wild_form` or a collected `GRANT_ABILITY` effect targeting `wild_form`, including access from Druid class progression, multiclass feature pickup, talents, or future equivalent grants.
+- Wild Form builder scope: reactive page state only; no saved-character schema, no persistence, no migration. Derived values should calculate on render with memoized browser state, and formula details should live in tooltips while the pane shows final values.
+- Wild Form source data: include source templates (Defensive, Grappler, Parkour, Infiltrator), Wild Form Traits, and non-negative Beastborn expanded Beast Traits from `src/lib/rulesdata/ancestries/ancestries.ts` / `traits.ts`. Treat Wild Form's built-in natural weapon as satisfying natural-weapon prerequisites, but do not include Beastborn origin/default traits such as `beastborn_beastkind`.
+
 #### Spell Sheet TODOs
 
 - Add a pure sheet-facing helper that builds calculated spell presentation stats from the saved spell, character calculation output, active effects, and equipped spell focus effects. The UI should consume this helper for spell attack/check bonuses, focus-driven damage/range adjustments, and any "applies in play" notes instead of duplicating rules logic inside `components/Spells.tsx` or `SpellPopup.tsx`.

@@ -61,12 +61,7 @@ const Background: React.FC = () => {
 		convertSkillToTrade: () => {
 			const currentSkillToTrade = state.skillToTradeConversions || 0;
 			const { availableSkillPoints } = background;
-
-			// Calculate current skill points used (this should come from summing the skillsData)
-			const skillPointsUsed = Object.values(state.skillsData || {}).reduce(
-				(sum, level) => sum + level,
-				0
-			);
+			const skillPointsUsed = background.skillPointsUsed;
 			const remainingSkillPoints = availableSkillPoints - skillPointsUsed;
 
 			// Only allow conversion if we have at least 1 skill point remaining
@@ -79,10 +74,7 @@ const Background: React.FC = () => {
 		},
 		convertTradeToSkill: () => {
 			const currentSkillToTrade = state.skillToTradeConversions || 0;
-			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
-				(sum, level) => sum + level,
-				0
-			);
+			const tradePointsUsed = background.tradePointsUsed;
 			const remainingTradePoints = background.availableTradePoints - tradePointsUsed;
 
 			// Source allows Skill -> Trade only; this action only undoes that conversion.
@@ -96,12 +88,7 @@ const Background: React.FC = () => {
 		convertTradeToLanguage: () => {
 			const currentTradeToLanguage = state.tradeToLanguageConversions || 0;
 			const { availableTradePoints } = background;
-
-			// Calculate current trade points used
-			const tradePointsUsed = Object.values(state.tradesData || {}).reduce(
-				(sum, level) => sum + level,
-				0
-			);
+			const tradePointsUsed = background.tradePointsUsed;
 			const remainingTradePoints = availableTradePoints - tradePointsUsed;
 
 			// Only allow conversion if we have at least 1 trade point remaining

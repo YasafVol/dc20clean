@@ -114,6 +114,8 @@ export const completeCharacter = async (
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+			skillMasteryLimitElevations: characterState.skillMasteryLimitElevations || {},
+			tradeMasteryLimitElevations: characterState.tradeMasteryLimitElevations || {},
 			usePrimeCapRule: !!characterState.usePrimeCapRule,
 			// CRITICAL: Include conversions for proper background validation
 			skillToTradeConversions: characterState.skillToTradeConversions || 0,
@@ -242,6 +244,8 @@ export const completeCharacter = async (
 			skillsData: characterState.skillsData || {},
 			tradesData: characterState.tradesData || {},
 			languagesData: characterState.languagesData || { common: { fluency: 'fluent' } },
+			skillMasteryLimitElevations: characterState.skillMasteryLimitElevations || {},
+			tradeMasteryLimitElevations: characterState.tradeMasteryLimitElevations || {},
 
 			// Level progression data (M2.7)
 			// Convert Record<string, number> to string[] for database compatibility

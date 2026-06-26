@@ -62,6 +62,8 @@ export const convertCharacterToInProgress = (
 			!Array.isArray(savedCharacter.languagesData)
 				? savedCharacter.languagesData
 				: { common: { fluency: 'fluent' } },
+		skillMasteryLimitElevations: savedCharacter.skillMasteryLimitElevations || {},
+		tradeMasteryLimitElevations: savedCharacter.tradeMasteryLimitElevations || {},
 		// Convert SpellData[] back to Record<string, string> (slotId → spellId)
 		selectedSpells: (() => {
 			if (!Array.isArray(savedCharacter.spells) || savedCharacter.spells.length === 0) return {};
@@ -83,9 +85,6 @@ export const convertCharacterToInProgress = (
 					.map((m: any) => (typeof m === 'string' ? m : m.name))
 					.filter(Boolean)
 			: [],
-		// Mastery limit elevations (default empty - will be populated during editing)
-		skillMasteryLimitElevations: {},
-		tradeMasteryLimitElevations: {},
 		// CRITICAL: Restore leveling choices for path bonuses and stat calculation
 		pathPointAllocations: savedCharacter.pathPointAllocations || {},
 		selectedTalents: normalizeSelectedTalents(savedCharacter.selectedTalents as any),
@@ -181,6 +180,8 @@ export const completeCharacterEdit = async (
 				typeof newCharacterState.tradesData === 'object' ? newCharacterState.tradesData : {},
 			languagesData:
 				typeof newCharacterState.languagesData === 'object' ? newCharacterState.languagesData : {},
+			skillMasteryLimitElevations: newCharacterState.skillMasteryLimitElevations || {},
+			tradeMasteryLimitElevations: newCharacterState.tradeMasteryLimitElevations || {},
 			selectedSpells: newCharacterState.selectedSpells || {},
 			selectedManeuvers: Array.isArray(newCharacterState.selectedManeuvers)
 				? newCharacterState.selectedManeuvers
@@ -223,6 +224,8 @@ export const completeCharacterEdit = async (
 				skillToTradeConversions: newCharacterState.skillToTradeConversions || 0,
 				tradeToSkillConversions: newCharacterState.tradeToSkillConversions || 0,
 				tradeToLanguageConversions: newCharacterState.tradeToLanguageConversions || 0,
+				skillMasteryLimitElevations: newCharacterState.skillMasteryLimitElevations || {},
+				tradeMasteryLimitElevations: newCharacterState.tradeMasteryLimitElevations || {},
 				usePrimeCapRule: !!newCharacterState.usePrimeCapRule,
 				// CRITICAL: Persist leveling choices for future editing round-trips
 				pathPointAllocations: newCharacterState.pathPointAllocations || {},

@@ -5,7 +5,7 @@
  * All components should use these types instead of legacy JSON string patterns.
  */
 
-import type { EnhancedStatBreakdown } from './effectSystem';
+import type { EnhancedStatBreakdown, MasteryLimitElevation } from './effectSystem';
 
 // Re-export necessary types from existing files
 export type { ManeuverData, SpellData, InventoryItemData } from '../../types/character';
@@ -164,6 +164,8 @@ export interface SavedCharacter {
 	selectedFeatureChoices: Record<string, string>;
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
+	skillMasteryLimitElevations?: Record<string, MasteryLimitElevation>;
+	tradeMasteryLimitElevations?: Record<string, MasteryLimitElevation>;
 	// Languages can be either a list of names or a map of name -> { fluency }
 	languagesData: any;
 

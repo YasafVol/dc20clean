@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-25
+> Last Updated: 2026-06-26
 
 #### Purpose
 
@@ -57,9 +57,10 @@
   - Agent/browser hooks: attribute cards expose `data-field-id="attribute-{attributeId}"`; increment/decrement controls expose `data-testid="{attributeId}-increase|decrease"` and matching `data-action-id`.
 
 - **Stage 5 – Background** (`Background.tsx`, `SkillsTab.tsx`, `TradesTab.tsx`, `LanguagesTab.tsx`)
-  - Inputs: `state.skillsData`, `state.tradesData`, `state.languagesData`, calculator `background` budgets, mastery limits
-  - Completion rule: skill points spent exactly, trade/language points <= remaining (UI allows overspend but completion requires <= 0 remaining)
-  - Outputs: skills/trades/languages plus conversion values (`SET_CONVERSIONS`)
+  - Inputs: `state.skillsData`, `state.tradesData`, `state.languagesData`, `state.skillMasteryLimitElevations`, `state.tradeMasteryLimitElevations`, calculator `background` budgets, mastery limits
+  - Completion rule: skill/trade/language points spent exactly and no Background validation errors
+  - Outputs: skills/trades/languages, point-bought mastery limit elevations, plus conversion values (`SET_CONVERSIONS`)
+  - Point-bought cap elevations are separate from mastery ranks. Example: a level 1 Skill raised from no Mastery to Adept stores `skillsData[skillId] = 2` and `skillMasteryLimitElevations[skillId] = { source: 'spent_points', value: 1 }`, costing 3 Skill Points total.
   - Agent/browser hooks: background tab controls expose `skills-tab`, `trades-tab`, and `languages-tab`; skill/trade mastery buttons expose `skill-{id}-mastery-{level}` and `trade-{id}-mastery-{level}` test IDs.
   - Conversion controls expose `convert-skill-to-trade`, `convert-trade-to-language`, `undo-skill-to-trade`, and `reset-background-conversions`.
 

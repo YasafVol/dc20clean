@@ -393,6 +393,8 @@ export interface EnhancedCharacterBuildData {
 	skillsData: Record<string, number>;
 	tradesData: Record<string, number>;
 	languagesData: Record<string, { fluency: 'limited' | 'fluent' }>;
+	skillMasteryLimitElevations?: Record<string, MasteryLimitElevation>;
+	tradeMasteryLimitElevations?: Record<string, MasteryLimitElevation>;
 
 	// Point conversions
 	conversions?: {

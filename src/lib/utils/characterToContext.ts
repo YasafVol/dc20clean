@@ -35,6 +35,8 @@ export function convertSavedCharacterToContext(
 		skillsData: character.skillsData || {},
 		tradesData: character.tradesData || {},
 		languagesData: character.languagesData || { common: { fluency: 'fluent' } },
+		skillMasteryLimitElevations: character.skillMasteryLimitElevations || {},
+		tradeMasteryLimitElevations: character.tradeMasteryLimitElevations || {},
 		usePrimeCapRule: character.usePrimeCapRule ?? false,
 		skillToTradeConversions: character.skillToTradeConversions || 0,
 		tradeToSkillConversions: character.tradeToSkillConversions || 0,

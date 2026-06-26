@@ -160,6 +160,8 @@ export function convertToEnhancedBuildData(contextData: any): EnhancedCharacterB
 		tradesData: contextData.tradesData ?? {},
 		// Default Common to fluent when empty to match current UI assumptions
 		languagesData: contextData.languagesData ?? { common: { fluency: 'fluent' } },
+		skillMasteryLimitElevations: contextData.skillMasteryLimitElevations ?? {},
+		tradeMasteryLimitElevations: contextData.tradeMasteryLimitElevations ?? {},
 
 		// Optional manual overrides supported by the engine
 		manualPD: contextData.manualPD,

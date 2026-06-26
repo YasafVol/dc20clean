@@ -238,6 +238,14 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			dispatch({ type: 'UPDATE_TRADES', tradesData: contextData.tradesData! });
 			dispatch({ type: 'UPDATE_LANGUAGES', languagesData: contextData.languagesData! });
 			dispatch({
+				type: 'UPDATE_SKILL_LIMIT_ELEVATIONS',
+				elevations: contextData.skillMasteryLimitElevations || {}
+			});
+			dispatch({
+				type: 'UPDATE_TRADE_LIMIT_ELEVATIONS',
+				elevations: contextData.tradeMasteryLimitElevations || {}
+			});
+			dispatch({
 				type: 'SET_CONVERSIONS',
 				conversions: {
 					skillToTrade: contextData.skillToTradeConversions,
@@ -758,67 +766,36 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					return false;
 				}
 
-				// Calculate current usage
-				let skillPointsUsed = 0;
-				let tradePointsUsed = 0;
-				let languagePointsUsed = 0;
-
-				// FIXED: Use typed skillsData instead of JSON parsing
-				if (state.skillsData && Object.keys(state.skillsData).length > 0) {
-					skillPointsUsed = Object.values(state.skillsData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
-
-				// FIXED: Use typed tradesData instead of JSON parsing
-				if (state.tradesData && Object.keys(state.tradesData).length > 0) {
-					tradePointsUsed = Object.values(state.tradesData).reduce(
-						(sum: number, level: number) => sum + level,
-						0
-					);
-				}
-
-				// FIXED: Use typed languagesData instead of JSON parsing
-				if (state.languagesData && Object.keys(state.languagesData).length > 0) {
-					languagePointsUsed = Object.entries(state.languagesData).reduce(
-						(sum, [langId, data]: [string, { fluency?: string }]) => {
-							if (langId === 'common') {
-								return sum; // Common is free
-							}
-							const cost = data.fluency === 'limited' ? 1 : data.fluency === 'fluent' ? 2 : 0; // 'none' or any other value costs 0
-							return sum + cost;
-						},
-						0
-					);
-				}
-
-				// Use calculator's values instead of recalculating
 				const availableSkillPoints = background.availableSkillPoints;
 				const availableTradePoints = background.availableTradePoints;
 				const availableLanguagePoints = background.availableLanguagePoints;
 
 				// Calculate remaining points
-				const skillPointsRemaining = availableSkillPoints - skillPointsUsed;
-				const tradePointsRemaining = availableTradePoints - tradePointsUsed;
-				const languagePointsRemaining = availableLanguagePoints - languagePointsUsed;
+				const skillPointsRemaining = availableSkillPoints - background.skillPointsUsed;
+				const tradePointsRemaining = availableTradePoints - background.tradePointsUsed;
+				const languagePointsRemaining = availableLanguagePoints - background.languagePointsUsed;
 
 				// Require exact spending - no overspending or underspending allowed
 				const hasExactlySpentAllSkillPoints = skillPointsRemaining === 0;
 				const hasExactlySpentAllTradePoints = tradePointsRemaining === 0;
 				const hasExactlySpentAllLanguagePoints = languagePointsRemaining === 0;
+				const hasNoBackgroundErrors = !calculationResult.validation.errors.some(
+					(error) => error.step === BuildStep.Background
+				);
 
-				// Step is complete when all skill points are spent and trade/language are spent or overspent
+				// Step is complete when all background points are spent and calculator validation passes.
 				const isValid =
 					hasExactlySpentAllSkillPoints &&
 					hasExactlySpentAllTradePoints &&
-					hasExactlySpentAllLanguagePoints;
+					hasExactlySpentAllLanguagePoints &&
+					hasNoBackgroundErrors;
 
 				if (!isValid) {
 					debug.state('Background validation FAILED:', {
 						hasExactlySpentAllSkillPoints,
 						hasExactlySpentAllTradePoints,
 						hasExactlySpentAllLanguagePoints,
+						hasNoBackgroundErrors,
 						skillPointsRemaining,
 						tradePointsRemaining,
 						languagePointsRemaining

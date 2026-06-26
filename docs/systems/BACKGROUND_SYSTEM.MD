@@ -1,6 +1,6 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Last Updated: 2026-06-24
+> Last Updated: 2026-06-26
 >
 > Purpose  
 > This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
@@ -72,6 +72,8 @@ Background allocations in store:
 - `skillsData: Record<string, number>` – mastery levels per skill
 - `tradesData: Record<string, number>` – mastery levels per trade
 - `languagesData: Record<string, { fluency: 'limited' | 'fluent' }>` – per-language fluency
+- `skillMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>` – extra Skill Points spent to raise a specific Skill's mastery limit
+- `tradeMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>` – extra Trade Points spent to raise a specific Trade's mastery limit
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
 
 Source-audit note: v0.10.5 explicitly supports `skillToTrade` and `tradeToLanguage`.
@@ -92,7 +94,7 @@ DC20 0.10.5 language catalog notes:
 ### Acceptance Criteria (Background)
 
 - Conversions follow documented formulas; over-budget states disable submit and surface errors.
-- Mastery cap validation emits `MASTERY_CAP_EXCEEDED` unless exceptions are granted.
+- Mastery cap validation emits `MASTERY_CAP_EXCEEDED` unless the allocation has a point-bought elevation or a feature/trait/talent cap increase.
 
 ## 4 Calculation Model
 
@@ -109,16 +111,17 @@ Within `calculateCharacterWithBreakdowns`:
   - `availableTradePoints = baseTradePoints + effectiveSkillToTrade*2 - tradeToLanguage`
   - `availableLanguagePoints = baseLanguagePoints + tradeToLanguage*2`
 - Usage:
-  - `skillPointsUsed = sum(levels in skillsData)`
-  - `tradePointsUsed = sum(levels in tradesData)`
+  - `skillPointsUsed = sum(levels in skillsData) + sum(spent skill mastery limit elevations)`
+  - `tradePointsUsed = sum(levels in tradesData) + sum(spent trade mastery limit elevations)`
   - `languagePointsUsed = sum(fluency costs; limited=1, fluent=2; 'common' free)`
 - **Mastery Cap Validation** ✅ **NEW**:
   - Determines baseline mastery tier from character level
   - Identifies skills/trades exceeding baseline cap
+  - Applies point-bought limit elevations from `skillMasteryLimitElevations` and `tradeMasteryLimitElevations`
   - Collects `MODIFY_SKILL_MASTERY_CAP` and `INCREASE_SKILL_MASTERY_CAP` effects
-  - Validates exception budget and specific skill coverage
+  - Validates feature/trait/talent increase budget and specific skill coverage
   - Emits `MASTERY_CAP_EXCEEDED` and `INVALID_MASTERY_GRANT` errors
-  - All characters have 1 base Adept slot by default; raising additional skills/trades to Adept requires granted exceptions
+  - A level 1 character can raise a Skill from no Mastery to Adept by spending 3 Skill Points: 1 for Novice, 1 to raise that Skill's limit, and 1 to raise the Skill's level to Adept.
 - Validation emits over-budget errors by step.
 
 Traits can modify these pools using effects:
@@ -144,7 +147,7 @@ Denormalized outputs persisted on `SavedCharacter` (for UI/PDF consumption) — 
 Transformer note: `src/lib/pdf/transformers.ts` reads these fields when present and only falls back to legacy math if they are missing, ensuring backward compatibility.
 
 Validation also exposes a `masteryLimits` block with:  
-`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept }`. At level 1, `maxAdeptCount` is 1 (base Adept slot) plus any granted exceptions.
+`{ maxSkillMastery, maxTradeMastery, currentAdeptCount, maxAdeptCount, canSelectAdept, baselineSkillCap, baselineTradeCap, skillEffectiveCaps, tradeEffectiveCaps, skillLimitElevations, tradeLimitElevations }`.
 
 ---
 

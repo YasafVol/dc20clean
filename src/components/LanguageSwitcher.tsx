@@ -10,9 +10,10 @@ const SwitcherButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 2.5rem;
-	height: 2.5rem;
-	padding: 0;
+	gap: 0.375rem;
+	min-width: 3.75rem;
+	height: 2.25rem;
+	padding: 0 0.625rem;
 	background: rgba(168, 85, 247, 0.05);
 	border: 1px solid rgba(168, 85, 247, 0.4);
 	border-radius: 8px;
@@ -37,6 +38,11 @@ const SwitcherButton = styled.button`
 const FlagIcon = styled.span`
 	font-size: 1.25rem;
 	line-height: 1;
+`;
+
+const LanguageLabel = styled.span`
+	font-size: 0.75rem;
+	text-transform: uppercase;
 `;
 
 const Dropdown = styled.div<{ $isOpen: boolean }>`
@@ -121,8 +127,14 @@ export const LanguageSwitcher: React.FC = () => {
 
 	return (
 		<SwitcherContainer ref={containerRef}>
-			<SwitcherButton onClick={() => setIsOpen(!isOpen)} title="Select Language">
+			<SwitcherButton
+				type="button"
+				onClick={() => setIsOpen(!isOpen)}
+				title={`Language: ${getLanguageName(currentLanguage)}`}
+				aria-label={`Language: ${getLanguageName(currentLanguage)}`}
+			>
 				<FlagIcon>{getFlagIcon(currentLanguage)}</FlagIcon>
+				<LanguageLabel>{currentLanguage === 'en' ? 'EN' : 'ES'}</LanguageLabel>
 			</SwitcherButton>
 			<Dropdown $isOpen={isOpen}>
 				<DropdownItem $isActive={currentLanguage === 'en'} onClick={() => changeLanguage('en')}>

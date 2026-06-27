@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-27
 
 ## Tech Stack
 
@@ -22,6 +22,7 @@
 - Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
 - Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
+- The fixed top-right toolbar keeps authentication as the rightmost primary action. Language switching is secondary and must include text, not only a flag icon, so it cannot be mistaken for sign-in.
 
 ## Local Setup
 

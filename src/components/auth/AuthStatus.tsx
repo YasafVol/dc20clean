@@ -23,7 +23,20 @@ export function AuthStatus({ className }: AuthStatusProps) {
 	}
 
 	if (isLoading) {
-		return null;
+		return (
+			<div className={className}>
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					className="border-purple-500/50 text-purple-200"
+					disabled
+					aria-busy="true"
+				>
+					{t('auth.signIn')}
+				</Button>
+			</div>
+		);
 	}
 
 	if (isAllowed) {

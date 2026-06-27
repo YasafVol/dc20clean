@@ -71,5 +71,19 @@ export const FixedAuthStatus = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: flex-end;
 	gap: 0.5rem;
+	max-width: calc(100vw - 2rem);
+
+	& > * {
+		flex: 0 0 auto;
+	}
+
+	@media (max-width: 480px) {
+		top: 0.5rem;
+		right: 0.5rem;
+		padding: 0.375rem;
+		gap: 0.375rem;
+		max-width: calc(100vw - 1rem);
+	}
 `;

@@ -94,8 +94,8 @@ function App() {
 			<StyledApp>
 				{/* Fixed top-right auth status on all pages */}
 				<FixedAuthStatus>
-					<AuthStatus />
 					<LanguageSwitcher />
+					<AuthStatus />
 				</FixedAuthStatus>
 				<BrowserRouter>
 					<UserbackFeedback />

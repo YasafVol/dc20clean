@@ -183,6 +183,11 @@ savedCharacters_backup → Backup copy (for migration safety)
 | `saveCharacter()`         | `storageUtils.ts` | Save/update single character |
 | `saveCharacterState()`    | `storageUtils.ts` | Update only game state       |
 
+Character edit completion is a single-record save. After recalculating the
+edited character, the edit flow calls `saveCharacter(editedCharacter)` rather
+than rewriting the full character list. This prevents one stale cloud record
+from blocking a different character's edit save under Convex strict validation.
+
 ### 4.3 Serialization
 
 - Uses `JSON.stringify()` and `JSON.parse()` internally

@@ -51,6 +51,7 @@ import ConditionsReference from './components/ConditionsReference';
 
 import PlayerNotes from './components/PlayerNotes';
 import DiceRoller from './components/DiceRoller';
+import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
 
 // Import modal components
 import FeaturePopup from './components/FeaturePopup';
@@ -110,8 +111,6 @@ import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 
 import { logger } from '../../lib/utils/logger';
 import { getDefaultStorage } from '../../lib/storage';
-import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
-import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
 
@@ -946,34 +945,9 @@ const CharacterSheetClean: React.FC<CharacterSheetCleanProps> = ({ characterId, 
 		if (!characterData) return;
 
 		try {
-			const pdf = await import('../../lib/pdf/transformers');
-			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
 			const storedCharacter =
 				(await getDefaultStorage().getCharacterById(characterData.id)) ?? characterData;
-			const pdfData = pdf.transformSavedCharacterToPdfData(storedCharacter);
-			const blob = await fillPdfFromData(pdfData, {
-				flatten: false,
-				version: getPdfVersionForCharacter(storedCharacter)
-			});
-
-			const safeName = (storedCharacter.finalName || storedCharacter.id || 'Character')
-				.replace(/[^A-Za-z0-9]+/g, '_')
-				.replace(/^_+|_+$/g, '')
-				.slice(0, 60);
-			const rulesVersionLabel = normalizeRulesVersion(storedCharacter.rulesVersion).replace(
-				'dc20-',
-				''
-			);
-			const fileName = `${safeName}_vDC20-${rulesVersionLabel}.pdf`;
-
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = fileName;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-			URL.revokeObjectURL(url);
+			await downloadCharacterPdf(storedCharacter);
 		} catch (err) {
 			console.error('Export PDF failed', err);
 			alert('Failed to export PDF: ' + (err instanceof Error ? err.message : String(err)));

@@ -50,8 +50,6 @@ import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAna
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
-import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
-import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 
 // Import existing components
 import Spells from './components/Spells';
@@ -75,6 +73,7 @@ import Attributes from './components/Attributes';
 import MobileBottomNav from './components/shared/MobileBottomNav';
 import HamburgerDrawer from './components/shared/HamburgerDrawer';
 import Snackbar from '../../components/Snackbar';
+import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
 
 // Import theme
 import { logger } from '../../lib/utils/logger';
@@ -501,34 +500,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!characterData) return;
 
 		try {
-			const pdf = await import('../../lib/pdf/transformers');
-			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
 			const storedCharacter =
 				(await getDefaultStorage().getCharacterById(characterData.id)) ?? characterData;
-			const pdfData = pdf.transformSavedCharacterToPdfData(storedCharacter);
-			const blob = await fillPdfFromData(pdfData, {
-				flatten: false,
-				version: getPdfVersionForCharacter(storedCharacter)
-			});
-
-			const safeName = (storedCharacter.finalName || storedCharacter.id || 'Character')
-				.replace(/[^A-Za-z0-9]+/g, '_')
-				.replace(/^_+|_+$/g, '')
-				.slice(0, 60);
-			const rulesVersionLabel = normalizeRulesVersion(storedCharacter.rulesVersion).replace(
-				'dc20-',
-				''
-			);
-			const fileName = `${safeName}_vDC20-${rulesVersionLabel}.pdf`;
-
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = fileName;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-			URL.revokeObjectURL(url);
+			await downloadCharacterPdf(storedCharacter);
 		} catch (err) {
 			console.error('Export PDF failed', err);
 			setSnackbarMessage(

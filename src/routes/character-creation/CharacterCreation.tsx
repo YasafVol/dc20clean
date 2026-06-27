@@ -27,7 +27,7 @@ import {
 import { BuildStep } from '../../lib/types/effectSystem';
 import { validateSubclassChoicesComplete } from '../../lib/rulesdata/classes-data/classUtils';
 import { resolveClassProgression } from '../../lib/rulesdata/classes-data/classProgressionResolver';
-import { getPdfVersionForCharacter } from '../../lib/rulesdata/versioning/compatibility';
+import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
 import { ALL_SPELLS } from '../../lib/rulesdata/spells-data';
 import { allManeuvers } from '../../lib/rulesdata/martials/maneuvers';
 import {
@@ -341,30 +341,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		dispatch({ type: 'SET_STEP', step, maxStep });
 	};
 
-	const getSafeCharacterFileName = (character: SavedCharacter, extension: string) => {
-		const safeName = (character.finalName || character.id || 'Character')
-			.replace(/[^A-Za-z0-9]+/g, '_')
-			.replace(/^_+|_+$/g, '')
-			.slice(0, 60);
-		return `${safeName || 'Character'}_vDC20-${(character.rulesVersion || '').replace('dc20-', '')}.${extension}`;
-	};
-
 	const exportSavedCharacterPdf = async (character: SavedCharacter) => {
-		const pdf = await import('../../lib/pdf/transformers');
-		const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
-		const pdfData = pdf.transformSavedCharacterToPdfData(character);
-		const blob = await fillPdfFromData(pdfData, {
-			flatten: false,
-			version: getPdfVersionForCharacter(character)
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = getSafeCharacterFileName(character, 'pdf');
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
+		await downloadCharacterPdf(character);
 	};
 
 	const completeCurrentCharacter = async (action: CompletionAction) => {

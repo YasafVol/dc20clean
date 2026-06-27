@@ -29,7 +29,22 @@ export async function fillPdfFromData(
 	const fieldMap = version === '0.9.5' ? fieldMap_dc20_095 : fieldMap_dc20_010;
 
 	const response = await fetch(templateUrl);
+	if (!response.ok) {
+		throw new Error(`PDF template request failed with ${response.status}`);
+	}
+	const contentType = response.headers.get('content-type') ?? '';
+	if (
+		contentType &&
+		!contentType.includes('application/pdf') &&
+		!contentType.includes('octet-stream')
+	) {
+		throw new Error(`PDF template request returned ${contentType} instead of application/pdf`);
+	}
 	const arrayBuffer = await response.arrayBuffer();
+	const header = new TextDecoder().decode(arrayBuffer.slice(0, 5));
+	if (!header.startsWith('%PDF-')) {
+		throw new Error('PDF template request did not return a PDF document');
+	}
 	const pdfDoc = await PDFDocument.load(arrayBuffer);
 	const form = pdfDoc.getForm();
 

@@ -11,8 +11,7 @@ import { checkSchemaCompatibility, normalizeSchemaVersion } from '../../lib/type
 import { migrateCharacterSchema } from '../../lib/utils/schemaMigration';
 import {
 	assessCharacterCompatibility,
-	CURRENT_RULES_VERSION,
-	getPdfVersionForCharacter
+	CURRENT_RULES_VERSION
 } from '../../lib/rulesdata/versioning/compatibility';
 import {
 	planCharacterUpgrade,
@@ -20,6 +19,7 @@ import {
 } from '../../lib/rulesdata/versioning/characterUpgrade';
 import { normalizeRulesVersion } from '../../lib/rulesdata/versioning/rulesVersion';
 import { useNavigate } from 'react-router-dom';
+import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
 import { AnimatePresence } from 'framer-motion';
 // Shared UI components
 import {
@@ -502,22 +502,7 @@ function LoadCharacter() {
 	const handleExportPdf = async (character: SavedCharacter, event: React.MouseEvent) => {
 		event.stopPropagation();
 		try {
-			const pdf = await import('../../lib/pdf/transformers');
-			const { fillPdfFromData } = await import('../../lib/pdf/fillPdf');
-			const pdfData = pdf.transformSavedCharacterToPdfData(character);
-			const blob = await fillPdfFromData(pdfData, {
-				flatten: false,
-				version: getPdfVersionForCharacter(character)
-			});
-			const fileName = getSafeCharacterFileName(character, 'pdf');
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = fileName;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-			URL.revokeObjectURL(url);
+			await downloadCharacterPdf(character);
 		} catch (err) {
 			console.error('Export PDF failed', err);
 			alert(t('loadCharacter.errorExportPdfFailed'));

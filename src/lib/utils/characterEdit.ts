@@ -240,8 +240,11 @@ export const completeCharacterEdit = async (
 				lastModified: new Date().toISOString()
 			};
 
-			debug.storage('completeCharacterEdit: savedCharacters after update:', savedCharacters);
-			await storage.saveAllCharacters(savedCharacters);
+			debug.storage('completeCharacterEdit: updated character after edit:', {
+				characterId: originalCharacterId,
+				character: savedCharacters[characterIndex]
+			});
+			await storage.saveCharacter(savedCharacters[characterIndex]);
 		} else {
 			debug.warn(
 				'Character',

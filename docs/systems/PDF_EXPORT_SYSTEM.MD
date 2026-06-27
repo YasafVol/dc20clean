@@ -36,7 +36,8 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **PDF Field Audit Service** — Generic, version-agnostic PDF schema/diff tooling:
   - `scripts/pdf/pdfFieldAuditService.mjs` extracts fields from any fillable PDF, compares two extracted schemas, and optionally validates a TS field map against the new/latest PDF.
   - `scripts/pdf/auditPdfFields.mjs` provides the CLI wrapper. Version labels are CLI metadata only; the service does not encode DC20-specific version behavior.
-- **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened). Supports version selection.
+- **PDF Filler** — `src/lib/pdf/fillPdf.ts` loads the template, applies the field map with `pdf-lib`, and returns a Blob (optionally flattened). Supports version selection and verifies that the template fetch returned PDF bytes rather than an HTML fallback.
+- **PDF Download Helper** — `src/lib/pdf/exportPdf.ts` centralizes saved-character PDF transformation, filling, filename generation, and browser download. UI call sites import this helper directly instead of lazy-importing PDF chunks at click time, avoiding stale dynamic-chunk failures after deploys.
 - **Rules Version Routing** — `src/lib/rulesdata/versioning/compatibility.ts` maps a character `rulesVersion` to the supported PDF template version.
 - **PDF Templates**:
   - `src/lib/pdf/010/DC20 Beta 0.10 (fillable) Character Sheet.pdf`
@@ -93,7 +94,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 1. **Trigger** — User clicks “Export PDF” in the character sheet UI/load-character list, or “Print PDF” on the final character-creation step.
 2. **Preparation** — UI reads the stored character record and routes the PDF version from `rulesVersion`. Character creation must complete/autosave first; export still consumes the saved record, not transient wizard state.
 3. **Transformation** — `transformSavedCharacterToPdfData(character)` produces a validated `PdfExportData` object.
-4. **Lazy Load** — UI dynamically imports `fillPdfFromData` (and `pdf-lib`) to avoid upfront bundle cost.
+4. **Fill Helper** — UI calls the shared `downloadCharacterPdf()` helper. The helper imports the transformer and filler statically within the route bundle; template bytes are still fetched on demand.
 5. **Fill & Save** — `fillPdfFromData` loads the template via `?url`, fills fields based on the rules-version-routed map (default: v0.10), optionally flattens, and returns a Blob for download.
 6. **Download** — UI uses `URL.createObjectURL` to prompt the user with a sanitized filename that includes the DC20 rules version.
 7. **Feedback** — UI surfaces success or error notifications, resetting loading state accordingly.

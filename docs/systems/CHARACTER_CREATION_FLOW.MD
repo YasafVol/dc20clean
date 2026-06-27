@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-27
 
 #### Purpose
 
@@ -66,8 +66,8 @@
 
 - **Stage 6 – Spells** (`Spells.tsx`, conditional)
   - Inputs: `ALL_SPELLS`, calculator spell slots/global magic profile, `state.selectedSpells`
-  - Completion rule: every current spell slot has a valid selected spell ID, no duplicate selected spells exist, global magic profile restrictions match, and slot-specific restrictions match.
-  - Spell filtering: source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results. Slot and Global Magic Profile eligibility use source restrictions only when present, then school-or-tag matching.
+  - Completion rule: every current spell slot has a valid selected spell ID, no duplicate selected spells exist, and each selected spell matches its slot's effective target.
+  - Spell filtering: the stage keeps an automatic active-slot cursor, starting with the first empty slot and advancing after each learned spell. Users can click a slot to override the cursor for targeted filling or replacement. Eligibility is evaluated per spell against the current target slot. Global class-progression slots use the Global Magic Profile; feature/talent slots use their own restrictions, and unrestricted feature slots do not inherit the global profile. Source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters narrow results.
   - Spell cards display cost, range, duration, sustained status, school, sources, and first mechanical effect description before selection.
   - Outputs: `state.selectedSpells`
   - Agent/browser hooks: spell cards expose `data-testid="spell-card-{spellId}"`, `data-spell-id`, and `data-option-id`; learn/forget controls expose `data-testid="spell-{spellId}-learn|forget"` and matching `data-action-id`.

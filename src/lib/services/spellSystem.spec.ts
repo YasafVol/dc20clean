@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
+import { generateSpellsKnownSlots } from './calculatorModules/spellSystem';
 
 // Helper to create a minimal character build data
 const createBaseBuild = (overrides = {}) => ({
@@ -232,6 +233,60 @@ describe('Spell System - Spells Known Slots', () => {
 		expect(
 			invalidResult.validation.errors.find((error) => error.field === psychicSlot!.id)
 		).toBeDefined();
+	});
+
+	it('allows Bard Magical Secrets slots to learn outside the Bard global profile', () => {
+		const result = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 1
+			}) as any
+		);
+		const magicalSecretsSlot = result.spellsKnownSlots.find(
+			(slot) => slot.sourceName === 'Magical Secrets'
+		);
+		const globalSlot = result.spellsKnownSlots.find((slot) => slot.isGlobal);
+
+		expect(magicalSecretsSlot).toBeDefined();
+		expect(magicalSecretsSlot?.isGlobal).toBe(false);
+		expect(globalSlot).toBeDefined();
+		expect(result.globalMagicProfile?.schools).toContain('Enchantment');
+		expect(result.globalMagicProfile?.tags).toContain('Healing');
+
+		const magicalSecretsResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 1,
+				selectedSpells: { [magicalSecretsSlot!.id]: 'fireball' }
+			}) as any
+		);
+		expect(
+			magicalSecretsResult.validation.errors.find((error) => error.field === magicalSecretsSlot!.id)
+		).toBeUndefined();
+
+		const globalResult = calculateCharacterWithBreakdowns(
+			createBaseBuild({
+				classId: 'bard',
+				level: 1,
+				selectedSpells: { [globalSlot!.id]: 'fireball' }
+			}) as any
+		);
+		expect(
+			globalResult.validation.errors.find(
+				(error) => error.field === globalSlot!.id && error.code === 'PROFILE_MISMATCH'
+			)
+		).toBeDefined();
+	});
+
+	it('treats legacy cantrip progression as normal spell slots', () => {
+		const slots = generateSpellsKnownSlots(
+			createBaseBuild({ classId: 'wizard' }) as any,
+			{ totalSpellsKnown: 1, totalCantripsKnown: 2 },
+			[]
+		);
+
+		expect(slots).toHaveLength(3);
+		expect(slots.every((slot) => slot.type === 'spell')).toBe(true);
 	});
 });
 

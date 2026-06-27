@@ -22,7 +22,11 @@ import { attributesData } from '../../rulesdata/attributes';
 import { getLevelCaps } from '../../rulesdata/progression/levelCaps';
 import { getSpellById } from '../../rulesdata/spells-data';
 import { BuildStep } from '../../types/effectSystem';
-import { matchesGlobalMagicProfile, matchesSpellRestrictions } from '../spellFiltering';
+import {
+	matchesGlobalMagicProfile,
+	matchesSpellRestrictions,
+	matchesSpellSlot
+} from '../spellFiltering';
 
 /**
  * Validate attribute limits against level caps
@@ -403,27 +407,29 @@ export function runValidation(input: ValidationInput): ValidationResult {
 				return;
 			}
 
-			if (
-				slot.specificRestrictions &&
-				!matchesSpellRestrictions(spell, slot.specificRestrictions)
-			) {
-				const { exactSpellId, schools, tags } = slot.specificRestrictions;
-				const allowedParts = [
-					exactSpellId ? `exact spell ${exactSpellId}` : null,
-					schools?.length ? `schools: ${schools.join(', ')}` : null,
-					tags?.length ? `tags: ${tags.join(', ')}` : null
-				].filter(Boolean);
+			if (!matchesSpellSlot(spell, slot, globalMagicProfile)) {
+				if (
+					slot.specificRestrictions &&
+					!matchesSpellRestrictions(spell, slot.specificRestrictions)
+				) {
+					const { exactSpellId, sources, schools, tags } = slot.specificRestrictions;
+					const allowedParts = [
+						exactSpellId ? `exact spell ${exactSpellId}` : null,
+						sources?.length ? `sources: ${sources.join(', ')}` : null,
+						schools?.length ? `schools: ${schools.join(', ')}` : null,
+						tags?.length ? `tags: ${tags.join(', ')}` : null
+					].filter(Boolean);
 
-				errors.push({
-					step: BuildStep.SpellsAndManeuvers,
-					field: slotId,
-					code: 'SCHOOL_RESTRICTION' as any,
-					message: `${spell.name} does not match restrictions for ${slot.sourceName}: ${allowedParts.join(' or ')}`
-				});
-			}
+					errors.push({
+						step: BuildStep.SpellsAndManeuvers,
+						field: slotId,
+						code: 'SCHOOL_RESTRICTION' as any,
+						message: `${spell.name} does not match restrictions for ${slot.sourceName}: ${allowedParts.join(' or ')}`
+					});
+					return;
+				}
 
-			if (slot.isGlobal && globalMagicProfile) {
-				if (!matchesGlobalMagicProfile(spell, globalMagicProfile)) {
+				if (slot.isGlobal && !matchesGlobalMagicProfile(spell, globalMagicProfile)) {
 					errors.push({
 						step: BuildStep.SpellsAndManeuvers,
 						field: slotId,

@@ -4,7 +4,7 @@
 > This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10.5 max level).
 >
 > **Status:** ✅ **Complete** - Core leveling functionality implemented with DC20 v0.10.5 progression tables.
-> **Last Updated:** 2026-06-24
+> **Last Updated:** 2026-06-27
 
 ---
 
@@ -138,8 +138,9 @@ Path points grant immediate bonuses to character resources based on allocation:
 | 4 | — | +1 |
 
 **Spellcaster Path Progression (DC20 v0.10 p.161):**
-| Path Level | Mana Points | Cantrips Learned | Spells Learned |
-|------------|-------------|------------------|----------------|
+Legacy cantrip grants are normalized into ordinary spell slots.
+| Path Level | Mana Points | Legacy Spell Grants | Spells Learned |
+|------------|-------------|---------------------|----------------|
 | 1 | +3 | +1 | +1 |
 | 2 | +2 | +1 | — |
 | 3 | +2 | +1 | +1 |

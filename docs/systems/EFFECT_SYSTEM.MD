@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-06-24
+> Last Updated: 2026-06-27
 
 ---
 
@@ -30,26 +30,26 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 
 ### Grants
 
-| Type                    | Target                                                    | Value                                                        | Special Fields                                      | Stacking                                                                       |
-| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `GRANT_ABILITY`         | ability name                                              | `string` (description)                                       | --                                                  | De-duplicates                                                                  |
-| `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`                                | `optional?: string`                                 | De-duplicates; **collected by `abilityCollection.ts`**                         |
-| `GRANT_VULNERABILITY`   | damage type                                               | `number`                                                     | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
-| `GRANT_ADV_ON_SAVE`     | save type or condition target                             | `string \| boolean`                                          | --                                                  | De-duplicates; condition targets normalize by ID/name                          |
-| `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`                                          | --                                                  | De-duplicates; collected as sheet-facing advantage text                        |
-| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                                                    | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
-| `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                                             | `mode?: 'set' \| 'increase' \| 'increase_existing'` | Highest set range wins; increases add; **collected by `abilityCollection.ts`** |
-| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | speed formula or numeric spaces                              | --                                                  | De-duplicates                                                                  |
-| `GRANT_CHOICE`          | choice category                                           | `number`                                                     | `userChoice?: { prompt, options? }`                 | Per-choice                                                                     |
-| `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt, count? }`                   | Per-skill                                                                      |
-| `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }`                             | `userChoice?: { prompt }`                           | Per-trade                                                                      |
+| Type                    | Target                                                    | Value                            | Special Fields                                      | Stacking                                                                       |
+| ----------------------- | --------------------------------------------------------- | -------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `GRANT_ABILITY`         | ability name                                              | `string` (description)           | --                                                  | De-duplicates                                                                  |
+| `GRANT_RESISTANCE`      | damage type                                               | `string \| number \| boolean`    | `optional?: string`                                 | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_VULNERABILITY`   | damage type                                               | `number`                         | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_ADV_ON_SAVE`     | save type or condition target                             | `string \| boolean`              | --                                                  | De-duplicates; condition targets normalize by ID/name                          |
+| `GRANT_ADV_ON_CHECK`    | check type                                                | `string \| boolean`              | --                                                  | De-duplicates; collected as sheet-facing advantage text                        |
+| `GRANT_COMBAT_TRAINING` | training type (e.g., `Weapons`, `Spell_Focuses`)          | `boolean`                        | --                                                  | De-duplicates; **collected by `abilityCollection.ts`**                         |
+| `GRANT_SENSE`           | sense type (e.g., `darkvision`)                           | `number` (range)                 | `mode?: 'set' \| 'increase' \| 'increase_existing'` | Highest set range wins; increases add; **collected by `abilityCollection.ts`** |
+| `GRANT_MOVEMENT`        | movement type (`climb`, `swim`, `fly`, `burrow`, `glide`) | speed formula or numeric spaces  | --                                                  | De-duplicates                                                                  |
+| `GRANT_CHOICE`          | choice category                                           | `number`                         | `userChoice?: { prompt, options? }`                 | Per-choice                                                                     |
+| `GRANT_SKILL_EXPERTISE` | skill name                                                | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt, count? }`                   | Per-skill                                                                      |
+| `GRANT_TRADE_EXPERTISE` | trade name                                                | `{ capIncrease, levelIncrease }` | `userChoice?: { prompt }`                           | Per-trade                                                                      |
 
 ### Spell and Maneuver Grants
 
 | Type              | Target                                       | Value              | Special Fields                      | Stacking                                              |
 | ----------------- | -------------------------------------------- | ------------------ | ----------------------------------- | ----------------------------------------------------- |
 | `GRANT_SPELL`     | spell restriction or specific spell          | `number \| string` | `userChoice?: { prompt, options? }` | Per-slot                                              |
-| `GRANT_CANTRIP`   | cantrip restriction                          | `number`           | --                                  | Per-slot                                              |
+| `GRANT_CANTRIP`   | legacy spell grant alias                     | `number`           | --                                  | Normalized to spell slots                             |
 | `GRANT_MANEUVERS` | maneuver type or `all_attack` (access grant) | `number`           | --                                  | Access grants don't add to budget; specific grants do |
 
 ### Mastery Cap Effects

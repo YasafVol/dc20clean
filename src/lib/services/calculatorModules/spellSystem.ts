@@ -111,7 +111,9 @@ export function generateSpellsKnownSlots(
 	const slots: SpellsKnownSlot[] = [];
 
 	// 1. Generate Global Class Progression Slots
-	for (let i = 0; i < progressionGains.totalSpellsKnown; i++) {
+	const totalProgressionSpellSlots =
+		(progressionGains.totalSpellsKnown ?? 0) + (progressionGains.totalCantripsKnown ?? 0);
+	for (let i = 0; i < totalProgressionSpellSlots; i++) {
 		slots.push({
 			id: `global_spell_${i}`,
 			type: 'spell',
@@ -187,7 +189,11 @@ export function generateSpellsKnownSlots(
 				slot.specificRestrictions!.exactSpellId ??= getExactSpellIdForTarget(target);
 
 				// Bard Magical Secrets (Special case: no restrictions)
-				if (target === 'any_source' || effect.source.id === 'bard_magical_secrets') {
+				if (
+					target === 'any_spell_list' ||
+					target === 'any_source' ||
+					effect.source.id === 'bard_magical_secrets'
+				) {
 					slot.specificRestrictions = {};
 				}
 

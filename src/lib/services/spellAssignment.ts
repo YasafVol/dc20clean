@@ -62,11 +62,11 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 		return [];
 	}
 
-	const cantripsToAssign = levelData.cantripsKnown || 0;
-	const spellsToAssign = levelData.spellsKnown || 0;
+	const legacyCantripGrants = levelData.cantripsKnown || 0;
+	const spellsToAssign = (levelData.spellsKnown || 0) + legacyCantripGrants;
 
 	debug.spells(`Assigning spells for ${className} level ${level}:`, {
-		cantripsToAssign,
+		legacyCantripGrants,
 		spellsToAssign,
 		availableSchools
 	});
@@ -79,31 +79,11 @@ export const assignSpellsToCharacter = (options: SpellAssignmentOptions): SpellD
 		availableSpells.map((s) => ({ name: s.name, school: s.school, isCantrip: s.isCantrip }))
 	);
 
-	// Separate cantrips and spells
-	const availableCantrips = availableSpells.filter((spell) => spell.isCantrip);
-	const availableRegularSpells = availableSpells.filter((spell) => !spell.isCantrip);
-
-	debug.spells(
-		`Available cantrips: ${availableCantrips.length}`,
-		availableCantrips.map((s) => s.name)
-	);
-	debug.spells(
-		`Available regular spells: ${availableRegularSpells.length}`,
-		availableRegularSpells.map((s) => s.name)
-	);
-
-	// Assign cantrips first
 	const assignedSpells: SpellData[] = [];
 
-	// Assign cantrips
-	for (let i = 0; i < cantripsToAssign && i < availableCantrips.length; i++) {
-		const cantrip = availableCantrips[i];
-		assignedSpells.push(createSpellData(cantrip));
-	}
-
-	// Assign regular spells
-	for (let i = 0; i < spellsToAssign && i < availableRegularSpells.length; i++) {
-		const spell = availableRegularSpells[i];
+	// Assign from the flat spell list. `isCantrip` is retained only as source metadata.
+	for (let i = 0; i < spellsToAssign && i < availableSpells.length; i++) {
+		const spell = availableSpells[i];
 		assignedSpells.push(createSpellData(spell));
 	}
 

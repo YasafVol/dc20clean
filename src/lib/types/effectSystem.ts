@@ -499,7 +499,7 @@ export interface GlobalMagicProfile {
  */
 export interface SpellsKnownSlot {
 	id: string; // Unique ID for state tracking
-	type: 'spell' | 'cantrip';
+	type: 'spell';
 	sourceName: string; // UI Label: "Wizard Level 1", "Magical Secrets", etc.
 	isGlobal: boolean; // If true, uses character's GlobalMagicProfile as filter
 	assignedSpellId?: string; // ID of the spell filling this slot

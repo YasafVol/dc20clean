@@ -111,3 +111,19 @@ export const matchesSpellRestrictions = (
 		matchesSchoolOrTag(spell, restrictions.schools, restrictions.tags)
 	);
 };
+
+export const matchesSpellSlot = (
+	spell: Spell,
+	slot: SpellsKnownSlot,
+	profile?: GlobalMagicProfile
+): boolean => {
+	if (!matchesSpellRestrictions(spell, slot.specificRestrictions)) {
+		return false;
+	}
+
+	if (slot.isGlobal) {
+		return Boolean(profile && matchesGlobalMagicProfile(spell, profile));
+	}
+
+	return true;
+};

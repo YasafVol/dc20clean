@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-27
 
 ---
 
@@ -106,7 +106,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 ### Progression Gains (from Class + Path)
 
 - **Maneuvers Known** = `sum(progressionGains.totalManeuversKnown) + sum(pathBonuses.maneuvers)`
-- **Cantrips Known** = `sum(progressionGains.totalCantripsKnown) + sum(pathBonuses.cantrips)`
+- **Legacy Cantrip Grants** = `sum(progressionGains.totalCantripsKnown) + sum(pathBonuses.cantrips)`, normalized into ordinary spell-known slots
 - **Spells Known** = `sum(progressionGains.totalSpellsKnown) + sum(pathBonuses.spells)`
 - **Talents** = `sum(progressionGains.totalTalents)`
 - **Path Points** = `sum(progressionGains.totalPathPoints)`
@@ -146,9 +146,9 @@ Level 5 Expert Features are resolved from the class feature data using the exist
 
 **Spellcaster Path:**
 
-- Level 1: +3 MP, +1 cantrip, +1 spell
-- Level 2: +2 MP, +1 cantrip
-- Level 3: +2 MP, +1 cantrip, +1 spell
+- Level 1: +3 MP, +1 legacy cantrip grant normalized to a spell slot, +1 spell
+- Level 2: +2 MP, +1 legacy cantrip grant normalized to a spell slot
+- Level 3: +2 MP, +1 legacy cantrip grant normalized to a spell slot, +1 spell
 - Level 4: +2 MP, +1 spell
 
   ***

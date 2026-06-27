@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-06-27
 
 ---
 
@@ -49,14 +49,14 @@ interface Spell {
 	sources: SpellSource[]; // Arcane, Divine, Primal
 	school: SpellSchool; // 8 schools
 	tags: SpellTag[]; // Burning, Cold, Healing, etc.
-	isCantrip?: boolean;
+	isCantrip?: boolean; // legacy/source metadata only; not a separate learnable entity
 	isRitual?: boolean;
 	cost: SpellCost; // numeric AP; numeric or variable MP with an optional minimum
 	range: string;
 	duration: string;
 	sustained: boolean; // Maintain action each turn
 	effects: SpellEffect[];
-	cantripPassive?: string;
+	cantripPassive?: string; // legacy/source text field
 	enhancements: SpellEnhancement[]; // structured mixed/variable/alternative costs
 }
 ```
@@ -99,15 +99,16 @@ src/lib/rulesdata/spells-data/
 ### Utility Functions
 
 ```typescript
-// Get all spells
+// Get all spells. The selectable model is a flat spell list; legacy cantrip helpers
+// are source-taxonomy helpers, not separate learnable-entity APIs.
 import { ALL_SPELLS } from './spells-data';
 
 // Lookup functions
 getSpellById(id: string): Spell | undefined
 getSpellsBySchool(school: SpellSchool): Spell[]
 getSpellsBySource(source: SpellSource): Spell[]
-getCantrips(): Spell[]
-getNonCantrips(): Spell[]
+getCantrips(): Spell[] // legacy/source taxonomy helper
+getNonCantrips(): Spell[] // legacy/source taxonomy helper
 ```
 
 ---
@@ -163,7 +164,7 @@ npm run spells:validate:0105
 
 Generated output and `docs/migration/spells-v0105-report.json` are committed. The report is
 the deterministic audit artifact: it includes counts, school totals, parser exceptions, and
-one entry per spell with ID, source, school, tags, cost, range, duration, sustained/cantrip
+one entry per spell with ID, source, school, tags, cost, range, duration, sustained/legacy cantrip
 flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
 overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
 
@@ -192,18 +193,17 @@ explicit character migration.
 
 ### 4.2 Spells Known Slots (Pockets)
 
-- Individual "pockets" that grant a single spell or cantrip.
+- Individual "pockets" that grant a single spell from the flat spell list.
 - Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.
 - Exact class grants such as `Charm` and `Call Familiar` resolve to canonical generated spell IDs instead of broad unrestricted slots.
-- `GRANT_SPELL` / `GRANT_CANTRIP` effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school.
+- `GRANT_SPELL` / legacy `GRANT_CANTRIP` effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school. `GRANT_CANTRIP` is normalized into an ordinary spell slot.
 - Tag-targeted grants such as Warlock Eldritch `any_psychic_tag` create tag-restricted slots rather than falling back to the global profile.
 
 ### 4.3 Validation Rules
 
-- **Type Mismatch**: Cantrips cannot fit into Spell slots and vice-versa.
-- **Restriction Mismatch**: Selected spells must match slot restrictions and the Global Magic Profile. Source restrictions narrow only when present; school and tag restrictions are OR-based, so a spell can qualify by matching an allowed school or an allowed tag. Exact spell restrictions remain exact-only.
+- **Restriction Mismatch**: Selected spells must match the effective target of the slot they fill. Global class-progression slots use the Global Magic Profile. Feature/talent slots use their own slot restrictions; unrestricted feature slots such as Bard Magical Secrets do not inherit the class global profile. Source restrictions narrow only when present; school and tag restrictions are OR-based, so a spell can qualify by matching an allowed school or an allowed tag. Exact spell restrictions remain exact-only.
 - **Exhaustion**: All available slots must be validly filled.
 
 ---
@@ -215,8 +215,9 @@ explicit character migration.
 - The Spells stage appears conditionally only when the calculator reports `spellsKnownSlots.length > 0`.
 - Each slot is an individual spell picker that respects:
   - Slot-level restrictions (specific school/source/tag requirements, with school/tag as OR)
-  - Global Magic Profile (source if present, then school or tag)
-  - Type matching (cantrip slots only accept cantrips, spell slots only accept spells)
+  - Global Magic Profile only for global class-progression slots
+- The UI maintains an automatic active-slot cursor. On entry, the first empty slot is targeted. After a spell is learned, the cursor advances to the next empty slot. Clicking any slot overrides the cursor for replacement or targeted filling.
+- The catalog is filtered against the active slot's effective target. If every slot is full and no override is active, the catalog can fall back to the union of spells that fit at least one current slot for review.
 - Source, school, and tag browsing filters are OR-based across selected facets; cost and sustained filters continue to narrow the result set.
 - Spell selection is tracked as `Record<SlotID, SpellID>` in `characterContext.tsx`.
 
@@ -256,5 +257,5 @@ explicit character migration.
 
 ---
 
-> Last updated: 2026-06-13
+> Last updated: 2026-06-27
 > Maintainer: @DC20Clean-Team

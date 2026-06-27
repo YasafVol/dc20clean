@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
 > Status: Active
-> Last Updated: 2026-06-24
+> Last Updated: 2026-06-27
 
 ---
 
@@ -286,7 +286,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 - Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
-- **Slot-Based Spell System (M3.20)**: Classes now define individual spell/cantrip slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles.
+- **Slot-Based Spell System (M3.20)**: Classes now define individual spell slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles. Legacy cantrip grants are normalized into ordinary spell slots.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 **Recent Updates (2026-06-01)**:

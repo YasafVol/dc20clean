@@ -5,12 +5,12 @@ import { formatSpellCost } from '../../lib/rulesdata/spells-data/spellCost';
 import { SpellSchool, SpellSource, type SpellTag } from '../../lib/rulesdata/schemas/spell.schema';
 import { classesData } from '../../lib/rulesdata/loaders/class.loader';
 import {
-	matchesGlobalMagicProfile,
 	matchesSpellCost,
-	matchesSpellRestrictions,
+	matchesSpellSlot,
 	matchesSpellSustained,
 	matchesUserSpellFacets
 } from '../../lib/services/spellFiltering';
+import type { SpellsKnownSlot } from '../../lib/types/effectSystem';
 import { theme } from '../character-sheet/styles/theme';
 import { SecondaryButton } from '../../components/styled/index';
 import { useTranslation } from 'react-i18next';
@@ -49,11 +49,56 @@ type CostFilter = 'all' | '1mp' | '2mp' | '3mp+';
 // Sustained filter options
 type SustainedFilter = 'all' | 'yes' | 'no';
 
+const getSlotRestrictionWeight = (slot: SpellsKnownSlot): number => {
+	const restrictions = slot.specificRestrictions;
+	const restrictionCount =
+		(restrictions?.sources?.length ?? 0) +
+		(restrictions?.schools?.length ?? 0) +
+		(restrictions?.tags?.length ?? 0);
+
+	if (restrictions?.exactSpellId) {
+		return 100;
+	}
+
+	if (restrictionCount > 0) {
+		return 50 + restrictionCount;
+	}
+
+	if (slot.isGlobal) {
+		return 25;
+	}
+
+	return 0;
+};
+
+const getNextEmptySlotId = (
+	slots: SpellsKnownSlot[],
+	selected: Record<string, string>,
+	afterSlotId?: string | null
+): string | null => {
+	if (slots.length === 0) {
+		return null;
+	}
+
+	const afterIndex = afterSlotId ? slots.findIndex((slot) => slot.id === afterSlotId) : -1;
+	const startIndex = afterIndex >= 0 ? afterIndex + 1 : 0;
+
+	for (let offset = 0; offset < slots.length; offset++) {
+		const slot = slots[(startIndex + offset) % slots.length];
+		if (!selected[slot.id]) {
+			return slot.id;
+		}
+	}
+
+	return null;
+};
+
 const Spells: React.FC = () => {
 	const { state, dispatch, calculationResult } = useCharacter();
 	const { t } = useTranslation();
 	const [selectedSpells, setSelectedSpells] = useState<Record<string, string>>({});
 	const [activeSlotId, setActiveSlotId] = useState<string | null>(null);
+	const [isManualSlotOverride, setIsManualSlotOverride] = useState(false);
 	const isInitialLoad = useRef(true);
 	const hasInitialized = useRef(false);
 
@@ -92,6 +137,33 @@ const Spells: React.FC = () => {
 
 	const spellSlots = calculationResult?.spellsKnownSlots || [];
 	const globalMagicProfile = calculationResult?.globalMagicProfile;
+	const nextEmptySlotId = useMemo(
+		() => getNextEmptySlotId(spellSlots, selectedSpells),
+		[spellSlots, selectedSpells]
+	);
+	const activeSlot = useMemo(
+		() => spellSlots.find((slot) => slot.id === activeSlotId) ?? null,
+		[activeSlotId, spellSlots]
+	);
+	const effectiveActiveSlot =
+		activeSlot ?? spellSlots.find((slot) => slot.id === nextEmptySlotId) ?? null;
+
+	useEffect(() => {
+		const activeSlotExists = Boolean(
+			activeSlotId && spellSlots.some((slot) => slot.id === activeSlotId)
+		);
+
+		if (isManualSlotOverride && activeSlotExists) {
+			return;
+		}
+
+		if (activeSlotId === nextEmptySlotId) {
+			return;
+		}
+
+		setIsManualSlotOverride(false);
+		setActiveSlotId(nextEmptySlotId);
+	}, [activeSlotId, isManualSlotOverride, nextEmptySlotId, spellSlots]);
 
 	// Debug class data lookup
 	useEffect(() => {
@@ -112,7 +184,7 @@ const Spells: React.FC = () => {
 		});
 	}, [spellSlots.length, selectedSpells]);
 
-	// Calculate available spells for the character based on Global Profile
+	// Calculate available spells from the effective target slot(s).
 	const availableSpells = useMemo(() => {
 		debug.spells('Calculating available spells:', {
 			hasClassData: !!classData,
@@ -134,23 +206,14 @@ const Spells: React.FC = () => {
 			return [];
 		}
 
-		// Debug: Log first few spells to see their structure
-		if (allSpells.length > 0) {
-			debug.spells('Sample spell structure:', {
-				spell: allSpells[0],
-				sources: allSpells[0].sources,
-				school: allSpells[0].school,
-				tags: allSpells[0].tags
-			});
-		}
-
+		const eligibleSlots = effectiveActiveSlot ? [effectiveActiveSlot] : spellSlots;
 		const filtered = allSpells.filter((spell) =>
-			matchesGlobalMagicProfile(spell, globalMagicProfile)
+			eligibleSlots.some((slot) => matchesSpellSlot(spell, slot, globalMagicProfile))
 		);
 
 		debug.spells('Filtered spells result', { count: filtered.length, total: allSpells.length });
 		return filtered;
-	}, [classData, globalMagicProfile, calculationResult, state.classId]);
+	}, [classData, globalMagicProfile, calculationResult, spellSlots, state.classId, effectiveActiveSlot]);
 
 	const spellCount = useMemo(() => {
 		return spellSlots.length;
@@ -195,36 +258,8 @@ const Spells: React.FC = () => {
 		// Filter by sustained
 		spells = spells.filter((spell) => matchesSpellSustained(spell, sustainedFilter));
 
-		// --- Smart Slot Filtering (M3.20) ---
-		if (activeSlotId) {
-			const activeSlot = spellSlots.find((s) => s.id === activeSlotId);
-			if (activeSlot) {
-				spells = spells.filter((spell) => {
-					// 1. Check Specific Restrictions
-					if (!matchesSpellRestrictions(spell, activeSlot.specificRestrictions)) return false;
-
-					// 3. Check Global Profile (if the slot is global)
-					if (activeSlot.isGlobal && globalMagicProfile) {
-						return matchesGlobalMagicProfile(spell, globalMagicProfile);
-					}
-
-					return true;
-				});
-			}
-		}
-
 		return spells;
-	}, [
-		availableSpells,
-		sourceFilter,
-		schoolFilter,
-		tagFilter,
-		costFilter,
-		sustainedFilter,
-		activeSlotId,
-		spellSlots,
-		globalMagicProfile
-	]);
+	}, [availableSpells, sourceFilter, schoolFilter, tagFilter, costFilter, sustainedFilter]);
 
 	// Handle spell selection with Smart Allocation (M3.20)
 	const handleSpellToggle = (spellId: string) => {
@@ -252,18 +287,26 @@ const Spells: React.FC = () => {
 			if (existingSlotId) {
 				delete newSelected[existingSlotId];
 				debug.spells('Spell deselected', { spellId, slotId: existingSlotId });
+				setIsManualSlotOverride(false);
+				setActiveSlotId(existingSlotId);
 				return newSelected;
 			}
 
-			// 2. If it's a specific slot click, target that slot
-			if (activeSlotId) {
-				const slot = spellSlots.find((s) => s.id === activeSlotId);
-				if (slot) {
-					newSelected[activeSlotId] = spellId;
-					debug.spells('Spell selected', { spellId, slotId: activeSlotId });
-					setActiveSlotId(null); // Close active slot after selection
+			// 2. Fill the active cursor slot. Users can override the cursor by clicking any slot.
+			if (effectiveActiveSlot) {
+				if (matchesSpellSlot(spell, effectiveActiveSlot, globalMagicProfile)) {
+					newSelected[effectiveActiveSlot.id] = spellId;
+					debug.spells('Spell selected', { spellId, slotId: effectiveActiveSlot.id });
+					setIsManualSlotOverride(false);
+					setActiveSlotId(getNextEmptySlotId(spellSlots, newSelected, effectiveActiveSlot.id));
 					return newSelected;
 				}
+
+				debug.warn('Spells', 'Spell does not match active slot', {
+					spellId,
+					slotId: effectiveActiveSlot.id
+				});
+				return prev;
 			}
 
 			// 3. Smart Allocation: Find the best empty slot
@@ -271,22 +314,15 @@ const Spells: React.FC = () => {
 			const emptySlots = spellSlots
 				.filter((s) => !newSelected[s.id])
 				.sort((a, b) => {
-					// More restrictions = higher priority
-					const aRes = (a.specificRestrictions ? 10 : 0) + (a.isGlobal ? 0 : 5);
-					const bRes = (b.specificRestrictions ? 10 : 0) + (b.isGlobal ? 0 : 5);
-					return bRes - aRes;
+					return getSlotRestrictionWeight(b) - getSlotRestrictionWeight(a);
 				});
 
 			for (const slot of emptySlots) {
-				// Restriction check
-				let fitsRestrictions = true;
-				if (slot.specificRestrictions) {
-					fitsRestrictions = matchesSpellRestrictions(spell, slot.specificRestrictions);
-				}
-
-				if (fitsRestrictions) {
+				if (matchesSpellSlot(spell, slot, globalMagicProfile)) {
 					newSelected[slot.id] = spellId;
 					debug.spells('Spell auto-allocated', { spellId, slotId: slot.id });
+					setIsManualSlotOverride(false);
+					setActiveSlotId(getNextEmptySlotId(spellSlots, newSelected, slot.id));
 					return newSelected;
 				}
 			}
@@ -565,7 +601,7 @@ const Spells: React.FC = () => {
 
 							{/* Cost Filter */}
 							<FilterGroup>
-								<FilterLabel>Type/Cost</FilterLabel>
+								<FilterLabel>Cost</FilterLabel>
 								<select
 									value={costFilter}
 									onChange={(e) => setCostFilter(e.target.value as CostFilter)}
@@ -623,6 +659,7 @@ const Spells: React.FC = () => {
 					>
 						<span>
 							Showing {filteredSpells.length} of {availableSpells.length} available spells
+							{effectiveActiveSlot ? ` for ${effectiveActiveSlot.sourceName}` : ''}
 						</span>
 						<span
 							style={{
@@ -657,7 +694,7 @@ const Spells: React.FC = () => {
 									const assignedSpell = assignedSpellId
 										? allSpells.find((s) => s.id === assignedSpellId)
 										: null;
-									const isActive = activeSlotId === slot.id;
+									const isActive = effectiveActiveSlot?.id === slot.id;
 
 									return (
 										<div
@@ -669,7 +706,10 @@ const Spells: React.FC = () => {
 													: 'border-border bg-card/60 hover:border-primary/40',
 												assignedSpell ? 'border-primary/40' : 'border-dashed opacity-80'
 											)}
-											onClick={() => setActiveSlotId(isActive ? null : slot.id)}
+											onClick={() => {
+												setIsManualSlotOverride(true);
+												setActiveSlotId(slot.id);
+											}}
 										>
 											<div className="flex items-center gap-2 overflow-hidden">
 												{assignedSpell ? (
@@ -699,18 +739,21 @@ const Spells: React.FC = () => {
 							<h3 className="font-cinzel mb-3 text-2xl text-white">No Matching Spells</h3>
 							<p className="text-muted-foreground mx-auto max-w-sm text-base leading-relaxed">
 								{activeSlotId
-									? 'This pocket has specific restrictions that no spells in our library currently meet.'
+									? 'This slot has restrictions that no spells in the current result set meet.'
 									: 'None of your available spells match the active filters.'}
 							</p>
-							{activeSlotId && (
+							{effectiveActiveSlot && nextEmptySlotId && nextEmptySlotId !== effectiveActiveSlot.id && (
 								<SecondaryButton
 									style={{
 										fontFamily: 'Cinzel, serif',
 										marginTop: theme.spacing[6]
 									}}
-									onClick={() => setActiveSlotId(null)}
+									onClick={() => {
+										setIsManualSlotOverride(false);
+										setActiveSlotId(nextEmptySlotId);
+									}}
 								>
-									Browse All Class Spells
+									Target Next Empty Slot
 								</SecondaryButton>
 							)}
 						</div>

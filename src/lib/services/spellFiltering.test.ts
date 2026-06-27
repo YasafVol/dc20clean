@@ -4,9 +4,11 @@ import {
 	matchesGlobalMagicProfile,
 	matchesSpellCost,
 	matchesSpellRestrictions,
+	matchesSpellSlot,
 	matchesSpellSustained,
 	matchesUserSpellFacets
 } from './spellFiltering';
+import type { SpellsKnownSlot } from '../types/effectSystem';
 
 const makeSpell = (overrides: Partial<Spell>): Spell =>
 	({
@@ -117,5 +119,49 @@ describe('spell filtering', () => {
 				tags: ['Summoning']
 			})
 		).toBe(false);
+	});
+
+	it('applies the global profile only to global slots', () => {
+		const spell = makeSpell({
+			id: 'fireball',
+			school: SpellSchool.Elemental,
+			tags: ['Fire']
+		});
+		const bardProfile = {
+			sources: [],
+			schools: [SpellSchool.Enchantment],
+			tags: ['Embolden', 'Enfeeble', 'Healing', 'Illusion', 'Sound'] as SpellTag[]
+		};
+		const globalSlot: SpellsKnownSlot = {
+			id: 'global_spell_0',
+			type: 'spell',
+			sourceName: 'Bard Progression',
+			isGlobal: true
+		};
+		const magicalSecretsSlot: SpellsKnownSlot = {
+			id: 'specialized_bard_magical_secrets_0_0',
+			type: 'spell',
+			sourceName: 'Magical Secrets',
+			isGlobal: false,
+			specificRestrictions: {}
+		};
+
+		expect(matchesSpellSlot(spell, globalSlot, bardProfile)).toBe(false);
+		expect(matchesSpellSlot(spell, magicalSecretsSlot, bardProfile)).toBe(true);
+	});
+
+	it('treats catalog isCantrip flags as display metadata for slot matching', () => {
+		const cantripFlaggedSpell = makeSpell({ isCantrip: true });
+		const spell = makeSpell({ isCantrip: false });
+		const spellSlot: SpellsKnownSlot = {
+			id: 'spell_slot',
+			type: 'spell',
+			sourceName: 'Spell Grant',
+			isGlobal: false,
+			specificRestrictions: {}
+		};
+
+		expect(matchesSpellSlot(spell, spellSlot)).toBe(true);
+		expect(matchesSpellSlot(cantripFlaggedSpell, spellSlot)).toBe(true);
 	});
 });

@@ -33,6 +33,23 @@ function normalizeRecord<T>(value: unknown, fallback: Record<string, T>): Record
 		: fallback;
 }
 
+function numberOrDefault(value: unknown, fallback: number): number {
+	return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function booleanOrDefault(value: unknown, fallback: boolean): boolean {
+	return typeof value === 'boolean' ? value : fallback;
+}
+
+function normalizeCurrency(value: unknown): CharacterState['inventory']['currency'] {
+	const currency = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+	return {
+		gold: numberOrDefault(currency.gold, 0),
+		silver: numberOrDefault(currency.silver, 0),
+		copper: numberOrDefault(currency.copper, 0)
+	};
+}
+
 export function normalizeSelectedTalents(
 	talents: Record<string, number> | string[] | undefined
 ): Record<string, number> {
@@ -51,6 +68,91 @@ export function normalizeSelectedTalents(
 			.map(([talentId, count]) => [talentId, Number(count)])
 	);
 }
+
+/**
+ * Normalize legacy/partial runtime state into the strict shape accepted by
+ * localStorage consumers and Convex document validators.
+ */
+export const normalizeCharacterStateForStorage = (
+	state?: Partial<CharacterState> | any
+): CharacterState => {
+	const defaults = getDefaultCharacterState();
+	const resources = state?.resources ?? {};
+	const current = resources.current ?? {};
+	const original = resources.original;
+	const ui = state?.ui ?? {};
+	const inventory = state?.inventory ?? {};
+	const normalizedState: CharacterState = {
+		resources: {
+			current: {
+				currentHP: numberOrDefault(current.currentHP, defaults.resources.current.currentHP),
+				currentSP: numberOrDefault(current.currentSP, defaults.resources.current.currentSP),
+				currentMP: numberOrDefault(current.currentMP, defaults.resources.current.currentMP),
+				currentGritPoints: numberOrDefault(
+					current.currentGritPoints,
+					defaults.resources.current.currentGritPoints
+				),
+				currentRestPoints: numberOrDefault(
+					current.currentRestPoints,
+					defaults.resources.current.currentRestPoints
+				),
+				tempHP: numberOrDefault(current.tempHP, defaults.resources.current.tempHP),
+				actionPointsUsed: numberOrDefault(
+					current.actionPointsUsed,
+					defaults.resources.current.actionPointsUsed
+				),
+				exhaustionLevel: numberOrDefault(
+					current.exhaustionLevel,
+					defaults.resources.current.exhaustionLevel
+				),
+				deathSteps: numberOrDefault(current.deathSteps, defaults.resources.current.deathSteps),
+				isDead: booleanOrDefault(current.isDead, defaults.resources.current.isDead)
+			}
+		},
+		ui: {
+			manualDefenseOverrides:
+				ui.manualDefenseOverrides && typeof ui.manualDefenseOverrides === 'object'
+					? ui.manualDefenseOverrides
+					: {},
+			activeConditions:
+				ui.activeConditions && typeof ui.activeConditions === 'object' ? ui.activeConditions : {},
+			combatToggles: {
+				isRaging: booleanOrDefault(ui.combatToggles?.isRaging, false)
+			}
+		},
+		inventory: {
+			items: Array.isArray(inventory.items) ? inventory.items : [],
+			currency: normalizeCurrency(inventory.currency)
+		},
+		notes: {
+			playerNotes: typeof state?.notes?.playerNotes === 'string' ? state.notes.playerNotes : ''
+		},
+		activeConditions: Array.isArray(state?.activeConditions)
+			? state.activeConditions.filter(
+					(condition: unknown): condition is string => typeof condition === 'string'
+				)
+			: [],
+		attacks: Array.isArray(state?.attacks) ? state.attacks : [],
+		spells: Array.isArray(state?.spells) ? state.spells : [],
+		maneuvers: Array.isArray(state?.maneuvers) ? state.maneuvers : []
+	};
+
+	if (original && typeof original === 'object') {
+		normalizedState.resources.original = {
+			maxHP: numberOrDefault(original.maxHP, 0),
+			maxSP: numberOrDefault(original.maxSP, 0),
+			maxMP: numberOrDefault(original.maxMP, 0),
+			maxGritPoints: numberOrDefault(original.maxGritPoints, 0),
+			maxRestPoints: numberOrDefault(original.maxRestPoints, 0)
+		};
+	}
+
+	if (state?.defenseOverrides && typeof state.defenseOverrides === 'object') {
+		normalizedState.defenseOverrides = state.defenseOverrides;
+	}
+
+	return normalizedState;
+};
 
 /**
  * Centralized JSON serialization for localStorage
@@ -92,27 +194,18 @@ export const deserializeCharacterFromStorage = (jsonString: string): SavedCharac
 			selectedTalents: normalizeSelectedTalents(data.selectedTalents),
 			spells: data.spells || [],
 			maneuvers: data.maneuvers || [],
-			characterState: {
-				...(data.characterState || getDefaultCharacterState()),
-				// Normalize attacks from object to array format for backward compatibility
+			characterState: normalizeCharacterStateForStorage({
+				...(data.characterState || {}),
 				attacks: Array.isArray(data.characterState?.attacks)
 					? data.characterState.attacks
 					: Object.values(data.characterState?.attacks || {}),
-				// Normalize spells to array if not already
 				spells: Array.isArray(data.characterState?.spells)
 					? data.characterState.spells
 					: data.spells || [],
-				// Normalize maneuvers to array if not already
 				maneuvers: Array.isArray(data.characterState?.maneuvers)
 					? data.characterState.maneuvers
-					: data.maneuvers || [],
-				ui: {
-					manualDefenseOverrides: data.characterState?.ui?.manualDefenseOverrides || {},
-					combatToggles: {
-						isRaging: data.characterState?.ui?.combatToggles?.isRaging ?? false
-					}
-				}
-			},
+					: data.maneuvers || []
+			}),
 			rulesVersion: normalizeRulesVersion(data.rulesVersion),
 			schemaVersion: CURRENT_SCHEMA_VERSION // Always update to current version
 		} as SavedCharacter;

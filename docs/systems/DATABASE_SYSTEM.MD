@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-24
+> Last Updated: 2026-06-27
 
 ---
 
@@ -151,6 +151,16 @@ Local mode does not create a Convex client or mount Convex authentication, so
 `VITE_CONVEX_URL` is not required for the default localStorage application.
 When `VITE_USE_CONVEX=true`, startup requires `VITE_CONVEX_URL` and fails with a
 configuration error if it is missing.
+
+### 3.4 Runtime State Normalization
+
+`normalizeCharacterStateForStorage()` is the shared boundary normalizer for
+legacy or partial `SavedCharacter.characterState` data. It fills required
+runtime resource fields, UI defaults, inventory currency, notes, and array
+surfaces before storage consumers or Convex mutations handle the character.
+Convex writes must run character state through this normalizer because table
+validators require complete `resources.current` and currency fields, while
+older local or cloud records may contain partial nested objects.
 
 ---
 

@@ -16,7 +16,7 @@ import { api } from '../../../convex/_generated/api';
 import { getConvexClient } from '../convexClient';
 import { CURRENT_SCHEMA_VERSION } from '../types/schemaVersion';
 import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
-import { normalizeSelectedTalents } from '../utils/storageUtils';
+import { normalizeCharacterStateForStorage, normalizeSelectedTalents } from '../utils/storageUtils';
 
 type StoredCharacterDoc = SavedCharacter & {
 	_id: string;
@@ -56,17 +56,7 @@ function sanitizeCharacterStateForConvex(
 	state: CharacterState | undefined
 ): CharacterState | undefined {
 	if (!state) return state;
-
-	return {
-		...state,
-		ui: {
-			manualDefenseOverrides: state.ui?.manualDefenseOverrides ?? {},
-			activeConditions: state.ui?.activeConditions ?? {},
-			combatToggles: {
-				isRaging: state.ui?.combatToggles?.isRaging ?? false
-			}
-		}
-	};
+	return normalizeCharacterStateForStorage(state);
 }
 
 function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {

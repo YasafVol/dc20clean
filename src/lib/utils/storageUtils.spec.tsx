@@ -1,5 +1,9 @@
 import { describe, test, expect, beforeEach } from 'vitest';
-import { deserializeCharacterFromStorage, serializeCharacterForStorage } from './storageUtils';
+import {
+	deserializeCharacterFromStorage,
+	normalizeCharacterStateForStorage,
+	serializeCharacterForStorage
+} from './storageUtils';
 
 describe('storageUtils', () => {
 	beforeEach(() => {
@@ -63,5 +67,29 @@ describe('storageUtils', () => {
 		expect(parsed.schemaVersion).toBe('2.2.0');
 		expect(parsed.rulesVersion).toBe('dc20-0.10');
 		expect(parsed.selectedTraitIds).toEqual(['trait1']);
+	});
+
+	test('normalizeCharacterStateForStorage fills partial legacy resource state', () => {
+		const result = normalizeCharacterStateForStorage({
+			resources: { current: { currentHP: 3 } },
+			ui: { manualDefenseOverrides: {} },
+			inventory: { items: [], currency: {} },
+			notes: { playerNotes: 'legacy note' }
+		});
+
+		expect(result.resources.current).toEqual({
+			currentHP: 3,
+			currentSP: 0,
+			currentMP: 0,
+			currentGritPoints: 0,
+			currentRestPoints: 0,
+			tempHP: 0,
+			actionPointsUsed: 0,
+			exhaustionLevel: 0,
+			deathSteps: 0,
+			isDead: false
+		});
+		expect(result.inventory.currency).toEqual({ gold: 0, silver: 0, copper: 0 });
+		expect(result.notes.playerNotes).toBe('legacy note');
 	});
 });

@@ -2,7 +2,7 @@
 
 > Purpose: Canonical policy for schema, rules, PDF, and system-source versioning.
 > Status: Active
-> Last Updated: 2026-06-25
+> Last Updated: 2026-06-27
 
 ---
 
@@ -68,6 +68,9 @@ Required behavior:
 6. Recalculate all current-rules derived values that the calculator can determine from the migrated draft.
    - The draft must be stamped with `CURRENT_SCHEMA_VERSION`.
    - Recalculation must persist calculated display/export arrays such as resistances, vulnerabilities, senses, and combat training.
+   - The draft must normalize partial legacy `characterState` before save so
+     Convex can create the current-rules copy even when the source record has
+     incomplete nested runtime resources.
 7. Mark the draft as `rulesUpgradeStatus: "needs-review"` when retired/deprecated selections were removed or require player alternatives.
 8. Force unresolved retired/ambiguous choices through explicit user selection before treating the upgrade as complete.
 

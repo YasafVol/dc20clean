@@ -204,6 +204,14 @@ const characterValidator = {
 	tradesData: v.any(), // Record<string, number>
 	languagesData: v.any(), // Complex language map
 
+	// Mastery cap elevations from spent points (Record<string, MasteryLimitElevation>)
+	skillMasteryLimitElevations: v.optional(
+		v.record(v.string(), v.object({ source: v.string(), value: v.number() }))
+	),
+	tradeMasteryLimitElevations: v.optional(
+		v.record(v.string(), v.object({ source: v.string(), value: v.number() }))
+	),
+
 	// Level progression data
 	// Note: App uses Record<string, number> internally but converts to array for storage
 	selectedTalents: v.optional(v.array(v.string())),

@@ -1,6 +1,6 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-27
 >
 > Purpose  
 > This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
@@ -75,6 +75,13 @@ Background allocations in store:
 - `skillMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>` – extra Skill Points spent to raise a specific Skill's mastery limit
 - `tradeMasteryLimitElevations: Record<string, { source: 'spent_points'; value: number }>` – extra Trade Points spent to raise a specific Trade's mastery limit
 - Conversions: `{ skillToTrade, tradeToSkill, tradeToLanguage }` numbers on the store
+
+Persistence note: `skillMasteryLimitElevations` and `tradeMasteryLimitElevations` are written to the
+saved character root by `characterCompletion.ts` (always present, default `{}`). They must be declared
+in `convex/schema.ts` `characterValidator` — Convex strict-validates documents on insert, so any
+undeclared root field makes `characters.create` throw a generic `Server Error`. Both are stored as
+`v.optional(v.record(v.string(), v.object({ source: v.string(), value: v.number() })))`. After editing
+the schema, redeploy the Convex backend (`npx convex deploy`) or prod will keep rejecting new characters.
 
 Source-audit note: v0.10.5 explicitly supports `skillToTrade` and `tradeToLanguage`.
 `tradeToSkill` is not a legal source conversion. It is retained only as a legacy/undo

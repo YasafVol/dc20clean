@@ -908,7 +908,12 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 			case 'maneuvers':
 				return <Maneuvers />;
 			case 'name':
-				return <CharacterName />;
+				return (
+					<CharacterName
+						onFinish={() => void completeCurrentCharacter('sheet')}
+						onPrintPdf={() => void completeCurrentCharacter('pdf')}
+					/>
+				);
 			default:
 				return null;
 		}
@@ -985,22 +990,11 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 
 					{/* Right: Next Button */}
 					<NavSection $align="end">
-						{state.currentStep === maxStep && (
-							<SecondaryButton
-								onClick={() => void completeCurrentCharacter('pdf')}
-								data-testid="creation-print-pdf"
-							>
-								{t('characterCreation.printPdf')}
-							</SecondaryButton>
+						{state.currentStep !== maxStep && (
+							<PrimaryButton onClick={handleNext} data-testid="creation-next">
+								<span>{t('characterCreation.next')}</span> →
+							</PrimaryButton>
 						)}
-						<PrimaryButton onClick={handleNext} data-testid="creation-next">
-							<span>
-								{state.currentStep === maxStep
-									? t('characterCreation.finishAndGoToSheet')
-									: t('characterCreation.next')}
-							</span>{' '}
-							→
-						</PrimaryButton>
 					</NavSection>
 					<RestartButton onClick={handleRestart} title={t('characterCreation.restartTooltip')}>
 						{t('characterCreation.restart')}

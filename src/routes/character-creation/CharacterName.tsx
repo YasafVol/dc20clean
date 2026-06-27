@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
 import { nameByRace } from 'fantasy-name-generator';
-import { SecondaryButton } from '../../components/styled/index';
+import { PrimaryButton, SecondaryButton } from '../../components/styled/index';
 import { useTranslation } from 'react-i18next';
 import {
 	Container,
@@ -18,6 +18,7 @@ import {
 	GeneratorText,
 	SuggestionsGrid,
 	SuggestionButton,
+	FinalActions,
 	EmptyState
 } from './CharacterName.styled';
 
@@ -46,7 +47,12 @@ const generateNamesFromNPM = (race: string): string[] => {
 	}
 };
 
-function CharacterName() {
+interface CharacterNameProps {
+	onFinish?: () => void;
+	onPrintPdf?: () => void;
+}
+
+function CharacterName({ onFinish, onPrintPdf }: CharacterNameProps) {
 	const { state, dispatch } = useCharacter();
 	const { t } = useTranslation();
 	const [characterName, setCharacterName] = useState(state.finalName || '');
@@ -236,6 +242,17 @@ function CharacterName() {
 							placeholder={t('characterCreation.enterYourName')}
 						/>
 					</FormGroup>
+
+					{onFinish && onPrintPdf && (
+						<FinalActions>
+							<SecondaryButton onClick={onPrintPdf} data-testid="creation-print-pdf">
+								{t('characterCreation.printPdf')}
+							</SecondaryButton>
+							<PrimaryButton onClick={onFinish} data-testid="creation-next">
+								<span>{t('characterCreation.finishAndGoToSheet')}</span> →
+							</PrimaryButton>
+						</FinalActions>
+					)}
 				</FormGrid>
 			</FormCard>
 		</Container>

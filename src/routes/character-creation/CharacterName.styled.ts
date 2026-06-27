@@ -119,6 +119,17 @@ export const SuggestionsGrid = styled.div`
 	}
 `;
 
+export const FinalActions = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	gap: ${theme.spacing[3]};
+	padding-top: ${theme.spacing[2]};
+
+	${media.mobile} {
+		flex-direction: column;
+	}
+`;
+
 export const SuggestionButton = styled.button`
 	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 	background: ${theme.colors.bg.secondary};

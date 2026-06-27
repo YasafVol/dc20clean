@@ -86,7 +86,7 @@
   - Inputs: `state.finalName`, `state.finalPlayerName`
   - Completion rule: both fields non-empty
   - UI: name generation is a secondary inline action beside the character name input.
-  - Final actions: `Finish & Go to Sheet` is the primary action; `Print PDF` autosaves the completed character, exports from the saved record, then opens the saved character sheet.
+  - Final actions render below the Player Name field: `Finish & Go to Sheet` is the primary action; `Print PDF` autosaves the completed character, exports from the saved record, then opens the saved character sheet.
   - Outputs: final naming data for persistence
   - Agent/browser hooks: name fields expose `data-testid="character-name-input"` / `data-field-id="character-name"` and `data-testid="player-name-input"` / `data-field-id="player-name"`.
 

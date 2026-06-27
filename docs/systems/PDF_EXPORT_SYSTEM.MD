@@ -3,7 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-27
 
 ---
 
@@ -41,7 +41,7 @@ Out of scope (tracked as future ideas in Section 8): flattened exports toggle, p
 - **PDF Templates**:
   - `src/lib/pdf/010/DC20 Beta 0.10 (fillable) Character Sheet.pdf`
   - `src/lib/pdf/095/DC20_Beta_0_9_5_(fillable)_Character_Sheet.pdf`
-- **UI Integration** — `src/routes/character-creation/LoadCharacter.tsx` provides the load-list "Export PDF" CTA. `src/routes/character-creation/CharacterCreation.tsx` also exposes a final-step "Print PDF" secondary action that completes/autosaves the character first, then exports from the saved record.
+- **UI Integration** — `src/routes/character-creation/LoadCharacter.tsx` provides the load-list "Export PDF" CTA. The character-creation final Name step exposes a "Print PDF" secondary action below the Player Name field; it completes/autosaves the character first, then exports from the saved record.
 - **Character Sheet Integration** — `src/routes/character-sheet/CharacterSheetClean.tsx` and `src/routes/character-sheet/CharacterSheetRedesign.tsx` re-read the saved record by ID before export.
 
 ---

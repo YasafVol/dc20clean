@@ -54,16 +54,27 @@ export function calculateGlobalMagicProfile(
 	const profile: GlobalMagicProfile = {
 		// DC20 v0.10: No source restriction - filtering is by school/tag only
 		sources: [],
-		schools: (spellList?.specificSchools as SpellSchool[]) || [],
+		// Copy the source arrays — expansion effects below push onto these, and returning the
+		// class-data array by reference would permanently mutate the shared rules data.
+		schools: [...((spellList?.specificSchools as SpellSchool[]) || [])],
 		tags: [
 			...((spellList?.spellTags as SpellTag[]) || []),
 			...((spellList?.tags as SpellTag[]) || [])
 		]
 	};
 
+	// Expansion effects (talents/features) ADD a school/tag to the accessible list.
+	// A profile with no schools AND no tags is a wildcard: every school/tag is already
+	// allowed (see matchesSchoolOrTag). Pushing a single school/tag onto a wildcard would
+	// invert the OR-matching from "everything" into "only this one", silently narrowing the
+	// caster's spell list (e.g. a Wizard who picks Portal Mage collapsing to Teleportation
+	// spells only). Expansions are no-ops on a wildcard, so skip them entirely.
+	const isWildcardProfile = profile.schools.length === 0 && profile.tags.length === 0;
+
 	// Process Expansion Effects (talents/features that expand spell access)
 	for (const effect of effects) {
 		if (!effect.resolved) continue;
+		if (isWildcardProfile) continue;
 
 		// Portal Magic Expansion - adds Teleportation tag
 		if ((effect as any).target === 'teleportation_expert') {

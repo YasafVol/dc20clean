@@ -190,6 +190,9 @@ explicit character migration.
 - Defines the character's general spellcasting thematic bounds.
 - Aggregates "Global Expansion" effects (e.g., a Feature that adds "Arcane" to all your spellcasting).
 - Used as a fallback for all spell selection.
+- **Wildcard semantics**: an empty `schools` **and** empty `tags` profile means "all schools/tags allowed" (school/tag matching is OR-based, so empty = everything). A class with no `specificSchools`/`spellTags` in its spell list (e.g. Wizard) is wildcard.
+- **Expansion effects must not narrow a wildcard.** Effects like `teleportation_expert` (Portal Mage), `curse_school_specialization` (Witch), and `spell_list_expansion` (talent) _add_ a school/tag. On a restricted profile this widens the OR set; on a wildcard profile the granted school/tag is already accessible, so `calculateGlobalMagicProfile` skips expansions entirely. Without this guard, pushing one tag onto a wildcard inverts matching from "everything" to "only that tag" (regression: a Wizard who picked Portal Mage saw only the 4 Teleportation-tagged spells).
+- The profile copies the class spell-list arrays before applying expansions; expansion `.push()` must never mutate the shared rules data.
 
 ### 4.2 Spells Known Slots (Pockets)
 

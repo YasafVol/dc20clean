@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { calculateCharacterWithBreakdowns } from './enhancedCharacterCalculator';
 import { generateSpellsKnownSlots } from './calculatorModules/spellSystem';
+import { ALL_SPELLS } from '../rulesdata/spells-data';
+import { matchesSpellSlot } from './spellFiltering';
 
 // Helper to create a minimal character build data
 const createBaseBuild = (overrides = {}) => ({
@@ -46,6 +48,30 @@ describe('Spell System - Global Magic Profile', () => {
 
 		expect(result.globalMagicProfile?.schools).toContain('Enchantment');
 		expect(result.globalMagicProfile?.tags).toContain('Healing');
+	});
+
+	it('should not collapse a wildcard caster to a single tag when a subclass expands access', () => {
+		// Regression: a Wizard has a wildcard spell list (no school/tag restriction = all
+		// spells). Picking the Portal Mage subclass adds a `teleportation_expert` expansion
+		// effect. Expansions must not narrow a wildcard profile down to the added tag only.
+		const build = createBaseBuild({
+			classId: 'wizard',
+			level: 3,
+			selectedSubclass: 'Portal Mage'
+		});
+		const result = calculateCharacterWithBreakdowns(build as any);
+		const profile = result.globalMagicProfile;
+
+		// Profile stays wildcard (not narrowed to Teleportation-only)
+		expect(profile?.tags ?? []).not.toContain('Teleportation');
+		expect(profile?.tags ?? []).toEqual([]);
+
+		// The whole spell library remains selectable, not just the 4 Teleportation spells.
+		const slots = result.spellsKnownSlots ?? [];
+		const selectable = ALL_SPELLS.filter((spell) =>
+			slots.some((slot) => matchesSpellSlot(spell, slot, profile!))
+		);
+		expect(selectable.length).toBe(ALL_SPELLS.length);
 	});
 });
 

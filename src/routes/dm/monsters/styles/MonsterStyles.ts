@@ -345,6 +345,33 @@ export const PreviewSubtitle = styled.p`
 	margin: 0;
 `;
 
+export const PreviewResetRow = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+`;
+
+export const PreviewResetButton = styled.button`
+	border: 1px solid rgba(168, 85, 247, 0.35);
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.18);
+	color: #c4b5fd;
+	cursor: pointer;
+	font-size: 0.6875rem;
+	line-height: 1;
+	padding: 0.35rem 0.5rem;
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+
+	&:hover {
+		background: rgba(168, 85, 247, 0.14);
+		border-color: rgba(168, 85, 247, 0.65);
+		color: #e9d5ff;
+	}
+`;
+
 export const PreviewBody = styled.div`
 	padding: 1rem;
 `;
@@ -356,12 +383,44 @@ export const PreviewStatGrid = styled.div`
 `;
 
 export const PreviewStatItem = styled.div<{ $highlight?: boolean }>`
+	position: relative;
+	min-height: 5.75rem;
 	background: ${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.3)')};
 	border: 1px solid
 		${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
 	border-radius: 8px;
-	padding: 0.75rem;
+	padding: 0.75rem 2rem;
 	text-align: center;
+`;
+
+export const PreviewStatAdjustButton = styled.button<{ $side: 'left' | 'right' }>`
+	position: absolute;
+	top: 50%;
+	${(props) => props.$side}: 0.35rem;
+	transform: translateY(-50%);
+	width: 1.25rem;
+	height: 1.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(168, 85, 247, 0.32);
+	border-radius: 9999px;
+	background: rgba(0, 0, 0, 0.28);
+	color: #c4b5fd;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: 700;
+	line-height: 1;
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+
+	&:hover {
+		background: rgba(168, 85, 247, 0.2);
+		border-color: rgba(168, 85, 247, 0.7);
+		color: #ffffff;
+	}
 `;
 
 export const PreviewStatLabel = styled.div`

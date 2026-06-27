@@ -2,7 +2,7 @@
 
 > Purpose: Monster designer using DC20's point-buy framework: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing.
 > Status: Active
-> Last Updated: 2026-02-06
+> Last Updated: 2026-06-27
 > Related: [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
 
 ---
@@ -120,6 +120,19 @@ encounterCost = level × tierCostMultiplier
 - Final PD: 13 - 2 = 11
 - Final AD: 13 + 2 = 15
 - Encounter Cost: 4 × 2 = 8
+
+### 5.4 Manual Stat Adjustments
+
+The designer sidebar lets users adjust combat stats directly with compact +/- controls:
+
+- HP, PD, AD, Attack, and Save DC adjust in whole-number steps.
+- Base Damage adjusts in 0.5 steps.
+- HP cannot fall below 1. Base Damage cannot fall below 0.
+- The adjusted final values are persisted in the saved monster record.
+
+Changing the monster role preserves the user's manual stat deltas. The builder compares the current saved stat values against the previous level/tier/role canonical values, then applies those deltas to the new role's canonical values.
+
+The sidebar reset button restores all combat stats to canonical values for the current level, tier, and role.
 
 ---
 

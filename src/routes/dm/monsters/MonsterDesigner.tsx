@@ -58,6 +58,8 @@ const MonsterDesignerContent: React.FC = () => {
 		setLevel,
 		setTier,
 		setRole,
+		adjustStat,
+		resetStats,
 		addFeature,
 		removeFeature,
 		addAction,
@@ -276,7 +278,11 @@ const MonsterDesignerContent: React.FC = () => {
 					{/* Sidebar */}
 					<DesignerSidebar>
 						{/* Stat Preview */}
-						<StatPreview monster={state.monster} />
+						<StatPreview
+							monster={state.monster}
+							onAdjustStat={adjustStat}
+							onResetStats={resetStats}
+						/>
 
 						{/* Validation */}
 						{(state.errors.length > 0 || state.warnings.length > 0) && (

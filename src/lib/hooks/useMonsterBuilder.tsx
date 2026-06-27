@@ -15,10 +15,13 @@ import {
 	type Dispatch
 } from 'react';
 import {
-	calculateMonsterStats,
+	adjustMonsterStat,
 	createDefaultMonster,
+	recalculateMonsterStats,
+	recalculateMonsterStatsPreservingManualDeltas,
 	validateMonsterActions,
-	validateFeatureBudget
+	validateFeatureBudget,
+	type EditableMonsterStatKey
 } from '../services/monsterCalculator';
 import { generateContentId } from '../utils/idGenerator';
 import type {
@@ -59,6 +62,8 @@ export type MonsterBuilderAction =
 	| { type: 'SET_TIER'; payload: MonsterTier }
 	| { type: 'SET_ROLE'; payload: MonsterRoleId }
 	| { type: 'SET_ATTRIBUTES'; payload: Partial<MonsterAttributes> }
+	| { type: 'ADJUST_STAT'; payload: { statKey: EditableMonsterStatKey; delta: number } }
+	| { type: 'RESET_STATS' }
 	| { type: 'ADD_FEATURE'; payload: string }
 	| { type: 'REMOVE_FEATURE'; payload: string }
 	| { type: 'SET_FEATURES'; payload: string[] }
@@ -72,27 +77,6 @@ export type MonsterBuilderAction =
 // ============================================================================
 // REDUCER
 // ============================================================================
-
-function recalculateMonster(monster: SavedMonster): SavedMonster {
-	const stats = calculateMonsterStats({
-		level: monster.level,
-		tier: monster.tier,
-		roleId: monster.roleId
-	});
-
-	return {
-		...monster,
-		finalHP: stats.finalHP,
-		finalPD: stats.finalPD,
-		finalAD: stats.finalAD,
-		finalAttack: stats.finalAttack,
-		finalSaveDC: stats.finalSaveDC,
-		finalBaseDamage: stats.finalBaseDamage,
-		featurePointsMax: stats.featurePointsMax,
-		breakdowns: stats.breakdowns,
-		lastModified: new Date().toISOString()
-	};
-}
 
 function validateMonster(monster: SavedMonster): { errors: string[]; warnings: string[] } {
 	const errors: string[] = [];
@@ -190,7 +174,7 @@ function monsterBuilderReducer(
 		}
 
 		case 'SET_LEVEL': {
-			const monster = recalculateMonster({ ...state.monster, level: action.payload });
+			const monster = recalculateMonsterStats({ ...state.monster, level: action.payload });
 			const { errors, warnings } = validateMonster(monster);
 			return {
 				...state,
@@ -203,7 +187,7 @@ function monsterBuilderReducer(
 		}
 
 		case 'SET_TIER': {
-			const monster = recalculateMonster({ ...state.monster, tier: action.payload });
+			const monster = recalculateMonsterStats({ ...state.monster, tier: action.payload });
 			const { errors, warnings } = validateMonster(monster);
 			return {
 				...state,
@@ -216,7 +200,10 @@ function monsterBuilderReducer(
 		}
 
 		case 'SET_ROLE': {
-			const monster = recalculateMonster({ ...state.monster, roleId: action.payload });
+			const monster = recalculateMonsterStatsPreservingManualDeltas(
+				{ ...state.monster, roleId: action.payload },
+				state.monster
+			);
 			const { errors, warnings } = validateMonster(monster);
 			return {
 				...state,
@@ -235,6 +222,36 @@ function monsterBuilderReducer(
 				...state,
 				monster,
 				isDirty: true
+			};
+		}
+
+		case 'ADJUST_STAT': {
+			const monster = adjustMonsterStat(
+				state.monster,
+				action.payload.statKey,
+				action.payload.delta
+			);
+			const { errors, warnings } = validateMonster(monster);
+			return {
+				...state,
+				monster,
+				isDirty: true,
+				isValid: errors.length === 0,
+				errors,
+				warnings
+			};
+		}
+
+		case 'RESET_STATS': {
+			const monster = recalculateMonsterStats(state.monster);
+			const { errors, warnings } = validateMonster(monster);
+			return {
+				...state,
+				monster,
+				isDirty: true,
+				isValid: errors.length === 0,
+				errors,
+				warnings
 			};
 		}
 
@@ -385,6 +402,8 @@ interface MonsterBuilderContextValue {
 	setTier: (tier: MonsterTier) => void;
 	setRole: (roleId: MonsterRoleId) => void;
 	setAttributes: (attributes: Partial<MonsterAttributes>) => void;
+	adjustStat: (statKey: EditableMonsterStatKey, delta: number) => void;
+	resetStats: () => void;
 	addFeature: (featureId: string) => void;
 	removeFeature: (featureId: string) => void;
 	addAction: (action?: Partial<MonsterAction>) => void;
@@ -442,6 +461,12 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			dispatch({ type: 'SET_ATTRIBUTES', payload: attributes }),
 		[]
 	);
+	const adjustStat = useCallback(
+		(statKey: EditableMonsterStatKey, delta: number) =>
+			dispatch({ type: 'ADJUST_STAT', payload: { statKey, delta } }),
+		[]
+	);
+	const resetStats = useCallback(() => dispatch({ type: 'RESET_STATS' }), []);
 	const addFeature = useCallback(
 		(featureId: string) => dispatch({ type: 'ADD_FEATURE', payload: featureId }),
 		[]
@@ -482,6 +507,8 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			setTier,
 			setRole,
 			setAttributes,
+			adjustStat,
+			resetStats,
 			addFeature,
 			removeFeature,
 			addAction,
@@ -498,6 +525,8 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			setTier,
 			setRole,
 			setAttributes,
+			adjustStat,
+			resetStats,
 			addFeature,
 			removeFeature,
 			addAction,

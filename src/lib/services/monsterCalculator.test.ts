@@ -16,10 +16,14 @@
 
 import { describe, it, expect } from 'vitest';
 import {
+	adjustMonsterStat,
 	calculateMonsterStats,
+	recalculateMonsterStats,
+	recalculateMonsterStatsPreservingManualDeltas,
 	validateMonsterActions,
 	validateFeatureBudget,
 	createDefaultMonster,
+	type EditableMonsterStatKey,
 	type MonsterCalculationInput,
 	type MonsterCalculationResult
 } from './monsterCalculator';
@@ -146,6 +150,57 @@ describe('Monster Calculator', () => {
 				expect(result.finalBaseDamage).toBe(stats.baseDamage);
 				expect(result.featurePointsMax).toBe(stats.featurePower);
 			}
+		});
+	});
+
+	// ========================================================================
+	// MANUAL STAT ADJUSTMENTS
+	// ========================================================================
+	describe('Manual Stat Adjustments', () => {
+		it('should preserve manual stat deltas when role changes', () => {
+			const supportMonster = createDefaultMonster({
+				level: 1,
+				tier: 'standard',
+				roleId: 'support'
+			});
+			const adjustments: Array<[EditableMonsterStatKey, number]> = [
+				['finalHP', 2],
+				['finalPD', 1],
+				['finalAttack', 1],
+				['finalBaseDamage', 0.5]
+			];
+			const adjustedMonster = adjustments.reduce(
+				(monster, [statKey, delta]) => adjustMonsterStat(monster, statKey, delta),
+				supportMonster
+			);
+
+			const bruteMonster = recalculateMonsterStatsPreservingManualDeltas(
+				{ ...adjustedMonster, roleId: 'brute' },
+				adjustedMonster
+			);
+
+			expect(bruteMonster.finalHP).toBe(15); // Brute canonical 13 + manual 2
+			expect(bruteMonster.finalPD).toBe(11); // Brute canonical 10 + manual 1
+			expect(bruteMonster.finalAD).toBe(14);
+			expect(bruteMonster.finalAttack).toBe(5);
+			expect(bruteMonster.finalBaseDamage).toBe(2);
+		});
+
+		it('should reset adjusted stats to canonical values', () => {
+			const adjustedMonster = adjustMonsterStat(
+				createDefaultMonster({ level: 1, tier: 'standard', roleId: 'support' }),
+				'finalHP',
+				3
+			);
+
+			const resetMonster = recalculateMonsterStats(adjustedMonster);
+
+			expect(resetMonster.finalHP).toBe(9);
+			expect(resetMonster.finalPD).toBe(10);
+			expect(resetMonster.finalAD).toBe(10);
+			expect(resetMonster.finalAttack).toBe(4);
+			expect(resetMonster.finalSaveDC).toBe(14);
+			expect(resetMonster.finalBaseDamage).toBe(1.5);
 		});
 	});
 

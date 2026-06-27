@@ -34,6 +34,17 @@ import {
 // INPUT/OUTPUT TYPES
 // ============================================================================
 
+export const EDITABLE_MONSTER_STAT_KEYS = [
+	'finalHP',
+	'finalPD',
+	'finalAD',
+	'finalAttack',
+	'finalSaveDC',
+	'finalBaseDamage'
+] as const;
+
+export type EditableMonsterStatKey = (typeof EDITABLE_MONSTER_STAT_KEYS)[number];
+
 /**
  * Input for monster stat calculation
  */
@@ -334,6 +345,102 @@ export function validateFeatureBudget(
 }
 
 // ============================================================================
+// MANUAL STAT ADJUSTMENTS
+// ============================================================================
+
+function normalizeManualStatValue(statKey: EditableMonsterStatKey, value: number): number {
+	if (statKey === 'finalBaseDamage') {
+		return Math.max(0, Math.round(value * 2) / 2);
+	}
+
+	const rounded = Math.round(value);
+	if (statKey === 'finalHP') {
+		return Math.max(1, rounded);
+	}
+
+	return rounded;
+}
+
+function getStatDeltaFromCanonical(
+	monster: SavedMonster,
+	canonical: MonsterCalculationResult
+): Record<EditableMonsterStatKey, number> {
+	return {
+		finalHP: monster.finalHP - canonical.finalHP,
+		finalPD: monster.finalPD - canonical.finalPD,
+		finalAD: monster.finalAD - canonical.finalAD,
+		finalAttack: monster.finalAttack - canonical.finalAttack,
+		finalSaveDC: monster.finalSaveDC - canonical.finalSaveDC,
+		finalBaseDamage: monster.finalBaseDamage - canonical.finalBaseDamage
+	};
+}
+
+function applyCanonicalStats(
+	monster: SavedMonster,
+	stats: MonsterCalculationResult,
+	statDeltas?: Record<EditableMonsterStatKey, number>
+): SavedMonster {
+	const deltas = statDeltas ?? {
+		finalHP: 0,
+		finalPD: 0,
+		finalAD: 0,
+		finalAttack: 0,
+		finalSaveDC: 0,
+		finalBaseDamage: 0
+	};
+
+	return {
+		...monster,
+		finalHP: normalizeManualStatValue('finalHP', stats.finalHP + deltas.finalHP),
+		finalPD: normalizeManualStatValue('finalPD', stats.finalPD + deltas.finalPD),
+		finalAD: normalizeManualStatValue('finalAD', stats.finalAD + deltas.finalAD),
+		finalAttack: normalizeManualStatValue('finalAttack', stats.finalAttack + deltas.finalAttack),
+		finalSaveDC: normalizeManualStatValue('finalSaveDC', stats.finalSaveDC + deltas.finalSaveDC),
+		finalBaseDamage: normalizeManualStatValue(
+			'finalBaseDamage',
+			stats.finalBaseDamage + deltas.finalBaseDamage
+		),
+		featurePointsMax: stats.featurePointsMax,
+		breakdowns: stats.breakdowns,
+		lastModified: new Date().toISOString()
+	};
+}
+
+export function adjustMonsterStat(
+	monster: SavedMonster,
+	statKey: EditableMonsterStatKey,
+	delta: number
+): SavedMonster {
+	return {
+		...monster,
+		[statKey]: normalizeManualStatValue(statKey, monster[statKey] + delta),
+		lastModified: new Date().toISOString()
+	};
+}
+
+export function recalculateMonsterStatsPreservingManualDeltas(
+	monster: SavedMonster,
+	previousMonster: SavedMonster
+): SavedMonster {
+	const previousCanonicalStats = calculateMonsterStats({
+		level: previousMonster.level,
+		tier: previousMonster.tier,
+		roleId: previousMonster.roleId
+	});
+	const nextCanonicalStats = calculateMonsterStats({
+		level: monster.level,
+		tier: monster.tier,
+		roleId: monster.roleId
+	});
+
+	return applyCanonicalStats(
+		monster,
+		nextCanonicalStats,
+		getStatDeltaFromCanonical(previousMonster, previousCanonicalStats)
+	);
+}
+
+// ============================================================================
 // DEFAULT MONSTER FACTORY
 // ============================================================================
 
@@ -443,16 +550,5 @@ export function recalculateMonsterStats(monster: SavedMonster): SavedMonster {
 		roleId: monster.roleId
 	});
 
-	return {
-		...monster,
-		finalHP: stats.finalHP,
-		finalPD: stats.finalPD,
-		finalAD: stats.finalAD,
-		finalAttack: stats.finalAttack,
-		finalSaveDC: stats.finalSaveDC,
-		finalBaseDamage: stats.finalBaseDamage,
-		featurePointsMax: stats.featurePointsMax,
-		breakdowns: stats.breakdowns,
-		lastModified: new Date().toISOString()
-	};
+	return applyCanonicalStats(monster, stats);
 }

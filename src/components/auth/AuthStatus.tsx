@@ -56,9 +56,10 @@ export function AuthStatus({ className }: AuthStatusProps) {
 			</Button>
 
 			<Dialog open={showSignIn} onOpenChange={setShowSignIn}>
-				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
+				<DialogContent className="w-[calc(100vw-2rem)] max-w-md border-0 bg-transparent p-0 shadow-none sm:max-w-md">
 					<SignIn
 						feature="general"
+						className="max-w-none"
 						onSuccess={() => setShowSignIn(false)}
 						onCancel={() => setShowSignIn(false)}
 					/>

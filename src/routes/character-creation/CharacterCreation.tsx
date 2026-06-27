@@ -1029,9 +1029,10 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 					if (!open) setPendingCompletionAction(null);
 				}}
 			>
-				<DialogContent className="border-purple-500/50 bg-transparent p-0 shadow-none">
+				<DialogContent className="w-[calc(100vw-2rem)] max-w-md border-0 bg-transparent p-0 shadow-none sm:max-w-md">
 					<SignIn
 						feature="cloud-save"
+						className="max-w-none"
 						onSuccess={() => setShowAuthDialog(false)}
 						onCancel={() => {
 							setShowAuthDialog(false);

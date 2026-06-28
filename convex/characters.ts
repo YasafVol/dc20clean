@@ -270,6 +270,6 @@ export const getByIdForMember = query({
 			.query('characters')
 			.withIndex('by_app_id', (q) => q.eq('id', args.characterId))
 			.first();
-		return char?.deletedAt ? null : char ?? null;
+		return (char as any)?.deletedAt ? null : char ?? null;
 	},
 });

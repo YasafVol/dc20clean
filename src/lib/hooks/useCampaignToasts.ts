@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMyCampaigns, useCampaignEvents } from './useCampaigns';
 import type { CampaignEvent } from '../types/campaign';
 

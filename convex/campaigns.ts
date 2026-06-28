@@ -62,7 +62,7 @@ export const listMyCampaigns = query({
     const results = await Promise.all(
       memberships.map(async (m: any) => {
         const campaign = await ctx.db.get(m.campaignId);
-        if (!campaign || campaign.deletedAt) return null;
+        if (!campaign || (campaign as any).deletedAt) return null;
         return { campaign, role: m.role };
       })
     );
@@ -178,9 +178,18 @@ export const getCampaignsForCharacter = query({
       .filter((q: any) => q.eq(q.field('deletedAt'), undefined))
       .collect();
 
-    return memberships
-      .filter((m: any) => m.sharedCharacterIds.includes(args.characterId))
-      .map((m: any) => ({ campaignDocId: m.campaignId.toString(), memberDocId: m._id.toString() }));
+    // Load each campaign doc to get the app-level id (used by all mutations)
+    const filtered = memberships.filter((m: any) => m.sharedCharacterIds.includes(args.characterId));
+    const results = [];
+    for (const m of filtered) {
+      const campaign = await ctx.db.get(m.campaignId);
+      if (!campaign || (campaign as any).deletedAt) continue;
+      results.push({
+        campaignDocId: (campaign as any).id,  // app-level id, e.g. camp_abc123
+        memberDocId: m._id.toString(),
+      });
+    }
+    return results;
   },
 });
 
@@ -302,6 +311,7 @@ export const joinByCode = mutation({
 
 export const leaveCampaign = mutation({
   args: { campaignId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -313,6 +323,7 @@ export const leaveCampaign = mutation({
 
 export const shareCharacter = mutation({
   args: { campaignId: v.string(), characterId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -343,6 +354,7 @@ export const shareCharacter = mutation({
 
 export const unshareCharacter = mutation({
   args: { campaignId: v.string(), characterId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -355,6 +367,7 @@ export const unshareCharacter = mutation({
 
 export const renameCampaign = mutation({
   args: { campaignId: v.string(), name: v.string(), description: v.optional(v.string()) },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -369,6 +382,7 @@ export const renameCampaign = mutation({
 
 export const regenerateCode = mutation({
   args: { campaignId: v.string() },
+  returns: v.object({ code: v.string() }),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -392,6 +406,7 @@ export const regenerateCode = mutation({
 
 export const kickMember = mutation({
   args: { campaignId: v.string(), targetUserId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -416,6 +431,7 @@ export const setMemberRole = mutation({
     targetUserId: v.string(),
     role: v.union(v.literal('co_dm'), v.literal('player')),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -435,6 +451,7 @@ export const setMemberRole = mutation({
 
 export const deleteCampaign = mutation({
   args: { campaignId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
@@ -472,6 +489,7 @@ export const postEvent = mutation({
     characterId: v.optional(v.string()),
     payload: v.any(),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');

@@ -3,18 +3,31 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { Button } from '../../components/ui/button';
 import { AuthGuard } from '../../components/auth/AuthGuard';
-import { useCampaign, useCampaignMutations } from '../../lib/hooks/useCampaigns';
+import { useCampaign, useCampaignRoster, useCampaignMutations } from '../../lib/hooks/useCampaigns';
 import { useCurrentUser } from '../../components/auth/CurrentUserContext';
 import { api } from '../../../convex/_generated/api';
 import type { CampaignRole } from '../../lib/types/campaign';
 
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
 
+function getStatusPill(currentHP: number | null, maxHP: number | null) {
+  if (currentHP === null || maxHP === null || maxHP === 0) {
+    return { label: 'Unknown', bg: '#444', color: '#ccc' };
+  }
+  const quarterHP = Math.floor(maxHP / 4);
+  const halfHP = Math.floor(maxHP / 2);
+  if (currentHP <= 0) return { label: 'Down', bg: '#7f1d1d', color: '#fca5a5' };
+  if (currentHP <= quarterHP) return { label: 'Well-Bloodied', bg: '#78350f', color: '#fcd34d' };
+  if (currentHP <= halfHP) return { label: 'Bloodied', bg: '#7f1d1d', color: '#fca5a5' };
+  return { label: 'Healthy', bg: '#14532d', color: '#86efac' };
+}
+
 export const CampaignDetail: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { detail, isLoading } = useCampaign(id ?? null);
   const currentUser = useCurrentUser();
+  const { roster } = useCampaignRoster(id ?? null);
   const mutations = useCampaignMutations();
 
   // Character list for share picker (owner's cloud characters)
@@ -139,47 +152,60 @@ export const CampaignDetail: React.FC = () => {
             </div>
           )}
 
+          {/* Full Live Roster */}
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #ccc', textAlign: 'left' }}>
-                <th style={{ padding: '0.5rem' }}>Member</th>
-                <th style={{ padding: '0.5rem' }}>Role</th>
-                <th style={{ padding: '0.5rem' }}>Shared Characters</th>
-                {isManager && <th style={{ padding: '0.5rem' }}>Actions</th>}
+                <th style={{ padding: '0.5rem' }}>Character</th>
+                <th style={{ padding: '0.5rem' }}>Owner</th>
+                <th style={{ padding: '0.5rem' }}>Class</th>
+                <th style={{ padding: '0.5rem' }}>Level</th>
+                <th style={{ padding: '0.5rem' }}>HP</th>
+                <th style={{ padding: '0.5rem' }}>Status</th>
+                <th style={{ padding: '0.5rem' }}>View</th>
               </tr>
             </thead>
             <tbody>
-              {members.map((member) => {
-                const isMe = member.userId === currentUser?.userId;
+              {roster.length === 0 && (
+                <tr>
+                  <td colSpan={7} style={{ padding: '1rem', color: '#888', textAlign: 'center' }}>
+                    No shared characters yet.
+                  </td>
+                </tr>
+              )}
+              {roster.map((entry) => {
+                const isOwner = entry.ownerUserId === currentUser?.userId;
+                const statusPill = getStatusPill(entry.currentHP, entry.maxHP);
                 return (
-                  <tr key={member._id} style={{ borderBottom: '1px solid #eee' }}>
+                  <tr key={`${entry.memberDocId}-${entry.characterId}`} style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>{entry.characterName}</td>
                     <td style={{ padding: '0.5rem' }}>
-                      {member.displayName ?? 'Unknown'} {isMe && '(You)'}
+                      {isOwner ? 'You' : (entry.ownerDisplayName ?? 'Unknown')}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>{ROLE_LABELS[member.role]}</td>
+                    <td style={{ padding: '0.5rem' }}>{entry.className ?? '—'}</td>
+                    <td style={{ padding: '0.5rem' }}>{entry.level ?? '—'}</td>
                     <td style={{ padding: '0.5rem' }}>
-                      {member.sharedCharacterIds.length === 0
-                        ? <span style={{ color: '#888' }}>None</span>
-                        : member.sharedCharacterIds.join(', ')}
+                      {entry.currentHP !== null && entry.maxHP !== null
+                        ? `${entry.currentHP} / ${entry.maxHP}`
+                        : '—'}
                     </td>
-                    {isManager && !isMe && member.role !== 'dm' && (
-                      <td style={{ padding: '0.5rem' }}>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <Button
-                            variant="outline"
-                            onClick={() =>
-                              handleSetRole(member.userId, member.role === 'co_dm' ? 'player' : 'co_dm')
-                            }
-                          >
-                            {member.role === 'co_dm' ? 'Demote' : 'Promote Co-DM'}
-                          </Button>
-                          <Button variant="destructive" onClick={() => handleKick(member.userId, member.displayName)}>
-                            Kick
-                          </Button>
-                        </div>
-                      </td>
-                    )}
-                    {isManager && (isMe || member.role === 'dm') && <td />}
+                    <td style={{ padding: '0.5rem' }}>
+                      <span style={{
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '999px',
+                        fontSize: '0.75rem',
+                        background: statusPill.bg,
+                        color: statusPill.color,
+                      }}>
+                        {statusPill.label}
+                      </span>
+                    </td>
+                    <td style={{ padding: '0.5rem' }}>
+                      {isOwner
+                        ? <Button variant="outline" onClick={() => navigate(`/character/${entry.characterId}`)}>Open</Button>
+                        : <Button variant="outline" onClick={() => navigate(`/campaigns/${id}/character/${entry.characterId}`)}>View</Button>
+                      }
+                    </td>
                   </tr>
                 );
               })}

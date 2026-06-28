@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMyCampaigns, useCampaignEvents } from './useCampaigns';
 import type { CampaignEvent } from '../types/campaign';
 
@@ -61,16 +61,14 @@ export interface UseCampaignToastsResult {
   clearToast: () => void;
 }
 
-import React from 'react';
-
 export function useCampaignToasts(): UseCampaignToastsResult {
   const { campaigns } = useMyCampaigns();
   const [toast, setToast] = useState<CampaignToast | null>(null);
   const mountTimestamp = useRef(new Date().toISOString());
 
-  const handleNewEvent = (message: string, variant: 'info' | 'warning') => {
+  const handleNewEvent = useCallback((message: string, variant: 'info' | 'warning') => {
     setToast((prev) => ({ message, variant, key: (prev?.key ?? 0) + 1 }));
-  };
+  }, []);
 
   const watchers = campaigns.map(({ campaign }) =>
     React.createElement(CampaignEventWatcher, {

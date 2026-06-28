@@ -567,6 +567,8 @@ function LoadCharacter() {
 						return (
 							<CharacterCard
 								key={character.id}
+								data-testid={`character-card-${character.id}`}
+								data-character-id={character.id}
 								onClick={() => handleCharacterClick(character)}
 								initial={{ opacity: 0, y: 20 }}
 								animate={{ opacity: 1, y: 0 }}

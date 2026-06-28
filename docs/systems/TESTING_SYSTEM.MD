@@ -2,7 +2,7 @@
 
 > Purpose: Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.
 > Status: Active
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-28
 
 ---
 
@@ -102,7 +102,7 @@ rules-data, or calculator tests.
 | `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                                                                                               |
 | `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                                                                                          |
 | `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                                                                                              |
-| `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, and level-1 Human Barbarian creation through Background/Maneuvers to sheet |
+| `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, level-1 Human Barbarian creation through Background/Maneuvers to sheet, and create → sheet → load/edit → attribute reallocation → resave persistence |
 | `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                              |
 | `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                                                                                   |
 | `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                                                                                       |
@@ -207,6 +207,9 @@ Minimum acceptance cases:
 - Recipe-style E2E tests should be written as named user actions and visible assertions. They may use Playwright as the executor, but the test should read as a deterministic user journey rather than DOM plumbing.
 - Add lightweight semantic hooks (`data-testid`, `data-step-id`, `aria-current`) for agent/browser discovery when the visible control is part of a cross-page flow.
 - Assert explicit visible state or saved localStorage state after each meaningful action.
+- Cross-page persistence E2E tests should attach targeted diagnostics on failure:
+  current URL, relevant console/page errors, and a compact saved-character
+  snapshot before/after the action under test.
 - Avoid screenshot-only success criteria.
 - Keep one spec focused on one user story.
 - Do not use broad text selectors when the same string can appear in hidden options, flavor text, or unrelated cards.

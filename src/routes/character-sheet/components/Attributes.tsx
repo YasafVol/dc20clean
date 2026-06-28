@@ -138,7 +138,9 @@ const Attributes: React.FC<AttributesProps> = ({
 							}
 							position="top"
 						>
-							<AttributeValue $isMobile={isMobile}>{characterData.finalMight}</AttributeValue>
+							<AttributeValue $isMobile={isMobile} data-testid="sheet-attribute-might-value">
+								{characterData.finalMight}
+							</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>
@@ -171,7 +173,9 @@ const Attributes: React.FC<AttributesProps> = ({
 							}
 							position="top"
 						>
-							<AttributeValue $isMobile={isMobile}>{characterData.finalAgility}</AttributeValue>
+							<AttributeValue $isMobile={isMobile} data-testid="sheet-attribute-agility-value">
+								{characterData.finalAgility}
+							</AttributeValue>
 						</Tooltip>
 					</AttributeBox>
 					<AttributeInfo $isMobile={isMobile}>

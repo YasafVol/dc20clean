@@ -1,7 +1,79 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type ConsoleMessage, type Page, type TestInfo } from '@playwright/test';
 import { runRecipe, type RecipeStep } from './support/recipe';
 
 const createFlowUrl = '/';
+const humanBarbarianName = 'Human Barb E2E';
+
+interface PersistedCharacterSnapshot {
+	id: string;
+	finalName: string;
+	finalMight?: number;
+	finalAgility?: number;
+	finalCharisma?: number;
+	finalIntelligence?: number;
+	lastModified?: string;
+}
+
+async function getSavedCharacterByName(
+	page: Page,
+	finalName: string
+): Promise<PersistedCharacterSnapshot | null> {
+	return page.evaluate((name) => {
+		const characters = JSON.parse(localStorage.getItem('savedCharacters') || '[]');
+		return characters.find((character: any) => character.finalName === name) ?? null;
+	}, finalName);
+}
+
+async function attachJson(testInfo: TestInfo, name: string, data: unknown) {
+	await testInfo.attach(name, {
+		body: JSON.stringify(data, null, 2),
+		contentType: 'application/json'
+	});
+}
+
+async function withEditResaveDiagnostics(
+	page: Page,
+	testInfo: TestInfo,
+	finalName: string,
+	run: () => Promise<void>,
+	getSnapshots: () => unknown = () => []
+) {
+	const consoleEvents: Array<{ type: string; text: string }> = [];
+	const pageErrors: string[] = [];
+	const consoleHandler = (message: ConsoleMessage) => {
+		const text = message.text();
+		if (
+			message.type() === 'error' ||
+			message.type() === 'warning' ||
+			/character|storage|save|convex|localStorage/i.test(text)
+		) {
+			consoleEvents.push({ type: message.type(), text });
+		}
+	};
+	const pageErrorHandler = (error: Error) => {
+		pageErrors.push(error.stack || error.message);
+	};
+
+	page.on('console', consoleHandler);
+	page.on('pageerror', pageErrorHandler);
+
+	try {
+		await run();
+	} catch (error) {
+		await attachJson(testInfo, 'character-edit-resave-diagnostics', {
+			url: page.url(),
+			error: error instanceof Error ? error.message : String(error),
+			consoleEvents: consoleEvents.slice(-80),
+			pageErrors,
+			snapshots: getSnapshots(),
+			savedCharacter: await getSavedCharacterByName(page, finalName)
+		});
+		throw error;
+	} finally {
+		page.off('console', consoleHandler);
+		page.off('pageerror', pageErrorHandler);
+	}
+}
 
 async function openCharacterCreation(page: Parameters<RecipeStep['run']>[0]) {
 	await page.goto(createFlowUrl);
@@ -98,11 +170,11 @@ const humanBarbarianCreationRecipe: RecipeStep[] = [
 	{
 		name: 'Name and save character',
 		run: async (page) => {
-			await page.getByTestId('character-name-input').fill('Human Barb E2E');
+			await page.getByTestId('character-name-input').fill(humanBarbarianName);
 			await page.getByTestId('player-name-input').fill('Playwright');
 			await page.getByRole('button', { name: 'Finish & Go to Sheet →' }).click();
 			await page.waitForURL('**/character/**');
-			await expect(page.getByRole('heading', { name: 'Human Barb E2E' })).toBeVisible();
+			await expect(page.getByRole('heading', { name: humanBarbarianName })).toBeVisible();
 			await expect(page.getByText('Level 1 Barbarian')).toBeVisible();
 			await expect(page.getByText('Attack/Spell')).toBeVisible();
 		}
@@ -188,5 +260,69 @@ test.describe('Character creation flow recipes', () => {
 		page
 	}) => {
 		await runRecipe(page, humanBarbarianCreationRecipe);
+	});
+
+	test('edits a completed character, reallocates one attribute point, and persists the resave', async ({
+		page
+	}, testInfo) => {
+		const snapshots: Array<{
+			label: string;
+			character: PersistedCharacterSnapshot | null;
+		}> = [];
+
+		await withEditResaveDiagnostics(page, testInfo, humanBarbarianName, async () => {
+			await runRecipe(page, humanBarbarianCreationRecipe);
+
+			const createdCharacter = await getSavedCharacterByName(page, humanBarbarianName);
+			snapshots.push({ label: 'after-create', character: createdCharacter });
+			expect(createdCharacter).toMatchObject({
+				finalName: humanBarbarianName,
+				finalMight: 3,
+				finalAgility: 1
+			});
+			expect(createdCharacter?.id).toBeTruthy();
+
+			await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('3');
+			await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('1');
+
+			await page.getByRole('button', { name: /back/i }).first().click();
+			await page.waitForURL('**/menu');
+			await page.getByRole('button', { name: /Load Character/i }).click();
+			await page.waitForURL('**/load-character');
+
+			const characterCard = page.getByTestId(`character-card-${createdCharacter!.id}`);
+			await expect(characterCard).toContainText(humanBarbarianName);
+			await characterCard.getByRole('button', { name: 'Edit' }).click();
+			await page.waitForURL('**/character/**/edit');
+
+			await expect(page.getByTestId('creation-step-class')).toBeVisible();
+			await page.getByTestId('creation-step-attributes').click();
+			await expect(page.getByTestId('creation-step-attributes')).toHaveAttribute(
+				'aria-current',
+				'step'
+			);
+
+			await page.getByTestId('might-decrease').click();
+			await page.getByTestId('agility-increase').click();
+			await expect(page.getByText('Spent: 13 | Remaining: 0')).toBeVisible();
+
+			await page.getByTestId('creation-step-name').click();
+			await expect(page.getByTestId('creation-step-name')).toHaveAttribute('aria-current', 'step');
+			await page.getByTestId('creation-next').click();
+			await page.waitForURL(`**/character/${createdCharacter!.id}`);
+
+			const updatedCharacter = await getSavedCharacterByName(page, humanBarbarianName);
+			snapshots.push({ label: 'after-edit-resave', character: updatedCharacter });
+			expect(updatedCharacter).toMatchObject({
+				id: createdCharacter!.id,
+				finalMight: 2,
+				finalAgility: 2
+			});
+			expect(updatedCharacter?.lastModified).not.toBe(createdCharacter?.lastModified);
+
+			await expect(page.getByRole('heading', { name: humanBarbarianName })).toBeVisible();
+			await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('2');
+			await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('2');
+		}, () => snapshots);
 	});
 });

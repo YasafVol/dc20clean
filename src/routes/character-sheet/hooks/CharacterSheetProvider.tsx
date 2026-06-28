@@ -593,10 +593,9 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 
 	// Retry failed save function
 	const retryFailedSave = useCallback(() => {
-		if (state.character) {
-			saveCharacterData(state.character);
-		}
-	}, [state.character, saveCharacterData]);
+		if (readOnly || !state.character) return;
+		saveCharacterData(state.character);
+	}, [readOnly, state.character, saveCharacterData]);
 
 	const contextValue: CharacterSheetContextType = {
 		state,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import * as convexReact from 'convex/react';
 
 vi.mock('convex/react', () => ({
@@ -8,14 +8,14 @@ vi.mock('convex/react', () => ({
   useMutation: vi.fn(),
 }));
 vi.mock('../../../../convex/_generated/api', () => ({
-  api: { characters: { getByIdForMember: 'characters:getByIdForMember' } },
+  api: { characters: { getByIdForMember: 'characters:getByIdForMember', list: 'characters:list' } },
 }));
-
 vi.mock('../../../lib/storage', () => ({
   getDefaultStorage: () => ({
     getCharacterById: vi.fn().mockResolvedValue(null),
-    saveCharacter: vi.fn().mockResolvedValue(undefined),
-    saveCharacterState: vi.fn().mockResolvedValue(undefined),
+    saveCharacter: vi.fn(),
+    listCharacters: vi.fn().mockResolvedValue([]),
+    deleteCharacter: vi.fn(),
   }),
 }));
 
@@ -41,22 +41,17 @@ const mockChar = {
 };
 
 describe('CharacterSheetProvider read-only mode', () => {
-  it('does not call saveCharacter when readOnly', async () => {
-    const saveMock = vi.fn();
+  it('exposes readOnly=true and saveNow is a no-op when campaignId is provided', async () => {
     vi.mocked(convexReact.useQuery).mockReturnValue(mockChar);
+    vi.mocked(convexReact.useMutation).mockReturnValue(vi.fn() as any);
 
-    // Import provider after mocks
     const { CharacterSheetProvider, useCharacterSheet } =
       await import('./CharacterSheetProvider');
 
-    let saveNow: (() => Promise<void>) | undefined;
-    let contextReadOnly: boolean | undefined;
-
+    let ctx: ReturnType<typeof useCharacterSheet> | undefined;
     function Consumer() {
-      const ctx = useCharacterSheet();
-      saveNow = ctx.saveNow;
-      contextReadOnly = ctx.readOnly;
-      return <div data-testid="read-only">{String(ctx.readOnly)}</div>;
+      ctx = useCharacterSheet();
+      return null;
     }
 
     render(
@@ -65,11 +60,13 @@ describe('CharacterSheetProvider read-only mode', () => {
       </CharacterSheetProvider>
     );
 
-    // readOnly must be true when campaignId is provided
-    expect(screen.getByTestId('read-only')).toHaveTextContent('true');
+    expect(ctx?.readOnly).toBe(true);
 
-    await act(async () => { await saveNow?.(); });
-    expect(saveMock).not.toHaveBeenCalled();
-    expect(contextReadOnly).toBe(true);
+    // saveNow should be a no-op in read-only mode
+    const { getDefaultStorage } = await import('../../../lib/storage');
+    const storageMock = (getDefaultStorage as ReturnType<typeof vi.fn>)();
+
+    await act(async () => { await ctx?.saveNow(); });
+    expect(storageMock.saveCharacter).not.toHaveBeenCalled();
   });
 });

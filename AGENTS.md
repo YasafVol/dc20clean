@@ -73,6 +73,12 @@ The wizard flow and every subsystem that feeds into it.
 | `docs/systems/MONSTER_SYSTEM_SPEC.MD`   | Monster designer using DC20 point-buy: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing | `src/routes/dm/monsters/*`, `convex/monsters.ts`     |
 | `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD` | Encounter planner: budget formulas (party size x level), difficulty scaling, monster slotting, validation thresholds                                  | `src/routes/dm/encounters/*`, `convex/encounters.ts` |
 
+### Campaigns
+
+| Doc                                    | What it covers                                                                                                                                                       | Key code                                                                 |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `docs/systems/CAMPAIGN_SYSTEM.MD`      | Campaign schema (3 tables), role-based permission model, join-code security, event system, read-only sheet mode, toast notification pipeline, known limitations      | `src/routes/campaigns/*`, `convex/campaigns.ts`, `src/lib/hooks/useCampaigns.ts` |
+
 ### Infrastructure
 
 | Doc                                 | What it covers                                                                                                                            | Key code                        |
@@ -107,6 +113,7 @@ Use this routing table to find the 2-4 docs relevant to your task.
 | Working on **equipment builder**                                      | `EQUIPMENT_SYSTEM`                                                                    |
 | Working on **DM monster tools**                                       | `MONSTER_SYSTEM_SPEC`, `DATABASE_SYSTEM`                                              |
 | Working on **DM encounter planner**                                   | `ENCOUNTER_SYSTEM_SPEC`, `MONSTER_SYSTEM_SPEC`, `DATABASE_SYSTEM`                     |
+| Working on **campaigns**                                              | `CAMPAIGN_SYSTEM`, `DATABASE_SYSTEM`, `CHARACTER_SHEET`                               |
 | Modifying **storage or persistence**                                  | `DATABASE_SYSTEM`                                                                     |
 | Working on **PDF export**                                             | `PDF_EXPORT_SYSTEM`, `CALCULATION_SYSTEM`                                             |
 | Changing **versioning, migrations, compatibility, or rules upgrades** | `VERSIONING_SYSTEM`, `DATABASE_SYSTEM`, `PDF_EXPORT_SYSTEM`                           |

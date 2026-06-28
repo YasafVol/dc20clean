@@ -38,7 +38,7 @@ shared interactions are added as new event types without new infrastructure.
 - OS / browser push notifications (service workers). In-app only.
 - Per-field privacy (hiding notes/inventory) — whole shared character is visible.
 - Revocable per-invite tokens or join approval — single reusable code only.
-- In-campaign chat, dice rolling, shared maps, initiative tracker.
+- Dice rolling, initiative tracker.
 - Sharing localStorage-only characters (see constraint below).
 
 ## 3. Constraints & Assumptions
@@ -172,6 +172,6 @@ shared interactions are added as new event types without new infrastructure.
 
 ## 8. Future (explicitly deferred)
 Per-field privacy; invite tokens & approval; OS/browser push; character snapshot
-mode; chat; shared initiative/encounter integration; ownership transfer; more
+mode; shared initiative/encounter integration; ownership transfer; more
 event types (death, level-up, condition gained, long rest, etc.) — all added as
 new event types on the same foundation.

@@ -266,9 +266,10 @@ export const getByIdForMember = query({
 		const isShared = anyMember.some((m) => m.sharedCharacterIds.includes(args.characterId));
 		if (!isShared) return null;
 
-		return ctx.db
+		const char = await ctx.db
 			.query('characters')
 			.withIndex('by_app_id', (q) => q.eq('id', args.characterId))
 			.first();
+		return char?.deletedAt ? null : char ?? null;
 	},
 });

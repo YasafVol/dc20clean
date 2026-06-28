@@ -372,7 +372,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				onShowSnackbar: (_message: string) => {
 					setSnackbarMessage(t('characterCreation.leveledUpSuccess'));
 					setShowSnackbar(true);
-				}
+				},
+				persist: false
 			});
 
 			if (!createdCharacter) return;
@@ -382,11 +383,8 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 				id: originalId,
 				createdAt: originalCharacter?.createdAt || createdCharacter.createdAt
 			};
-			const updatedChars = (await storage.getAllCharacters())
-				.filter((character) => character.id !== createdCharacter.id)
-				.map((character) => (character.id === originalId ? savedCharacter! : character));
 
-			await storage.saveAllCharacters(updatedChars);
+			await storage.saveCharacter(savedCharacter);
 			debug.character('Character updated via level-up', originalId);
 		} else if (editChar) {
 			const supportedClasses = [

@@ -59,8 +59,12 @@ function sanitizeCharacterStateForConvex(
 	return normalizeCharacterStateForStorage(state);
 }
 
-function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
-	return {
+function hasRecordEntries(value: unknown): boolean {
+	return !!value && typeof value === 'object' && Object.keys(value).length > 0;
+}
+
+export function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
+	const payload = {
 		...character,
 		schemaVersion: character.schemaVersion || CURRENT_SCHEMA_VERSION,
 		rulesVersion: normalizeRulesVersion(character.rulesVersion),
@@ -68,6 +72,17 @@ function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
 		characterState: sanitizeCharacterStateForConvex(character.characterState) as CharacterState
 	};
+
+	// Prod Convex can lag frontend schema deploys. Do not send empty optional root
+	// records that older strict table validators reject.
+	if (!hasRecordEntries(payload.skillMasteryLimitElevations)) {
+		delete payload.skillMasteryLimitElevations;
+	}
+	if (!hasRecordEntries(payload.tradeMasteryLimitElevations)) {
+		delete payload.tradeMasteryLimitElevations;
+	}
+
+	return payload;
 }
 
 class ConvexStorageAdapter implements CharacterStorageWithEvents {

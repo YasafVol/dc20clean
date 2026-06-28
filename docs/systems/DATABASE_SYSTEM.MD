@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-06-28
 
 ---
 
@@ -183,10 +183,12 @@ savedCharacters_backup → Backup copy (for migration safety)
 | `saveCharacter()`         | `storageUtils.ts` | Save/update single character |
 | `saveCharacterState()`    | `storageUtils.ts` | Update only game state       |
 
-Character edit completion is a single-record save. After recalculating the
-edited character, the edit flow calls `saveCharacter(editedCharacter)` rather
-than rewriting the full character list. This prevents one stale cloud record
-from blocking a different character's edit save under Convex strict validation.
+Character creation, edit completion, and level-up replacement are single-record
+saves. Creation calls `saveCharacter(completedCharacter)` for the new record.
+Edit and level-up recalculate the target character and call
+`saveCharacter(updatedCharacter)` rather than rewriting the full character list.
+This prevents one stale cloud record from blocking a different character's save
+under Convex strict validation.
 
 ### 4.3 Serialization
 
@@ -480,6 +482,11 @@ When validators or table definitions change in `convex/`:
 1. Run `npx convex dev --once`
 2. Commit schema/function changes together with `convex/_generated/*`
 3. Roll out frontend code that consumes the updated generated API
+
+The Convex adapter omits empty optional root records for fields introduced in a
+newer frontend schema when that preserves compatibility with a stale deployed
+Convex table validator. Non-empty records are still sent and require the Convex
+backend schema to be deployed.
 
 ---
 

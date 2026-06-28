@@ -88,6 +88,7 @@ export interface CharacterCompletionCallbacks {
 	onShowSnackbar: (message: string) => void;
 	onNavigateToLoad?: (character: SavedCharacter) => void;
 	navigateDelayMs?: number;
+	persist?: boolean;
 }
 
 export const completeCharacter = async (
@@ -432,18 +433,17 @@ export const completeCharacter = async (
 			}
 		}
 
-		// OPTIMIZED: Save using new typed storage utilities
-		const storage = getDefaultStorage();
-		const existingCharacters = await storage.getAllCharacters();
-		existingCharacters.push(completedCharacter);
-		await storage.saveAllCharacters(existingCharacters);
+		if (callbacks.persist !== false) {
+			const storage = getDefaultStorage();
+			await storage.saveCharacter(completedCharacter);
+		}
 
 		logger.info('ui', 'Character creation complete', {
 			characterId: completedCharacter.id,
 			characterName: completedCharacter.finalName,
 			className: completedCharacter.className,
 			level: completedCharacter.level,
-			totalCharacters: existingCharacters.length
+			persisted: callbacks.persist !== false
 		});
 
 		// Track analytics event

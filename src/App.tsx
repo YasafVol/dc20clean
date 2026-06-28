@@ -16,9 +16,12 @@ import { CampaignList, CampaignDetail, JoinCampaign, CampaignCharacterView } fro
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
+import { useAppAuth } from './components/auth/AuthModeContext';
 import TopLeftToolbar from './components/TopLeftToolbar.tsx';
 import LanguageSwitcher from './components/LanguageSwitcher.tsx';
 import UserbackFeedback from './components/UserbackFeedback.tsx';
+import { useCampaignToasts } from './lib/hooks/useCampaignToasts';
+import Snackbar from './components/Snackbar';
 
 // Import fonts for GlobalStyle
 
@@ -88,6 +91,31 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
+function CampaignNotificationInner() {
+	const { watchers, toast, clearToast } = useCampaignToasts();
+	return (
+		<>
+			{watchers}
+			{toast && (
+				<Snackbar
+					key={toast.key}
+					message={toast.message}
+					isVisible
+					onClose={clearToast}
+					duration={5000}
+					variant={toast.variant}
+				/>
+			)}
+		</>
+	);
+}
+
+function CampaignNotificationLayer() {
+	const { isConvexEnabled, isAuthenticated } = useAppAuth();
+	if (!isConvexEnabled || !isAuthenticated) return null;
+	return <CampaignNotificationInner />;
+}
+
 function App() {
 	return (
 		<>
@@ -102,6 +130,7 @@ function App() {
 					<UserbackFeedback />
 					{/* Fixed top-left toolbar with back button */}
 					<TopLeftToolbar />
+					<CampaignNotificationLayer />
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />

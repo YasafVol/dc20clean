@@ -38,6 +38,7 @@ import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeat
 import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
 import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
+import { useCampaignEventProducer } from './useCampaignEventProducer';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -395,6 +396,8 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 	);
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+	const [savedHP, setSavedHP] = useState<number | null>(null);
+	const [savedMaxHP, setSavedMaxHP] = useState<number | null>(null);
 	const lastSavedHash = useRef<string>('');
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -481,6 +484,8 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 				lastSavedHash.current = currentHash;
+				setSavedHP(updatedCharacter.characterState?.resources?.current?.currentHP ?? null);
+				setSavedMaxHP(updatedCharacter.finalHPMax ?? null);
 
 				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
@@ -506,6 +511,8 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 					await storage.saveCharacter(character);
 
 					lastSavedHash.current = currentHash;
+					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
+					setSavedMaxHP(character.finalHPMax ?? null);
 					setSaveStatus('saved');
 
 					// Reset to idle after 2 seconds
@@ -520,7 +527,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 				}
 			}
 		},
-		[storage]
+		[storage, setSavedHP, setSavedMaxHP]
 	);
 
 	// Debounced save function
@@ -596,6 +603,16 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		if (readOnly || !state.character) return;
 		saveCharacterData(state.character);
 	}, [readOnly, state.character, saveCharacterData]);
+
+	// Campaign event producer: fires well_bloodied / deaths_door / dead events after saves
+	useCampaignEventProducer(
+		state.character?.id ?? null,
+		readOnly,
+		savedHP,
+		savedMaxHP,
+		state.character?.finalName ?? null,
+		state.character?.finalDeathThreshold ?? -10
+	);
 
 	const contextValue: CharacterSheetContextType = {
 		state,

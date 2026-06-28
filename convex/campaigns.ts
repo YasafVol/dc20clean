@@ -190,7 +190,9 @@ export const getCampaignsForCharacter = query({
 
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const bytes = new Uint8Array(6);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => chars[b % chars.length]).join('');
 }
 
 export const createCampaign = mutation({
@@ -394,13 +396,12 @@ export const kickMember = mutation({
     const { userId } = await requireManager(ctx, campaign._id);
     if (userId.toString() === args.targetUserId) throw new Error('Cannot kick yourself');
 
-    const target = await ctx.db
+    const members = await ctx.db
       .query('campaignMembers')
-      .withIndex('by_campaign_and_user', (q: any) =>
-        q.eq('campaignId', campaign._id).eq('userId', args.targetUserId as any)
-      )
+      .withIndex('by_campaign', (q: any) => q.eq('campaignId', campaign._id))
       .filter((q: any) => q.eq(q.field('deletedAt'), undefined))
-      .first();
+      .collect();
+    const target = members.find((m: any) => m.userId.toString() === args.targetUserId);
     if (!target) throw new Error('Member not found');
     if (target.role === 'dm') throw new Error('Cannot kick the DM');
     await ctx.db.patch(target._id, { deletedAt: new Date().toISOString() });
@@ -418,13 +419,12 @@ export const setMemberRole = mutation({
     if (!campaign) throw new Error('Campaign not found');
     await requireDm(ctx, campaign._id);
 
-    const target = await ctx.db
+    const members = await ctx.db
       .query('campaignMembers')
-      .withIndex('by_campaign_and_user', (q: any) =>
-        q.eq('campaignId', campaign._id).eq('userId', args.targetUserId as any)
-      )
+      .withIndex('by_campaign', (q: any) => q.eq('campaignId', campaign._id))
       .filter((q: any) => q.eq(q.field('deletedAt'), undefined))
-      .first();
+      .collect();
+    const target = members.find((m: any) => m.userId.toString() === args.targetUserId);
     if (!target) throw new Error('Member not found');
     if (target.role === 'dm') throw new Error('Cannot change the DM role');
     await ctx.db.patch(target._id, { role: args.role });

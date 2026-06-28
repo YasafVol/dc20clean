@@ -199,6 +199,7 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 import { useIsAuthenticated } from './auth';
+import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
 
 // Encounter planner icon
@@ -231,6 +232,7 @@ export const EncounterIcon = () => (
 function Menu() {
 	const navigate = useNavigate();
 	const isAuthenticated = useIsAuthenticated();
+	const { isConvexEnabled } = useAppAuth();
 	const { t } = useTranslation();
 
 	return (
@@ -286,6 +288,27 @@ function Menu() {
 							</StyledIcon>
 							<StyledTextContent>
 								<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+					</StyledDMGrid>
+				</StyledMenuSection>
+			)}
+
+			{/* Campaigns Section - Only visible when authenticated and Convex enabled */}
+			{isAuthenticated && isConvexEnabled && (
+				<StyledMenuSection>
+					<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
+					<StyledDMGrid>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
+							<StyledIcon $variant="dm">Map</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+						<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
+							<StyledIcon $variant="dm">Key</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
 							</StyledTextContent>
 						</StyledMenuCard>
 					</StyledDMGrid>

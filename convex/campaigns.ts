@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { query, mutation } from './_generated/server';
+import { query } from './_generated/server';
 import { getAuthUserId } from '@convex-dev/auth/server';
 import type { Id } from './_generated/dataModel';
 
@@ -103,6 +103,9 @@ export const getCampaign = query({
 export const getRoster = query({
   args: { campaignId: v.string() },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) return [];
 
@@ -144,6 +147,9 @@ export const getRoster = query({
 export const listEvents = query({
   args: { campaignId: v.string(), limit: v.optional(v.number()) },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) return [];
 

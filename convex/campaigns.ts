@@ -246,6 +246,7 @@ export const createCampaign = mutation({
 
 export const joinByCode = mutation({
   args: { code: v.string() },
+  returns: v.object({ id: v.string(), alreadyMember: v.boolean() }),
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error('Not authenticated');

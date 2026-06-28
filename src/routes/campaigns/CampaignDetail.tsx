@@ -3,12 +3,23 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { Button } from '../../components/ui/button';
 import { AuthGuard } from '../../components/auth/AuthGuard';
-import { useCampaign, useCampaignRoster, useCampaignMutations } from '../../lib/hooks/useCampaigns';
+import { useCampaign, useCampaignRoster, useCampaignMutations, useCampaignEvents } from '../../lib/hooks/useCampaigns';
 import { useCurrentUser } from '../../components/auth/CurrentUserContext';
 import { api } from '../../../convex/_generated/api';
-import type { CampaignRole } from '../../lib/types/campaign';
+import type { CampaignRole, CampaignEvent } from '../../lib/types/campaign';
 
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
+
+function formatEvent(event: CampaignEvent): string {
+  const name = (event.payload as any)?.characterName ?? (event.payload as any)?.displayName ?? 'Someone';
+  switch (event.type) {
+    case 'well_bloodied': return `[!!] ${name} is well-bloodied!`;
+    case 'bloodied': return `[~] ${name} is bloodied.`;
+    case 'member_joined': return `[+] ${name} joined the campaign.`;
+    case 'character_shared': return `[~] ${name} was shared.`;
+    default: return `[*] ${event.type}: ${name}`;
+  }
+}
 
 function getStatusPill(currentHP: number | null, maxHP: number | null) {
   if (currentHP === null || maxHP === null || maxHP === 0) {
@@ -29,6 +40,7 @@ export const CampaignDetail: React.FC = () => {
   const currentUser = useCurrentUser();
   const { roster } = useCampaignRoster(id ?? null);
   const mutations = useCampaignMutations();
+  const { events } = useCampaignEvents(id ?? null);
 
   // Character list for share picker (owner's cloud characters)
   const myCharacters = useQuery(api.characters.list) ?? [];
@@ -211,6 +223,32 @@ export const CampaignDetail: React.FC = () => {
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Event Feed */}
+        <div style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>Event Feed</h2>
+          {events.length === 0 && (
+            <p style={{ color: '#888' }}>No events yet.</p>
+          )}
+          <div style={{ display: 'grid', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
+            {events.map((event) => (
+              <div key={event._id} style={{
+                padding: '0.5rem 0.75rem',
+                background: '#1a1a2e',
+                borderRadius: '6px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '0.875rem',
+              }}>
+                <span>{formatEvent(event)}</span>
+                <span style={{ color: '#666', fontSize: '0.75rem' }}>
+                  {new Date(event.createdAt).toLocaleTimeString()}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <Button variant="outline" onClick={() => navigate('/campaigns')}>← Back</Button>

@@ -7,6 +7,7 @@ import './styles/globals.css';
 import i18n, { i18nPromise } from './i18n/config';
 import { getOptionalConvexClient } from './lib/convexClient';
 import { ConvexAppAuthProvider, LocalAppAuthProvider } from './components/auth/AuthModeContext';
+import { CurrentUserProvider } from './components/auth/CurrentUserContext';
 
 console.log('[GIMLI DEBUG] 🔧 App Initialization:', {
 	VITE_CONVEX_URL: import.meta.env.VITE_CONVEX_URL,
@@ -29,7 +30,9 @@ function renderApp() {
 			{convex ? (
 				<ConvexAuthProvider client={convex}>
 					<ConvexAppAuthProvider>
-						<App />
+						<CurrentUserProvider>
+							<App />
+						</CurrentUserProvider>
 					</ConvexAppAuthProvider>
 				</ConvexAuthProvider>
 			) : (

@@ -26,7 +26,7 @@ export const CampaignList: React.FC = () => {
       const result = await createCampaign(newName.trim());
       setCreating(false);
       setNewName('');
-      navigate(`/campaigns/${(result as { id: string }).id}`);
+      navigate(`/campaigns/${result.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to create campaign');
     }
@@ -70,7 +70,7 @@ export const CampaignList: React.FC = () => {
 
         {isLoading && <p>Loading campaigns...</p>}
 
-        {!isLoading && campaigns.length === 0 && (
+        {!isLoading && !creating && campaigns.length === 0 && (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
             <p style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>No campaigns yet.</p>
             <p>Create a campaign or join one with a code.</p>

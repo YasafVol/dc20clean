@@ -197,6 +197,7 @@ function generateCode(): string {
 
 export const createCampaign = mutation({
   args: { name: v.string(), description: v.optional(v.string()) },
+  returns: v.object({ id: v.string() }),
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error('Not authenticated');

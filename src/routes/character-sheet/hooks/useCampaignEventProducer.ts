@@ -14,7 +14,7 @@ export function useCampaignEventProducer(
 	const campaignLinks = useCampaignsForCharacter(readOnly ? null : characterId);
 	const { postEvent } = useCampaignMutations();
 	const prevStatusRef = useRef<string | null>(null);
-	const prevIsDeadRef = useRef<boolean>(false);
+	const prevIsDeadRef = useRef<boolean | undefined>(undefined);
 
 	// HP-based status transitions: bloodied, well-bloodied, deaths-door, recovered
 	useEffect(() => {
@@ -55,6 +55,7 @@ export function useCampaignEventProducer(
 		const prevIsDead = prevIsDeadRef.current;
 		prevIsDeadRef.current = savedIsDead;
 
+		if (prevIsDead === undefined) return; // first load, record baseline
 		if (!savedIsDead || savedIsDead === prevIsDead) return;
 		if (campaignLinks.length === 0) return;
 

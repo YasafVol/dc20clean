@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-26
+> Last Updated: 2026-06-28
 
 ## Recent UX additions
 
@@ -267,9 +267,66 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 ---
 
-## 8. Related Docs
+## 8. Read-Only Mode (Campaign Viewing)
 
-- `docs/systems/CALCULATION_SYSTEM.MD` ? how stats are computed
-- `docs/systems/SPELLS_SYSTEM.MD` ? spell data and assignment
-- `docs/systems/MARTIALS_SYSTEM.MD` ? maneuver data
-- `docs/systems/BACKGROUND_SYSTEM.MD` ? skills/trades/languages
+Campaign members can view a shared character sheet in read-only mode. The same `CharacterSheetProvider` is used; a single `campaignId` prop switches the provider into this mode.
+
+### 8.1 Trigger
+
+`CharacterSheetProvider` accepts `campaignId?: string`. When the prop is set, `readOnly = true` for the entire provider instance:
+
+```typescript
+export function CharacterSheetProvider({ children, characterId, campaignId }) {
+  const readOnly = !!campaignId;
+}
+```
+
+### 8.2 Load path
+
+When `campaignId` is present, the character is fetched via `characters.getByIdForMember` (a Convex query with a three-layer auth + membership + sharing guard) rather than local storage:
+
+```typescript
+const campaignCharacter = useQuery(
+  api.characters.getByIdForMember,
+  campaignId ? { campaignId, characterId } : 'skip'
+);
+```
+
+### 8.3 No save effects
+
+- The auto-save `useEffect` short-circuits: `if (readOnly || !state.character) return`.
+- `saveNow` is a no-op: `if (readOnly) return`.
+- `retryFailedSave` is guarded: `if (readOnly || !state.character) return`.
+
+### 8.4 Reducer no-op guards
+
+`useCharacterSheetReducer` receives `readOnly`. All state-mutating callbacks (HP changes, condition toggles, inventory edits, etc.) guard with `if (readOnly) return`, so the sheet renders the live data without allowing writes.
+
+### 8.5 Read-only banner
+
+`CharacterSheetRedesign.tsx` renders a banner at the top of the sheet when `readOnly` is truthy:
+
+```
+Read-only — viewing <characterName>'s sheet
+```
+
+### 8.6 Related files
+
+| File | Role |
+| ---- | ---- |
+| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | `readOnly` flag, load path, save guards |
+| `src/routes/character-sheet/CharacterSheetRedesign.tsx` | Read-only banner |
+| `src/routes/campaigns/CampaignCharacterView.tsx` | Route that passes `campaignId` to the provider |
+| `convex/characters.ts` (`getByIdForMember`) | Three-layer guarded query |
+
+See `docs/systems/CAMPAIGN_SYSTEM.MD` for the full campaign architecture.
+
+---
+
+## 9. Related Docs
+
+- `docs/systems/CALCULATION_SYSTEM.MD` — how stats are computed
+- `docs/systems/SPELLS_SYSTEM.MD` — spell data and assignment
+- `docs/systems/MARTIALS_SYSTEM.MD` — maneuver data
+- `docs/systems/BACKGROUND_SYSTEM.MD` — skills/trades/languages
+- `docs/systems/CAMPAIGN_SYSTEM.MD` — campaign system and read-only mode

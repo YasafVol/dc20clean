@@ -22,6 +22,15 @@ const {
 	mockConvertToEnhancedBuildData: vi.fn()
 }));
 
+vi.mock('convex/react', () => ({
+	useQuery: vi.fn().mockReturnValue(undefined),
+	useMutation: vi.fn(),
+}));
+
+vi.mock('../../../../convex/_generated/api', () => ({
+	api: { characters: { getByIdForMember: 'characters:getByIdForMember' } },
+}));
+
 vi.mock('../../../lib/storage', () => ({
 	getDefaultStorage: () => ({
 		getCharacterById: mockGetCharacterById,

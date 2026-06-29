@@ -7,6 +7,8 @@ import React, {
 	useRef,
 	useState
 } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
 import {
 	useCharacterSheetReducer,
 	type SheetState,
@@ -36,6 +38,7 @@ import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeat
 import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
 import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
+import { useCampaignEventProducer } from './useCampaignEventProducer';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -337,6 +340,8 @@ interface CharacterSheetContextType {
 	// Save status
 	saveStatus: SaveStatus;
 	retryFailedSave: () => void;
+	// Read-only mode (campaign member viewing another's sheet)
+	readOnly: boolean;
 }
 
 const CharacterSheetContext = createContext<CharacterSheetContextType | undefined>(undefined);
@@ -344,9 +349,11 @@ const CharacterSheetContext = createContext<CharacterSheetContextType | undefine
 interface CharacterSheetProviderProps {
 	children: React.ReactNode;
 	characterId: string;
+	campaignId?: string;
 }
 
-export function CharacterSheetProvider({ children, characterId }: CharacterSheetProviderProps) {
+export function CharacterSheetProvider({ children, characterId, campaignId }: CharacterSheetProviderProps) {
+	const readOnly = !!campaignId;
 	const {
 		state,
 		dispatch,
@@ -380,9 +387,17 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive
-	} = useCharacterSheetReducer();
+	} = useCharacterSheetReducer(readOnly);
+
+	// Campaign member view: fetch character via Convex query
+	const campaignCharacter = useQuery(
+		api.characters.getByIdForMember,
+		campaignId ? { campaignId, characterId } : 'skip'
+	);
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+	const [savedHP, setSavedHP] = useState<number | null>(null);
+	const [savedMaxHP, setSavedMaxHP] = useState<number | null>(null);
 	const lastSavedHash = useRef<string>('');
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -469,6 +484,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
 				lastSavedHash.current = currentHash;
+				setSavedHP(updatedCharacter.characterState?.resources?.current?.currentHP ?? null);
+				setSavedMaxHP(updatedCharacter.finalHPMax ?? null);
 
 				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
@@ -494,6 +511,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 					await storage.saveCharacter(character);
 
 					lastSavedHash.current = currentHash;
+					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
+					setSavedMaxHP(character.finalHPMax ?? null);
 					setSaveStatus('saved');
 
 					// Reset to idle after 2 seconds
@@ -508,26 +527,25 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 				}
 			}
 		},
-		[storage]
+		[storage, setSavedHP, setSavedMaxHP]
 	);
 
 	// Debounced save function
 	const debouncedSave = useDebounce(saveCharacterData, 2000);
 
-	// Effect to auto-save when state changes
+	// Effect to auto-save when state changes (skip when readOnly)
 	useEffect(() => {
+		if (readOnly || !state.character) return () => debouncedSave.cancel();
 		logger.debug('storage', 'Character state changed', {
 			exists: !!state.character,
 			id: state.character?.id,
 			hpCurrent: state.character?.characterState?.resources?.current?.currentHP
 		});
-		if (state.character) {
-			logger.debug('storage', 'Auto-save effect triggered - queueing debounced save');
-			debouncedSave(state.character);
-		}
+		logger.debug('storage', 'Auto-save effect triggered - queueing debounced save');
+		debouncedSave(state.character);
 		// Clean up on unmount
 		return () => debouncedSave.cancel();
-	}, [state.character, debouncedSave]);
+	}, [state.character, debouncedSave, readOnly]);
 
 	// Cleanup save status timeout on unmount
 	useEffect(() => {
@@ -538,12 +556,19 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		};
 	}, []);
 
-	// Effect to load character data on mount
+	// Effect to load character data on mount (campaign-aware)
 	useEffect(() => {
 		const loadCharacter = async () => {
 			try {
 				dispatch({ type: 'LOAD_START' });
-				const characterData = await storage.getCharacterById(characterId);
+				let characterData;
+				if (campaignId) {
+					// campaignCharacter: undefined = still loading, null = not found, object = found
+					if (campaignCharacter === undefined) return;
+					characterData = campaignCharacter ?? null;
+				} else {
+					characterData = await storage.getCharacterById(characterId);
+				}
 				if (characterData) {
 					dispatch({ type: 'LOAD_SUCCESS', character: characterData });
 				} else {
@@ -561,23 +586,33 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 			}
 		};
 		loadCharacter();
-	}, [characterId, dispatch, storage]);
+	}, [characterId, campaignId, campaignCharacter, dispatch, storage]);
 
-	// Manual save function exposed through context
+	// Manual save function exposed through context (no-op when readOnly)
 	const saveNow = useCallback(async () => {
+		if (readOnly) return;
 		if (state.character) {
 			// Cancel any pending debounced save
 			debouncedSave.cancel();
 			await saveCharacterData(state.character);
 		}
-	}, [state.character, saveCharacterData, debouncedSave]);
+	}, [readOnly, state.character, saveCharacterData, debouncedSave]);
 
 	// Retry failed save function
 	const retryFailedSave = useCallback(() => {
-		if (state.character) {
-			saveCharacterData(state.character);
-		}
-	}, [state.character, saveCharacterData]);
+		if (readOnly || !state.character) return;
+		saveCharacterData(state.character);
+	}, [readOnly, state.character, saveCharacterData]);
+
+	// Campaign event producer: fires well_bloodied / deaths_door / dead events after saves
+	useCampaignEventProducer(
+		state.character?.id ?? null,
+		readOnly,
+		savedHP,
+		savedMaxHP,
+		state.character?.finalName ?? null,
+		state.character?.finalDeathThreshold ?? -10
+	);
 
 	const contextValue: CharacterSheetContextType = {
 		state,
@@ -614,7 +649,8 @@ export function CharacterSheetProvider({ children, characterId }: CharacterSheet
 		setRageActive,
 		saveNow,
 		saveStatus,
-		retryFailedSave
+		retryFailedSave,
+		readOnly
 	};
 
 	return (

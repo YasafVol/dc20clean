@@ -228,3 +228,48 @@ export const duplicate = mutation({
 		return newCharacterId;
 	}
 });
+
+/**
+ * Fetch a character by app id for a campaign member (cross-user read).
+ * Caller must be a member of the campaign and the character must be shared.
+ */
+export const getByIdForMember = query({
+	args: { campaignId: v.string(), characterId: v.string() },
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId) return null;
+
+		// Find campaign doc by app id
+		const campaign = await ctx.db
+			.query('campaigns')
+			.withIndex('by_app_id', (q) => q.eq('id', args.campaignId))
+			.filter((q) => q.eq(q.field('deletedAt'), undefined))
+			.first();
+		if (!campaign) return null;
+
+		// Confirm caller is a member
+		const member = await ctx.db
+			.query('campaignMembers')
+			.withIndex('by_campaign_and_user', (q) =>
+				q.eq('campaignId', campaign._id).eq('userId', userId)
+			)
+			.filter((q) => q.eq(q.field('deletedAt'), undefined))
+			.first();
+		if (!member) return null;
+
+		// Confirm character is actually shared in this campaign
+		const anyMember = await ctx.db
+			.query('campaignMembers')
+			.withIndex('by_campaign', (q) => q.eq('campaignId', campaign._id))
+			.filter((q) => q.eq(q.field('deletedAt'), undefined))
+			.collect();
+		const isShared = anyMember.some((m) => m.sharedCharacterIds.includes(args.characterId));
+		if (!isShared) return null;
+
+		const char = await ctx.db
+			.query('characters')
+			.withIndex('by_app_id', (q) => q.eq('id', args.characterId))
+			.first();
+		return (char as any)?.deletedAt ? null : char ?? null;
+	},
+});

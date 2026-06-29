@@ -17,11 +17,12 @@ The DC20 Character Creator uses a **hybrid storage model**:
 
 ### 1.1 Data Domains
 
-| Domain               | Tables                       | Status                         |
-| -------------------- | ---------------------------- | ------------------------------ |
-| Characters           | `characters`                 | Active (Convex + localStorage) |
-| DM Tools: Monsters   | `monsters`, `customFeatures` | Active (Convex)                |
-| DM Tools: Encounters | `encounters`                 | Active (Convex)                |
+| Domain               | Tables                                              | Status                         |
+| -------------------- | --------------------------------------------------- | ------------------------------ |
+| Characters           | `characters`                                        | Active (Convex + localStorage) |
+| DM Tools: Monsters   | `monsters`, `customFeatures`                        | Active (Convex)                |
+| DM Tools: Encounters | `encounters`                                        | Active (Convex)                |
+| Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents`    | Active (Convex only)           |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -545,15 +546,67 @@ const saveCharacterData = async (character: SavedCharacter) => {
 
 ---
 
-## 9. Related Systems
+## 9. Campaign Tables
+
+See `docs/systems/CAMPAIGN_SYSTEM.MD` for full schema details, permission model, and frontend architecture.
+
+### 9.1 `campaigns`
+
+| Field          | Type              | Notes                                        |
+| -------------- | ----------------- | -------------------------------------------- |
+| `userId`       | `Id<'users'>`     | Creator / DM                                 |
+| `id`           | `string`          | App-generated id, e.g. `camp_<uuid>`         |
+| `code`         | `string`          | 6-char alphanumeric join code                |
+| `name`         | `string`          |                                              |
+| `description`  | `string?`         |                                              |
+| `createdAt`    | `string`          | ISO timestamp                                |
+| `lastModified` | `string`          | ISO timestamp                                |
+| `deletedAt`    | `string?`         | Soft-delete                                  |
+
+Indexes: `by_user` (userId), `by_app_id` (id — note: `by_id` is Convex-reserved), `by_code` (code).
+
+### 9.2 `campaignMembers`
+
+| Field                 | Type              | Notes                                        |
+| --------------------- | ----------------- | -------------------------------------------- |
+| `campaignId`          | `Id<'campaigns'>` |                                              |
+| `userId`              | `Id<'users'>`     |                                              |
+| `role`                | `'dm' \| 'co_dm' \| 'player'` |                                |
+| `sharedCharacterIds`  | `string[]`        | App-level character ids shared by this member |
+| `displayName`         | `string?`         | Captured at join time                        |
+| `joinedAt`            | `string`          | ISO timestamp                                |
+| `deletedAt`           | `string?`         | Soft-delete                                  |
+
+Indexes: `by_campaign` (campaignId), `by_user` (userId), `by_campaign_and_user` (campaignId, userId).
+
+### 9.3 `campaignEvents`
+
+| Field          | Type              | Notes                                        |
+| -------------- | ----------------- | -------------------------------------------- |
+| `campaignId`   | `Id<'campaigns'>` |                                              |
+| `type`         | `string`          | e.g. `well_bloodied`, `member_joined`        |
+| `actorUserId`  | `Id<'users'>`     |                                              |
+| `characterId`  | `string?`         | App-level character id                       |
+| `payload`      | `any`             | Event-specific data                          |
+| `createdAt`    | `string`          | ISO timestamp                                |
+| `deletedAt`    | `string?`         | Soft-delete                                  |
+
+Indexes: `by_campaign` (campaignId), `by_campaign_and_time` (campaignId, createdAt).
+
+All three campaign tables use soft-delete; all reads filter `deletedAt === undefined`.
+
+---
+
+## 10. Related Systems
 
 - **Character Sheet** — `docs/systems/CHARACTER_SHEET.MD`
 - **PDF Export** — `docs/systems/PDF_EXPORT_SYSTEM.MD`
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`
 - **Monster System** — `docs/systems/MONSTER_SYSTEM_SPEC.MD`
 - **Encounter System** — `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD`
+- **Campaign System** — `docs/systems/CAMPAIGN_SYSTEM.MD`
 
 ---
 
-> Last updated: 2026-06-19
+> Last updated: 2026-06-28
 > Maintainer: @DC20Clean-Team

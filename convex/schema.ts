@@ -639,12 +639,44 @@ const featureValidator = {
 	schemaVersion: v.string()
 };
 
+const campaignValidator = {
+	userId: v.id('users'),            // creator / DM
+	id: v.string(),                   // app-generated, e.g. "camp_<uuid>"
+	code: v.string(),                 // 6-char join code A-Z0-9
+	name: v.string(),
+	description: v.optional(v.string()),
+	createdAt: v.string(),
+	lastModified: v.string(),
+	deletedAt: v.optional(v.string()),
+};
+
+const campaignMemberValidator = {
+	campaignId: v.id('campaigns'),
+	userId: v.id('users'),
+	role: v.union(v.literal('dm'), v.literal('co_dm'), v.literal('player')),
+	sharedCharacterIds: v.array(v.string()),
+	displayName: v.optional(v.string()),
+	joinedAt: v.string(),
+	deletedAt: v.optional(v.string()),
+};
+
+const campaignEventValidator = {
+	campaignId: v.id('campaigns'),
+	type: v.string(),
+	actorUserId: v.id('users'),
+	characterId: v.optional(v.string()),
+	payload: v.any(),
+	createdAt: v.string(),
+	deletedAt: v.optional(v.string()),
+};
+
 export default defineSchema({
 	...authTables,
 	characters: defineTable(characterValidator)
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
-		.index('by_user_and_name', ['userId', 'finalName']),
+		.index('by_user_and_name', ['userId', 'finalName'])
+		.index('by_app_id', ['id']),
 
 	// DM Tools: Monsters (official + user-created)
 	monsters: defineTable(monsterValidator)
@@ -667,5 +699,20 @@ export default defineSchema({
 		.index('by_user', ['userId'])
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
-		.index('by_user_and_deleted', ['userId', 'deletedAt'])
+		.index('by_user_and_deleted', ['userId', 'deletedAt']),
+
+	// Campaigns
+	campaigns: defineTable(campaignValidator)
+		.index('by_user', ['userId'])
+		.index('by_app_id', ['id'])
+		.index('by_code', ['code']),
+
+	campaignMembers: defineTable(campaignMemberValidator)
+		.index('by_campaign', ['campaignId'])
+		.index('by_user', ['userId'])
+		.index('by_campaign_and_user', ['campaignId', 'userId']),
+
+	campaignEvents: defineTable(campaignEventValidator)
+		.index('by_campaign', ['campaignId'])
+		.index('by_campaign_and_time', ['campaignId', 'createdAt']),
 });

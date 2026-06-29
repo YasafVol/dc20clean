@@ -211,6 +211,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	// Use Provider hooks
 	const {
 		state,
+		readOnly,
 		updateHP,
 		updateMP,
 		updateSP,
@@ -673,6 +674,17 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	return (
 		<PageContainer>
+			{readOnly && (
+				<div style={{
+					background: '#1a1a2e',
+					color: '#aaa',
+					padding: '0.5rem 1rem',
+					textAlign: 'center',
+					fontSize: '0.875rem',
+				}}>
+					Read-only — viewing {state.character?.finalName ?? 'character'}&apos;s sheet
+				</div>
+			)}
 			<Header
 				initial={{ y: -100 }}
 				animate={{ y: 0 }}

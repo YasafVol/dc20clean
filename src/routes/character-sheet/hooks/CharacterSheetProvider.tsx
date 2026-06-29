@@ -398,6 +398,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
 	const [savedHP, setSavedHP] = useState<number | null>(null);
 	const [savedMaxHP, setSavedMaxHP] = useState<number | null>(null);
+	const [savedIsDead, setSavedIsDead] = useState<boolean>(false);
 	const lastSavedHash = useRef<string>('');
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -486,6 +487,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 				lastSavedHash.current = currentHash;
 				setSavedHP(updatedCharacter.characterState?.resources?.current?.currentHP ?? null);
 				setSavedMaxHP(updatedCharacter.finalHPMax ?? null);
+				setSavedIsDead(updatedCharacter.characterState?.resources?.current?.isDead ?? false);
 
 				logger.debug('storage', 'Character save successful', { characterId: character.id });
 				logger.debug('storage', 'Character sheet data saved successfully', {
@@ -513,6 +515,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 					lastSavedHash.current = currentHash;
 					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
 					setSavedMaxHP(character.finalHPMax ?? null);
+					setSavedIsDead(character.characterState?.resources?.current?.isDead ?? false);
 					setSaveStatus('saved');
 
 					// Reset to idle after 2 seconds
@@ -611,7 +614,8 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		savedHP,
 		savedMaxHP,
 		state.character?.finalName ?? null,
-		-(state.character?.finalDeathThreshold ?? 10)
+		-(state.character?.finalDeathThreshold ?? 10),
+		savedIsDead
 	);
 
 	const contextValue: CharacterSheetContextType = {

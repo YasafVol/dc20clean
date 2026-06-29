@@ -15,6 +15,9 @@ function formatEvent(event: CampaignEvent): string {
   switch (event.type) {
     case 'well_bloodied': return `[!!] ${name} is well-bloodied!`;
     case 'bloodied': return `[~] ${name} is bloodied.`;
+    case 'deaths_door': return `[!!] ${name} is on Death's Door!`;
+    case 'dead': return `[*] ${name} has died.`;
+    case 'recovered': return `[+] ${name} has recovered.`;
     case 'member_joined': return `[+] ${name} joined the campaign.`;
     case 'character_shared': return `[~] ${name} was shared.`;
     default: return `[*] ${event.type}: ${name}`;

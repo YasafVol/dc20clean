@@ -12,6 +12,12 @@ function eventMessage(event: CampaignEvent): string {
       return `[!!] ${name} is well-bloodied!`;
     case 'bloodied':
       return `[~] ${name} is bloodied.`;
+    case 'deaths_door':
+      return `[!!] ${name} is on Death's Door!`;
+    case 'dead':
+      return `[*] ${name} has died.`;
+    case 'recovered':
+      return `[+] ${name} has recovered.`;
     case 'member_joined':
       return `[+] ${name} joined the campaign.`;
     case 'character_shared':
@@ -41,7 +47,7 @@ export function CampaignEventWatcher({
       seenIds.current.add(event._id);
       // Skip events that predate mount (history replay prevention)
       if (event.createdAt < mountTimestamp) continue;
-      const variant = event.type === 'well_bloodied' ? 'warning' : 'info';
+      const variant = (event.type === 'well_bloodied' || event.type === 'deaths_door' || event.type === 'dead') ? 'warning' : 'info';
       onNewEvent(eventMessage(event), variant);
     }
   }, [events, mountTimestamp, onNewEvent]);

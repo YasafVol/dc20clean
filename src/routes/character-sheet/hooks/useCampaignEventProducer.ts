@@ -30,10 +30,13 @@ export function useCampaignEventProducer(
 
 		// Only fire if campaigns are loaded and something notable changed
 		if (campaignLinks.length === 0) return;
-		const NOTABLE = new Set(['well-bloodied', 'deaths-door', 'dead']);
+		const NOTABLE = new Set(['bloodied', 'well-bloodied', 'deaths-door', 'dead']);
 		if (!NOTABLE.has(status) || status === prevStatus) return;
 
-		const type = status === 'well-bloodied' ? 'well_bloodied' : status === 'deaths-door' ? 'deaths_door' : 'dead';
+		const type =
+			status === 'bloodied' ? 'bloodied' :
+			status === 'well-bloodied' ? 'well_bloodied' :
+			status === 'deaths-door' ? 'deaths_door' : 'dead';
 		const payload = { characterName: characterName ?? 'Unknown', currentHP: savedHP, maxHP: savedMaxHP };
 
 		for (const { campaignDocId } of campaignLinks) {

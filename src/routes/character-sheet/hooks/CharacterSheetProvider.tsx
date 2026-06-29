@@ -611,7 +611,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		savedHP,
 		savedMaxHP,
 		state.character?.finalName ?? null,
-		state.character?.finalDeathThreshold ?? -10
+		-(state.character?.finalDeathThreshold ?? 10)
 	);
 
 	const contextValue: CharacterSheetContextType = {

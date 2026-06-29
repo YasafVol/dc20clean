@@ -216,7 +216,9 @@ export const CampaignDetail: React.FC = () => {
                       </span>
                     </td>
                     <td style={{ padding: '0.5rem' }}>
-                      {isOwner
+                      {currentUser === undefined
+                        ? <Button variant="outline" disabled>...</Button>
+                        : isOwner
                         ? <Button variant="outline" onClick={() => navigate(`/character/${entry.characterId}`)}>Open</Button>
                         : <Button variant="outline" onClick={() => navigate(`/campaigns/${id}/character/${entry.characterId}`)}>View</Button>
                       }

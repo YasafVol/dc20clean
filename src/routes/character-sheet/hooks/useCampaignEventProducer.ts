@@ -15,14 +15,21 @@ export function useCampaignEventProducer(
 	const prevStatusRef = useRef<string | null>(null);
 
 	useEffect(() => {
-		if (readOnly || !characterId || savedHP === null || savedMaxHP === null || campaignLinks.length === 0) return;
+		if (readOnly || !characterId || savedHP === null || savedMaxHP === null) return;
 
 		const status = getHealthStatus(savedHP, savedMaxHP, deathThreshold).status;
 		const prevStatus = prevStatusRef.current;
+
+		if (prevStatus === null) {
+			// First time we have valid HP — record baseline, never fire on first load
+			prevStatusRef.current = status;
+			return;
+		}
+
 		prevStatusRef.current = status;
 
-		if (prevStatus === null) return; // first load, don't fire
-
+		// Only fire if campaigns are loaded and something notable changed
+		if (campaignLinks.length === 0) return;
 		const NOTABLE = new Set(['well-bloodied', 'deaths-door', 'dead']);
 		if (!NOTABLE.has(status) || status === prevStatus) return;
 
@@ -32,5 +39,5 @@ export function useCampaignEventProducer(
 		for (const { campaignDocId } of campaignLinks) {
 			postEvent(campaignDocId, type, payload, characterId).catch(() => {});
 		}
-	}, [savedHP, savedMaxHP]); // intentionally only dep on HP values — fires after save
+	}, [savedHP, savedMaxHP, campaignLinks.length]); // campaignLinks.length needed: campaigns may load after first HP save
 }

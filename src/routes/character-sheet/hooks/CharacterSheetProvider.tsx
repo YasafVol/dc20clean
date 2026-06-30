@@ -430,6 +430,9 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 				if (compatibility.autoSaveMode === 'characterState') {
 					await storage.saveCharacterState(character.id, character.characterState);
 					lastSavedHash.current = currentHash;
+					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
+					setSavedMaxHP(character.finalHPMax ?? null);
+					setSavedIsDead(character.characterState?.resources?.current?.isDead ?? false);
 					setSaveStatus('saved');
 					if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
 					saveTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000);

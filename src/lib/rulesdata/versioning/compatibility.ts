@@ -216,8 +216,8 @@ export function assessCharacterCompatibility(
 			canRenderSheet: true,
 			canEdit: false,
 			canLevelUp: false,
-			canAutoSave: false,
-			autoSaveMode: 'none',
+			canAutoSave: true,
+			autoSaveMode: 'characterState', // HP/resources save; full rebuild blocked until upgrade
 			canExportPdf: true,
 			pdfVersion,
 			reasons,

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { getHealthStatus } from '../../../lib/rulesdata/death';
 import { useCampaignsForCharacter, useCampaignMutations } from '../../../lib/hooks/useCampaigns';
 
-export function useCampaignEventProducer(
+export function useCampaignVitalEvents(
 	characterId: string | null,
 	readOnly: boolean,
 	savedHP: number | null,

@@ -38,7 +38,7 @@ import { getDetailedClassFeatureDescription } from '../../../lib/utils/classFeat
 import { calculateCharacterConditions } from '../../../lib/services/conditionAggregator';
 import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
-import { useCampaignEventProducer } from './useCampaignEventProducer';
+import { useCampaignVitalEvents } from './useCampaignVitalEvents';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -611,7 +611,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 	}, [readOnly, state.character, saveCharacterData]);
 
 	// Campaign event producer: fires well_bloodied / deaths_door / dead events after saves
-	useCampaignEventProducer(
+	useCampaignVitalEvents(
 		state.character?.id ?? null,
 		readOnly,
 		savedHP,

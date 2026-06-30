@@ -17,7 +17,7 @@ const FILTER_CATEGORIES: Array<{ key: FilterCategory; label: string; types: stri
   { key: 'dice',       label: 'Dice Rolls',        types: ['dice_roll'] },
   { key: 'combat',     label: 'Combat Actions',    types: ['rage_start', 'rage_end', 'wild_form_enter', 'wild_form_exit'] },
   { key: 'spells',     label: 'Spells & Maneuvers', types: ['spell_cast', 'maneuver_used'] },
-  { key: 'rests',      label: 'Rests',             types: ['short_rest', 'long_rest'] },
+  { key: 'rests',      label: 'Rests',             types: ['long_rest'] },
   { key: 'conditions', label: 'Conditions',        types: ['condition_gained', 'condition_cured', 'exhaustion_changed'] },
   { key: 'system',     label: 'System',            types: ['member_joined', 'character_shared'] },
 ];

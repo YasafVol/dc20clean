@@ -11,16 +11,45 @@ import type { CampaignRole, CampaignEvent } from '../../lib/types/campaign';
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
 
 function formatEvent(event: CampaignEvent): string {
-  const name = (event.payload as any)?.characterName ?? (event.payload as any)?.displayName ?? 'Someone';
+  const p = event.payload as any;
+  const name = p?.characterName ?? p?.displayName ?? 'Someone';
   switch (event.type) {
-    case 'well_bloodied': return `[!!] ${name} is well-bloodied!`;
-    case 'bloodied': return `[~] ${name} is bloodied.`;
-    case 'deaths_door': return `[!!] ${name} is on Death's Door!`;
-    case 'dead': return `[*] ${name} has died.`;
-    case 'recovered': return `[+] ${name} has recovered.`;
-    case 'member_joined': return `[+] ${name} joined the campaign.`;
-    case 'character_shared': return `[~] ${name} was shared.`;
-    default: return `[*] ${event.type}: ${name}`;
+    case 'well_bloodied':      return `[!!] ${name} is well-bloodied!`;
+    case 'bloodied':           return `[~] ${name} is bloodied.`;
+    case 'deaths_door':        return `[!!] ${name} is on Death's Door!`;
+    case 'dead':               return `[*] ${name} has died.`;
+    case 'recovered':          return `[+] ${name} has recovered.`;
+    case 'rage_start':         return `[>] ${name} enters a Rage!`;
+    case 'rage_end':           return `[~] ${name} rage ends.`;
+    case 'wild_form_enter':    return `[>] ${name} transforms into Wild Form!`;
+    case 'wild_form_exit':     return `[~] ${name} returns from Wild Form.`;
+    case 'spell_cast': {
+      const sustained = p?.sustained ? ' (sustained)' : '';
+      return `[*] ${name} casts ${p?.spellName ?? 'a spell'}${sustained}.`;
+    }
+    case 'maneuver_used':      return `[>] ${name} uses ${p?.maneuverName ?? 'a maneuver'}.`;
+    case 'long_rest':          return `[+] ${name} takes a Long Rest.`;
+    case 'condition_gained':   return `[!] ${name} gains condition: ${p?.conditionId ?? 'unknown'}.`;
+    case 'condition_cured':    return `[+] ${name} is cured of: ${p?.conditionId ?? 'unknown'}.`;
+    case 'exhaustion_changed': {
+      const lvl = p?.level ?? '?';
+      const prev = p?.prevLevel ?? '?';
+      return (p?.level ?? 0) > (p?.prevLevel ?? 0)
+        ? `[!] ${name} exhaustion → level ${lvl}.`
+        : `[+] ${name} exhaustion → level ${lvl} (was ${prev}).`;
+    }
+    case 'dice_roll': {
+      const label = p?.label ?? 'd20';
+      const mode = p?.mode === 'advantage' ? ' (adv)' : p?.mode === 'disadvantage' ? ' (dis)' : '';
+      const all = Array.isArray(p?.allResults) ? `[${p.allResults.join(', ')}]` : '';
+      const mod = (p?.modifier ?? 0) !== 0
+        ? ((p.modifier > 0 ? ' +' : ' ') + p.modifier)
+        : '';
+      return `[d] ${name}: ${label}${mode} ${all}${mod} = ${p?.total ?? '?'}`;
+    }
+    case 'member_joined':      return `[+] ${name} joined the campaign.`;
+    case 'character_shared':   return `[~] ${name} shared a character.`;
+    default:                   return `[*] ${event.type}: ${name}`;
   }
 }
 

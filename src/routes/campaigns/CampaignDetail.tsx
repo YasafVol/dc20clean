@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { Button } from '../../components/ui/button';
@@ -9,6 +9,36 @@ import { api } from '../../../convex/_generated/api';
 import type { CampaignRole, CampaignEvent } from '../../lib/types/campaign';
 
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
+
+type FilterCategory = 'vitals' | 'dice' | 'combat' | 'spells' | 'rests' | 'conditions' | 'system';
+
+const FILTER_CATEGORIES: Array<{ key: FilterCategory; label: string; types: string[] }> = [
+  { key: 'vitals',     label: 'HP / Vitals',      types: ['bloodied', 'well_bloodied', 'deaths_door', 'dead', 'recovered'] },
+  { key: 'dice',       label: 'Dice Rolls',        types: ['dice_roll'] },
+  { key: 'combat',     label: 'Combat Actions',    types: ['rage_start', 'rage_end', 'wild_form_enter', 'wild_form_exit'] },
+  { key: 'spells',     label: 'Spells & Maneuvers', types: ['spell_cast', 'maneuver_used'] },
+  { key: 'rests',      label: 'Rests',             types: ['short_rest', 'long_rest'] },
+  { key: 'conditions', label: 'Conditions',        types: ['condition_gained', 'condition_cured', 'exhaustion_changed'] },
+  { key: 'system',     label: 'System',            types: ['member_joined', 'character_shared'] },
+];
+
+const ALL_ENABLED: Record<FilterCategory, boolean> = {
+  vitals: true, dice: true, combat: true, spells: true, rests: true, conditions: true, system: true,
+};
+
+function loadFilters(campaignId: string): Record<FilterCategory, boolean> {
+  try {
+    const raw = localStorage.getItem(`campaign-feed-filters-${campaignId}`);
+    if (!raw) return { ...ALL_ENABLED };
+    return { ...ALL_ENABLED, ...JSON.parse(raw) };
+  } catch {
+    return { ...ALL_ENABLED };
+  }
+}
+
+function saveFilters(campaignId: string, filters: Record<FilterCategory, boolean>) {
+  localStorage.setItem(`campaign-feed-filters-${campaignId}`, JSON.stringify(filters));
+}
 
 function formatEvent(event: CampaignEvent): string {
   const p = event.payload as any;
@@ -79,6 +109,23 @@ export const CampaignDetail: React.FC = () => {
 
   const [showSharePicker, setShowSharePicker] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [filters, setFilters] = useState<Record<FilterCategory, boolean>>(
+    () => loadFilters(id ?? '')
+  );
+
+  useEffect(() => {
+    if (id) saveFilters(id, filters);
+  }, [id, filters]);
+
+  const toggleFilter = (key: FilterCategory) => {
+    setFilters(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const allowedTypes = new Set(
+    FILTER_CATEGORIES.filter(cat => filters[cat.key]).flatMap(cat => cat.types)
+  );
+
+  const filteredEvents = events.filter(e => allowedTypes.has(e.type));
 
   if (!id) return null;
   if (isLoading) return <div style={{ padding: '2rem' }}>Loading campaign...</div>;
@@ -261,12 +308,36 @@ export const CampaignDetail: React.FC = () => {
 
         {/* Event Feed */}
         <div style={{ marginTop: '2rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>Event Feed</h2>
-          {events.length === 0 && (
-            <p style={{ color: '#888' }}>No events yet.</p>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Event Feed</h2>
+
+          {/* Filter chips */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+            {FILTER_CATEGORIES.map(cat => (
+              <button
+                key={cat.key}
+                onClick={() => toggleFilter(cat.key)}
+                style={{
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  border: '1px solid',
+                  cursor: 'pointer',
+                  background: filters[cat.key] ? '#1e3a5f' : 'transparent',
+                  borderColor: filters[cat.key] ? '#3b82f6' : '#444',
+                  color: filters[cat.key] ? '#93c5fd' : '#666',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {filteredEvents.length === 0 && (
+            <p style={{ color: '#888' }}>No events match the current filter.</p>
           )}
           <div style={{ display: 'grid', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <div key={event._id} style={{
                 padding: '0.5rem 0.75rem',
                 background: '#1a1a2e',

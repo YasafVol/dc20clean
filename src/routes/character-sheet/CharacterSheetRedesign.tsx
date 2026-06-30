@@ -910,7 +910,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 											)}
 											{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
-											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} />}
+											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} readOnly={readOnly} isMobile={isMobile} />}
 											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 											{activeTab === 'conditions' && (
 												<>
@@ -968,7 +968,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								)}
 								{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
-								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} />}
+								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} readOnly={readOnly} isMobile={isMobile} />}
 								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 								{activeTab === 'conditions' && (
 									<ActiveConditionsTracker

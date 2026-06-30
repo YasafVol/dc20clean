@@ -333,9 +333,11 @@ export const CampaignDetail: React.FC = () => {
             ))}
           </div>
 
-          {filteredEvents.length === 0 && (
+          {events.length === 0 ? (
+            <p style={{ color: '#888' }}>No events yet.</p>
+          ) : filteredEvents.length === 0 ? (
             <p style={{ color: '#888' }}>No events match the current filter.</p>
-          )}
+          ) : null}
           <div style={{ display: 'grid', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
             {filteredEvents.map((event) => (
               <div key={event._id} style={{

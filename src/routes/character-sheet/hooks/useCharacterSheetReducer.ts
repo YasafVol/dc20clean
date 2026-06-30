@@ -52,7 +52,8 @@ export type SheetAction =
 			type: 'UPDATE_DEFENSE_OVERRIDES';
 			overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number };
 	  }
-	| { type: 'SET_RAGE_ACTIVE'; isRaging: boolean };
+	| { type: 'SET_RAGE_ACTIVE'; isRaging: boolean }
+	| { type: 'SET_WILD_FORM_ACTIVE'; isWildFormed: boolean };
 
 const initialState: SheetState = {
 	character: null,
@@ -619,6 +620,28 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 				}
 			};
 
+		case 'SET_WILD_FORM_ACTIVE':
+			if (!state.character) return state;
+			return {
+				...state,
+				character: {
+					...state.character,
+					characterState: {
+						...state.character.characterState,
+						ui: {
+							...(state.character.characterState.ui || { manualDefenseOverrides: {} }),
+							activeConditions: {
+								...(state.character.characterState.ui?.activeConditions || {})
+							},
+							combatToggles: {
+								...state.character.characterState.ui?.combatToggles,
+								isWildFormed: action.isWildFormed
+							}
+						}
+					}
+				}
+			};
+
 		default:
 			return state;
 	}
@@ -785,6 +808,11 @@ export function useCharacterSheetReducer(readOnly = false) {
 		dispatch({ type: 'SET_RAGE_ACTIVE', isRaging });
 	}, [readOnly]);
 
+	const setWildFormActive = useCallback((isWildFormed: boolean) => {
+		if (readOnly) return;
+		dispatch({ type: 'SET_WILD_FORM_ACTIVE', isWildFormed });
+	}, [readOnly]);
+
 	return {
 		state,
 		dispatch,
@@ -818,6 +846,7 @@ export function useCharacterSheetReducer(readOnly = false) {
 		toggleActiveCondition,
 		setActiveConditionStacks,
 		updateDefenseOverrides,
-		setRageActive
+		setRageActive,
+		setWildFormActive
 	};
 }

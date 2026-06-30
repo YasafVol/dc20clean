@@ -78,7 +78,8 @@ const uiStateValidator = v.object({
 	activeConditions: v.optional(v.record(v.string(), v.boolean())),
 	combatToggles: v.optional(
 		v.object({
-			isRaging: v.optional(v.boolean())
+			isRaging: v.optional(v.boolean()),
+			isWildFormed: v.optional(v.boolean())
 		})
 	)
 });

@@ -59,6 +59,7 @@ export interface CharacterState {
 		activeConditions?: Record<string, boolean>;
 		combatToggles?: {
 			isRaging?: boolean;
+			isWildFormed?: boolean;
 		};
 	};
 	inventory: {

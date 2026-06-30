@@ -117,7 +117,8 @@ export const normalizeCharacterStateForStorage = (
 			activeConditions:
 				ui.activeConditions && typeof ui.activeConditions === 'object' ? ui.activeConditions : {},
 			combatToggles: {
-				isRaging: booleanOrDefault(ui.combatToggles?.isRaging, false)
+				isRaging: booleanOrDefault(ui.combatToggles?.isRaging, false),
+				isWildFormed: booleanOrDefault(ui.combatToggles?.isWildFormed, false)
 			}
 		},
 		inventory: {
@@ -262,7 +263,7 @@ export const getDefaultCharacterState = (): CharacterState => ({
 			isDead: false
 		}
 	},
-	ui: { manualDefenseOverrides: {}, combatToggles: { isRaging: false } },
+	ui: { manualDefenseOverrides: {}, combatToggles: { isRaging: false, isWildFormed: false } },
 	inventory: {
 		items: [],
 		currency: { gold: 0, silver: 0, copper: 0 }
@@ -304,7 +305,7 @@ export const getInitializedCharacterState = (character: any): CharacterState => 
 	},
 	ui: {
 		manualDefenseOverrides: {},
-		combatToggles: { isRaging: false }
+		combatToggles: { isRaging: false, isWildFormed: false }
 	},
 	inventory: {
 		items: [],

@@ -344,6 +344,7 @@ interface CharacterSheetContextType {
 	handleDiceRoll: (results: DiceRollResult[], total: number, rollMode: RollMode, modifier: number, label: string) => void;
 	handleSpellCast: (spell: SpellData) => void;
 	handleManeuverUse: (maneuver: ManeuverData) => void;
+	handleLongRestEvent: () => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -697,6 +698,15 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		}
 	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
 
+	const handleLongRestEvent = useCallback(() => {
+		const characterId = state.character?.id;
+		if (!characterId || campaignLinks.length === 0) return;
+		const payload = { characterName: state.character?.finalName ?? 'Unknown' };
+		for (const { campaignDocId } of campaignLinks) {
+			postEvent(campaignDocId, 'long_rest', payload, characterId).catch(() => {});
+		}
+	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
+
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
@@ -734,6 +744,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		handleDiceRoll,
 		handleSpellCast,
 		handleManeuverUse,
+		handleLongRestEvent,
 		saveNow,
 		saveStatus,
 		retryFailedSave,

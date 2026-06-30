@@ -227,6 +227,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		handleDiceRoll,
 		handleSpellCast,
 		handleManeuverUse,
+		handleLongRestEvent,
 		saveStatus,
 		retryFailedSave,
 		updateInventory
@@ -539,6 +540,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateExhaustion(0);
 
 		showSnackbarWithMessage(t('characterSheet.longRestDone'), 'success');
+		handleLongRestEvent();
 	};
 
 	// Copy character summary to clipboard

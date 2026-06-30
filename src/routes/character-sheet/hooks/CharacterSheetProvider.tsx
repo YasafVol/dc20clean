@@ -39,6 +39,7 @@ import { calculateCharacterConditions } from '../../../lib/services/conditionAgg
 import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
 import { useCampaignVitalEvents } from './useCampaignVitalEvents';
+import { useCampaignStateEvents } from './useCampaignStateEvents';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -335,6 +336,7 @@ interface CharacterSheetContextType {
 		precisionDR?: number;
 	}) => void;
 	setRageActive: (isRaging: boolean) => void;
+	setWildFormActive: (isWildFormed: boolean) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -386,7 +388,8 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		toggleActiveCondition,
 		setActiveConditionStacks,
 		updateDefenseOverrides,
-		setRageActive
+		setRageActive,
+		setWildFormActive
 	} = useCharacterSheetReducer(readOnly);
 
 	// Campaign member view: fetch character via Convex query
@@ -621,6 +624,17 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		savedIsDead
 	);
 
+	// Campaign state event producer: fires rage, wild form, conditions, exhaustion events
+	useCampaignStateEvents(
+		state.character?.id ?? null,
+		readOnly,
+		state.character?.characterState?.ui?.combatToggles?.isRaging ?? false,
+		state.character?.characterState?.ui?.combatToggles?.isWildFormed ?? false,
+		state.character?.characterState?.activeConditions ?? [],
+		state.character?.characterState?.resources?.current?.exhaustionLevel ?? 0,
+		state.character?.finalName ?? null,
+	);
+
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
@@ -654,6 +668,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		setActiveConditionStacks,
 		updateDefenseOverrides,
 		setRageActive,
+		setWildFormActive,
 		saveNow,
 		saveStatus,
 		retryFailedSave,

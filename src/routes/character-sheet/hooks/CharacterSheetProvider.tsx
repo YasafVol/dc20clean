@@ -42,6 +42,7 @@ import { useCampaignVitalEvents } from './useCampaignVitalEvents';
 import { useCampaignStateEvents } from './useCampaignStateEvents';
 import { useCampaignsForCharacter, useCampaignMutations } from '../../../lib/hooks/useCampaigns';
 import type { DiceRollResult, RollMode } from '../components/DiceRoller';
+import type { SpellData } from '../../../types';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -340,6 +341,7 @@ interface CharacterSheetContextType {
 	setRageActive: (isRaging: boolean) => void;
 	setWildFormActive: (isWildFormed: boolean) => void;
 	handleDiceRoll: (results: DiceRollResult[], total: number, rollMode: RollMode, modifier: number, label: string) => void;
+	handleSpellCast: (spell: SpellData) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -668,6 +670,19 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		}
 	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
 
+	const handleSpellCast = useCallback((spell: SpellData) => {
+		const characterId = state.character?.id;
+		if (!characterId || campaignLinks.length === 0) return;
+		const payload = {
+			characterName: state.character?.finalName ?? 'Unknown',
+			spellName: spell.spellName,
+			sustained: (spell.duration ?? '').toLowerCase().includes('sustain'),
+		};
+		for (const { campaignDocId } of campaignLinks) {
+			postEvent(campaignDocId, 'spell_cast', payload, characterId).catch(() => {});
+		}
+	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
+
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
@@ -703,6 +718,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		setRageActive,
 		setWildFormActive,
 		handleDiceRoll,
+		handleSpellCast,
 		saveNow,
 		saveStatus,
 		retryFailedSave,

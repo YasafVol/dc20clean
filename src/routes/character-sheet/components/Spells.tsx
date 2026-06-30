@@ -107,12 +107,14 @@ export interface SpellsProps {
 	onSpellClick: (spell: Spell) => void;
 	readOnly?: boolean; // New prop for read-only display
 	isMobile?: boolean;
+	onSpellCast?: (spell: SpellData) => void;
 }
 
 const Spells: React.FC<SpellsProps> = ({
 	onSpellClick: _onSpellClick,
 	readOnly = false,
-	isMobile
+	isMobile,
+	onSpellCast
 }) => {
 	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
@@ -533,6 +535,23 @@ const Spells: React.FC<SpellsProps> = ({
 											spell.range || ''
 										)}
 									</StyledSpellCell>
+
+									{/* Cast Button */}
+									{!readOnly && onSpellCast && (
+										<button
+											onClick={(e) => { e.stopPropagation(); onSpellCast(spell); }}
+											style={{
+												padding: '0.15rem 0.5rem',
+												fontSize: '0.7rem',
+												borderRadius: '4px',
+												border: '1px solid #444',
+												background: 'transparent',
+												color: '#aaa',
+												cursor: 'pointer',
+												marginLeft: '0.5rem',
+											}}
+										>Cast</button>
+									)}
 								</StyledSpellRow>
 
 								{/* Expandable Description Section — catalog spell */}

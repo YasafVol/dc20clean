@@ -225,6 +225,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		setRageActive,
 		setWildFormActive,
 		handleDiceRoll,
+		handleSpellCast,
 		saveStatus,
 		retryFailedSave,
 		updateInventory
@@ -906,7 +907,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													}}
 												/>
 											)}
-											{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
+											{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
@@ -964,7 +965,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										}}
 									/>
 								)}
-								{activeTab === 'spells' && <Spells onSpellClick={() => {}} />}
+								{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} />}
 								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}

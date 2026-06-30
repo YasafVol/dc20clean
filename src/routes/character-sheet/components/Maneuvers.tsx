@@ -44,11 +44,12 @@ import {
 
 export interface ManeuversProps {
 	onManeuverClick: (maneuver: Maneuver) => void;
+	onManeuverUse?: (maneuver: ManeuverData) => void;
 	readOnly?: boolean;
 	isMobile?: boolean;
 }
 
-const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false, isMobile }) => {
+const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, readOnly = false, isMobile }) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
@@ -336,6 +337,23 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, readOnly = false
 											: t('characterSheet.maneuversAction')}
 										{maneuverDetails.range ? ` • ${maneuverDetails.range}` : ''}
 									</StyledTimingCell>
+
+									{/* Use Button */}
+									{!readOnly && onManeuverUse && (
+										<button
+											onClick={(e) => { e.stopPropagation(); onManeuverUse(maneuver); }}
+											style={{
+												padding: '0.15rem 0.5rem',
+												fontSize: '0.7rem',
+												borderRadius: '4px',
+												border: '1px solid #444',
+												background: 'transparent',
+												color: '#aaa',
+												cursor: 'pointer',
+												marginLeft: '0.5rem',
+											}}
+										>Use</button>
+									)}
 								</StyledManeuverRow>
 
 								{/* Expandable Description Section */}

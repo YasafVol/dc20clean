@@ -40,6 +40,8 @@ import { normalizeSelectedTalents } from '../../../lib/utils/storageUtils';
 import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
 import { useCampaignVitalEvents } from './useCampaignVitalEvents';
 import { useCampaignStateEvents } from './useCampaignStateEvents';
+import { useCampaignsForCharacter, useCampaignMutations } from '../../../lib/hooks/useCampaigns';
+import type { DiceRollResult, RollMode } from '../components/DiceRoller';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -337,6 +339,7 @@ interface CharacterSheetContextType {
 	}) => void;
 	setRageActive: (isRaging: boolean) => void;
 	setWildFormActive: (isWildFormed: boolean) => void;
+	handleDiceRoll: (results: DiceRollResult[], total: number, rollMode: RollMode, modifier: number, label: string) => void;
 	// Manual save function
 	saveNow: () => Promise<void>;
 	// Save status
@@ -635,6 +638,36 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		state.character?.finalName ?? null,
 	);
 
+	// Campaign dice roll event producer
+	const campaignCharacterId = readOnly ? null : (state.character?.id ?? null);
+	const campaignLinks = useCampaignsForCharacter(campaignCharacterId);
+	const { postEvent } = useCampaignMutations();
+
+	const handleDiceRoll = useCallback((
+		results: DiceRollResult[],
+		total: number,
+		rollMode: RollMode,
+		modifier: number,
+		label: string,
+	) => {
+		const characterId = state.character?.id;
+		if (!characterId || campaignLinks.length === 0 || rollMode === 'no-d20') return;
+		const payload = {
+			characterName: state.character?.finalName ?? 'Unknown',
+			label: label || 'd20',
+			mode: rollMode === 'advantage' ? 'advantage'
+				: rollMode === 'disadvantage' ? 'disadvantage'
+				: 'normal',
+			allResults: results.map(r => r.value),
+			takenResult: total - modifier,
+			modifier,
+			total,
+		};
+		for (const { campaignDocId } of campaignLinks) {
+			postEvent(campaignDocId, 'dice_roll', payload, characterId).catch(() => {});
+		}
+	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
+
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
@@ -669,6 +702,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		updateDefenseOverrides,
 		setRageActive,
 		setWildFormActive,
+		handleDiceRoll,
 		saveNow,
 		saveStatus,
 		retryFailedSave,

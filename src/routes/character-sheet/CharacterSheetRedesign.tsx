@@ -224,6 +224,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
 		setWildFormActive,
+		handleDiceRoll,
 		saveStatus,
 		retryFailedSave,
 		updateInventory
@@ -1027,7 +1028,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			/>
 
 			{/* Dice Roller Component */}
-			<DiceRoller ref={diceRollerRef} />
+			<DiceRoller ref={diceRollerRef} onRoll={handleDiceRoll} />
 
 			{/* Auto-save Status Indicator */}
 			<AutoSaveIndicator status={saveStatus} onRetry={retryFailedSave} />

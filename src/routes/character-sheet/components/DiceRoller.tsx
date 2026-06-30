@@ -35,9 +35,9 @@ import {
 } from '../styles/DiceRoller';
 
 type DiceType = 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20';
-type RollMode = 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
+export type RollMode = 'normal' | 'advantage' | 'disadvantage' | 'no-d20';
 
-interface DiceRollResult {
+export interface DiceRollResult {
 	type: DiceType;
 	value: number;
 	isMax: boolean;
@@ -54,7 +54,13 @@ interface AdditionalDice {
 }
 
 interface DiceRollerProps {
-	onRoll?: (results: DiceRollResult[], total: number, rollMode: RollMode) => void;
+	onRoll?: (
+		results: DiceRollResult[],
+		total: number,
+		rollMode: RollMode,
+		modifier: number,
+		label: string,
+	) => void;
 }
 
 export interface DiceRollerRef {
@@ -233,7 +239,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		]);
 
 		// Call callback if provided
-		onRoll?.(results, totalValue, mode);
+		onRoll?.(results, totalValue, mode, modifier, modifierLabel ?? '');
 	};
 
 	const clearDice = () => {

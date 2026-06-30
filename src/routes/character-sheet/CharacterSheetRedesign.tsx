@@ -223,6 +223,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		setActiveConditionStacks,
 		updateDefenseOverrides: updateDefenseOverridesContext,
 		setRageActive,
+		setWildFormActive,
 		saveStatus,
 		retryFailedSave,
 		updateInventory
@@ -390,6 +391,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		(characterData.unlockedFeatureIds || []).includes('barbarian_rage') ||
 		String(characterData.selectedMulticlassFeature || '').toLowerCase() === 'rage';
 	const isRaging = !!characterData.characterState?.ui?.combatToggles?.isRaging;
+
+	// Wild Form state (temporary in-combat toggle for druids)
+	const hasWildFormFeature =
+		(characterData.unlockedFeatureIds ?? []).includes('druid_wild_form');
+	const isWildFormed =
+		characterData.characterState?.ui?.combatToggles?.isWildFormed ?? false;
 
 	// Get defenses and combat stats from character data (with manual overrides if set)
 	const basePrecisionAD = characterData.finalPD ?? 10;
@@ -843,6 +850,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								isRaging={isRaging}
 								onRageToggle={setRageActive}
 							/>
+
+							{hasWildFormFeature && !readOnly && (
+								<button
+									onClick={() => setWildFormActive(!isWildFormed)}
+									style={{
+										border: `1px solid ${isWildFormed ? '#22c55e' : '#555'}`,
+										background: isWildFormed ? '#14532d' : 'transparent',
+										color: isWildFormed ? '#86efac' : '#aaa',
+										fontSize: '0.75rem',
+										fontWeight: 700,
+										borderRadius: '4px',
+										padding: '4px 8px',
+										cursor: 'pointer',
+										textTransform: 'uppercase' as const,
+										letterSpacing: '0.04em',
+									}}
+								>
+									{isWildFormed ? 'Exit Wild Form' : 'Wild Form'}
+								</button>
+							)}
 
 							{/* Tabs Section - Only visible on desktop */}
 							{!isMobile && (

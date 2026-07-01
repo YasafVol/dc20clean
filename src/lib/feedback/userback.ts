@@ -30,6 +30,10 @@ export function loadUserbackWidget(): boolean {
 
 	window.Userback = window.Userback || {};
 	window.Userback.access_token = accessToken;
+	(window.Userback as any).widget_settings = {
+		...((window.Userback as any).widget_settings ?? {}),
+		position: 'bottom-left',
+	};
 
 	if (document.getElementById(USERBACK_SCRIPT_ID) || findUserbackScript()) {
 		return true;

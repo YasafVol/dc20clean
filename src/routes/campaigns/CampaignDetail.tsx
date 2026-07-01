@@ -7,6 +7,7 @@ import { useCampaign, useCampaignRoster, useCampaignMutations, useCampaignEvents
 import { useCurrentUser } from '../../components/auth/CurrentUserContext';
 import { api } from '../../../convex/_generated/api';
 import type { CampaignRole, CampaignEvent } from '../../lib/types/campaign';
+import { theme } from '../character-sheet/styles/theme';
 
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
 
@@ -85,14 +86,69 @@ function formatEvent(event: CampaignEvent): string {
 
 function getStatusPill(currentHP: number | null, maxHP: number | null) {
   if (currentHP === null || maxHP === null || maxHP === 0) {
-    return { label: 'Unknown', bg: '#444', color: '#ccc' };
+    return {
+      label: 'Unknown',
+      bg: 'rgba(86,95,137,0.2)',
+      color: theme.colors.text.muted,
+      border: `1px solid ${theme.colors.border.default}`,
+    };
   }
   const quarterHP = Math.floor(maxHP / 4);
   const halfHP = Math.floor(maxHP / 2);
-  if (currentHP <= 0) return { label: 'Down', bg: '#7f1d1d', color: '#fca5a5' };
-  if (currentHP <= quarterHP) return { label: 'Well-Bloodied', bg: '#78350f', color: '#fcd34d' };
-  if (currentHP <= halfHP) return { label: 'Bloodied', bg: '#7f1d1d', color: '#fca5a5' };
-  return { label: 'Healthy', bg: '#14532d', color: '#86efac' };
+  if (currentHP <= 0) return {
+    label: 'Down',
+    bg: theme.colors.accent.dangerAlpha30,
+    color: theme.colors.accent.danger,
+    border: `1px solid ${theme.colors.accent.dangerAlpha40}`,
+  };
+  if (currentHP <= quarterHP) return {
+    label: 'Well-Bloodied',
+    bg: theme.colors.accent.warningAlpha20,
+    color: theme.colors.accent.warning,
+    border: `1px solid ${theme.colors.accent.warningAlpha30}`,
+  };
+  if (currentHP <= halfHP) return {
+    label: 'Bloodied',
+    bg: theme.colors.accent.dangerAlpha20,
+    color: theme.colors.accent.danger,
+    border: `1px solid ${theme.colors.accent.dangerAlpha30}`,
+  };
+  return {
+    label: 'Healthy',
+    bg: 'rgba(158,206,106,0.15)',
+    color: theme.colors.accent.success,
+    border: '1px solid rgba(158,206,106,0.3)',
+  };
+}
+
+function getEventAccent(type: string): string {
+  switch (type) {
+    case 'dead':
+    case 'deaths_door':
+    case 'well_bloodied':
+      return theme.colors.accent.danger;
+    case 'bloodied':
+      return theme.colors.accent.warning;
+    case 'recovered':
+    case 'condition_cured':
+    case 'long_rest':
+      return theme.colors.accent.success;
+    case 'dice_roll':
+      return theme.colors.accent.primary;
+    case 'rage_start':
+    case 'wild_form_enter':
+    case 'condition_gained':
+    case 'exhaustion_changed':
+      return theme.colors.accent.warning;
+    case 'rage_end':
+    case 'wild_form_exit':
+      return theme.colors.text.muted;
+    case 'spell_cast':
+    case 'maneuver_used':
+      return theme.colors.accent.secondary;
+    default:
+      return theme.colors.border.default;
+  }
 }
 
 export const CampaignDetail: React.FC = () => {
@@ -128,8 +184,16 @@ export const CampaignDetail: React.FC = () => {
   const filteredEvents = events.filter(e => allowedTypes.has(e.type));
 
   if (!id) return null;
-  if (isLoading) return <div style={{ padding: '2rem' }}>Loading campaign...</div>;
-  if (!detail) return <div style={{ padding: '2rem' }}>Campaign not found or access denied.</div>;
+  if (isLoading) return (
+    <div style={{ background: theme.colors.bg.primary, color: theme.colors.text.secondary, padding: '2rem', minHeight: '100vh' }}>
+      Loading campaign...
+    </div>
+  );
+  if (!detail) return (
+    <div style={{ background: theme.colors.bg.primary, color: theme.colors.text.secondary, padding: '2rem', minHeight: '100vh' }}>
+      Campaign not found or access denied.
+    </div>
+  );
 
   const { campaign, members, myRole } = detail;
   const isManager = myRole === 'dm' || myRole === 'co_dm';
@@ -186,22 +250,44 @@ export const CampaignDetail: React.FC = () => {
 
   return (
     <AuthGuard feature="general">
-      <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{
+        background: theme.colors.bg.primary,
+        color: theme.colors.text.primary,
+        fontFamily: theme.typography.fontFamily.primary,
+        minHeight: '100vh',
+        padding: '2rem',
+        maxWidth: '900px',
+        margin: '0 auto',
+      }}>
 
         {/* Header */}
         <div style={{ marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{campaign.name}</h1>
-            <span style={{ background: '#334', color: '#adf', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: theme.colors.text.primary }}>{campaign.name}</h1>
+            <span style={{
+              background: theme.colors.accent.infoAlpha20,
+              color: theme.colors.accent.info,
+              border: `1px solid ${theme.colors.accent.infoAlpha30}`,
+              padding: '0.2rem 0.6rem',
+              borderRadius: '0.375rem',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+            }}>
               {ROLE_LABELS[myRole]}
             </span>
           </div>
           {campaign.description && (
-            <p style={{ color: '#888', marginTop: '0.25rem' }}>{campaign.description}</p>
+            <p style={{ color: theme.colors.text.muted, marginTop: '0.25rem' }}>{campaign.description}</p>
           )}
 
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-            <span style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: '1.25rem', letterSpacing: '0.15em' }}>
+            <span style={{
+              fontFamily: theme.typography.fontFamily.mono,
+              color: theme.colors.accent.primary,
+              fontSize: '1.25rem',
+              letterSpacing: '0.15em',
+              fontWeight: 700,
+            }}>
               {campaign.code}
             </span>
             <Button variant="outline" onClick={copyCode}>{copyFeedback ? 'Copied!' : 'Copy Code'}</Button>
@@ -212,22 +298,34 @@ export const CampaignDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* Stub Roster */}
-        <div style={{ marginBottom: '2rem' }}>
+        {/* Members & Characters card */}
+        <div style={{
+          background: theme.colors.bg.secondary,
+          border: `1px solid ${theme.colors.border.default}`,
+          borderRadius: '0.75rem',
+          padding: '1.5rem',
+          marginBottom: '1.5rem',
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Members & Characters</h2>
+            <h2 style={{ fontSize: '1rem', fontWeight: 600, color: theme.colors.text.primary }}>Members & Characters</h2>
             <Button onClick={() => setShowSharePicker(true)}>+ Share a Character</Button>
           </div>
 
           {showSharePicker && (
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' }}>
-              <h3 style={{ marginBottom: '0.5rem' }}>Choose a character to share</h3>
-              {myCharacters.length === 0 && <p style={{ color: '#888' }}>No cloud-stored characters.</p>}
+            <div style={{
+              background: theme.colors.bg.elevated,
+              border: `1px solid ${theme.colors.border.default}`,
+              borderRadius: '0.5rem',
+              padding: '1rem',
+              marginBottom: '1rem',
+            }}>
+              <h3 style={{ marginBottom: '0.5rem', color: theme.colors.text.primary }}>Choose a character to share</h3>
+              {myCharacters.length === 0 && <p style={{ color: theme.colors.text.muted }}>No cloud-stored characters.</p>}
               <div style={{ display: 'grid', gap: '0.5rem' }}>
                 {myCharacters.map((char: any) => {
                   const alreadyShared = mySharedIds.includes(char.id);
                   return (
-                    <div key={char.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={char.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: theme.colors.text.primary }}>
                       <span>{char.finalName} (Lv {char.level} {char.classId})</span>
                       {alreadyShared
                         ? <Button variant="outline" onClick={() => handleUnshare(char.id)}>Unshare</Button>
@@ -244,22 +342,22 @@ export const CampaignDetail: React.FC = () => {
           )}
 
           {/* Full Live Roster */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', color: theme.colors.text.primary }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #ccc', textAlign: 'left' }}>
-                <th style={{ padding: '0.5rem' }}>Character</th>
-                <th style={{ padding: '0.5rem' }}>Owner</th>
-                <th style={{ padding: '0.5rem' }}>Class</th>
-                <th style={{ padding: '0.5rem' }}>Level</th>
-                <th style={{ padding: '0.5rem' }}>HP</th>
-                <th style={{ padding: '0.5rem' }}>Status</th>
-                <th style={{ padding: '0.5rem' }}>View</th>
+              <tr style={{ borderBottom: `1px solid ${theme.colors.border.default}`, textAlign: 'left' }}>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Character</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Class</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Level</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>HP</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+                <th style={{ padding: '0.5rem 0.75rem', color: theme.colors.text.secondary, fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>View</th>
               </tr>
             </thead>
             <tbody>
               {roster.length === 0 && (
                 <tr>
-                  <td colSpan={7} style={{ padding: '1rem', color: '#888', textAlign: 'center' }}>
+                  <td colSpan={7} style={{ padding: '1rem', color: theme.colors.text.muted, textAlign: 'center', fontSize: '0.875rem' }}>
                     No shared characters yet.
                   </td>
                 </tr>
@@ -268,30 +366,31 @@ export const CampaignDetail: React.FC = () => {
                 const isOwner = entry.ownerUserId === currentUser?.userId;
                 const statusPill = getStatusPill(entry.currentHP, entry.maxHP);
                 return (
-                  <tr key={`${entry.memberDocId}-${entry.characterId}`} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>{entry.characterName}</td>
-                    <td style={{ padding: '0.5rem' }}>
+                  <tr key={`${entry.memberDocId}-${entry.characterId}`} style={{ borderBottom: '1px solid rgba(59,66,97,0.4)' }}>
+                    <td style={{ padding: '0.5rem 0.75rem', fontWeight: 'bold' }}>{entry.characterName}</td>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>
                       {isOwner ? 'You' : (entry.ownerDisplayName ?? 'Unknown')}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>{entry.className ?? '—'}</td>
-                    <td style={{ padding: '0.5rem' }}>{entry.level ?? '—'}</td>
-                    <td style={{ padding: '0.5rem' }}>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>{entry.className ?? '—'}</td>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>{entry.level ?? '—'}</td>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>
                       {entry.currentHP !== null && entry.maxHP !== null
                         ? `${entry.currentHP} / ${entry.maxHP}`
                         : '—'}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>
                       <span style={{
                         padding: '0.2rem 0.5rem',
-                        borderRadius: '999px',
+                        borderRadius: '9999px',
                         fontSize: '0.75rem',
                         background: statusPill.bg,
                         color: statusPill.color,
+                        border: statusPill.border,
                       }}>
                         {statusPill.label}
                       </span>
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
+                    <td style={{ padding: '0.5rem 0.75rem' }}>
                       {currentUser === undefined
                         ? <Button variant="outline" disabled>...</Button>
                         : isOwner
@@ -306,9 +405,15 @@ export const CampaignDetail: React.FC = () => {
           </table>
         </div>
 
-        {/* Event Feed */}
-        <div style={{ marginTop: '2rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Event Feed</h2>
+        {/* Event Feed card */}
+        <div style={{
+          background: theme.colors.bg.secondary,
+          border: `1px solid ${theme.colors.border.default}`,
+          borderRadius: '0.75rem',
+          padding: '1.5rem',
+          marginBottom: '1.5rem',
+        }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: theme.colors.text.primary, marginBottom: '0.75rem' }}>Event Feed</h2>
 
           {/* Filter chips */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
@@ -320,12 +425,11 @@ export const CampaignDetail: React.FC = () => {
                   padding: '0.2rem 0.6rem',
                   borderRadius: '999px',
                   fontSize: '0.75rem',
-                  border: '1px solid',
                   cursor: 'pointer',
-                  background: filters[cat.key] ? '#1e3a5f' : 'transparent',
-                  borderColor: filters[cat.key] ? '#3b82f6' : '#444',
-                  color: filters[cat.key] ? '#93c5fd' : '#666',
                   transition: 'all 0.15s',
+                  background: filters[cat.key] ? theme.colors.accent.infoAlpha20 : 'transparent',
+                  border: filters[cat.key] ? `1px solid ${theme.colors.accent.infoAlpha30}` : `1px solid ${theme.colors.border.default}`,
+                  color: filters[cat.key] ? theme.colors.accent.info : theme.colors.text.muted,
                 }}
               >
                 {cat.label}
@@ -334,23 +438,25 @@ export const CampaignDetail: React.FC = () => {
           </div>
 
           {events.length === 0 ? (
-            <p style={{ color: '#888' }}>No events yet.</p>
+            <p style={{ color: theme.colors.text.muted, fontSize: '0.875rem', padding: '1rem 0' }}>No events yet.</p>
           ) : filteredEvents.length === 0 ? (
-            <p style={{ color: '#888' }}>No events match the current filter.</p>
+            <p style={{ color: theme.colors.text.muted, fontSize: '0.875rem', padding: '1rem 0' }}>No events match the current filter.</p>
           ) : null}
           <div style={{ display: 'grid', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
             {filteredEvents.map((event) => (
               <div key={event._id} style={{
+                background: theme.colors.bg.elevated,
+                borderRadius: '0.5rem',
+                borderLeft: `3px solid ${getEventAccent(event.type)}`,
                 padding: '0.5rem 0.75rem',
-                background: '#1a1a2e',
-                borderRadius: '6px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontSize: '0.875rem',
+                color: theme.colors.text.primary,
               }}>
                 <span>{formatEvent(event)}</span>
-                <span style={{ color: '#666', fontSize: '0.75rem' }}>
+                <span style={{ color: theme.colors.text.muted, fontSize: '0.75rem' }}>
                   {new Date(event.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
@@ -358,7 +464,9 @@ export const CampaignDetail: React.FC = () => {
           </div>
         </div>
 
-        <Button variant="outline" onClick={() => navigate('/campaigns')}>← Back</Button>
+        <div style={{ marginTop: '1.5rem' }}>
+          <Button variant="outline" onClick={() => navigate('/campaigns')}>← Back</Button>
+        </div>
       </div>
     </AuthGuard>
   );

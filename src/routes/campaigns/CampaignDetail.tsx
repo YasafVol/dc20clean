@@ -351,7 +351,7 @@ export const CampaignDetail: React.FC = () => {
               }}>
                 <span>{formatEvent(event)}</span>
                 <span style={{ color: '#666', fontSize: '0.75rem' }}>
-                  {new Date(event.createdAt).toLocaleTimeString()}
+                  {new Date(event.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
             ))}

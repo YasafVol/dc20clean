@@ -438,7 +438,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 					{/* Roll Button */}
 					<StyledRollButton
-						onClick={handleRoll}
+						onClick={() => handleRoll()}
 						disabled={isRolling || (rollMode === 'no-d20' && additionalDice.length === 0)}
 						$isRolling={isRolling}
 					>

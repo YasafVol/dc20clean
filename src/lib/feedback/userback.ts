@@ -45,6 +45,12 @@ export function loadUserbackWidget(): boolean {
 	script.src = USERBACK_SCRIPT_SRC;
 	document.body.appendChild(script);
 
+	// Inject CSS to enforce left: 1rem (mirrors dice roller's right: 1rem)
+	const style = document.createElement('style');
+	style.id = 'userback-position-override';
+	style.textContent = '#userback-button, .userback-button-e { left: 1rem !important; right: auto !important; }';
+	document.head.appendChild(style);
+
 	return true;
 }
 

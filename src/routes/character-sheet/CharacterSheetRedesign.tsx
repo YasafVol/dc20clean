@@ -402,10 +402,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const isWildFormed =
 		characterData.characterState?.ui?.combatToggles?.isWildFormed ?? false;
 
-	// Get defenses and combat stats from character data (with manual overrides if set)
-	const basePrecisionAD = characterData.finalPD ?? 10;
-	const baseAreaAD = characterData.finalAD ?? 10;
-	const basePrecisionDR = characterData.finalPDR ?? 0;
+	// Get defenses from live calculator result; fall back to saved character data
+	const basePrecisionAD = calculatedData?.stats?.finalPD ?? characterData.finalPD ?? 10;
+	const baseAreaAD = calculatedData?.stats?.finalAD ?? characterData.finalAD ?? 10;
+	const basePrecisionDR = calculatedData?.stats?.finalPDR ?? characterData.finalPDR ?? 0;
 	const ragePdPenalty = hasRageFeature && isRaging ? 5 : 0;
 
 	const precisionAD = Math.max(

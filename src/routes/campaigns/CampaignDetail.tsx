@@ -341,6 +341,49 @@ export const CampaignDetail: React.FC = () => {
             </div>
           )}
 
+          {/* Member list with role management */}
+          <div style={{ marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '0.75rem', fontWeight: 600, color: theme.colors.text.secondary, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Members</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              {members.map((m: any) => {
+                const isSelf = m.userId === currentUser?.userId;
+                const isDmTarget = m.role === 'dm';
+                const roleBadgeColor = m.role === 'dm'
+                  ? { bg: theme.colors.accent.dangerAlpha20, color: theme.colors.accent.danger, border: `1px solid ${theme.colors.accent.danger}40` }
+                  : m.role === 'co_dm'
+                  ? { bg: theme.colors.accent.warningAlpha20, color: theme.colors.accent.warning, border: `1px solid ${theme.colors.accent.warning}40` }
+                  : { bg: theme.colors.accent.infoAlpha20, color: theme.colors.accent.info, border: `1px solid ${theme.colors.accent.infoAlpha30}` };
+                return (
+                  <div key={m._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.5rem', borderRadius: '0.375rem', background: theme.colors.bg.elevated }}>
+                    <span style={{ flex: 1, fontSize: '0.875rem', color: theme.colors.text.primary }}>
+                      {isSelf ? 'You' : (m.displayName ?? 'Unknown')}
+                    </span>
+                    <span style={{ padding: '0.15rem 0.5rem', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 600, ...roleBadgeColor }}>
+                      {ROLE_LABELS[m.role as CampaignRole]}
+                    </span>
+                    {myRole === 'dm' && !isSelf && !isDmTarget && (
+                      <>
+                        {m.role === 'player' && (
+                          <Button variant="outline" onClick={() => handleSetRole(m.userId, 'co_dm')} style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+                            Make Co-DM
+                          </Button>
+                        )}
+                        {m.role === 'co_dm' && (
+                          <Button variant="outline" onClick={() => handleSetRole(m.userId, 'player')} style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+                            Demote
+                          </Button>
+                        )}
+                        <Button variant="outline" onClick={() => handleKick(m.userId, m.displayName)} style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', color: theme.colors.accent.danger, borderColor: theme.colors.accent.danger }}>
+                          Kick
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Full Live Roster */}
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', color: theme.colors.text.primary }}>
             <thead>

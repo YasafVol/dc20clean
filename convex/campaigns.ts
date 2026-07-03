@@ -345,7 +345,7 @@ export const shareCharacter = mutation({
       .collect();
 
     for (const m of allMemberships) {
-      if (m._id.equals(member._id)) continue;
+      if (m._id === member._id) continue;
       if ((m.sharedCharacterIds as string[]).includes(args.characterId)) {
         const otherCampaign = await ctx.db.get(m.campaignId);
         const name = otherCampaign ? (otherCampaign as any).name : 'another campaign';

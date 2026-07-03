@@ -1091,7 +1091,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				<CampaignFeedPanel
 					campaignName={campaignName}
 					events={campaignEvents}
-					currentUserId={currentUser.userId}
 					onClose={() => setFeedOpen(false)}
 				/>
 			)}

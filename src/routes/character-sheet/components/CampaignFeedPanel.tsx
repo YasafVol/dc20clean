@@ -6,11 +6,10 @@ import type { CampaignEvent } from '../../../lib/types/campaign';
 interface CampaignFeedPanelProps {
   campaignName: string;
   events: CampaignEvent[];
-  currentUserId: string;
   onClose: () => void;
 }
 
-export function CampaignFeedPanel({ campaignName, events, currentUserId: _currentUserId, onClose }: CampaignFeedPanelProps) {
+export function CampaignFeedPanel({ campaignName, events, onClose }: CampaignFeedPanelProps) {
   const sorted = [...events].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );

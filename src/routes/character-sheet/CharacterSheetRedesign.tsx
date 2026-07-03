@@ -74,8 +74,12 @@ import MobileBottomNav from './components/shared/MobileBottomNav';
 import HamburgerDrawer from './components/shared/HamburgerDrawer';
 import Snackbar from '../../components/Snackbar';
 import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
+import { useCampaignNotifications } from './hooks/useCampaignNotifications';
+import { CampaignFeedPanel } from './components/CampaignFeedPanel';
+import { useCurrentUser } from '../../components/auth/CurrentUserContext';
 
 // Import theme
+import { theme } from './styles/theme';
 import { logger } from '../../lib/utils/logger';
 import { getDefaultStorage } from '../../lib/storage';
 
@@ -105,6 +109,17 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
 	const [rulebookOpen, setRulebookOpen] = useState(false);
+
+	const currentUser = useCurrentUser();
+	const { campaignName, events: campaignEvents, unreadCount, markSeen, inCampaign } =
+		useCampaignNotifications(characterId);
+	const [feedOpen, setFeedOpen] = useState(false);
+
+	const openFeed = () => {
+		markSeen();
+		setFeedOpen(true);
+	};
+
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [snackbarVariant, setSnackbarVariant] = useState<'success' | 'error' | 'info'>('success');
 	const [showSnackbar, setShowSnackbar] = useState(false);
@@ -724,6 +739,38 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
 
 					<ActionButtons>
+						{inCampaign && (
+							<ActionButton
+								onClick={openFeed}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								title="Campaign feed"
+								style={{ position: 'relative' }}
+							>
+								🔔
+								{unreadCount > 0 && (
+									<span style={{
+										position: 'absolute',
+										top: '-4px',
+										right: '-4px',
+										background: theme.colors.accent.danger,
+										color: '#fff',
+										borderRadius: '9999px',
+										fontSize: '0.6rem',
+										fontWeight: 700,
+										minWidth: '16px',
+										height: '16px',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										padding: '0 3px',
+										lineHeight: 1,
+									}}>
+										{unreadCount > 99 ? '99+' : unreadCount}
+									</span>
+								)}
+							</ActionButton>
+						)}
 						{onBack && (
 							<BackButton onClick={onBack} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 								← {t('characterSheet.back')}
@@ -1039,6 +1086,15 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 			{/* Feature Details Popup */}
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
+
+			{feedOpen && campaignName && currentUser && (
+				<CampaignFeedPanel
+					campaignName={campaignName}
+					events={campaignEvents}
+					currentUserId={currentUser.userId}
+					onClose={() => setFeedOpen(false)}
+				/>
+			)}
 
 			{/* Snackbar for notifications */}
 			<Snackbar

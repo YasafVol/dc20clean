@@ -186,6 +186,7 @@ export const getCampaignsForCharacter = query({
       if (!campaign || (campaign as any).deletedAt) continue;
       results.push({
         campaignDocId: (campaign as any).id,  // app-level id, e.g. camp_abc123
+        campaignName: (campaign as any).name,
         memberDocId: m._id.toString(),
       });
     }
@@ -335,6 +336,22 @@ export const shareCharacter = mutation({
       .withIndex('by_user_and_id', (q: any) => q.eq('userId', userId).eq('id', args.characterId))
       .first();
     if (!char) throw new Error('Character not found or not owned by caller');
+
+    // One-character-one-campaign: reject if character already shared elsewhere
+    const allMemberships = await ctx.db
+      .query('campaignMembers')
+      .withIndex('by_user', (q: any) => q.eq('userId', userId))
+      .filter((q: any) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+
+    for (const m of allMemberships) {
+      if (m._id.equals(member._id)) continue;
+      if ((m.sharedCharacterIds as string[]).includes(args.characterId)) {
+        const otherCampaign = await ctx.db.get(m.campaignId);
+        const name = otherCampaign ? (otherCampaign as any).name : 'another campaign';
+        throw new Error(`Character is already shared in "${name}". Unshare it there first.`);
+      }
+    }
 
     if (member.sharedCharacterIds.includes(args.characterId)) return;
     await ctx.db.patch(member._id, {

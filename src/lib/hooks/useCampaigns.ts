@@ -58,7 +58,7 @@ export function useCampaignsForCharacter(characterId: string | null) {
     api.campaigns.getCampaignsForCharacter,
     characterId ? { characterId } : 'skip'
   );
-  return (raw ?? []) as Array<{ campaignDocId: string; memberDocId: string }>;
+  return (raw ?? []) as Array<{ campaignDocId: string; campaignName: string; memberDocId: string }>;
 }
 
 export function useCampaignMutations() {

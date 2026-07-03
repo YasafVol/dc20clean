@@ -240,8 +240,12 @@ export const CampaignDetail: React.FC = () => {
   const mySharedIds = myMember?.sharedCharacterIds ?? [];
 
   const handleShareCharacter = async (characterId: string) => {
-    await mutations.shareCharacter(campaign.id, characterId);
-    setShowSharePicker(false);
+    try {
+      await mutations.shareCharacter(campaign.id, characterId);
+      setShowSharePicker(false);
+    } catch (err: any) {
+      alert(err?.data?.message ?? err?.message ?? 'Failed to share character.');
+    }
   };
 
   const handleUnshare = async (characterId: string) => {

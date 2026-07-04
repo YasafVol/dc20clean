@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { theme } from '../styles/theme';
 import { formatEvent, getEventAccent } from '../utils/campaignFeedFormat';
 import type { CampaignEvent } from '../../../lib/types/campaign';
@@ -14,6 +14,12 @@ export function CampaignFeedPanel({ campaignName, events, onClose }: CampaignFee
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   return (
     <>
       {/* Backdrop */}
@@ -23,7 +29,7 @@ export function CampaignFeedPanel({ campaignName, events, onClose }: CampaignFee
           position: 'fixed',
           inset: 0,
           background: 'rgba(0,0,0,0.4)',
-          zIndex: 999,
+          zIndex: 9998,
         }}
       />
 
@@ -33,11 +39,11 @@ export function CampaignFeedPanel({ campaignName, events, onClose }: CampaignFee
           position: 'fixed',
           top: 0,
           right: 0,
-          width: '380px',
+          width: 'min(380px, 100vw)',
           height: '100vh',
           background: theme.colors.bg.secondary,
           borderLeft: `1px solid ${theme.colors.border.default}`,
-          zIndex: 1000,
+          zIndex: 9999,
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -79,7 +85,7 @@ export function CampaignFeedPanel({ campaignName, events, onClose }: CampaignFee
         </div>
 
         {/* Events list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 1rem' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem 1rem', scrollbarWidth: 'thin' }}>
           {sorted.length === 0 ? (
             <p style={{ color: theme.colors.text.muted, fontSize: '0.875rem', textAlign: 'center', marginTop: '2rem' }}>
               No events yet.

@@ -38,10 +38,18 @@ export const HeaderContent = styled.div`
 	gap: ${theme.spacing[6]};
 `;
 
+export const LeftSection = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[4]};
+	min-width: 0;
+`;
+
 export const CharacterIdentity = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: ${theme.spacing[2]};
+	min-width: 0;
 `;
 
 export const CharacterName = styled.h1`
@@ -89,6 +97,12 @@ export const MetaItem = styled.span`
 export const ActionButtons = styled.div`
 	display: flex;
 	gap: ${theme.spacing[3]};
+	/* Leave room for the fixed FixedAuthStatus overlay (≈12rem from right edge) */
+	padding-right: 12rem;
+
+	${media.tablet} {
+		padding-right: 10rem;
+	}
 
 	${media.mobile} {
 		display: none; /* Hide on mobile - use hamburger menu instead */

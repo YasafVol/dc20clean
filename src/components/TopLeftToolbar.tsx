@@ -45,12 +45,14 @@ export const TopLeftToolbar: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
-	// Hide entirely on the character sheet view (`/character/:id`, but NOT on
-	// `/character/:id/edit` or `/character/:id/levelup`). The sheet ships its
-	// own back button and action row inside `Header`; the floating toolbar
-	// would otherwise overlap the character name on the left edge.
-	const isCharacterSheetView = /^\/character\/[^/]+\/?$/.test(location.pathname);
-	if (isCharacterSheetView) return null;
+	// Hide on pages that ship their own in-page back button to avoid duplicates
+	// and overlap with the fixed toolbar.
+	const hiddenPaths = [
+		/^\/character\/[^/]+\/?$/, // character sheet (has its own header back button)
+		/^\/dm\/monsters\/[^/]+\/?$/, // monster designer
+		/^\/dm\/encounters\/[^/]+\/?$/, // encounter planner
+	];
+	if (hiddenPaths.some((re) => re.test(location.pathname))) return null;
 
 	// Hide back button on menu page
 	const showBackButton = location.pathname !== '/menu';

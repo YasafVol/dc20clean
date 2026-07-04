@@ -7,6 +7,7 @@ import {
 	PageContainer,
 	Header,
 	HeaderContent,
+	LeftSection,
 	CharacterIdentity,
 	CharacterName,
 	CharacterMeta,
@@ -718,22 +719,29 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				transition={{ type: 'spring', stiffness: 100 }}
 			>
 				<HeaderContent>
-					<CharacterIdentity>
-						<CharacterName>
-							{characterData.finalName || t('characterSheet.unnamedCharacter')}
-						</CharacterName>
-						<CharacterMeta>
-							<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
-							<MetaItem>
-								{t('characterSheet.level')} {characterData.level || 1}{' '}
-								{characterData.className || t('characterSheet.adventurer')}
-							</MetaItem>
-							<MetaItem>
-								{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
-								{characterData.ancestry2Name ? `/ ${characterData.ancestry2Name}` : ''}
-							</MetaItem>
-						</CharacterMeta>
-					</CharacterIdentity>
+					<LeftSection>
+						{onBack && (
+							<BackButton onClick={onBack} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+								← {t('characterSheet.back')}
+							</BackButton>
+						)}
+						<CharacterIdentity>
+							<CharacterName>
+								{characterData.finalName || t('characterSheet.unnamedCharacter')}
+							</CharacterName>
+							<CharacterMeta>
+								<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
+								<MetaItem>
+									{t('characterSheet.level')} {characterData.level || 1}{' '}
+									{characterData.className || t('characterSheet.adventurer')}
+								</MetaItem>
+								<MetaItem>
+									{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
+									{characterData.ancestry2Name ? `/ ${characterData.ancestry2Name}` : ''}
+								</MetaItem>
+							</CharacterMeta>
+						</CharacterIdentity>
+					</LeftSection>
 
 					{/* Mobile hamburger menu - only visible on mobile */}
 					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
@@ -770,11 +778,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									</span>
 								)}
 							</ActionButton>
-						)}
-						{onBack && (
-							<BackButton onClick={onBack} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-								← {t('characterSheet.back')}
-							</BackButton>
 						)}
 						<ActionButton
 							onClick={() => setRulebookOpen(true)}

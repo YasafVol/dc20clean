@@ -1,8 +1,10 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useCampaignsForCharacter, useCampaignEvents } from '../../../lib/hooks/useCampaigns';
+import { useMyCampaigns, useCampaignEvents } from '../../../lib/hooks/useCampaigns';
 import { useCurrentUser } from '../../../components/auth/CurrentUserContext';
 import type { CampaignEvent } from '../../../lib/types/campaign';
 
+// Watches all campaigns the logged-in user belongs to (up to 3) so the bell and
+// feed are consistent with the global toast system, which also watches all campaigns.
 export function useCampaignNotifications(characterId: string | null): {
   campaignName: string | null;
   campaignId: string | null;
@@ -11,9 +13,32 @@ export function useCampaignNotifications(characterId: string | null): {
   markSeen: () => void;
   inCampaign: boolean;
 } {
-  const campaignLinks = useCampaignsForCharacter(characterId);
-  const link = campaignLinks[0] ?? null;
-  const { events } = useCampaignEvents(link?.campaignDocId ?? null);
+  const { campaigns } = useMyCampaigns();
+
+  // Always call 3 slots (rules of hooks — no conditional calls).
+  const id0 = (campaigns[0]?.campaign as any)?.id ?? null;
+  const id1 = (campaigns[1]?.campaign as any)?.id ?? null;
+  const id2 = (campaigns[2]?.campaign as any)?.id ?? null;
+
+  const { events: events0 } = useCampaignEvents(id0);
+  const { events: events1 } = useCampaignEvents(id1);
+  const { events: events2 } = useCampaignEvents(id2);
+
+  const events = useMemo(
+    () =>
+      [...events0, ...events1, ...events2].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ),
+    [events0, events1, events2]
+  );
+
+  const campaignName = useMemo(() => {
+    if (campaigns.length === 0) return null;
+    return campaigns.map((c) => (c.campaign as any).name as string).join(', ');
+  }, [campaigns]);
+
+  const primaryCampaignId = id0;
+
   const currentUser = useCurrentUser();
 
   const storageKey = characterId
@@ -40,11 +65,11 @@ export function useCampaignNotifications(characterId: string | null): {
   }, [events, currentUser, lastSeenAt]);
 
   return {
-    campaignName: link?.campaignName ?? null,
-    campaignId: link?.campaignDocId ?? null,
+    campaignName,
+    campaignId: primaryCampaignId,
     events,
     unreadCount,
     markSeen,
-    inCampaign: !!link,
+    inCampaign: campaigns.length > 0,
   };
 }

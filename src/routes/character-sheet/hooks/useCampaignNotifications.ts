@@ -58,11 +58,15 @@ export function useCampaignNotifications(characterId: string | null): {
   }, [storageKey]);
 
   const unreadCount = useMemo(() => {
-    if (!currentUser) return 0;
-    return events.filter(
-      (e) => e.actorUserId !== currentUser.userId && e.createdAt > lastSeenAt
-    ).length;
-  }, [events, currentUser, lastSeenAt]);
+    // Count events from characters other than the one being viewed, or from
+    // other users when no characterId is present (e.g. member_joined events).
+    return events.filter((e) => {
+      if (e.createdAt <= lastSeenAt) return false;
+      if (e.characterId != null) return e.characterId !== characterId;
+      // No characterId: fall back to user-based filter
+      return currentUser ? e.actorUserId !== currentUser.userId : false;
+    }).length;
+  }, [events, characterId, currentUser, lastSeenAt]);
 
   return {
     campaignName,

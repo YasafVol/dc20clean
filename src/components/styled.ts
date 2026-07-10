@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import mainBgImage from '../assets/Main.jpg';
 
+type StyledMenuVariant = 'character' | 'dm' | 'tools' | 'rulebook';
+
 export const StyledContainer = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -127,14 +129,16 @@ export const StyledMenuGrid = styled.div`
 `;
 
 // Base menu card with variant support
-export const StyledMenuCard = styled.button<{ $variant?: 'character' | 'dm' | 'tools' }>`
+export const StyledMenuCard = styled.button<{ $variant?: StyledMenuVariant }>`
 	border: 1px solid
 		${(props) =>
 			props.$variant === 'character'
 				? 'rgba(251, 191, 36, 0.4)'
 				: props.$variant === 'dm'
 					? 'rgba(168, 85, 247, 0.4)'
-					: 'rgba(96, 165, 250, 0.4)'};
+					: props.$variant === 'rulebook'
+						? 'rgba(34, 197, 94, 0.4)'
+						: 'rgba(96, 165, 250, 0.4)'};
 	padding: 1rem 1.25rem;
 	border-radius: 8px;
 	background: ${(props) =>
@@ -142,7 +146,9 @@ export const StyledMenuCard = styled.button<{ $variant?: 'character' | 'dm' | 't
 			? 'rgba(251, 191, 36, 0.05)'
 			: props.$variant === 'dm'
 				? 'rgba(168, 85, 247, 0.05)'
-				: 'rgba(96, 165, 250, 0.05)'};
+				: props.$variant === 'rulebook'
+					? 'rgba(34, 197, 94, 0.05)'
+					: 'rgba(96, 165, 250, 0.05)'};
 	cursor: pointer;
 	transition: all 0.3s ease;
 	text-align: left;
@@ -150,25 +156,36 @@ export const StyledMenuCard = styled.button<{ $variant?: 'character' | 'dm' | 't
 	backdrop-filter: blur(4px);
 	height: 90px;
 	display: flex;
-	flex-direction: ${(props) => (props.$variant === 'tools' ? 'column' : 'row')};
-	justify-content: ${(props) => (props.$variant === 'tools' ? 'center' : 'space-between')};
+	flex-direction: ${(props) =>
+		props.$variant === 'tools' || props.$variant === 'rulebook' ? 'column' : 'row'};
+	justify-content: ${(props) =>
+		props.$variant === 'tools' || props.$variant === 'rulebook' ? 'center' : 'space-between'};
 	align-items: center;
-	gap: ${(props) => (props.$variant === 'tools' ? '0.5rem' : '0.75rem')};
+	gap: ${(props) =>
+		props.$variant === 'tools' || props.$variant === 'rulebook' ? '0.5rem' : '0.75rem'};
 
 	&:hover {
 		border-color: ${(props) =>
-			props.$variant === 'character' ? '#fbbf24' : props.$variant === 'dm' ? '#a855f7' : '#60a5fa'};
+			props.$variant === 'character'
+				? '#fbbf24'
+				: props.$variant === 'dm'
+					? '#a855f7'
+					: props.$variant === 'rulebook'
+						? '#22c55e'
+						: '#60a5fa'};
 		background: ${(props) =>
 			props.$variant === 'character'
 				? 'rgba(251, 191, 36, 0.15)'
 				: props.$variant === 'dm'
 					? 'rgba(168, 85, 247, 0.15)'
-					: 'rgba(96, 165, 250, 0.15)'};
+					: props.$variant === 'rulebook'
+						? 'rgba(34, 197, 94, 0.15)'
+						: 'rgba(96, 165, 250, 0.15)'};
 		transform: translateY(-2px);
 	}
 `;
 
-export const StyledIcon = styled.div<{ $variant?: 'character' | 'dm' | 'tools' }>`
+export const StyledIcon = styled.div<{ $variant?: StyledMenuVariant }>`
 	font-size: 2.5rem;
 	background: transparent;
 	border-radius: 0;
@@ -182,7 +199,13 @@ export const StyledIcon = styled.div<{ $variant?: 'character' | 'dm' | 'tools' }
 	box-shadow: none;
 	transition: all 0.3s ease;
 	color: ${(props) =>
-		props.$variant === 'character' ? '#fbbf24' : props.$variant === 'dm' ? '#c084fc' : '#60a5fa'};
+		props.$variant === 'character'
+			? '#fbbf24'
+			: props.$variant === 'dm'
+				? '#c084fc'
+				: props.$variant === 'rulebook'
+					? '#4ade80'
+					: '#60a5fa'};
 	font-weight: 300;
 
 	svg {
@@ -192,15 +215,27 @@ export const StyledIcon = styled.div<{ $variant?: 'character' | 'dm' | 'tools' }
 
 	${StyledMenuCard}:hover & {
 		color: ${(props) =>
-			props.$variant === 'character' ? '#f59e0b' : props.$variant === 'dm' ? '#a855f7' : '#3b82f6'};
+			props.$variant === 'character'
+				? '#f59e0b'
+				: props.$variant === 'dm'
+					? '#a855f7'
+					: props.$variant === 'rulebook'
+						? '#22c55e'
+						: '#3b82f6'};
 		transform: scale(1.1);
 	}
 `;
 
-export const StyledCardTitle = styled.h2<{ $variant?: 'character' | 'dm' | 'tools' }>`
+export const StyledCardTitle = styled.h2<{ $variant?: StyledMenuVariant }>`
 	margin: 0;
 	color: ${(props) =>
-		props.$variant === 'character' ? '#fbbf24' : props.$variant === 'dm' ? '#c084fc' : '#60a5fa'};
+		props.$variant === 'character'
+			? '#fbbf24'
+			: props.$variant === 'dm'
+				? '#c084fc'
+				: props.$variant === 'rulebook'
+					? '#4ade80'
+					: '#60a5fa'};
 	font-size: 1.1rem;
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
@@ -212,7 +247,13 @@ export const StyledCardTitle = styled.h2<{ $variant?: 'character' | 'dm' | 'tool
 
 	${StyledMenuCard}:hover & {
 		color: ${(props) =>
-			props.$variant === 'character' ? '#f59e0b' : props.$variant === 'dm' ? '#a855f7' : '#3b82f6'};
+			props.$variant === 'character'
+				? '#f59e0b'
+				: props.$variant === 'dm'
+					? '#a855f7'
+					: props.$variant === 'rulebook'
+						? '#22c55e'
+						: '#3b82f6'};
 	}
 `;
 

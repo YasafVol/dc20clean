@@ -2,7 +2,7 @@
 
 > Purpose: Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.
 > Status: Active
-> Last Updated: 2026-06-28
+> Last Updated: 2026-07-11
 
 ---
 
@@ -91,21 +91,21 @@ rules-data, or calculator tests.
 
 ## 4. Current E2E Inventory
 
-| Spec                                         | Coverage                                                                                                                                                                     |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `e2e/01-import.e2e.spec.ts`                  | Imports a fixture and opens the character sheet                                                                                                                              |
-| `e2e/02-resources.e2e.spec.ts`               | Resource controls and notes                                                                                                                                                  |
-| `e2e/07-weapons.e2e.spec.ts`                 | Weapon add/update/remove                                                                                                                                                     |
-| `e2e/08-items.e2e.spec.ts`                   | Item add/remove                                                                                                                                                              |
-| `e2e/09-spells.e2e.spec.ts`                  | Spell add/filter/delete                                                                                                                                                      |
-| `e2e/10-maneuvers.e2e.spec.ts`               | Maneuver add/delete when available                                                                                                                                           |
-| `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                                                                                               |
-| `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                                                                                          |
-| `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                                                                                              |
+| Spec                                         | Coverage                                                                                                                                                                                                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `e2e/01-import.e2e.spec.ts`                  | Imports a fixture and opens the character sheet                                                                                                                                                                                                        |
+| `e2e/02-resources.e2e.spec.ts`               | Resource controls and notes                                                                                                                                                                                                                            |
+| `e2e/07-weapons.e2e.spec.ts`                 | Weapon add/update/remove                                                                                                                                                                                                                               |
+| `e2e/08-items.e2e.spec.ts`                   | Item add/remove                                                                                                                                                                                                                                        |
+| `e2e/09-spells.e2e.spec.ts`                  | Spell add/filter/delete                                                                                                                                                                                                                                |
+| `e2e/10-maneuvers.e2e.spec.ts`               | Maneuver add/delete when available                                                                                                                                                                                                                     |
+| `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                                                                                                                                                                         |
+| `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                                                                                                                                                                    |
+| `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                                                                                                                                                                        |
 | `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, level-1 Human Barbarian creation through Background/Maneuvers to sheet, and create → sheet → load/edit → attribute reallocation → resave persistence |
-| `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                              |
-| `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                                                                                   |
-| `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                                                                                       |
+| `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
+| `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
+| `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                                                                                                                                                                 |
 
 The files in `docs/e2e/` are descriptive snapshots, not the system source of truth. Keep this file authoritative for testing policy.
 
@@ -214,6 +214,20 @@ Minimum acceptance cases:
 - Keep one spec focused on one user story.
 - Do not use broad text selectors when the same string can appear in hidden options, flavor text, or unrelated cards.
 - If a behavior is calculated but not visibly rendered, add a UI TODO or component test instead of pretending E2E covered it.
+
+### 7.1 Rulebook Coverage
+
+1. `src/routes/rulebook/rulebookData.test.ts`
+   1. Validates generated manifest counts and unique IDs.
+   2. Validates the public TOC filter, stable article routes, article neighbors, and search ranking.
+2. `e2e/15-rulebook.e2e.spec.ts`
+   1. Runs in both desktop and mobile projects.
+   2. Opens the manifest-backed TOC and navigates to one lazy article chunk.
+   3. Verifies GFM table rendering.
+   4. Searches the deferred index and follows a stable heading hash.
+3. `npm run rulebook:generate:0105`
+   1. Is the source-to-artifact validation gate.
+   2. Must report zero unresolved and zero ambiguous mappings.
 
 ---
 

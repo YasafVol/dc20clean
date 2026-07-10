@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import { BrowserRouter, Routes, Route, useParams, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import { CharacterProvider } from './lib/stores/characterContext';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
@@ -28,6 +29,8 @@ import Snackbar from './components/Snackbar';
 import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 import libreBaskervilleItalic from './types/Fonts/LibreBaskerville-Italic.ttf';
+
+const Rulebook = lazy(() => import('./routes/rulebook/Rulebook.tsx'));
 
 const GlobalStyle = createGlobalStyle`
 	@font-face {
@@ -146,6 +149,14 @@ function App() {
 						<Route path="/spellbook" element={<Spellbook />} />
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
+						<Route
+							path="/rulebook/*"
+							element={
+								<Suspense fallback={<div className="p-8 text-center">Loading rulebook...</div>}>
+									<Rulebook />
+								</Suspense>
+							}
+						/>
 						<Route path="/custom-equipment" element={<CustomEquipment />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />
 						<Route

@@ -2,7 +2,7 @@
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-11
 
 ## Tech Stack
 
@@ -74,6 +74,7 @@ PDF export:
 
 Rules source audits:
 
+- `npm run rulebook:generate:0105`
 - `npm run spells:validate:0105`
 - `npm run martials:validate:0105`
 - `npm run ancestries:validate:0105`
@@ -122,6 +123,7 @@ src/
 │   ├── conditions/                # Conditions reference page
 │   ├── custom-equipment/          # Equipment builder wizard
 │   ├── martial-manual/            # Maneuver reference browser
+│   ├── rulebook/                  # Passive Markdown rulebook reader
 │   ├── dm/                        # DM tools
 │   │   ├── encounters/            #   Encounter planner
 │   │   └── monsters/              #   Monster designer

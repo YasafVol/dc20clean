@@ -198,6 +198,7 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
+import { BookOpenText } from 'lucide-react';
 import { useIsAuthenticated } from './auth';
 import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
@@ -352,6 +353,15 @@ function Menu() {
 						</StyledIcon>
 						<StyledTextContent $center>
 							<StyledCardTitle $variant="tools">{t('menu.equipage')}</StyledCardTitle>
+						</StyledTextContent>
+					</StyledMenuCard>
+
+					<StyledMenuCard $variant="rulebook" onClick={() => navigate('/rulebook')}>
+						<StyledIcon $variant="rulebook">
+							<BookOpenText aria-hidden="true" strokeWidth={1.5} />
+						</StyledIcon>
+						<StyledTextContent $center>
+							<StyledCardTitle $variant="rulebook">{t('menu.rulebook')}</StyledCardTitle>
 						</StyledTextContent>
 					</StyledMenuCard>
 				</StyledToolsGrid>

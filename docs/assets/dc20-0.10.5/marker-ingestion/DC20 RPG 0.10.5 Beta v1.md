@@ -1526,7 +1526,7 @@ The creature rolls a d20, adds its given Attribute, and adds its Combat Mastery.
 
 **D20 + Attribute + Combat Mastery**
 
-**Example (Might Save):** *A level 2 Barbarian that attempts to resist being pushed against their will would make a Might Save to prevent themselves from moving.Their Might is 3 and their Combat Mastery (1/2 level, rounded up) is 1, so their total bonus to the Save is a 4. They would roll a d20 and add* **4** *to their Might Save.* 
+**Example (Might Save):** *A level 2 Barbarian that attempts to resist being pushed against their will would make a Might Save to prevent themselves from moving.Their Might is 3 and their Combat Mastery (1/2 level, rounded up) is 1, so their total bonus to the Save is a 4. They would roll a d20 and add* **4** *to their Might Save.*
 
 **Example (Agility Save):** *A level 5 Rogue that attempts to jump to safety when the ground beneath their feet collapses would make an Agility Save to secure its footing on solid ground. Their Agility is 4 and their Combat Mastery (1/2 level, rounded up) is 3, so their total bonus to the Save is a 7. They would roll a d20 and add* **7** *to their Agility Save.*
 
@@ -2836,7 +2836,7 @@ Make an Area Martial Attack against the AD of every target within range. **Hit:*
 
 *Careful Cleave*: (X SP) You can choose X targets in the area to avoid with the Attack.
 
-*Sweep*: (2 SP) Each target makes an Agility Save. **Save** 
+*Sweep*: (2 SP) Each target makes an Agility Save. **Save**
 
 **Failure:** The target is knocked **Prone**.
 
@@ -5937,7 +5937,7 @@ Describe or name a location, object, or creature and make a Spell Check against 
 | You've previously seen the target.                                    | 15 |
 | You've been to the location or have previously touched<br>the target. | 10 |
 
-*DC Tip: The GM may increase or decrease the DC under certain circumstances (such as having a piece of the item or a lock of their hair).* 
+*DC Tip: The GM may increase or decrease the DC under certain circumstances (such as having a piece of the item or a lock of their hair).*
 
 ### Spell Enhancements
 
@@ -6844,7 +6844,7 @@ This Spell leaves debris imbedded in objects in the area.
 
 *Aura*: (1 MP) The Area becomes an Aura instead.
 
-*Impair*: (1 MP) Each target makes an Agility Save. **Save** 
+*Impair*: (1 MP) Each target makes an Agility Save. **Save**
 
 **Failure:** The target is **Impaired** for 1 Round.
 
@@ -7338,7 +7338,7 @@ Damage from this Spell leaves no visible trace on any affected creatures or the 
 
 *Damage*: (X AP) The damage increases by **X**.
 
-*Dazed*: (1 AP) The target makes an Intelligence Save. **Save** 
+*Dazed*: (1 AP) The target makes an Intelligence Save. **Save**
 
 **Failure:** The target is **Dazed** for 1 Round.
 
@@ -8017,7 +8017,7 @@ The Spell deals double damage to objects. Creatures and objects killed or destro
 
 *Damage*: (X AP) The damage increases by **X**.
 
-*Weaken*: (1 MP) The target makes a Physical save. **Save** 
+*Weaken*: (1 MP) The target makes a Physical save. **Save**
 
 **Failure:** They're **Weakened** for 1 Round.
 
@@ -11348,7 +11348,7 @@ This option allows you to "think outside the box" on why your PC can do what the
 
 **Example:** *You want to play a "normal" Human PC, but you REALLY want to have a Breath Weapon (from the Dragonborn Ancestry) and don't want to say that you're part Dragonborn. You can create a Human with 3 points spent in the Human Ancestry, then with the other 2 points you can get the Dragonborn's Breath Weapon but describe that it comes from a "magic ring" on your finger. This allows you to play the fantasy of a human while still having the magical abilities that you want.*
 
-**DC Tip:** *I've done this myself with Class Features before. I had a PC who was a complete commoner, but he happened to find a magic sword. As soon as he picked it up he was granted the powers of a Spellblade. If I ever lost the sword, then those powers were gone. It's a very unique way to make a unique PC.* 
+**DC Tip:** *I've done this myself with Class Features before. I had a PC who was a complete commoner, but he happened to find a magic sword. As soon as he picked it up he was granted the powers of a Spellblade. If I ever lost the sword, then those powers were gone. It's a very unique way to make a unique PC.*
 
 # GM and PC Notes
 
@@ -11603,7 +11603,7 @@ You gain the following Ancestry Trait:
 
 **(0) Beastkind:** You can understand and speak to (in a limited capacity) the species of Beast your Beastborn is modeled after. You can understand the meaning of their noises and behaviors, and they understand the meanings of simple words, concepts, or states of emotion.
 
-*DC Tip: It's up to the GM how far the category of the beast you choose can be applied. Turtle for example might reference ONLY turtles, or might also include other reptiles. If you choose to be a "hybrid creature" of sorts, you'd have to choose just 1 type of Beast unless your GM makes an exception for you.* 
+*DC Tip: It's up to the GM how far the category of the beast you choose can be applied. Turtle for example might reference ONLY turtles, or might also include other reptiles. If you choose to be a "hybrid creature" of sorts, you'd have to choose just 1 type of Beast unless your GM makes an exception for you.*
 
 # **Beast Traits**
 

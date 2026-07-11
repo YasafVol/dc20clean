@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-06-28
+> Last Updated: 2026-07-09
 
 ---
 
@@ -36,16 +36,16 @@ The primary data structure for character persistence. Defined in `src/lib/types/
 
 **Key sections:**
 
-| Section        | Fields                                                                   | Description                                     |
-| -------------- | ------------------------------------------------------------------------ | ----------------------------------------------- |
-| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                            | Core character info                             |
-| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.             | Build choices                                   |
-| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`       | Core stats                                      |
-| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.     | Calculated values                               |
+| Section        | Fields                                                                                           | Description                                     |
+| -------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Identity       | `id`, `finalName`, `finalPlayerName`, `level`                                                    | Core character info                             |
+| Class/Ancestry | `classId`, `className`, `ancestry1Id`, `ancestry1Name`, etc.                                     | Build choices                                   |
+| Attributes     | `finalMight`, `finalAgility`, `finalCharisma`, `finalIntelligence`                               | Core stats                                      |
+| Derived Stats  | `finalHPMax`, `finalSPMax`, `finalMPMax`, `finalPD`, `finalAD`, etc.                             | Calculated values                               |
 | Selections     | `selectedTraitIds`, `selectedTraitChoices`, `selectedFeatureChoices`, `skillsData`, `tradesData` | User choices                                    |
-| Game State     | `characterState`                                                         | Current HP, inventory, notes, etc.              |
-| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`         | Calculated display data (v2.2.0+)               |
-| Metadata       | `createdAt`, `lastModified`, `schemaVersion`, `rulesVersion`             | Timestamps, storage shape, rules interpretation |
+| Game State     | `characterState`                                                                                 | Current HP, inventory, notes, etc.              |
+| Display Arrays | `resistances?`, `vulnerabilities?`, `senses?`, `combatTraining?`                                 | Calculated display data (v2.2.0+)               |
+| Metadata       | `createdAt`, `lastModified`, `schemaVersion`, `rulesVersion`                                     | Timestamps, storage shape, rules interpretation |
 
 ### 2.2 Display Arrays (v2.2.0+)
 
@@ -303,7 +303,9 @@ encounters: defineTable({
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
 - Convex authentication is mounted only when `VITE_USE_CONVEX=true`; local mode
-  uses an unauthenticated app-auth context and keeps cloud-only routes hidden.
+  uses an unauthenticated app-auth context, keeps cloud-only routes hidden, and
+  renders a disabled `Sign In` affordance so the top-right toolbar does not look
+  like a language-only control.
 
 ### 5.6 Auth UI & Access Control
 
@@ -318,13 +320,22 @@ encounters: defineTable({
 
 **Access Control by Feature**:
 
-| Feature                                           | Auth Required | Notes                                |
-| ------------------------------------------------- | ------------- | ------------------------------------ |
-| Character Creation                                | No            | Saves to localStorage without auth   |
-| Character Creation → Save                         | **Prompted**  | Auth dialog when clicking "Complete" |
-| Load Character                                    | No            | Loads from localStorage              |
-| DM Tools (Laboratory, War Room)                   | **Yes**       | Menu items hidden until signed in    |
-| Reference Tools (Spellbook, Conditions, Equipage) | No            | Public access                        |
+| Feature                                                     | Auth Required | Notes                                |
+| ----------------------------------------------------------- | ------------- | ------------------------------------ |
+| Character Creation                                          | No            | Saves to localStorage without auth   |
+| Character Creation → Save                                   | **Prompted**  | Auth dialog when clicking "Complete" |
+| Load Character                                              | No            | Loads from localStorage              |
+| DM Tools (Laboratory, War Room)                             | **Yes**       | Menu items hidden until signed in    |
+| Reference Tools (Spellbook, Conditions, Equipage, Rulebook) | No            | Public access                        |
+
+### 5.6.1 Auth TODO: Party-Gated App
+
+TODO: Move the app from mixed public/private access to a login-only party tool.
+
+1. Hide all routes and application content behind authentication, including reference tools and the passive Rulebook.
+2. Add a hard-coded party-member allowlist for the initial private campaign deployment.
+3. Keep anonymous localStorage behavior disabled or explicitly migration-only after the login wall is active.
+4. Replace the hard-coded allowlist with a durable membership model only after the private-party flow is proven.
 
 **Character Creation Auth Flow**:
 

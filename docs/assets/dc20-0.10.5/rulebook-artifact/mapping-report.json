@@ -1,0 +1,43 @@
+{
+  "sourceHeadingCount": 2005,
+  "tocNodeCount": 504,
+  "groupCount": 8,
+  "requestedArticleCount": 88,
+  "generatedArticleCount": 88,
+  "mappedAnchorCount": 408,
+  "searchRecordCount": 496,
+  "unresolvedCount": 0,
+  "ambiguousCount": 0,
+  "resolvedOverrideCount": 3,
+  "unresolved": [],
+  "ambiguous": [],
+  "resolvedOverrides": [
+    {
+      "id": "ancestries/gnome",
+      "title": "Gnome",
+      "method": "synthetic-page-start",
+      "sourcePage": 199,
+      "sourceLine": 11323
+    },
+    {
+      "id": "core-rules/attacks-and-defenses/damage/stacking-damage-vuln-resist-and-immun",
+      "title": "Stacking Damage Vuln, Resist, & Immun",
+      "method": "source-title-override",
+      "sourceTitle": "Stacking Damage Vulnerabilities, Resistances, & Immunities",
+      "sourcePage": 37,
+      "sourceLine": 1881
+    },
+    {
+      "id": "general-rules/equipment/customized-weapons/step-3-weapon-properties",
+      "title": "Step 3: Weapon Properties",
+      "method": "source-title-override",
+      "sourceTitle": "Step 3: Weapon",
+      "sourcePage": 167,
+      "sourceLine": 9558
+    }
+  ],
+  "validation": {
+    "status": "passed",
+    "errors": []
+  }
+}

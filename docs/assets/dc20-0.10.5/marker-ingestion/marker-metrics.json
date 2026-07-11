@@ -1,0 +1,45 @@
+{
+  "source_pdf": "DC20 RPG 0.10.5 Beta v1.pdf",
+  "selected_pipeline": "marker",
+  "generated_at": "2026-07-09T00:19:01+03:00",
+  "tool": {
+    "package": "marker-pdf",
+    "version": "1.10.2",
+    "mode": "local",
+    "llm_service_used": false
+  },
+  "output": {
+    "markdown_path": "docs/assets/dc20-0.10.5/marker-ingestion/DC20 RPG 0.10.5 Beta v1.md",
+    "metadata_path": "docs/assets/dc20-0.10.5/marker-ingestion/DC20 RPG 0.10.5 Beta v1_meta.json",
+    "runtime_seconds": 494.24,
+    "bytes": 859766,
+    "chars": 858887,
+    "lines": 14827,
+    "words": 131978,
+    "headings": 2006,
+    "heading_levels": {
+      "1": 1402,
+      "2": 0,
+      "3": 597,
+      "4": 7,
+      "5": 0,
+      "6": 0
+    },
+    "table_pipe_lines": 742,
+    "page_anchor_spans": 214
+  },
+  "rejected_pipelines": [
+    {
+      "name": "pymupdf4llm",
+      "runtime_seconds": 209.65,
+      "headings": 892,
+      "reason": "Default run emitted most headings as h6 and included OCR/picture-text noise."
+    },
+    {
+      "name": "markitdown",
+      "runtime_seconds": 10.43,
+      "headings": 0,
+      "reason": "Output had no Markdown heading hierarchy."
+    }
+  ]
+}

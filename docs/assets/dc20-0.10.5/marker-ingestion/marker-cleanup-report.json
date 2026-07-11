@@ -1,0 +1,22 @@
+{
+  "inputPath": "docs/assets/dc20-0.10.5/marker-ingestion/DC20 RPG 0.10.5 Beta v1.md",
+  "outputPath": "docs/assets/dc20-0.10.5/marker-ingestion/DC20 RPG 0.10.5 Beta v1.cleaned.md",
+  "rawLines": 14827,
+  "cleanedLines": 14783,
+  "removedTocLines": 248,
+  "preservedPageAnchors": 214,
+  "removedReplacementGlyphs": 0,
+  "normalizedHtmlBreaks": 195,
+  "removedSupTags": 6,
+  "headingCounts": {
+    "1": 1402,
+    "3": 597,
+    "4": 6
+  },
+  "notes": [
+    "Raw Marker output is preserved unchanged.",
+    "The extracted visual table-of-contents block was removed from the cleaned Markdown.",
+    "Page span HTML was converted into Markdown comments so source anchors are preserved without polluting rendered text.",
+    "Heading depth is not corrected here; use the visual TOC draft and later hierarchy manifest for that."
+  ]
+}

@@ -19,7 +19,21 @@ export function AuthStatus({ className }: AuthStatusProps) {
 	const { t } = useTranslation();
 
 	if (!isConvexEnabled) {
-		return null;
+		return (
+			<div className={className}>
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					className="border-purple-500/50 text-purple-200"
+					disabled
+					title="Sign in requires Convex auth"
+					aria-disabled="true"
+				>
+					{t('auth.signIn')}
+				</Button>
+			</div>
+		);
 	}
 
 	if (isLoading) {

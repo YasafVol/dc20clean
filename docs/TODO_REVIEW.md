@@ -46,7 +46,7 @@
 2. **[Complete] Central Effects / Rules Notes surface — 76/100**: the Features tab categorizes applied, collected, rules-only, and unsupported effects and exposes resolved Size.
 3. **[Complete] Spellbook replacement flow — 74/100**: users can open the Spellbook for review and replace a row from calculator-valid options; locked sheets remain read-only.
 4. **[Complete] MSL/SSL in-play enhancement workflow — 72/100**: maneuver enhancements are declared session-side, total SP against SSL, and block Use when over limit.
-5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.
+5. **[Complete] Populate `EffectResolution` spell data — 70/100**: the source generator emits explicit attack/save metadata and reports coverage without guessing ambiguous prose.
 6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.
 7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
 8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.

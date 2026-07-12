@@ -51,6 +51,7 @@ import { HeroSection } from './components/new/HeroSection';
 import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
 import EffectsRulesNotes from './components/EffectsRulesNotes';
 import ActiveConditionSummary from './components/ActiveConditionSummary';
+import ComplexFeatureHost from './components/ComplexFeatureHost';
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -1021,6 +1022,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												<>
 													<Features onFeatureClick={openFeaturePopup} />
 													<EffectsRulesNotes />
+													<ComplexFeatureHost />
 												</>
 											)}
 											{activeTab === 'conditions' && (
@@ -1098,6 +1100,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									<>
 										<Features onFeatureClick={openFeaturePopup} />
 										<EffectsRulesNotes />
+										<ComplexFeatureHost />
 									</>
 								)}
 								{activeTab === 'conditions' && (

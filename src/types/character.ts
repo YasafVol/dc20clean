@@ -135,7 +135,7 @@ export interface FeatureData {
 	id: string;
 	name: string;
 	description: string;
-	source: 'ancestry' | 'class' | 'choice';
+	source: 'ancestry' | 'class' | 'subclass' | 'talent' | 'path' | 'choice';
 	sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
 }
 

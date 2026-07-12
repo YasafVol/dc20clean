@@ -43,7 +43,7 @@
 ## 3. Medium-confidence work
 
 1. **Complex Feature Host / Wild Form — 78/100**: module boundary is clear; Wild Form source-template and trait-selection UX still needs a compact interaction spec.
-2. **Central Effects / Rules Notes surface — 76/100**: aggregation inputs are defined; categorization, duplication rules, and placement need a UI decision.
+2. **[Complete] Central Effects / Rules Notes surface — 76/100**: the Features tab categorizes applied, collected, rules-only, and unsupported effects and exposes resolved Size.
 3. **Spellbook replacement flow — 74/100**: slot validation is defined; replacement navigation and confirmation behavior need a UX decision.
 4. **MSL/SSL in-play enhancement workflow — 72/100**: calculator limits exist; performed-action state and declare-before-roll interaction are not modeled.
 5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.

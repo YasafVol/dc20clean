@@ -27,7 +27,7 @@
 4. **[Complete] Spell presentation helper — 86/100**
    1. Sources: `CHARACTER_SHEET.MD` and `EQUIPMENT_SYSTEM.MD`.
    2. Requirements completed: pure helper input is saved spell + calculation + active effects + equipped focus effects; output owns check, damage, range, and play-note presentation; locked legacy sheets may render stored values but cannot replace spells.
-5. **[Ready] Active-condition effects summary — 85/100**
+5. **[Complete] Active-condition effects summary — 85/100**
    1. Sources: `CONDITIONS_SYSTEM.MD` and `CHARACTER_SHEET.MD`.
    2. Requirements completed: summarize non-roll mechanics with source condition, timing, and unresolved player action; do not simulate targets, turns, forced movement, or damage application.
 6. **[Ready] Cleric Dark/Knowledge domain E2E — 84/100**

@@ -167,6 +167,11 @@ one entry per spell with ID, source, school, tags, cost, range, duration, sustai
 flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
 overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
 
+The generator populates structured `EffectResolution` metadata when source prose has
+an explicit Spell Attack versus PD/AD, a target Save, or both. Ambiguous and non-roll
+effects remain unset rather than receiving guessed mechanics; the report records
+deterministic resolution coverage.
+
 ### 3.3 Deterministic Audit Boundary
 
 Code can deterministically verify:

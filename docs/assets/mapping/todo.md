@@ -146,7 +146,7 @@ Source: `../../systems/**`
 
 - [ ] UI: MSL/SSL enforcement in spell/maneuver selection
 - [ ] UI: Declare-before-roll workflow for enhancements
-- [ ] Data: Populate EffectResolution fields on spells
+- [x] Data: Populate EffectResolution fields on spells through the v0.10.5 generator
 - [ ] Data: Populate TraitRequirements on ancestry traits
 
 ## Decisions Log

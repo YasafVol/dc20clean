@@ -356,6 +356,31 @@ function removeSections(lines, sections) {
 	return lines.filter((_, index) => !removed.has(index));
 }
 
+export function inferEffectResolution(description) {
+	const attack = description.match(
+		/(?:make|makes) (?:a |an )?(?:Melee |Ranged )?Spell Attack(?: Check)? against (?:the |their )?(PD|AD)/i
+	);
+	const save = description.match(
+		/\b(?:make|makes) (?:a )?(Repeated )?(Physical|Mental|Might|Agility|Charisma|Intelligence) Save/i
+	);
+	if (!attack && !save) return undefined;
+
+	return {
+		rollBy: attack && save ? 'both' : attack ? 'caster' : 'target',
+		...(attack ? { casterCheck: { kind: 'spell', vs: attack[1].toUpperCase() } } : {}),
+		...(save
+			? {
+					targetSave: {
+						ability: save[2][0].toUpperCase() + save[2].slice(1).toLowerCase(),
+						vs: 'SaveDC',
+						...(save[1] ? { repeated: true } : {})
+					}
+				}
+			: {}),
+		...(attack && save ? { timing: 'sequential' } : {})
+	};
+}
+
 function parseSpell(block, startLine, endLine) {
 	const sourceName = block[0].replace(/^## /, '').trim();
 	const sourceException = SOURCE_EXCEPTIONS[sourceName];
@@ -388,7 +413,15 @@ function parseSpell(block, startLine, endLine) {
 		range: metadata.range,
 		duration: metadata.duration,
 		sustained: /\(Sustained\)/i.test(metadata.duration ?? ''),
-		effects: [{ title: 'Effect', description }],
+		effects: [
+			{
+				title: 'Effect',
+				description,
+				...(inferEffectResolution(description)
+					? { resolution: inferEffectResolution(description) }
+					: {})
+			}
+		],
 		...(passive ? { spellPassive: passive.value } : {}),
 		enhancements,
 		fullDescription: trimBlankLines(withoutPageMarkers(block)).join('\n').trim(),
@@ -467,6 +500,9 @@ function createReport(spells) {
 		])
 	);
 	const enhancementCount = spells.reduce((count, spell) => count + spell.enhancements.length, 0);
+	const resolutionCount = spells.filter((spell) =>
+		spell.effects.some((effect) => effect.resolution)
+	).length;
 	const exceptions = spells
 		.filter((spell) => spell.sourceException)
 		.map((spell) => ({ spell: spell.name, ...spell.sourceException }));
@@ -488,6 +524,7 @@ function createReport(spells) {
 		source: 'docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md',
 		spellCount: spells.length,
 		enhancementCount,
+		resolutionCount,
 		schools,
 		exceptions,
 		spells: spellAudit

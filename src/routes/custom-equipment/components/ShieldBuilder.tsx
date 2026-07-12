@@ -18,6 +18,8 @@ import type {
 	CustomShield,
 	ShieldType
 } from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -50,6 +52,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
 	const [name, setName] = useState('');
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
 
@@ -65,6 +68,16 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 		if (!shieldType) return [];
 		return getPropertiesForShieldType(shieldType);
 	}, [shieldType]);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_SHIELDS, presetQuery, (preset) => [
+				preset.name,
+				preset.shieldType,
+				...preset.properties
+			]),
+		[presetQuery]
+	);
 
 	const validation = useMemo(() => {
 		if (!shieldType) return { isValid: false, errors: [], warnings: [] };
@@ -240,8 +253,13 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<OptionGrid>
-							{PRESET_SHIELDS.map((preset) => (
+							{filteredPresets.map((preset) => (
 								<OptionCard
 									key={preset.id}
 									$selected={selectedPreset === preset.id}
@@ -263,6 +281,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 								</OptionCard>
 							))}
 						</OptionGrid>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No shield presets match.</p>
+						)}
 					</div>
 
 					<ActionButtons>

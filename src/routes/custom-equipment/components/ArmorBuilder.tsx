@@ -14,6 +14,8 @@ import { validateArmor } from '../../../lib/rulesdata/equipment/validation/equip
 import { saveCustomArmor } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
 import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type { CustomArmor, ArmorType } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -46,6 +48,7 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
 	const [name, setName] = useState('');
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
 
@@ -61,6 +64,16 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 		if (!armorType) return [];
 		return getPropertiesForArmorType(armorType);
 	}, [armorType]);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_ARMOR, presetQuery, (preset) => [
+				preset.name,
+				preset.armorType,
+				...(preset.hasPdr ? ['pdr'] : [])
+			]),
+		[presetQuery]
+	);
 
 	const validation = useMemo(() => {
 		if (!armorType) return { isValid: false, errors: [], warnings: [] };
@@ -228,8 +241,13 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<OptionGrid>
-							{PRESET_ARMOR.map((preset) => (
+							{filteredPresets.map((preset) => (
 								<OptionCard
 									key={preset.id}
 									$selected={selectedPreset === preset.id}
@@ -247,6 +265,9 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 								</OptionCard>
 							))}
 						</OptionGrid>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No armor presets match.</p>
+						)}
 					</div>
 
 					<ActionButtons>

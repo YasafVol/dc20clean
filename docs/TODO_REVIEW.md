@@ -33,7 +33,7 @@
 6. **[Ready] Cleric Dark/Knowledge domain E2E — 84/100**
    1. Source: `TESTING_SYSTEM.MD` section 6.
    2. Requirements are already explicit. Keep rule permutations in unit tests and use E2E only for creation, persistence, and sheet visibility.
-7. **[Ready] Equipment preset search/filter — 82/100**
+7. **[Complete] Equipment preset search/filter — 82/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: client-side name/type/property filter, no schema change, empty-state copy, and mobile-compatible controls.
 8. **[Ready] Equipment duplicate/clone — 80/100**

@@ -47,7 +47,7 @@
 3. **[Complete] Spellbook replacement flow — 74/100**: users can open the Spellbook for review and replace a row from calculator-valid options; locked sheets remain read-only.
 4. **[Complete] MSL/SSL in-play enhancement workflow — 72/100**: maneuver enhancements are declared session-side, total SP against SSL, and block Use when over limit.
 5. **[Complete] Populate `EffectResolution` spell data — 70/100**: the source generator emits explicit attack/save metadata and reports coverage without guessing ambiguous prose.
-6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.
+6. **[Complete] Populate ancestry `TraitRequirements` — 70/100**: legacy all-of prerequisite chains populate the structured contract; explicit any-of/prohibition rules stay authoritative.
 7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
 8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.
 9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.

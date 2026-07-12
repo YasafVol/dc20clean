@@ -36,7 +36,7 @@
 7. **[Complete] Equipment preset search/filter — 82/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: client-side name/type/property filter, no schema change, empty-state copy, and mobile-compatible controls.
-8. **[Ready] Equipment duplicate/clone — 80/100**
+8. **[Complete] Equipment duplicate/clone — 80/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: generate a new ID and timestamps, append `Copy` to the name, preserve mechanical fields, and open the duplicate for editing without mutating the source.
 

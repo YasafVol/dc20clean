@@ -264,6 +264,33 @@ export function deleteCustomEquipment(category: string, id: string): void {
 	}
 }
 
+export function duplicateCustomEquipment(
+	category: CustomEquipment['category'],
+	id: string
+): CustomEquipment | undefined {
+	const source = getAllCustomEquipment().find(
+		(equipment) => equipment.category === category && equipment.id === id
+	);
+	if (!source) return undefined;
+
+	const timestamp = new Date().toISOString();
+	const uniqueId =
+		typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+			? crypto.randomUUID()
+			: `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+	const duplicate = {
+		...source,
+		id: `custom-${category}-copy-${uniqueId}`,
+		name: `${source.name} Copy`,
+		isPreset: false,
+		createdAt: timestamp,
+		updatedAt: timestamp
+	} as CustomEquipment;
+
+	saveCustomEquipment(duplicate);
+	return duplicate;
+}
+
 // ================================================================= //
 // EXPORT / IMPORT
 // ================================================================= //

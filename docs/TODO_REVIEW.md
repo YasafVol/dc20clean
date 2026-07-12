@@ -30,7 +30,7 @@
 5. **[Complete] Active-condition effects summary — 85/100**
    1. Sources: `CONDITIONS_SYSTEM.MD` and `CHARACTER_SHEET.MD`.
    2. Requirements completed: summarize non-roll mechanics with source condition, timing, and unresolved player action; do not simulate targets, turns, forced movement, or damage application.
-6. **[Ready] Cleric Dark/Knowledge domain E2E — 84/100**
+6. **[Complete] Cleric Dark/Knowledge domain E2E — 84/100**
    1. Source: `TESTING_SYSTEM.MD` section 6.
    2. Requirements are already explicit. Keep rule permutations in unit tests and use E2E only for creation, persistence, and sheet visibility.
 7. **[Complete] Equipment preset search/filter — 82/100**

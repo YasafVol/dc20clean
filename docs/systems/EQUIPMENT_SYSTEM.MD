@@ -449,6 +449,8 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 - Import from JSON file
 - Duplicate any saved item as an independent `Copy`; the source remains unchanged and
   the duplicate receives a new ID and timestamps.
+- Edit any saved item in its category builder. Saving preserves the stable item ID and
+  creation timestamp while refreshing its mechanical effects and update timestamp.
 
 ### Preset Search
 
@@ -462,7 +464,7 @@ without a separate modal.
 ## 10. Future Enhancements
 
 - [ ] Integration with character creation (equip custom items)
-- [ ] Edit existing saved equipment
+- [x] Edit existing saved equipment
 - [x] Duplicate/clone functionality
 - [x] Search/filter presets
 - [ ] Mobile-optimized layout

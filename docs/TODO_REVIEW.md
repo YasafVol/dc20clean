@@ -48,7 +48,7 @@
 4. **MSL/SSL in-play enhancement workflow — 72/100**: calculator limits exist; performed-action state and declare-before-roll interaction are not modeled.
 5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.
 6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.
-7. **Edit saved custom equipment — 68/100**: persistence exists; overwrite-versus-save-copy behavior needs a decision.
+7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
 8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.
 9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.
 

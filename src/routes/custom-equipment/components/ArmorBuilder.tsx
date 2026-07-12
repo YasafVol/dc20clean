@@ -40,14 +40,19 @@ import {
 
 interface ArmorBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomArmor;
 }
 
-const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
+const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [armorType, setArmorType] = useState<ArmorType | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [armorType, setArmorType] = useState<ArmorType | null>(initialEquipment?.armorType ?? null);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
 	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
@@ -165,8 +170,9 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 		const stats = calculateStats();
 		const armorTypeData = ARMOR_TYPES.find((t) => t.id === armorType);
 
+		const now = new Date().toISOString();
 		const armor: CustomArmor = {
-			id: `custom-armor-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-armor-${Date.now()}`,
 			category: 'armor',
 			name: name || 'Custom Armor',
 			armorType: armorType!,
@@ -181,8 +187,8 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 			hasAgilityDisadvantage: armorType === 'heavy' || stats.hasRigid,
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(armor);

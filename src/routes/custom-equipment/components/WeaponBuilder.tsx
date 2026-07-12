@@ -49,17 +49,28 @@ import {
 
 interface WeaponBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomWeapon;
 }
 
-const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
+const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [weaponType, setWeaponType] = useState<WeaponType | null>(null);
-	const [style, setStyle] = useState<WeaponStyle | null>(null);
-	const [secondaryStyle, setSecondaryStyle] = useState<WeaponStyle | null>(null);
-	const [damageType, setDamageType] = useState<PhysicalDamageType | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [weaponType, setWeaponType] = useState<WeaponType | null>(
+		initialEquipment?.weaponType ?? null
+	);
+	const [style, setStyle] = useState<WeaponStyle | null>(initialEquipment?.style ?? null);
+	const [secondaryStyle, setSecondaryStyle] = useState<WeaponStyle | null>(
+		initialEquipment?.secondaryStyle ?? null
+	);
+	const [damageType, setDamageType] = useState<PhysicalDamageType | null>(
+		initialEquipment?.damageType ?? null
+	);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
 	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = weaponType === 'ranged' ? 1 : 2;
@@ -190,8 +201,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 	const buildWeapon = (): CustomWeapon => {
 		const styleData = WEAPON_STYLES.find((s) => s.id === style);
 
+		const now = new Date().toISOString();
 		const weapon: CustomWeapon = {
-			id: `custom-weapon-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-weapon-${Date.now()}`,
 			category: 'weapon',
 			name: name || 'Custom Weapon',
 			weaponType: weaponType!,
@@ -210,8 +222,8 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 			maxPoints,
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(weapon);

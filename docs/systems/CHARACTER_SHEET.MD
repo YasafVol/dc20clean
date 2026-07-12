@@ -132,7 +132,8 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 #### Spell Sheet TODOs
 
-- Add a pure sheet-facing helper that builds calculated spell presentation stats from the saved spell, character calculation output, active effects, and equipped spell focus effects. The UI should consume this helper for spell attack/check bonuses, focus-driven damage/range adjustments, and any "applies in play" notes instead of duplicating rules logic inside `components/Spells.tsx` or `SpellPopup.tsx`.
+- `spellPresentation.ts` builds contextual spell check/attack, damage, range, and
+  in-play focus notes from saved/catalog spell data plus calculator-collected equipped effects.
 - Add a Character Sheet flow for opening the Spellbook to review, select, and replace known spells. Replacement should respect spell-slot restrictions from the calculator and must remain disabled for locked legacy characters.
 
 #### Maneuver Sheet Notes

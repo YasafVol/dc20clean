@@ -8,7 +8,12 @@ import { ALL_SPELLS as allSpells, getSpellById } from '../../../lib/rulesdata/sp
 import { RULES_ALIASES } from '../../../lib/rulesdata/versioning/aliases';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { formatSpellEnhancementCost } from '../../../lib/rulesdata/spells-data/spellCost';
-import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterCalculatedData,
+	useCharacterSpells,
+	useCharacterSheet
+} from '../hooks/CharacterSheetProvider';
+import { getSpellPresentation } from '../spellPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import {
@@ -125,6 +130,7 @@ const Spells: React.FC<SpellsProps> = ({
 	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
+	const calculation = useCharacterCalculatedData();
 
 	if (!state.character) {
 		return <div>{t('characterSheet.spellsLoading')}</div>;
@@ -428,6 +434,21 @@ const Spells: React.FC<SpellsProps> = ({
 						const selectedSpell = resolveCatalogSpell(spell.spellName) ?? null;
 						const isCustom = customSpellIds.has(spell.id);
 						const isEditing = editingSpellIds.has(spell.id);
+						const presentationSpell = selectedSpell ?? {
+							range: spell.range,
+							effects: (spell.effects ?? []).map((effect) => ({
+								title: '',
+								description: effect.description
+							}))
+						};
+						const presentation = getSpellPresentation({
+							spell: presentationSpell,
+							baseAttackSpellCheck:
+								calculation?.stats.finalAttackSpellCheck ??
+								state.character.finalAttackSpellCheck ??
+								0,
+							grantedAbilities: calculation?.grantedAbilities
+						});
 
 						return (
 							<React.Fragment key={spell.id}>
@@ -557,7 +578,7 @@ const Spells: React.FC<SpellsProps> = ({
 												onChange={(e) => updateSpell(spell.id, 'range', e.target.value)}
 											/>
 										) : (
-											spell.range || ''
+											presentation.range || ''
 										)}
 									</StyledSpellCell>
 
@@ -602,6 +623,18 @@ const Spells: React.FC<SpellsProps> = ({
 										</StyledSpellDescriptionHeader>
 
 										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
+											{(presentation.usesSpellAttack || presentation.usesSpellCheck) && (
+												<div className="mb-3 rounded border border-amber-500/40 bg-amber-500/10 p-2">
+													<strong>
+														Spell modifier: {presentation.checkBonus >= 0 ? '+' : ''}
+														{presentation.checkBonus}
+													</strong>
+													{presentation.damageBonus > 0 && ` • Damage +${presentation.damageBonus}`}
+													{presentation.notes.map((note) => (
+														<div key={note}>{note}</div>
+													))}
+												</div>
+											)}
 											<strong>Description:</strong>
 											<br />
 											{selectedSpell.effects?.map((effect, effectIndex) => (

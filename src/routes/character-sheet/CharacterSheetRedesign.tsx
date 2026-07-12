@@ -50,6 +50,7 @@ import { HeroSection } from './components/new/HeroSection';
 // Import condition analyzer
 import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
 import EffectsRulesNotes from './components/EffectsRulesNotes';
+import ActiveConditionSummary from './components/ActiveConditionSummary';
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -1031,6 +1032,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														onToggleCondition={toggleActiveCondition}
 														onSetConditionStacks={setActiveConditionStacks}
 													/>
+													<ActiveConditionSummary
+														activeConditions={
+															state.character?.characterState?.activeConditions || []
+														}
+													/>
 												</>
 											)}
 											{activeTab === 'knowledge' && (
@@ -1095,11 +1101,16 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									</>
 								)}
 								{activeTab === 'conditions' && (
-									<ActiveConditionsTracker
-										activeConditions={state.character?.characterState?.activeConditions || []}
-										onToggleCondition={toggleActiveCondition}
-										onSetConditionStacks={setActiveConditionStacks}
-									/>
+									<>
+										<ActiveConditionsTracker
+											activeConditions={state.character?.characterState?.activeConditions || []}
+											onToggleCondition={toggleActiveCondition}
+											onSetConditionStacks={setActiveConditionStacks}
+										/>
+										<ActiveConditionSummary
+											activeConditions={state.character?.characterState?.activeConditions || []}
+										/>
+									</>
 								)}
 								{activeTab === 'knowledge' && (
 									<>

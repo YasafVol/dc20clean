@@ -24,7 +24,7 @@
 3. **[Complete] Attack presentation helper for Rage — 88/100**
    1. Sources: `CHARACTER_SHEET.MD`, `EFFECT_SYSTEM.MD`, and `CLASS_SYSTEM.MD`.
    2. Requirements completed: classify Unarmed Strike explicitly and catalog weapons through equipment metadata; treat unknown/custom rows as ineligible unless they carry explicit melee metadata; apply active conditional effects for display only; do not rewrite persisted damage strings.
-4. **[Ready] Spell presentation helper — 86/100**
+4. **[Complete] Spell presentation helper — 86/100**
    1. Sources: `CHARACTER_SHEET.MD` and `EQUIPMENT_SYSTEM.MD`.
    2. Requirements completed: pure helper input is saved spell + calculation + active effects + equipped focus effects; output owns check, damage, range, and play-note presentation; locked legacy sheets may render stored values but cannot replace spells.
 5. **[Ready] Active-condition effects summary — 85/100**

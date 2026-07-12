@@ -9,7 +9,12 @@ import {
 	formatManeuverCost,
 	formatManeuverEnhancementCost
 } from '../../../lib/rulesdata/martials/maneuverFormatting';
-import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterCalculatedData,
+	useCharacterManeuvers,
+	useCharacterSheet
+} from '../hooks/CharacterSheetProvider';
+import { calculateEnhancementStaminaSpend } from '../maneuverEnhancementSpend';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import RichDescription from './RichDescription';
@@ -60,6 +65,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
+	const calculation = useCharacterCalculatedData();
 
 	if (!state.character) {
 		return <div>{t('characterSheet.maneuversLoading')}</div>;
@@ -76,6 +82,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		return new Set([...cached].filter((maneuverId) => currentManeuverIds.has(maneuverId)));
 	});
 	const [editingManeuverIds, setEditingManeuverIds] = useState<Set<string>>(new Set());
+	const [declaredEnhancements, setDeclaredEnhancements] = useState<
+		Record<string, Record<string, number>>
+	>({});
 
 	useEffect(() => {
 		expandedManeuverSessionState.set(expansionSessionKey, new Set(expandedManeuvers));
@@ -299,6 +308,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 						const maneuverDetails = selectedManeuver ?? maneuver;
 						const maneuverEnhancements = maneuverDetails.enhancements ?? [];
 						const isEditing = editingManeuverIds.has(maneuver.id);
+						const enhancementCounts = declaredEnhancements[maneuver.id] ?? {};
+						const enhancementSpend = calculateEnhancementStaminaSpend(
+							maneuverEnhancements,
+							enhancementCounts
+						);
+						const staminaSpendLimit = calculation?.stats.staminaSpendLimit ?? 0;
+						const spendValid = enhancementSpend <= staminaSpendLimit;
 
 						return (
 							<React.Fragment key={maneuver.id}>
@@ -367,8 +383,19 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 									<StyledManeuverActions>
 										{!readOnly && onManeuverUse && (
 											<StyledManeuverActionButton
-												onClick={() => onManeuverUse(maneuver)}
-												title="Use maneuver"
+												onClick={() => {
+													onManeuverUse(maneuver);
+													setDeclaredEnhancements((current) => ({
+														...current,
+														[maneuver.id]: {}
+													}));
+												}}
+												disabled={!spendValid}
+												title={
+													spendValid
+														? `Use maneuver with ${enhancementSpend} SP declared`
+														: `Enhancements exceed SSL ${staminaSpendLimit}`
+												}
 											>
 												Use
 											</StyledManeuverActionButton>
@@ -450,11 +477,42 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 															</StyledManeuverEnhancementCost>
 															<strong>{enhancement.name}</strong>
 															{enhancement.repeatable && <span>Repeatable</span>}
+															<button
+																type="button"
+																onClick={() =>
+																	setDeclaredEnhancements((current) => {
+																		const counts = current[maneuver.id] ?? {};
+																		const count = counts[enhancement.name] ?? 0;
+																		return {
+																			...current,
+																			[maneuver.id]: {
+																				...counts,
+																				[enhancement.name]: enhancement.repeatable
+																					? count + 1
+																					: Number(count === 0)
+																			}
+																		};
+																	})
+																}
+																className="ml-auto rounded border border-amber-500/40 px-2 py-1 text-xs"
+															>
+																Declare{' '}
+																{enhancementCounts[enhancement.name]
+																	? `×${enhancementCounts[enhancement.name]}`
+																	: ''}
+															</button>
 														</StyledManeuverEnhancementHeader>
 														<RichDescription text={enhancement.description} />
 													</StyledManeuverEnhancement>
 												))}
 											</StyledManeuverEnhancements>
+										)}
+										{maneuverEnhancements.length > 0 && (
+											<div
+												className={`mt-2 text-sm ${spendValid ? 'text-slate-300' : 'text-red-400'}`}
+											>
+												Declared enhancement SP: {enhancementSpend} / SSL {staminaSpendLimit}
+											</div>
 										)}
 									</StyledManeuverDescriptionContainer>
 								)}

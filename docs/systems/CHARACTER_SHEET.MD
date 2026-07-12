@@ -147,13 +147,13 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 #### Effects Sheet TODOs
 
-- Add a centralized sheet-facing effect presentation service that takes `EnhancedCalculationResult` plus source-attributed effects and returns categorized rows for:
+- `effectPresentation.ts` takes source-attributed effects and returns categorized rows for:
   - calculator-applied effects already represented in stat/budget breakdowns,
   - collected sheet effects (`movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining`),
   - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, non-condition `GRANT_ADV_ON_SAVE`),
   - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
-- Wire that service into a Character Sheet “Effects / Rules Notes” surface so every selected trait, feature, talent, and equipped item effect has a visible home even when it is not numerically automated.
-- Add a dedicated Size pane/field on the Character Sheet. `SET_VALUE:size` is currently acceptable as a collected/unapplied effect because the sheet has no dedicated size surface; once the surface exists, consume the resolved size effect there.
+- The Features tab renders those rows in an “Effects & Rules Notes” surface, including a
+  dedicated resolved Size badge for `SET_VALUE:size`.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
 #### Attack Sheet TODOs

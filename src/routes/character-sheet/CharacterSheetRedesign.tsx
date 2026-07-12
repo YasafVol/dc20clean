@@ -49,6 +49,7 @@ import { HeroSection } from './components/new/HeroSection';
 
 // Import condition analyzer
 import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
+import EffectsRulesNotes from './components/EffectsRulesNotes';
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -1015,7 +1016,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													isMobile={isMobile}
 												/>
 											)}
-											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+											{activeTab === 'features' && (
+												<>
+													<Features onFeatureClick={openFeaturePopup} />
+													<EffectsRulesNotes />
+												</>
+											)}
 											{activeTab === 'conditions' && (
 												<>
 													<ActiveConditionsTracker
@@ -1082,7 +1088,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										isMobile={isMobile}
 									/>
 								)}
-								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+								{activeTab === 'features' && (
+									<>
+										<Features onFeatureClick={openFeaturePopup} />
+										<EffectsRulesNotes />
+									</>
+								)}
 								{activeTab === 'conditions' && (
 									<ActiveConditionsTracker
 										activeConditions={state.character?.characterState?.activeConditions || []}

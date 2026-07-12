@@ -6,8 +6,10 @@ import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import {
 	useCharacterAttacks,
 	useCharacterInventory,
+	useCharacterCalculatedData,
 	useCharacterSheet
 } from '../hooks/CharacterSheetProvider';
+import { getAttackPresentation } from '../attackPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import {
@@ -67,6 +69,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
 	const inventory = useCharacterInventory();
+	const calculation = useCharacterCalculatedData();
 	const [showAllWeapons, setShowAllWeapons] = useState(false);
 
 	// Build the list of weapons currently in the character's inventory by matching
@@ -253,6 +256,17 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						const weapon = attack.weaponName
 							? weapons.find((w) => w.name === attack.weaponName)
 							: null;
+						const activeConditions = Object.entries(
+							characterData.characterState?.ui?.activeConditions ?? {}
+						)
+							.filter(([, enabled]) => Boolean(enabled))
+							.map(([condition]) => condition);
+						const presentation = getAttackPresentation({
+							attack,
+							weapon,
+							conditionalModifiers: calculation?.conditionalModifiers,
+							activeConditions
+						});
 
 						return (
 							<StyledAttackRow $isMobile={effectiveIsMobile} key={attack.id}>
@@ -296,7 +310,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									}
 									data-testid="weapon-damage"
 								>
-									{weapon ? attack.damage || weapon.damage : '-'}
+									{presentation.isSupportedAttack ? presentation.baseDamage : '-'}
 								</StyledDamageCell>
 
 								{/* Heavy Damage */}
@@ -311,10 +325,10 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 											: ''
 									}
 								>
-									{weapon ? (
+									{presentation.isSupportedAttack ? (
 										<>
-											{calculateDamage(weapon, 'heavy')}
-											{weapon.properties.includes('Impact') && (
+											{presentation.heavyDamage}
+											{weapon?.properties.includes('Impact') && (
 												<div style={{ fontSize: '0.6rem' }}>+Prone/Push</div>
 											)}
 										</>
@@ -335,7 +349,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 											: ''
 									}
 								>
-									{weapon ? calculateDamage(weapon, 'brutal') : '-'}
+									{presentation.isSupportedAttack ? presentation.brutalDamage : '-'}
 								</StyledDamageCell>
 
 								{/* Damage Type */}
@@ -343,7 +357,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 									$isMobile={effectiveIsMobile}
 									title={weapon ? `${getDamageType(weapon.damage)} damage` : ''}
 								>
-									{weapon ? parseDamage(weapon.damage).type : '-'}
+									{presentation.isSupportedAttack ? presentation.damageType : '-'}
 								</StyledDamageTypeCell>
 
 								{/* Damage Calculation Info */}

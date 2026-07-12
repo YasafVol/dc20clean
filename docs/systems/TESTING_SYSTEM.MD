@@ -2,7 +2,7 @@
 
 > Purpose: Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-12
 
 ---
 
@@ -106,6 +106,7 @@ rules-data, or calculator tests.
 | `e2e/15-rulebook.e2e.spec.ts`                         | Rulebook TOC, article navigation, table rendering, search, and stable heading hashes                                                                                                                                                                   |
 | `e2e/16-character-sheet-export.e2e.spec.ts`           | Imported character JSON/PDF downloads, stored-value metadata, PDF validity, and reopen-after-export                                                                                                                                                    |
 | `e2e/17-character-creation-final-actions.e2e.spec.ts` | Final-step controls, autosave-before-PDF, current-rules filename/header, sheet navigation, and no-download finish path                                                                                                                                 |
+| `e2e/18-load-character-ordering.e2e.spec.ts`          | Load-character newest-first ordering across timestamp fallbacks and immediate reordering after JSON import                                                                                                                                             |
 | `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
 | `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
 | `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |
@@ -162,7 +163,7 @@ Minimum acceptance cases:
 
 Status: implemented. Both creation paths reuse the canonical Human Barbarian wizard recipe from `e2e/support/humanBarbarian.ts`.
 
-## 5.2 Planned Load Character Ordering E2E
+## 5.2 Load Character Ordering E2E
 
 Recommended coverage:
 
@@ -172,6 +173,8 @@ Recommended coverage:
    2. fallback `completedAt`;
    3. fallback `createdAt`.
 3. After importing or rules-upgrading a character, assert the refreshed list remains newest first without requiring page reload.
+
+Status: implemented for initial load and JSON import. Rules-upgrade list refresh remains covered by the upgrade flow rather than duplicated here.
 
 ---
 

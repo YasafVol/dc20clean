@@ -74,7 +74,7 @@ export const AttributeSection = styled.div<MobileStyledProps>`
 export const AttributeHeader = styled.div<MobileStyledProps>`
 	display: flex;
 	align-items: center;
-	margin-bottom: 0.5rem;
+	margin-bottom: 0.75rem;
 `;
 
 export const AttributeBox = styled.div<MobileStyledProps>`
@@ -104,13 +104,16 @@ export const AttributeValue = styled.div<MobileStyledProps>`
 
 export const AttributeInfo = styled.div<MobileStyledProps>`
 	flex: 1;
+	display: flex;
+	align-items: baseline;
+	gap: 0.45rem;
+	flex-wrap: wrap;
 `;
 
 export const AttributeName = styled.div<MobileStyledProps>`
 	font-size: 1.1rem;
 	font-weight: bold;
 	color: ${(props) => (props.$isMobile ? 'var(--mobile-accent)' : 'var(--crystal-primary)')};
-	margin-bottom: 0.2rem;
 `;
 
 export const AttributeSave = styled.div<MobileStyledProps>`
@@ -120,12 +123,19 @@ export const AttributeSave = styled.div<MobileStyledProps>`
 	transition: all 0.2s ease;
 	padding: 0.25rem;
 	border-radius: 4px;
+	white-space: nowrap;
 
 	&:hover {
 		color: var(--crystal-primary);
 		background: ${(props) =>
 			props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)'};
 	}
+`;
+
+export const AttributeContext = styled.span<MobileStyledProps>`
+	font-size: 0.9rem;
+	color: ${(props) => (props.$isMobile ? 'var(--mobile-accent)' : 'var(--text-secondary)')};
+	white-space: nowrap;
 `;
 
 export const SkillRow = styled.div<MobileStyledProps>`

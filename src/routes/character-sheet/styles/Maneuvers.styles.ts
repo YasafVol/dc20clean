@@ -64,7 +64,7 @@ export const StyledManeuversContainer = styled.div<MobileStyledProps>`
 
 export const StyledManeuversHeaderRow = styled.div<MobileStyledProps>`
 	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+	grid-template-columns: 2fr 1fr 0.8fr 1.5fr 1.1fr;
 	gap: ${theme.spacing[3]};
 	padding: ${theme.spacing[3]};
 	background: ${theme.colors.bg.tertiary};
@@ -95,19 +95,49 @@ export const StyledManeuverEmptyState = styled.div<MobileStyledProps>`
 
 export const StyledManeuverRow = styled.div<MobileStyledProps>`
 	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+	grid-template-columns: 2fr 1fr 0.8fr 1.5fr 1.1fr;
 	gap: ${theme.spacing[3]};
 	padding: ${theme.spacing[3]};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.md};
 	background: ${theme.colors.bg.tertiary};
-	align-items: flex-start;
-	min-height: 60px;
+	align-items: center;
+	min-height: 48px;
+	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
 		background: ${theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
+	}
+`;
+
+export const StyledManeuverActions = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledManeuverActionButton = styled.button`
+	min-width: 32px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	background: transparent;
+	color: ${theme.colors.text.secondary};
+	cursor: pointer;
+	font-size: ${theme.typography.fontSize.xs};
+	transition: all ${theme.transitions.fast};
+
+	&:hover {
+		border-color: ${theme.colors.accent.primary};
+		color: ${theme.colors.accent.primary};
+		background: ${theme.colors.bg.elevated};
 	}
 `;
 
@@ -344,11 +374,6 @@ export const StyledManeuverDescriptionCollapsed = styled.div<MobileStyledProps>`
 export const StyledClickableNameCell = styled(StyledManeuverNameCell)<MobileStyledProps>`
 	font-weight: ${theme.typography.fontWeight.bold};
 	color: ${theme.colors.text.primary};
-	cursor: pointer;
-
-	&:hover {
-		color: ${theme.colors.accent.primary};
-	}
 `;
 
 // Small timing cell variant

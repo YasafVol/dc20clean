@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { theme, media } from './styles/theme';
 
 export const PageContainer = styled.div`
@@ -33,15 +34,16 @@ export const HeaderContent = styled.div`
 	max-width: 1400px;
 	margin: 0 auto;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: ${theme.spacing[6]};
+	flex-direction: column;
+	align-items: flex-start;
+	gap: ${theme.spacing[4]};
 `;
 
 export const LeftSection = styled.div`
 	display: flex;
 	align-items: center;
 	gap: ${theme.spacing[4]};
+	width: 100%;
 	min-width: 0;
 `;
 
@@ -91,6 +93,19 @@ export const MetaItem = styled.span`
 		content: '•';
 		margin-left: ${theme.spacing[4]};
 		color: ${theme.colors.text.muted};
+	}
+`;
+
+export const MetaLink = styled(Link)`
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: ${theme.colors.border.default};
+	text-underline-offset: 0.2em;
+
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.accent.primary};
+		text-decoration-color: currentColor;
 	}
 `;
 

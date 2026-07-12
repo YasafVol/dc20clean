@@ -91,32 +91,35 @@ rules-data, or calculator tests.
 
 ## 4. Current E2E Inventory
 
-| Spec                                         | Coverage                                                                                                                                                                                                                                               |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `e2e/01-import.e2e.spec.ts`                  | Imports a fixture and opens the character sheet                                                                                                                                                                                                        |
-| `e2e/02-resources.e2e.spec.ts`               | Resource controls and notes                                                                                                                                                                                                                            |
-| `e2e/07-weapons.e2e.spec.ts`                 | Weapon add/update/remove                                                                                                                                                                                                                               |
-| `e2e/08-items.e2e.spec.ts`                   | Item add/remove                                                                                                                                                                                                                                        |
-| `e2e/09-spells.e2e.spec.ts`                  | Spell add/filter/delete                                                                                                                                                                                                                                |
-| `e2e/10-maneuvers.e2e.spec.ts`               | Maneuver add/delete when available                                                                                                                                                                                                                     |
-| `e2e/11-currency.e2e.spec.ts`                | Currency input                                                                                                                                                                                                                                         |
-| `e2e/12-exhaustion-info.e2e.spec.ts`         | Exhaustion and feature info buttons                                                                                                                                                                                                                    |
-| `e2e/13-character-upgrade.e2e.spec.ts`       | Explicit old-rules upgrade flow                                                                                                                                                                                                                        |
-| `e2e/14-character-creation-flow.e2e.spec.ts` | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, level-1 Human Barbarian creation through Background/Maneuvers to sheet, and create → sheet → load/edit → attribute reallocation → resave persistence |
-| `e2e/human-cleric.e2e.spec.ts`               | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
-| `e2e/hunter-beastborn.e2e.spec.ts`           | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
-| `e2e/spellblade-hybrid.e2e.spec.ts`          | Spellblade hybrid flow                                                                                                                                                                                                                                 |
+| Spec                                                  | Coverage                                                                                                                                                                                                                                               |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `e2e/01-import.e2e.spec.ts`                           | Imports a fixture and opens the character sheet                                                                                                                                                                                                        |
+| `e2e/02-resources.e2e.spec.ts`                        | Resource controls and notes                                                                                                                                                                                                                            |
+| `e2e/07-weapons.e2e.spec.ts`                          | Weapon add/update/remove                                                                                                                                                                                                                               |
+| `e2e/08-items.e2e.spec.ts`                            | Item add/remove                                                                                                                                                                                                                                        |
+| `e2e/09-spells.e2e.spec.ts`                           | Spell add/filter/delete                                                                                                                                                                                                                                |
+| `e2e/10-maneuvers.e2e.spec.ts`                        | Maneuver add/delete when available                                                                                                                                                                                                                     |
+| `e2e/11-currency.e2e.spec.ts`                         | Currency input                                                                                                                                                                                                                                         |
+| `e2e/12-exhaustion-info.e2e.spec.ts`                  | Exhaustion and feature info buttons                                                                                                                                                                                                                    |
+| `e2e/13-character-upgrade.e2e.spec.ts`                | Explicit old-rules upgrade flow                                                                                                                                                                                                                        |
+| `e2e/14-character-creation-flow.e2e.spec.ts`          | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, level-1 Human Barbarian creation through Background/Maneuvers to sheet, and create → sheet → load/edit → attribute reallocation → resave persistence |
+| `e2e/15-rulebook.e2e.spec.ts`                         | Rulebook TOC, article navigation, table rendering, search, and stable heading hashes                                                                                                                                                                   |
+| `e2e/16-character-sheet-export.e2e.spec.ts`           | Imported character JSON/PDF downloads, stored-value metadata, PDF validity, and reopen-after-export                                                                                                                                                    |
+| `e2e/17-character-creation-final-actions.e2e.spec.ts` | Final-step controls, autosave-before-PDF, current-rules filename/header, sheet navigation, and no-download finish path                                                                                                                                 |
+| `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
+| `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
+| `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |
 
 The files in `docs/e2e/` are descriptive snapshots, not the system source of truth. Keep this file authoritative for testing policy.
 
 ---
 
-## 5. Planned Character Sheet Export E2E
+## 5. Character Sheet Export E2E
 
 Recommended spec:
 
 ```text
-e2e/15-character-sheet-export.e2e.spec.ts
+e2e/16-character-sheet-export.e2e.spec.ts
 ```
 
 Minimum acceptance cases:
@@ -133,12 +136,14 @@ Implementation notes:
 2. Keep field-level PDF assertions in unit tests against `transformSavedCharacterToPdfData`; E2E only proves the user flow downloads a valid file.
 3. Prefer fixture import for determinism unless the test specifically targets creation flow.
 
-## 5.1 Planned Creation Final-Actions E2E
+Status: implemented.
+
+## 5.1 Creation Final-Actions E2E
 
 Recommended spec:
 
 ```text
-e2e/16-character-creation-final-actions.e2e.spec.ts
+e2e/17-character-creation-final-actions.e2e.spec.ts
 ```
 
 Minimum acceptance cases:
@@ -154,6 +159,8 @@ Minimum acceptance cases:
 3. Click `Finish & Go to Sheet` in a separate run and verify:
    1. no PDF download is triggered;
    2. the saved character sheet opens from the persisted character ID.
+
+Status: implemented. Both creation paths reuse the canonical Human Barbarian wizard recipe from `e2e/support/humanBarbarian.ts`.
 
 ## 5.2 Planned Load Character Ordering E2E
 

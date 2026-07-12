@@ -24,11 +24,15 @@ const {
 
 vi.mock('convex/react', () => ({
 	useQuery: vi.fn().mockReturnValue(undefined),
-	useMutation: vi.fn(),
+	useMutation: vi.fn()
 }));
 
 vi.mock('../../../../convex/_generated/api', () => ({
-	api: { characters: { getByIdForMember: 'characters:getByIdForMember' } },
+	api: { characters: { getByIdForMember: 'characters:getByIdForMember' } }
+}));
+
+vi.mock('../../../components/auth/AuthModeContext', () => ({
+	useAppAuth: () => ({ isConvexEnabled: false, isAuthenticated: false, isLoading: false })
 }));
 
 vi.mock('../../../lib/storage', () => ({
@@ -140,7 +144,7 @@ describe('CharacterSheetProvider compatibility fence', () => {
 		cleanup();
 	});
 
-	it('loads legacy v0.10 characters from stored data without saving mutations', async () => {
+	it('loads legacy v0.10 characters from stored data and saves only runtime state', async () => {
 		mockGetCharacterById.mockResolvedValue(makeLegacyV010Character());
 		mockSaveCharacter.mockResolvedValue(undefined);
 		mockSaveCharacterState.mockResolvedValue(undefined);
@@ -163,7 +167,14 @@ describe('CharacterSheetProvider compatibility fence', () => {
 		await waitFor(() => {
 			expect(screen.getByTestId('save-status')).toHaveTextContent('idle');
 		});
-		expect(mockSaveCharacterState).not.toHaveBeenCalled();
+		expect(mockSaveCharacterState).toHaveBeenCalledWith(
+			'legacy-v010-sheet',
+			expect.objectContaining({
+				resources: expect.objectContaining({
+					current: expect.objectContaining({ currentHP: 7 })
+				})
+			})
+		);
 		expect(mockSaveCharacter).not.toHaveBeenCalled();
 		expect(mockConvertToEnhancedBuildData).not.toHaveBeenCalled();
 		expect(mockCalculateCharacterWithBreakdowns).not.toHaveBeenCalled();

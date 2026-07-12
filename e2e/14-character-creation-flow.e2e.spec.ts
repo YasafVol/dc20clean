@@ -1,8 +1,12 @@
 import { expect, test, type ConsoleMessage, type Page, type TestInfo } from '@playwright/test';
+import {
+	finishHumanBarbarianToSheet,
+	HUMAN_BARBARIAN_NAME,
+	humanBarbarianToNameRecipe
+} from './support/humanBarbarian';
 import { runRecipe, type RecipeStep } from './support/recipe';
 
 const createFlowUrl = '/';
-const humanBarbarianName = 'Human Barb E2E';
 
 interface PersistedCharacterSnapshot {
 	id: string;
@@ -85,98 +89,12 @@ async function chooseStartingLevel(page: Parameters<RecipeStep['run']>[0], level
 	await page.getByTestId(`starting-level-option-${level}`).click();
 }
 
-async function spendBackgroundForHumanBarbarian(page: Parameters<RecipeStep['run']>[0]) {
-	for (const skill of [
-		'athletics',
-		'intimidation',
-		'acrobatics',
-		'survival',
-		'awareness',
-		'stealth'
-	]) {
-		await page.getByTestId(`skill-${skill}-mastery-1`).click();
-	}
-	await expect(page.getByTestId('skills-tab')).toContainText('0 left');
-
-	await page.getByTestId('trades-tab').click();
-	for (const trade of ['blacksmithing', 'leatherworking', 'cooking']) {
-		await page.getByTestId(`trade-${trade}-mastery-1`).click();
-	}
-	await expect(page.getByTestId('trades-tab')).toContainText('0 left');
-
-	await page.getByTestId('languages-tab').click();
-	await page.getByTestId('language-item-human').getByRole('button', { name: 'Fluent (2)' }).click();
-	await expect(page.getByTestId('languages-tab')).toContainText('0 left');
-}
-
 const humanBarbarianCreationRecipe: RecipeStep[] = [
-	{
-		name: 'Open character creation',
-		run: openCharacterCreation
-	},
-	{
-		name: 'Choose level 1 Barbarian',
-		run: async (page) => {
-			await page.getByTestId('class-card-barbarian').click();
-			await page.getByTestId('creation-next').click();
-		}
-	},
-	{
-		name: 'Spend Human ancestry points',
-		run: async (page) => {
-			await page.getByTestId('ancestry-card-human').click();
-			for (const trait of [
-				'human_attribute_increase',
-				'human_resolve',
-				'human_determination',
-				'human_unbreakable'
-			]) {
-				await page.getByTestId(`trait-card-${trait}`).click();
-			}
-			await expect(page.getByText('Spent: 5 | Remaining: 0/5')).toBeVisible();
-			await page.getByTestId('creation-next').click();
-		}
-	},
-	{
-		name: 'Spend attribute points',
-		run: async (page) => {
-			const attributeClicks = { might: 5, agility: 3, charisma: 2, intelligence: 3 };
-			for (const [attribute, clicks] of Object.entries(attributeClicks)) {
-				for (let index = 0; index < clicks; index += 1) {
-					await page.getByTestId(`${attribute}-increase`).click();
-				}
-			}
-			await expect(page.getByText('Spent: 13 | Remaining: 0')).toBeVisible();
-			await page.getByTestId('creation-next').click();
-		}
-	},
-	{
-		name: 'Spend background points and advance',
-		run: async (page) => {
-			await spendBackgroundForHumanBarbarian(page);
-			await page.getByTestId('creation-next').click();
-			await expect(page.getByRole('heading', { name: 'Learn Maneuvers' })).toBeVisible();
-		}
-	},
-	{
-		name: 'Learn maneuvers',
-		run: async (page) => {
-			await page.getByTestId('maneuver-heroic-bash-learn').click();
-			await page.getByTestId('maneuver-savage-strike-learn').click();
-			await expect(page.getByText('Maneuvers: 2 / 2')).toBeVisible();
-			await page.getByTestId('creation-next').click();
-		}
-	},
+	...humanBarbarianToNameRecipe,
 	{
 		name: 'Name and save character',
 		run: async (page) => {
-			await page.getByTestId('character-name-input').fill(humanBarbarianName);
-			await page.getByTestId('player-name-input').fill('Playwright');
-			await page.getByRole('button', { name: 'Finish & Go to Sheet →' }).click();
-			await page.waitForURL('**/character/**');
-			await expect(page.getByRole('heading', { name: humanBarbarianName })).toBeVisible();
-			await expect(page.getByText('Level 1 Barbarian')).toBeVisible();
-			await expect(page.getByText('Attack/Spell')).toBeVisible();
+			await finishHumanBarbarianToSheet(page);
 		}
 	}
 ];
@@ -270,59 +188,68 @@ test.describe('Character creation flow recipes', () => {
 			character: PersistedCharacterSnapshot | null;
 		}> = [];
 
-		await withEditResaveDiagnostics(page, testInfo, humanBarbarianName, async () => {
-			await runRecipe(page, humanBarbarianCreationRecipe);
+		await withEditResaveDiagnostics(
+			page,
+			testInfo,
+			HUMAN_BARBARIAN_NAME,
+			async () => {
+				await runRecipe(page, humanBarbarianCreationRecipe);
 
-			const createdCharacter = await getSavedCharacterByName(page, humanBarbarianName);
-			snapshots.push({ label: 'after-create', character: createdCharacter });
-			expect(createdCharacter).toMatchObject({
-				finalName: humanBarbarianName,
-				finalMight: 3,
-				finalAgility: 1
-			});
-			expect(createdCharacter?.id).toBeTruthy();
+				const createdCharacter = await getSavedCharacterByName(page, HUMAN_BARBARIAN_NAME);
+				snapshots.push({ label: 'after-create', character: createdCharacter });
+				expect(createdCharacter).toMatchObject({
+					finalName: HUMAN_BARBARIAN_NAME,
+					finalMight: 3,
+					finalAgility: 1
+				});
+				expect(createdCharacter?.id).toBeTruthy();
 
-			await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('3');
-			await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('1');
+				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('3');
+				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('1');
 
-			await page.getByRole('button', { name: /back/i }).first().click();
-			await page.waitForURL('**/menu');
-			await page.getByRole('button', { name: /Load Character/i }).click();
-			await page.waitForURL('**/load-character');
+				await page.getByRole('button', { name: /back/i }).first().click();
+				await page.waitForURL('**/menu');
+				await page.getByRole('button', { name: /Load Character/i }).click();
+				await page.waitForURL('**/load-character');
 
-			const characterCard = page.getByTestId(`character-card-${createdCharacter!.id}`);
-			await expect(characterCard).toContainText(humanBarbarianName);
-			await characterCard.getByRole('button', { name: 'Edit' }).click();
-			await page.waitForURL('**/character/**/edit');
+				const characterCard = page.getByTestId(`character-card-${createdCharacter!.id}`);
+				await expect(characterCard).toContainText(HUMAN_BARBARIAN_NAME);
+				await characterCard.getByRole('button', { name: 'Edit' }).click();
+				await page.waitForURL('**/character/**/edit');
 
-			await expect(page.getByTestId('creation-step-class')).toBeVisible();
-			await page.getByTestId('creation-step-attributes').click();
-			await expect(page.getByTestId('creation-step-attributes')).toHaveAttribute(
-				'aria-current',
-				'step'
-			);
+				await expect(page.getByTestId('creation-step-class')).toBeVisible();
+				await page.getByTestId('creation-step-attributes').click();
+				await expect(page.getByTestId('creation-step-attributes')).toHaveAttribute(
+					'aria-current',
+					'step'
+				);
 
-			await page.getByTestId('might-decrease').click();
-			await page.getByTestId('agility-increase').click();
-			await expect(page.getByText('Spent: 13 | Remaining: 0')).toBeVisible();
+				await page.getByTestId('might-decrease').click();
+				await page.getByTestId('agility-increase').click();
+				await expect(page.getByText('Spent: 13 | Remaining: 0')).toBeVisible();
 
-			await page.getByTestId('creation-step-name').click();
-			await expect(page.getByTestId('creation-step-name')).toHaveAttribute('aria-current', 'step');
-			await page.getByTestId('creation-next').click();
-			await page.waitForURL(`**/character/${createdCharacter!.id}`);
+				await page.getByTestId('creation-step-name').click();
+				await expect(page.getByTestId('creation-step-name')).toHaveAttribute(
+					'aria-current',
+					'step'
+				);
+				await page.getByTestId('creation-next').click();
+				await page.waitForURL(`**/character/${createdCharacter!.id}`);
 
-			const updatedCharacter = await getSavedCharacterByName(page, humanBarbarianName);
-			snapshots.push({ label: 'after-edit-resave', character: updatedCharacter });
-			expect(updatedCharacter).toMatchObject({
-				id: createdCharacter!.id,
-				finalMight: 2,
-				finalAgility: 2
-			});
-			expect(updatedCharacter?.lastModified).not.toBe(createdCharacter?.lastModified);
+				const updatedCharacter = await getSavedCharacterByName(page, HUMAN_BARBARIAN_NAME);
+				snapshots.push({ label: 'after-edit-resave', character: updatedCharacter });
+				expect(updatedCharacter).toMatchObject({
+					id: createdCharacter!.id,
+					finalMight: 2,
+					finalAgility: 2
+				});
+				expect(updatedCharacter?.lastModified).not.toBe(createdCharacter?.lastModified);
 
-			await expect(page.getByRole('heading', { name: humanBarbarianName })).toBeVisible();
-			await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('2');
-			await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('2');
-		}, () => snapshots);
+				await expect(page.getByRole('heading', { name: HUMAN_BARBARIAN_NAME })).toBeVisible();
+				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('2');
+				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('2');
+			},
+			() => snapshots
+		);
 	});
 });

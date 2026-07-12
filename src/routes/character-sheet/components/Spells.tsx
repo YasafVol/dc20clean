@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Check, Pencil } from 'lucide-react';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells, getSpellById } from '../../../lib/rulesdata/spells-data';
@@ -31,14 +32,19 @@ import {
 	StyledSpellDescriptionContent,
 	StyledSpellEffect,
 	StyledSpellEnhancement,
-	StyledSpellToggleContainer,
-	StyledSpellToggleButton
+	StyledSpellActions,
+	StyledSpellActionButton
 } from '../styles/Spells';
 import { theme } from '../styles/theme';
 import RichDescription from './RichDescription';
 
 /** Sentinel dropdown value that switches a spell row into freeform custom mode. */
 const CUSTOM_SPELL_VALUE = '__custom_spell__';
+
+// Keeps expansion choices while the user moves between sheet tabs. Module state
+// intentionally resets on a full page load, so every new page session starts
+// with spell descriptions collapsed.
+const expandedSpellSessionState = new Map<string, Set<string>>();
 
 export function resolveCatalogSpell(spellName: string | null | undefined): Spell | undefined {
 	const candidate = spellName?.trim();
@@ -128,16 +134,18 @@ const Spells: React.FC<SpellsProps> = ({
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
-	// Initialize with all spells expanded by default
+	const [editingSpellIds, setEditingSpellIds] = useState<Set<string>>(new Set());
+	const expansionSessionKey = state.character.id;
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
-		const expanded = new Set<string>();
-		spells.forEach((spell) => {
-			if (spell.spellName) {
-				expanded.add(spell.id);
-			}
-		});
-		return expanded;
+		const cached = expandedSpellSessionState.get(expansionSessionKey);
+		if (!cached) return new Set();
+		const currentSpellIds = new Set(spells.map((spell) => spell.id));
+		return new Set([...cached].filter((spellId) => currentSpellIds.has(spellId)));
 	});
+
+	useEffect(() => {
+		expandedSpellSessionState.set(expansionSessionKey, new Set(expandedSpells));
+	}, [expandedSpells, expansionSessionKey]);
 
 	// Track which spell rows are in custom freeform mode. Re-derived from data on
 	// load: any saved spell whose name doesn't match the catalog is custom.
@@ -194,6 +202,7 @@ const Spells: React.FC<SpellsProps> = ({
 			notes: ''
 		};
 		addSpell(newSpell);
+		setEditingSpellIds((prev) => new Set(prev).add(newSpell.id));
 	};
 
 	const removeSpellSlot = (spellIndex: number) => {
@@ -291,6 +300,24 @@ const Spells: React.FC<SpellsProps> = ({
 		});
 	};
 
+	const handleSpellRowClick = (event: React.MouseEvent<HTMLDivElement>, spellId: string) => {
+		const target = event.target as HTMLElement;
+		if (target.closest('button, select, input, textarea, a')) return;
+		toggleSpellExpansion(spellId);
+	};
+
+	const toggleSpellEditing = (spellId: string) => {
+		setEditingSpellIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(spellId)) {
+				next.delete(spellId);
+			} else {
+				next.add(spellId);
+			}
+			return next;
+		});
+	};
+
 	const expandAll = () => {
 		const allSpellIds = filteredCharacterSpells.map((spell) => spell.id);
 		setExpandedSpells(new Set(allSpellIds));
@@ -361,7 +388,6 @@ const Spells: React.FC<SpellsProps> = ({
 
 			<StyledSpellsContainer $isMobile={effectiveIsMobile} data-testid="spells-container">
 				<StyledSpellsHeaderRow $isMobile={effectiveIsMobile}>
-					<span></span> {/* Empty column for remove button */}
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.spellsColumnName')}
 					</StyledHeaderColumn>
@@ -380,6 +406,7 @@ const Spells: React.FC<SpellsProps> = ({
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.spellsColumnRange')}
 					</StyledHeaderColumn>
+					<span aria-hidden="true" />
 				</StyledSpellsHeaderRow>
 
 				{filteredCharacterSpells.length === 0 ? (
@@ -400,20 +427,18 @@ const Spells: React.FC<SpellsProps> = ({
 						// Get the selected spell details for info display
 						const selectedSpell = resolveCatalogSpell(spell.spellName) ?? null;
 						const isCustom = customSpellIds.has(spell.id);
+						const isEditing = editingSpellIds.has(spell.id);
 
 						return (
 							<React.Fragment key={spell.id}>
-								<StyledSpellRow $isMobile={effectiveIsMobile} data-testid={`spell-row-${spell.id}`}>
-									{/* Remove Button - only show in edit mode */}
-									{!readOnly && (
-										<DeleteButton
-											onClick={() => removeSpellSlot(originalIndex)}
-											$isMobile={effectiveIsMobile}
-										/>
-									)}
-
+								<StyledSpellRow
+									$isMobile={effectiveIsMobile}
+									data-testid={`spell-row-${spell.id}`}
+									aria-expanded={expandedSpells.has(spell.id)}
+									onClick={(event) => handleSpellRowClick(event, spell.id)}
+								>
 									{/* Spell Name */}
-									{readOnly ? (
+									{readOnly || !isEditing ? (
 										<StyledBoldSpellCell $isMobile={effectiveIsMobile} $boldMobile={true}>
 											{spell.spellName || 'Unknown Spell'}
 										</StyledBoldSpellCell>
@@ -464,7 +489,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* School */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly ? (
+										{isCustom && !readOnly && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.school}
@@ -478,7 +503,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* Duration */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly ? (
+										{isCustom && !readOnly && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.duration}
@@ -492,7 +517,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* AP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly ? (
+										{isCustom && !readOnly && isEditing ? (
 											<SpellCellInput
 												type="number"
 												min="0"
@@ -508,7 +533,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* MP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly ? (
+										{isCustom && !readOnly && isEditing ? (
 											<SpellCellInput
 												type="number"
 												min="0"
@@ -524,7 +549,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* Range */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly ? (
+										{isCustom && !readOnly && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.range}
@@ -536,22 +561,36 @@ const Spells: React.FC<SpellsProps> = ({
 										)}
 									</StyledSpellCell>
 
-									{/* Cast Button */}
-									{!readOnly && onSpellCast && (
-										<button
-											onClick={(e) => { e.stopPropagation(); onSpellCast(spell); }}
-											style={{
-												padding: '0.15rem 0.5rem',
-												fontSize: '0.7rem',
-												borderRadius: '4px',
-												border: '1px solid #444',
-												background: 'transparent',
-												color: '#aaa',
-												cursor: 'pointer',
-												marginLeft: '0.5rem',
-											}}
-										>Cast</button>
-									)}
+									<StyledSpellActions>
+										{!readOnly && onSpellCast && (
+											<StyledSpellActionButton
+												onClick={() => onSpellCast(spell)}
+												title="Cast spell"
+											>
+												Cast
+											</StyledSpellActionButton>
+										)}
+										{!readOnly && (
+											<StyledSpellActionButton
+												onClick={() => toggleSpellEditing(spell.id)}
+												aria-label={isEditing ? 'Finish Editing Spell Slot' : 'Edit Spell Slot'}
+												title={isEditing ? 'Finish editing spell slot' : 'Edit spell slot'}
+												data-testid={`edit-spell-${spell.id}`}
+											>
+												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
+											</StyledSpellActionButton>
+										)}
+										{!readOnly && isEditing && (
+											<DeleteButton
+												onClick={(event) => {
+													event.stopPropagation();
+													removeSpellSlot(originalIndex);
+												}}
+												title="Remove spell slot"
+												$isMobile={effectiveIsMobile}
+											/>
+										)}
+									</StyledSpellActions>
 								</StyledSpellRow>
 
 								{/* Expandable Description Section — catalog spell */}
@@ -608,7 +647,7 @@ const Spells: React.FC<SpellsProps> = ({
 										</StyledSpellDescriptionHeader>
 										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
 											<strong>{t('characterSheet.spellsDescriptionLabel')}</strong>
-											{readOnly ? (
+											{readOnly || !isEditing ? (
 												<div style={{ whiteSpace: 'pre-wrap', marginTop: '0.5rem' }}>
 													{spell.effects?.[0]?.description || ''}
 												</div>
@@ -621,18 +660,6 @@ const Spells: React.FC<SpellsProps> = ({
 											)}
 										</StyledSpellDescriptionContent>
 									</StyledSpellDescriptionContainer>
-								)}
-
-								{/* Toggle Description Button — show for catalog and custom spells alike */}
-								{(selectedSpell || isCustom) && (
-									<StyledSpellToggleContainer>
-										<StyledSpellToggleButton
-											onClick={() => toggleSpellExpansion(spell.id)}
-											data-testid={`toggle-spell-desc-${spell.id}`}
-										>
-											{expandedSpells.has(spell.id) ? 'Hide Description' : 'Show Description'}
-										</StyledSpellToggleButton>
-									</StyledSpellToggleContainer>
 								)}
 							</React.Fragment>
 						);

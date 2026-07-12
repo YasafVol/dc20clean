@@ -2,7 +2,7 @@
 
 > Purpose: Canonical policy for schema, rules, PDF, and system-source versioning.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-11
 
 ---
 
@@ -71,6 +71,9 @@ Required behavior:
    - The draft must normalize partial legacy `characterState` before save so
      Convex can create the current-rules copy even when the source record has
      incomplete nested runtime resources.
+   - The Convex save boundary must remove calculator-only, creation-input, and
+     JSON export envelope fields carried through upgrade object spreads; these
+     are not part of the persisted character schema.
 7. Mark the draft as `rulesUpgradeStatus: "needs-review"` when retired/deprecated selections were removed or require player alternatives.
 8. Force unresolved retired/ambiguous choices through explicit user selection before treating the upgrade as complete.
 

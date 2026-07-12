@@ -41,6 +41,7 @@ import { calculateHoldBreath } from '../../../lib/utils/holdBreath';
 import { useCampaignVitalEvents } from './useCampaignVitalEvents';
 import { useCampaignStateEvents } from './useCampaignStateEvents';
 import { useCampaignsForCharacter, useCampaignMutations } from '../../../lib/hooks/useCampaigns';
+import { useAppAuth } from '../../../components/auth/AuthModeContext';
 import type { DiceRollResult, RollMode } from '../components/DiceRoller';
 import type { SpellData } from '../../../types';
 import type { ManeuverData } from '../../../types';
@@ -341,7 +342,13 @@ interface CharacterSheetContextType {
 	}) => void;
 	setRageActive: (isRaging: boolean) => void;
 	setWildFormActive: (isWildFormed: boolean) => void;
-	handleDiceRoll: (results: DiceRollResult[], total: number, rollMode: RollMode, modifier: number, label: string) => void;
+	handleDiceRoll: (
+		results: DiceRollResult[],
+		total: number,
+		rollMode: RollMode,
+		modifier: number,
+		label: string
+	) => void;
 	handleSpellCast: (spell: SpellData) => void;
 	handleManeuverUse: (maneuver: ManeuverData) => void;
 	handleLongRestEvent: () => void;
@@ -362,7 +369,64 @@ interface CharacterSheetProviderProps {
 	campaignId?: string;
 }
 
-export function CharacterSheetProvider({ children, characterId, campaignId }: CharacterSheetProviderProps) {
+interface CampaignEventHandlers {
+	handleDiceRoll: CharacterSheetContextType['handleDiceRoll'];
+	handleSpellCast: CharacterSheetContextType['handleSpellCast'];
+	handleManeuverUse: CharacterSheetContextType['handleManeuverUse'];
+	handleLongRestEvent: CharacterSheetContextType['handleLongRestEvent'];
+}
+
+const NO_CAMPAIGN_EVENT_HANDLERS: CampaignEventHandlers = {
+	handleDiceRoll: () => {},
+	handleSpellCast: () => {},
+	handleManeuverUse: () => {},
+	handleLongRestEvent: () => {}
+};
+
+function CampaignCharacterSheetProvider(props: CharacterSheetProviderProps) {
+	const campaignCharacter = useQuery(
+		api.characters.getByIdForMember,
+		props.campaignId ? { campaignId: props.campaignId, characterId: props.characterId } : 'skip'
+	);
+	return (
+		<CharacterSheetProviderCore
+			{...props}
+			campaignCharacter={campaignCharacter ?? null}
+			campaignCharacterLoading={campaignCharacter === undefined}
+			campaignEventsEnabled={false}
+		/>
+	);
+}
+
+export function CharacterSheetProvider(props: CharacterSheetProviderProps) {
+	const { isConvexEnabled } = useAppAuth();
+	if (props.campaignId && isConvexEnabled) {
+		return <CampaignCharacterSheetProvider {...props} />;
+	}
+	return (
+		<CharacterSheetProviderCore
+			{...props}
+			campaignCharacter={null}
+			campaignCharacterLoading={false}
+			campaignEventsEnabled={isConvexEnabled}
+		/>
+	);
+}
+
+interface CharacterSheetProviderCoreProps extends CharacterSheetProviderProps {
+	campaignCharacter: SavedCharacter | null;
+	campaignCharacterLoading: boolean;
+	campaignEventsEnabled: boolean;
+}
+
+function CharacterSheetProviderCore({
+	children,
+	characterId,
+	campaignId,
+	campaignCharacter,
+	campaignCharacterLoading,
+	campaignEventsEnabled
+}: CharacterSheetProviderCoreProps) {
 	const readOnly = !!campaignId;
 	const {
 		state,
@@ -400,11 +464,6 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		setWildFormActive
 	} = useCharacterSheetReducer(readOnly);
 
-	// Campaign member view: fetch character via Convex query
-	const campaignCharacter = useQuery(
-		api.characters.getByIdForMember,
-		campaignId ? { campaignId, characterId } : 'skip'
-	);
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
 	const [savedHP, setSavedHP] = useState<number | null>(null);
@@ -581,7 +640,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 				let characterData;
 				if (campaignId) {
 					// campaignCharacter: undefined = still loading, null = not found, object = found
-					if (campaignCharacter === undefined) return;
+					if (campaignCharacterLoading) return;
 					characterData = campaignCharacter ?? null;
 				} else {
 					characterData = await storage.getCharacterById(characterId);
@@ -603,7 +662,7 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 			}
 		};
 		loadCharacter();
-	}, [characterId, campaignId, campaignCharacter, dispatch, storage]);
+	}, [characterId, campaignId, campaignCharacter, campaignCharacterLoading, dispatch, storage]);
 
 	// Manual save function exposed through context (no-op when readOnly)
 	const saveNow = useCallback(async () => {
@@ -621,91 +680,23 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 		saveCharacterData(state.character);
 	}, [readOnly, state.character, saveCharacterData]);
 
-	// Campaign event producer: fires well_bloodied / deaths_door / dead events after saves
-	useCampaignVitalEvents(
-		state.character?.id ?? null,
-		readOnly,
-		savedHP,
-		savedMaxHP,
-		state.character?.finalName ?? null,
-		-(state.character?.finalDeathThreshold ?? 10),
-		savedIsDead
+	const campaignEventHandlers = useRef<CampaignEventHandlers>(NO_CAMPAIGN_EVENT_HANDLERS);
+	const handleDiceRoll = useCallback<CharacterSheetContextType['handleDiceRoll']>(
+		(...args) => campaignEventHandlers.current.handleDiceRoll(...args),
+		[]
 	);
-
-	// Campaign state event producer: fires rage, wild form, conditions, exhaustion events
-	useCampaignStateEvents(
-		state.character?.id ?? null,
-		readOnly,
-		state.character?.characterState?.ui?.combatToggles?.isRaging ?? false,
-		state.character?.characterState?.ui?.combatToggles?.isWildFormed ?? false,
-		state.character?.characterState?.activeConditions ?? [],
-		state.character?.characterState?.resources?.current?.exhaustionLevel ?? 0,
-		state.character?.finalName ?? null,
+	const handleSpellCast = useCallback<CharacterSheetContextType['handleSpellCast']>(
+		(spell) => campaignEventHandlers.current.handleSpellCast(spell),
+		[]
 	);
-
-	// Campaign dice roll event producer
-	const campaignCharacterId = readOnly ? null : (state.character?.id ?? null);
-	const campaignLinks = useCampaignsForCharacter(campaignCharacterId);
-	const { postEvent } = useCampaignMutations();
-
-	const handleDiceRoll = useCallback((
-		results: DiceRollResult[],
-		total: number,
-		rollMode: RollMode,
-		modifier: number,
-		label: string,
-	) => {
-		const characterId = state.character?.id;
-		if (!characterId || campaignLinks.length === 0 || rollMode === 'no-d20') return;
-		const payload = {
-			characterName: state.character?.finalName ?? 'Unknown',
-			label: label || 'd20',
-			mode: rollMode === 'advantage' ? 'advantage'
-				: rollMode === 'disadvantage' ? 'disadvantage'
-				: 'normal',
-			allResults: results.map(r => r.value),
-			takenResult: total - modifier,
-			modifier,
-			total,
-		};
-		for (const { campaignDocId } of campaignLinks) {
-			postEvent(campaignDocId, 'dice_roll', payload, characterId).catch(() => {});
-		}
-	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
-
-	const handleSpellCast = useCallback((spell: SpellData) => {
-		const characterId = state.character?.id;
-		if (!characterId || campaignLinks.length === 0) return;
-		const payload = {
-			characterName: state.character?.finalName ?? 'Unknown',
-			spellName: spell.spellName,
-			sustained: (spell.duration ?? '').toLowerCase().includes('sustain'),
-		};
-		for (const { campaignDocId } of campaignLinks) {
-			postEvent(campaignDocId, 'spell_cast', payload, characterId).catch(() => {});
-		}
-	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
-
-	const handleManeuverUse = useCallback((maneuver: ManeuverData) => {
-		const characterId = state.character?.id;
-		if (!characterId || campaignLinks.length === 0) return;
-		const payload = {
-			characterName: state.character?.finalName ?? 'Unknown',
-			maneuverName: maneuver.name,
-		};
-		for (const { campaignDocId } of campaignLinks) {
-			postEvent(campaignDocId, 'maneuver_used', payload, characterId).catch(() => {});
-		}
-	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
-
-	const handleLongRestEvent = useCallback(() => {
-		const characterId = state.character?.id;
-		if (!characterId || campaignLinks.length === 0) return;
-		const payload = { characterName: state.character?.finalName ?? 'Unknown' };
-		for (const { campaignDocId } of campaignLinks) {
-			postEvent(campaignDocId, 'long_rest', payload, characterId).catch(() => {});
-		}
-	}, [state.character?.id, state.character?.finalName, campaignLinks, postEvent]);
+	const handleManeuverUse = useCallback<CharacterSheetContextType['handleManeuverUse']>(
+		(maneuver) => campaignEventHandlers.current.handleManeuverUse(maneuver),
+		[]
+	);
+	const handleLongRestEvent = useCallback(
+		() => campaignEventHandlers.current.handleLongRestEvent(),
+		[]
+	);
 
 	const contextValue: CharacterSheetContextType = {
 		state,
@@ -752,8 +743,122 @@ export function CharacterSheetProvider({ children, characterId, campaignId }: Ch
 	};
 
 	return (
-		<CharacterSheetContext.Provider value={contextValue}>{children}</CharacterSheetContext.Provider>
+		<CharacterSheetContext.Provider value={contextValue}>
+			{campaignEventsEnabled && !readOnly ? (
+				<CampaignEventsInner
+					character={state.character}
+					savedHP={savedHP}
+					savedMaxHP={savedMaxHP}
+					savedIsDead={savedIsDead}
+					handlersRef={campaignEventHandlers}
+				/>
+			) : null}
+			{children}
+		</CharacterSheetContext.Provider>
 	);
+}
+
+function CampaignEventsInner({
+	character,
+	savedHP,
+	savedMaxHP,
+	savedIsDead,
+	handlersRef
+}: {
+	character: SavedCharacter | null;
+	savedHP: number | null;
+	savedMaxHP: number | null;
+	savedIsDead: boolean;
+	handlersRef: React.MutableRefObject<CampaignEventHandlers>;
+}) {
+	const characterId = character?.id ?? null;
+	const characterName = character?.finalName ?? null;
+	useCampaignVitalEvents(
+		characterId,
+		false,
+		savedHP,
+		savedMaxHP,
+		characterName,
+		-(character?.finalDeathThreshold ?? 10),
+		savedIsDead
+	);
+	useCampaignStateEvents(
+		characterId,
+		false,
+		character?.characterState?.ui?.combatToggles?.isRaging ?? false,
+		character?.characterState?.ui?.combatToggles?.isWildFormed ?? false,
+		character?.characterState?.activeConditions ?? [],
+		character?.characterState?.resources?.current?.exhaustionLevel ?? 0,
+		characterName
+	);
+	const campaignLinks = useCampaignsForCharacter(characterId);
+	const { postEvent } = useCampaignMutations();
+
+	const handleDiceRoll = useCallback<CampaignEventHandlers['handleDiceRoll']>(
+		(results, total, rollMode, modifier, label) => {
+			if (!characterId || campaignLinks.length === 0 || rollMode === 'no-d20') return;
+			const payload = {
+				characterName: characterName ?? 'Unknown',
+				label: label || 'd20',
+				mode:
+					rollMode === 'advantage'
+						? 'advantage'
+						: rollMode === 'disadvantage'
+							? 'disadvantage'
+							: 'normal',
+				allResults: results.map((result) => result.value),
+				takenResult: total - modifier,
+				modifier,
+				total
+			};
+			for (const { campaignDocId } of campaignLinks) {
+				postEvent(campaignDocId, 'dice_roll', payload, characterId).catch(() => {});
+			}
+		},
+		[characterId, characterName, campaignLinks, postEvent]
+	);
+	const handleSpellCast = useCallback<CampaignEventHandlers['handleSpellCast']>(
+		(spell) => {
+			if (!characterId || campaignLinks.length === 0) return;
+			const payload = {
+				characterName: characterName ?? 'Unknown',
+				spellName: spell.spellName,
+				sustained: (spell.duration ?? '').toLowerCase().includes('sustain')
+			};
+			for (const { campaignDocId } of campaignLinks) {
+				postEvent(campaignDocId, 'spell_cast', payload, characterId).catch(() => {});
+			}
+		},
+		[characterId, characterName, campaignLinks, postEvent]
+	);
+	const handleManeuverUse = useCallback<CampaignEventHandlers['handleManeuverUse']>(
+		(maneuver) => {
+			if (!characterId || campaignLinks.length === 0) return;
+			const payload = {
+				characterName: characterName ?? 'Unknown',
+				maneuverName: maneuver.name
+			};
+			for (const { campaignDocId } of campaignLinks) {
+				postEvent(campaignDocId, 'maneuver_used', payload, characterId).catch(() => {});
+			}
+		},
+		[characterId, characterName, campaignLinks, postEvent]
+	);
+	const handleLongRestEvent = useCallback(() => {
+		if (!characterId || campaignLinks.length === 0) return;
+		const payload = { characterName: characterName ?? 'Unknown' };
+		for (const { campaignDocId } of campaignLinks) {
+			postEvent(campaignDocId, 'long_rest', payload, characterId).catch(() => {});
+		}
+	}, [characterId, characterName, campaignLinks, postEvent]);
+
+	handlersRef.current = {
+		handleDiceRoll,
+		handleSpellCast,
+		handleManeuverUse,
+		handleLongRestEvent
+	};
+	return null;
 }
 
 // Custom hook to consume the context

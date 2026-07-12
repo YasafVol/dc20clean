@@ -2,7 +2,7 @@
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-12
 
 ---
 
@@ -70,6 +70,8 @@ This modular structure improves maintainability and makes the calculation pipeli
 
 - **PD** = `8 + Combat Mastery + Agility + Intelligence + sum(always-on effects.pd)`
 - **AD** = `8 + Combat Mastery + Might + Charisma + sum(always-on effects.ad)`
+- **Heavy Hit threshold** = target defense + 5, for both PD and AD
+- **Brutal Hit threshold** = target defense + 10, for both PD and AD
 - Equipped armor, shields, and weapons contribute through the same effect sums. For
   example, an equipped Guard weapon adds `MODIFY_STAT pd +1`.
 - Conditional modifiers (for example `while_raging` or `not_wearing_armor`) are surfaced under `conditionalModifiers` and are not applied to always-on totals.

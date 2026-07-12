@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCharacter } from '../../lib/stores/characterContext';
+import { useCurrentUser } from '../../components/auth/CurrentUserContext';
 import { nameByRace } from 'fantasy-name-generator';
 import { PrimaryButton, SecondaryButton } from '../../components/styled/index';
 import { useTranslation } from 'react-i18next';
@@ -54,11 +55,27 @@ interface CharacterNameProps {
 
 function CharacterName({ onFinish, onPrintPdf }: CharacterNameProps) {
 	const { state, dispatch } = useCharacter();
+	const currentUser = useCurrentUser();
 	const { t } = useTranslation();
 	const [characterName, setCharacterName] = useState(state.finalName || '');
 	const [playerName, setPlayerName] = useState(state.finalPlayerName || '');
+	const hasAppliedPlayerNameDefault = useRef(false);
 	const [suggestions, setSuggestions] = useState<string[]>([]);
 	const [isGenerating, setIsGenerating] = useState(false);
+
+	useEffect(() => {
+		const defaultPlayerName = currentUser?.name?.trim();
+		if (!defaultPlayerName || hasAppliedPlayerNameDefault.current) return;
+
+		hasAppliedPlayerNameDefault.current = true;
+		if (playerName.trim()) return;
+
+		setPlayerName(defaultPlayerName);
+		dispatch({
+			type: 'UPDATE_STORE',
+			updates: { finalPlayerName: defaultPlayerName }
+		});
+	}, [currentUser?.name, dispatch, playerName]);
 
 	const getFallbackNames = (ancestry: string) => {
 		const fallbackNames: { [key: string]: string[] } = {

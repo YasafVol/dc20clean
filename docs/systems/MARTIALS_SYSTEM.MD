@@ -2,7 +2,7 @@
 
 > Purpose: Canonical reference for maneuver data, budget calculation, and creation/sheet integration.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-07-12
 
 ---
 
@@ -99,6 +99,7 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - Creation stage enforces exact selected count = `totalManeuversKnown`.
 - Remaining count and filter by `ManeuverType` are displayed in `Maneuvers.tsx`.
 - If no maneuver budget exists, the Maneuvers stage is hidden by step gating in `CharacterCreation.tsx`.
+- Sheet maneuver rows mirror spell rows: the row toggles details, Use remains directly available, and changing/removing a slot requires its trailing edit action. Expansion state persists across sheet-tab changes and resets on a full page load.
 
 ---
 

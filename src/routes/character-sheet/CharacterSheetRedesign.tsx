@@ -12,6 +12,7 @@ import {
 	CharacterName,
 	CharacterMeta,
 	MetaItem,
+	MetaLink,
 	ActionButtons,
 	ActionButton,
 	BackButton,
@@ -75,9 +76,11 @@ import MobileBottomNav from './components/shared/MobileBottomNav';
 import HamburgerDrawer from './components/shared/HamburgerDrawer';
 import Snackbar from '../../components/Snackbar';
 import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
+import { getRulebookArticle, getRulebookArticlePath } from '../rulebook/rulebookData';
 import { useCampaignNotifications } from './hooks/useCampaignNotifications';
 import { CampaignFeedPanel } from './components/CampaignFeedPanel';
 import { useCurrentUser } from '../../components/auth/CurrentUserContext';
+import { useAppAuth } from '../../components/auth/AuthModeContext';
 
 // Import theme
 import { theme } from './styles/theme';
@@ -99,6 +102,67 @@ type TabId =
 	| 'knowledge'
 	| 'notes';
 
+function CampaignFeedActionInner({ characterId }: { characterId: string }) {
+	const currentUser = useCurrentUser();
+	const { campaignName, events, unreadCount, markSeen, inCampaign } =
+		useCampaignNotifications(characterId);
+	const [feedOpen, setFeedOpen] = useState(false);
+
+	if (!inCampaign) return null;
+	return (
+		<>
+			<ActionButton
+				onClick={() => {
+					markSeen();
+					setFeedOpen(true);
+				}}
+				whileHover={{ scale: 1.05 }}
+				whileTap={{ scale: 0.95 }}
+				title="Campaign feed"
+				style={{ position: 'relative' }}
+			>
+				🔔
+				{unreadCount > 0 ? (
+					<span
+						style={{
+							position: 'absolute',
+							top: '-4px',
+							right: '-4px',
+							background: theme.colors.accent.danger,
+							color: '#fff',
+							borderRadius: '9999px',
+							fontSize: '0.6rem',
+							fontWeight: 700,
+							minWidth: '16px',
+							height: '16px',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							padding: '0 3px',
+							lineHeight: 1
+						}}
+					>
+						{unreadCount > 99 ? '99+' : unreadCount}
+					</span>
+				) : null}
+			</ActionButton>
+			{feedOpen && campaignName && currentUser ? (
+				<CampaignFeedPanel
+					campaignName={campaignName}
+					events={events}
+					onClose={() => setFeedOpen(false)}
+				/>
+			) : null}
+		</>
+	);
+}
+
+function CampaignFeedAction({ characterId }: { characterId: string }) {
+	const { isConvexEnabled, isAuthenticated } = useAppAuth();
+	if (!isConvexEnabled || !isAuthenticated) return null;
+	return <CampaignFeedActionInner characterId={characterId} />;
+}
+
 const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ characterId, onBack }) => {
 	logger.debug('ui', 'CharacterSheetRedesign render', { characterId });
 	const { t } = useTranslation();
@@ -110,16 +174,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
 	const [rulebookOpen, setRulebookOpen] = useState(false);
-
-	const currentUser = useCurrentUser();
-	const { campaignName, events: campaignEvents, unreadCount, markSeen, inCampaign } =
-		useCampaignNotifications(characterId);
-	const [feedOpen, setFeedOpen] = useState(false);
-
-	const openFeed = () => {
-		markSeen();
-		setFeedOpen(true);
-	};
 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [snackbarVariant, setSnackbarVariant] = useState<'success' | 'error' | 'info'>('success');
@@ -281,6 +335,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const characterData = state.character;
 	const loading = state.loading;
 	const error = state.error;
+	const secondaryAncestryName = characterData?.ancestry2Name?.trim();
+	const displayedSecondaryAncestryName =
+		secondaryAncestryName?.toLowerCase() === 'unknown' ? undefined : secondaryAncestryName;
 
 	// Feature popup handlers
 	const openFeaturePopup = (feature: FeatureData) => {
@@ -383,6 +440,10 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	}
 
 	// Extract character data
+	const classRulebookArticleId = `classes/${characterData.classId}`;
+	const classRulebookPath = getRulebookArticle(classRulebookArticleId)
+		? getRulebookArticlePath(classRulebookArticleId)
+		: undefined;
 	const currentHP = resources?.current?.currentHP ?? 0;
 	const maxHP = calculatedData?.breakdowns?.hpMax?.total ?? characterData.finalHPMax ?? 0;
 	const tempHP = resources?.current?.tempHP ?? 0;
@@ -413,10 +474,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const isRaging = !!characterData.characterState?.ui?.combatToggles?.isRaging;
 
 	// Wild Form state (temporary in-combat toggle for druids)
-	const hasWildFormFeature =
-		(characterData.unlockedFeatureIds ?? []).includes('druid_wild_form');
-	const isWildFormed =
-		characterData.characterState?.ui?.combatToggles?.isWildFormed ?? false;
+	const hasWildFormFeature = (characterData.unlockedFeatureIds ?? []).includes('druid_wild_form');
+	const isWildFormed = characterData.characterState?.ui?.combatToggles?.isWildFormed ?? false;
 
 	// Get defenses from live calculator result; fall back to saved character data
 	const basePrecisionAD = calculatedData?.stats?.finalPD ?? characterData.finalPD ?? 10;
@@ -431,6 +490,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const precisionADHeavyThreshold = precisionAD + 5;
 	const precisionADBrutalThreshold = precisionAD + 10;
 	const areaAD = defenseOverrides.areaAD ?? baseAreaAD;
+	const areaADHeavyThreshold = areaAD + 5;
+	const areaADBrutalThreshold = areaAD + 10;
 	const precisionDR = defenseOverrides.precisionDR ?? basePrecisionDR;
 
 	// Combat stats - use manual calculation since breakdowns may be incorrect
@@ -703,13 +764,15 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	return (
 		<PageContainer>
 			{readOnly && (
-				<div style={{
-					background: '#1a1a2e',
-					color: '#aaa',
-					padding: '0.5rem 1rem',
-					textAlign: 'center',
-					fontSize: '0.875rem',
-				}}>
+				<div
+					style={{
+						background: '#1a1a2e',
+						color: '#aaa',
+						padding: '0.5rem 1rem',
+						textAlign: 'center',
+						fontSize: '0.875rem'
+					}}
+				>
 					Read-only — viewing {state.character?.finalName ?? 'character'}&apos;s sheet
 				</div>
 			)}
@@ -732,12 +795,21 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							<CharacterMeta>
 								<MetaItem>{characterData.finalPlayerName || t('characterSheet.player')}</MetaItem>
 								<MetaItem>
-									{t('characterSheet.level')} {characterData.level || 1}{' '}
-									{characterData.className || t('characterSheet.adventurer')}
+									{classRulebookPath ? (
+										<MetaLink to={classRulebookPath}>
+											{t('characterSheet.level')} {characterData.level || 1}{' '}
+											{characterData.className || t('characterSheet.adventurer')}
+										</MetaLink>
+									) : (
+										<>
+											{t('characterSheet.level')} {characterData.level || 1}{' '}
+											{characterData.className || t('characterSheet.adventurer')}
+										</>
+									)}
 								</MetaItem>
 								<MetaItem>
-									{characterData.ancestry1Name || t('characterSheet.unknown')}{' '}
-									{characterData.ancestry2Name ? `/ ${characterData.ancestry2Name}` : ''}
+									{characterData.ancestry1Name || t('characterSheet.unknown')}
+									{displayedSecondaryAncestryName ? ` / ${displayedSecondaryAncestryName}` : ''}
 								</MetaItem>
 							</CharacterMeta>
 						</CharacterIdentity>
@@ -747,38 +819,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
 
 					<ActionButtons>
-						{inCampaign && (
-							<ActionButton
-								onClick={openFeed}
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
-								title="Campaign feed"
-								style={{ position: 'relative' }}
-							>
-								🔔
-								{unreadCount > 0 && (
-									<span style={{
-										position: 'absolute',
-										top: '-4px',
-										right: '-4px',
-										background: theme.colors.accent.danger,
-										color: '#fff',
-										borderRadius: '9999px',
-										fontSize: '0.6rem',
-										fontWeight: 700,
-										minWidth: '16px',
-										height: '16px',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										padding: '0 3px',
-										lineHeight: 1,
-									}}>
-										{unreadCount > 99 ? '99+' : unreadCount}
-									</span>
-								)}
-							</ActionButton>
-						)}
+						<CampaignFeedAction characterId={characterId} />
 						<ActionButton
 							onClick={() => setRulebookOpen(true)}
 							whileHover={{ scale: 1.05 }}
@@ -864,6 +905,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								precisionADBrutalThreshold={precisionADBrutalThreshold}
 								precisionDR={precisionDR}
 								areaAD={areaAD}
+								areaADHeavyThreshold={areaADHeavyThreshold}
+								areaADBrutalThreshold={areaADBrutalThreshold}
 								attackBonus={attackBonus}
 								saveDC={saveDC}
 								initiative={initiative}
@@ -919,7 +962,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										padding: '4px 8px',
 										cursor: 'pointer',
 										textTransform: 'uppercase' as const,
-										letterSpacing: '0.04em',
+										letterSpacing: '0.04em'
 									}}
 								>
 									{isWildFormed ? 'Exit Wild Form' : 'Wild Form'}
@@ -960,9 +1003,18 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													}}
 												/>
 											)}
-											{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
+											{activeTab === 'spells' && (
+												<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+											)}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
-											{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} readOnly={readOnly} isMobile={isMobile} />}
+											{activeTab === 'maneuvers' && (
+												<Maneuvers
+													onManeuverClick={() => {}}
+													onManeuverUse={handleManeuverUse}
+													readOnly={readOnly}
+													isMobile={isMobile}
+												/>
+											)}
 											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 											{activeTab === 'conditions' && (
 												<>
@@ -1018,9 +1070,18 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										}}
 									/>
 								)}
-								{activeTab === 'spells' && <Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />}
+								{activeTab === 'spells' && (
+									<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+								)}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
-								{activeTab === 'maneuvers' && <Maneuvers onManeuverClick={() => {}} onManeuverUse={handleManeuverUse} readOnly={readOnly} isMobile={isMobile} />}
+								{activeTab === 'maneuvers' && (
+									<Maneuvers
+										onManeuverClick={() => {}}
+										onManeuverUse={handleManeuverUse}
+										readOnly={readOnly}
+										isMobile={isMobile}
+									/>
+								)}
 								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
 								{activeTab === 'conditions' && (
 									<ActiveConditionsTracker
@@ -1089,14 +1150,6 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 			{/* Feature Details Popup */}
 			<FeaturePopup feature={selectedFeature} onClose={closeFeaturePopup} />
-
-			{feedOpen && campaignName && currentUser && (
-				<CampaignFeedPanel
-					campaignName={campaignName}
-					events={campaignEvents}
-					onClose={() => setFeedOpen(false)}
-				/>
-			)}
 
 			{/* Snackbar for notifications */}
 			<Snackbar

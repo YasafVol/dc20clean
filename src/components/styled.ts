@@ -72,7 +72,21 @@ export const StyledCharacterGrid = styled.div`
 // DM Tools section - Purple highlight
 export const StyledDMGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+
+	@media (max-width: 899px) {
+		grid-template-columns: 1fr;
+	}
+`;
+
+export const StyledDMGroup = styled.div`
+	min-width: 0;
+`;
+
+export const StyledDMGroupCards = styled.div`
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 1rem;
 
 	@media (max-width: 599px) {
@@ -84,14 +98,27 @@ export const StyledDMGrid = styled.div`
 export const StyledToolsGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 1rem;
+	row-gap: 1.5rem;
+	column-gap: 1rem;
+
+	& > *:nth-child(5) {
+		grid-column: 2 / span 2;
+	}
 
 	@media (max-width: 899px) {
 		grid-template-columns: repeat(2, 1fr);
+
+		& > *:nth-child(5) {
+			grid-column: 1 / -1;
+		}
 	}
 
 	@media (max-width: 599px) {
 		grid-template-columns: 1fr;
+
+		& > *:nth-child(5) {
+			grid-column: auto;
+		}
 	}
 `;
 

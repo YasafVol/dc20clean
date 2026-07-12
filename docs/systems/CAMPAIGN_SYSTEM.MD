@@ -2,7 +2,7 @@
 
 > Purpose: Multi-player campaign layer: campaign management, membership, character sharing, live event notifications, and read-only sheet viewing.
 > Status: Active
-> Last Updated: 2026-06-28
+> Last Updated: 2026-07-11
 
 ---
 
@@ -44,11 +44,11 @@ All three tables use **soft-delete**: every record has an optional `deletedAt` f
 
 **Indexes:**
 
-| Index name   | Fields   | Notes                                                                 |
-| ------------ | -------- | --------------------------------------------------------------------- |
-| `by_user`    | `userId` | List all campaigns owned by a user                                    |
-| `by_app_id`  | `id`     | Lookup by app-level string id. Named `by_app_id` because `by_id` is reserved by the Convex platform |
-| `by_code`    | `code`   | Join-by-code lookup                                                   |
+| Index name  | Fields   | Notes                                                                                               |
+| ----------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `by_user`   | `userId` | List all campaigns owned by a user                                                                  |
+| `by_app_id` | `id`     | Lookup by app-level string id. Named `by_app_id` because `by_id` is reserved by the Convex platform |
+| `by_code`   | `code`   | Join-by-code lookup                                                                                 |
 
 ### 2.2 `campaignMembers`
 
@@ -66,11 +66,11 @@ All three tables use **soft-delete**: every record has an optional `deletedAt` f
 
 **Indexes:**
 
-| Index name                | Fields                  | Notes                                              |
-| ------------------------- | ----------------------- | -------------------------------------------------- |
-| `by_campaign`             | `campaignId`            | List all members of a campaign                     |
-| `by_user`                 | `userId`                | List all campaigns a user belongs to               |
-| `by_campaign_and_user`    | `campaignId`, `userId`  | Point lookup — membership check and auth helpers   |
+| Index name             | Fields                 | Notes                                            |
+| ---------------------- | ---------------------- | ------------------------------------------------ |
+| `by_campaign`          | `campaignId`           | List all members of a campaign                   |
+| `by_user`              | `userId`               | List all campaigns a user belongs to             |
+| `by_campaign_and_user` | `campaignId`, `userId` | Point lookup — membership check and auth helpers |
 
 ### 2.3 `campaignEvents`
 
@@ -88,10 +88,10 @@ All three tables use **soft-delete**: every record has an optional `deletedAt` f
 
 **Indexes:**
 
-| Index name               | Fields                        | Notes                                    |
-| ------------------------ | ----------------------------- | ---------------------------------------- |
-| `by_campaign`            | `campaignId`                  | All events in a campaign                 |
-| `by_campaign_and_time`   | `campaignId`, `createdAt`     | Ordered event feed (used by `listEvents` with `.order('desc')`) |
+| Index name             | Fields                    | Notes                                                           |
+| ---------------------- | ------------------------- | --------------------------------------------------------------- |
+| `by_campaign`          | `campaignId`              | All events in a campaign                                        |
+| `by_campaign_and_time` | `campaignId`, `createdAt` | Ordered event feed (used by `listEvents` with `.order('desc')`) |
 
 ---
 
@@ -101,8 +101,8 @@ All three tables use **soft-delete**: every record has an optional `deletedAt` f
 
 Three internal helpers enforce the permission hierarchy. Each throws on failure.
 
-| Helper              | Requirement              |
-| ------------------- | ------------------------ |
+| Helper              | Requirement                                              |
+| ------------------- | -------------------------------------------------------- |
 | `requireMembership` | Caller is an active (non-deleted) member of the campaign |
 | `requireManager`    | Caller has role `dm` OR `co_dm`                          |
 | `requireDm`         | Caller has role `dm` only                                |
@@ -111,29 +111,29 @@ All helpers query `campaignMembers` via the `by_campaign_and_user` index.
 
 ### 3.2 Queries
 
-| Export                    | Args                               | Returns                              | Description |
-| ------------------------- | ---------------------------------- | ------------------------------------ | ----------- |
-| `listMyCampaigns`         | `{}`                               | `CampaignWithRole[]`                 | All active campaigns where the caller is a member, with their role |
-| `getCampaign`             | `{ id: string }`                   | `CampaignDetail \| null`             | Full campaign detail + all active members + caller's role. Returns `null` if not a member |
-| `getRoster`               | `{ campaignId: string }`           | `RosterEntry[]`                      | Flattened list of all shared characters across all members, with HP data |
-| `listEvents`              | `{ campaignId: string, limit?: number }` | `CampaignEvent[]`              | Most recent events (default 50), ordered newest-first |
-| `getCampaignsForCharacter`| `{ characterId: string }`          | `Array<{ campaignDocId, memberDocId }>` | Which campaigns share a given character — used by the event producer |
+| Export                     | Args                                     | Returns                                 | Description                                                                               |
+| -------------------------- | ---------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `listMyCampaigns`          | `{}`                                     | `CampaignWithRole[]`                    | All active campaigns where the caller is a member, with their role                        |
+| `getCampaign`              | `{ id: string }`                         | `CampaignDetail \| null`                | Full campaign detail + all active members + caller's role. Returns `null` if not a member |
+| `getRoster`                | `{ campaignId: string }`                 | `RosterEntry[]`                         | Flattened list of all shared characters across all members, with HP data                  |
+| `listEvents`               | `{ campaignId: string, limit?: number }` | `CampaignEvent[]`                       | Most recent events (default 50), ordered newest-first                                     |
+| `getCampaignsForCharacter` | `{ characterId: string }`                | `Array<{ campaignDocId, memberDocId }>` | Which campaigns share a given character — used by the event producer                      |
 
 ### 3.3 Mutations
 
-| Export             | Auth required  | Description |
-| ------------------ | -------------- | ----------- |
-| `createCampaign`   | Authenticated  | Creates campaign + DM membership record. Generates a unique join code (up to 10 retries). Returns `{ id: string }` |
-| `joinByCode`       | Authenticated  | Finds campaign by code (case-insensitive), inserts or restores a `player` membership. Posts a `member_joined` event. Returns `{ id, alreadyMember }` |
-| `leaveCampaign`    | Member         | Soft-deletes the caller's membership. DM cannot leave (must delete campaign instead) |
-| `shareCharacter`   | Member         | Verifies caller owns the character (`by_user_and_id` index), then appends to `sharedCharacterIds`. Posts a `character_shared` event |
-| `unshareCharacter` | Member         | Removes character from caller's `sharedCharacterIds` |
-| `renameCampaign`   | Manager        | Updates `name`, `description`, `lastModified` |
-| `regenerateCode`   | Manager        | Generates and persists a new unique join code. Returns `{ code }` |
-| `kickMember`       | Manager        | Soft-deletes a non-DM member's record |
-| `setMemberRole`    | DM only        | Promotes or demotes a member between `co_dm` and `player`. Cannot change the DM's role |
-| `deleteCampaign`   | DM only        | Cascade soft-deletes: campaign → all members → all events |
-| `postEvent`        | Member         | Inserts a `campaignEvents` record. Validates that any supplied `characterId` is in the caller's own `sharedCharacterIds` |
+| Export             | Auth required | Description                                                                                                                                          |
+| ------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createCampaign`   | Authenticated | Creates campaign + DM membership record. Generates a unique join code (up to 10 retries). Returns `{ id: string }`                                   |
+| `joinByCode`       | Authenticated | Finds campaign by code (case-insensitive), inserts or restores a `player` membership. Posts a `member_joined` event. Returns `{ id, alreadyMember }` |
+| `leaveCampaign`    | Member        | Soft-deletes the caller's membership. DM cannot leave (must delete campaign instead)                                                                 |
+| `shareCharacter`   | Member        | Verifies caller owns the character (`by_user_and_id` index), then appends to `sharedCharacterIds`. Posts a `character_shared` event                  |
+| `unshareCharacter` | Member        | Removes character from caller's `sharedCharacterIds`                                                                                                 |
+| `renameCampaign`   | Manager       | Updates `name`, `description`, `lastModified`                                                                                                        |
+| `regenerateCode`   | Manager       | Generates and persists a new unique join code. Returns `{ code }`                                                                                    |
+| `kickMember`       | Manager       | Soft-deletes a non-DM member's record                                                                                                                |
+| `setMemberRole`    | DM only       | Promotes or demotes a member between `co_dm` and `player`. Cannot change the DM's role                                                               |
+| `deleteCampaign`   | DM only       | Cascade soft-deletes: campaign → all members → all events                                                                                            |
+| `postEvent`        | Member        | Inserts a `campaignEvents` record. Validates that any supplied `characterId` is in the caller's own `sharedCharacterIds`                             |
 
 ### 3.4 `characters.getByIdForMember` (in `convex/characters.ts`)
 
@@ -151,17 +151,18 @@ Returns the full character document or `null` if any guard fails. Uses `by_app_i
 
 ## 4. Permission Matrix
 
-| Action                                 | DM  | Co-DM | Player |
-| -------------------------------------- | --- | ----- | ------ |
-| View roster / view shared characters   | Yes | Yes   | Yes    |
-| Share / unshare own character          | Yes | Yes   | Yes    |
-| Leave campaign                         | Yes | Yes   | Yes    |
-| Rename campaign, regenerate join code  | Yes | Yes   | No     |
-| Kick member                            | Yes | Yes   | No     |
-| Promote / demote Co-DM                 | Yes | No    | No     |
-| Delete campaign                        | Yes | No    | No     |
+| Action                                | DM  | Co-DM | Player |
+| ------------------------------------- | --- | ----- | ------ |
+| View roster / view shared characters  | Yes | Yes   | Yes    |
+| Share / unshare own character         | Yes | Yes   | Yes    |
+| Leave campaign                        | Yes | Yes   | Yes    |
+| Rename campaign, regenerate join code | Yes | Yes   | No     |
+| Kick member                           | Yes | Yes   | No     |
+| Promote / demote Co-DM                | Yes | No    | No     |
+| Delete campaign                       | Yes | No    | No     |
 
 Notes:
+
 - The DM cannot leave — they must delete the campaign.
 - `setMemberRole` is guarded by `requireDm`; Co-DMs cannot promote/demote others.
 - `kickMember` cannot target the DM.
@@ -174,10 +175,10 @@ Join codes are generated by `generateCode()` in `convex/campaigns.ts`:
 
 ```typescript
 function generateCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 chars
-  const bytes = new Uint8Array(6);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => chars[b % chars.length]).join('');
+	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 chars
+	const bytes = new Uint8Array(6);
+	crypto.getRandomValues(bytes);
+	return Array.from(bytes, (b) => chars[b % chars.length]).join('');
 }
 ```
 
@@ -193,12 +194,12 @@ function generateCode(): string {
 
 ### 6.1 Built-in event types
 
-| Type               | Produced by          | Payload fields                                     |
-| ------------------ | -------------------- | -------------------------------------------------- |
-| `member_joined`    | `joinByCode`         | `{ displayName }`                                  |
-| `character_shared` | `shareCharacter`     | `{ characterName }`                                |
-| `well_bloodied`    | `useCampaignEventProducer` | `{ characterName, currentHP, maxHP }`        |
-| `bloodied`         | (reserved / future)  | `{ characterName, currentHP, maxHP }`              |
+| Type               | Produced by                | Payload fields                        |
+| ------------------ | -------------------------- | ------------------------------------- |
+| `member_joined`    | `joinByCode`               | `{ displayName }`                     |
+| `character_shared` | `shareCharacter`           | `{ characterName }`                   |
+| `well_bloodied`    | `useCampaignEventProducer` | `{ characterName, currentHP, maxHP }` |
+| `bloodied`         | (reserved / future)        | `{ characterName, currentHP, maxHP }` |
 
 ### 6.2 Adding a new event type
 
@@ -212,18 +213,20 @@ function generateCode(): string {
 
 ### 7.1 Key files
 
-| File | Role |
-| ---- | ---- |
-| `src/lib/types/campaign.ts` | TypeScript types: `SavedCampaign`, `CampaignMember`, `CampaignEvent`, `RosterEntry`, `CampaignWithRole`, `CampaignDetail` |
-| `src/lib/hooks/useCampaigns.ts` | All query and mutation hooks: `useMyCampaigns`, `useCampaign`, `useCampaignRoster`, `useCampaignEvents`, `useCampaignsForCharacter`, `useCampaignMutations` |
-| `src/components/auth/CurrentUserContext.tsx` | Current user provider |
-| `src/routes/campaigns/CampaignList.tsx` | Campaign list page |
-| `src/routes/campaigns/CampaignDetail.tsx` | Campaign detail: roster table, event feed, management controls, share picker |
-| `src/routes/campaigns/JoinCampaign.tsx` | Join-by-code page |
-| `src/routes/campaigns/CampaignCharacterView.tsx` | Read-only sheet route |
-| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | Sheet provider — read-only mode |
-| `src/routes/character-sheet/hooks/useCampaignEventProducer.ts` | HP-state event producer |
-| `src/lib/hooks/useCampaignToasts.ts` | App-level toast watcher and `CampaignEventWatcher` component |
+| File                                                           | Role                                                                                                                                                        |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/types/campaign.ts`                                    | TypeScript types: `SavedCampaign`, `CampaignMember`, `CampaignEvent`, `RosterEntry`, `CampaignWithRole`, `CampaignDetail`                                   |
+| `src/lib/hooks/useCampaigns.ts`                                | All query and mutation hooks: `useMyCampaigns`, `useCampaign`, `useCampaignRoster`, `useCampaignEvents`, `useCampaignsForCharacter`, `useCampaignMutations` |
+| `src/components/auth/CurrentUserContext.tsx`                   | Current user provider                                                                                                                                       |
+| `src/routes/campaigns/CampaignList.tsx`                        | Campaign list page                                                                                                                                          |
+| `src/routes/campaigns/CampaignDetail.tsx`                      | Campaign detail: roster table, event feed, management controls, share picker                                                                                |
+| `src/routes/campaigns/JoinCampaign.tsx`                        | Join-by-code page                                                                                                                                           |
+| `src/routes/campaigns/CampaignCharacterView.tsx`               | Read-only sheet route                                                                                                                                       |
+| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`  | Sheet provider — read-only mode                                                                                                                             |
+| `src/routes/character-sheet/hooks/useCampaignEventProducer.ts` | HP-state event producer                                                                                                                                     |
+| `src/lib/hooks/useCampaignToasts.ts`                           | App-level toast watcher and `CampaignEventWatcher` component                                                                                                |
+
+All frontend consumers of Convex campaign hooks are isolated in inner components that mount only when Convex is enabled. Ordinary localStorage character sheets keep campaign event handlers as no-ops and never call `useQuery` or `useMutation`; campaign read-only sheets use the Convex-only provider path.
 
 ---
 
@@ -235,8 +238,8 @@ function generateCode(): string {
 
 ```typescript
 export function CharacterSheetProvider({ children, characterId, campaignId }) {
-  const readOnly = !!campaignId;
-  // ...
+	const readOnly = !!campaignId;
+	// ...
 }
 ```
 
@@ -246,8 +249,8 @@ When `campaignId` is set, the character is loaded via `characters.getByIdForMemb
 
 ```typescript
 const campaignCharacter = useQuery(
-  api.characters.getByIdForMember,
-  campaignId ? { campaignId, characterId } : 'skip'
+	api.characters.getByIdForMember,
+	campaignId ? { campaignId, characterId } : 'skip'
 );
 ```
 
@@ -292,11 +295,12 @@ CharacterSheetProvider saves character
 
 **Notable states**: `well-bloodied`, `deaths-door`, `dead`.
 
-**De-duplication**: `prevStatusRef` stores the previous status. Events only fire on *transitions into* notable states, never when the status is unchanged.
+**De-duplication**: `prevStatusRef` stores the previous status. Events only fire on _transitions into_ notable states, never when the status is unchanged.
 
 **First-load guard**: `if (prevStatus === null) return` — the first render after mount never fires an event (prevents replaying state on page load).
 
 **No-op guards**:
+
 - `readOnly` — passes `null` to `useCampaignsForCharacter` so no campaigns are found.
 - No campaigns linked — effect short-circuits.
 
@@ -337,11 +341,11 @@ useCampaignToasts (app-level)
 
 ## 11. Known Limitations
 
-| Issue | Notes |
-| ----- | ----- |
-| `displayName` staleness | `displayName` is captured from the user profile at join time and written into the `campaignMembers` record. If a user later renames their profile, the stored value becomes stale. |
+| Issue                        | Notes                                                                                                                                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `displayName` staleness      | `displayName` is captured from the user profile at join time and written into the `campaignMembers` record. If a user later renames their profile, the stored value becomes stale.                                     |
 | Client-emitted health events | `postEvent` is called from the browser after a save. This means a player could craft an arbitrary event payload. Future mitigation: derive health events server-side via a Convex action triggered on character write. |
-| Untyped share picker | `CampaignDetail.tsx` casts the character list from `useQuery` as `(char: any)` because Convex list returns untyped documents at the call site. |
+| Untyped share picker         | `CampaignDetail.tsx` casts the character list from `useQuery` as `(char: any)` because Convex list returns untyped documents at the call site.                                                                         |
 
 ---
 

@@ -18,7 +18,7 @@
    1. Source: `TESTING_SYSTEM.MD` section 5.2.
    2. Requirements: prove `lastModified`, then `completedAt`, then `createdAt` fallback ordering; prove an import becomes first without reload.
    3. First implementation: `e2e/18-load-character-ordering.e2e.spec.ts`.
-2. **[Ready] Full maneuver-card flow from known sheet rows — 90/100**
+2. **[Complete] Full maneuver-card flow from known sheet rows — 90/100**
    1. Source: `CHARACTER_SHEET.MD` Maneuver Sheet Notes.
    2. Requirements completed: reuse the Martial Manual presentation model; keep Use directly available; disable mutation for locked legacy characters; resolve old saved rows by catalog name.
 3. **[Complete] Attack presentation helper for Rage — 88/100**

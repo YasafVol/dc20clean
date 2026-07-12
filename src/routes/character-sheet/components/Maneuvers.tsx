@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Pencil } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
@@ -404,6 +405,14 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
 												{maneuverDetails.name}
 											</StyledManeuverDescriptionLabel>
+											{selectedManeuver && (
+												<Link
+													to={`/martial-manual?maneuver=${encodeURIComponent(selectedManeuver.id)}`}
+													className="text-sm font-semibold text-amber-400 hover:text-amber-300"
+												>
+													View full card
+												</Link>
+											)}
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
 											<strong>{t('characterSheet.maneuversDescription')}:</strong>

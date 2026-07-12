@@ -100,6 +100,8 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - Remaining count and filter by `ManeuverType` are displayed in `Maneuvers.tsx`.
 - If no maneuver budget exists, the Maneuvers stage is hidden by step gating in `CharacterCreation.tsx`.
 - Sheet maneuver rows mirror spell rows: the row toggles details, Use remains directly available, and changing/removing a slot requires its trailing edit action. Expansion state persists across sheet-tab changes and resets on a full page load.
+- Expanded known rows expose `View full card`, which opens the Martial Manual filtered
+  to the canonical maneuver ID and automatically expands that card.
 
 ---
 

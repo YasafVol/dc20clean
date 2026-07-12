@@ -50,6 +50,7 @@ flowchart LR
 | Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)               |
 |                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface                           |
 | Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present                 |
+|                       | `src/lib/rulesdata/ancestries/traits.contract.test.ts`                                    | Focused trait records and structured requirement references              |
 | Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns                |
 | State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI                   |
 | UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context                       |

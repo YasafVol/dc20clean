@@ -318,12 +318,15 @@ Current inventory:
    2. Recalculates saved characters through `calculateCharacterWithBreakdowns`.
    3. Reports stat and selection mismatches.
 
-TODO: decide the gate policy for expensive agentic testing versus cheap automated testing.
+Agentic gate policy:
 
 1. Automated deterministic checks should stay cheap enough to run on every local change and PR: focused Vitest, focused deterministic Playwright specs, and `git diff --check`.
-2. Agentic browser QA should remain opt-in until the team defines runtime, artifact, and triage thresholds.
+2. Agentic browser QA remains opt-in for ordinary PRs and is required for release
+   candidates and changes to creation budgets, step gating, or cross-page persistence.
 3. Candidate agentic triggers: nightly runs, release candidates, broad character-creation changes, rules-data migrations, Background/Class/Ancestry budget changes, and failures that only appear through full UI persistence.
-4. Do not make `npm run e2e:agentic:*` a required always-run gate until this policy is explicit.
+4. Nightly/release runs retain artifacts for failed recipes; local focused runs retain
+   only failure artifacts. Environment failures do not block a release until reproduced
+   with the deterministic focused Playwright spec.
 
 ### 8.2 UI Agent Contract
 
@@ -426,11 +429,17 @@ Status: implemented.
 
 Next implementation slice:
 
-1. Add missing UI hooks discovered by smoke runs.
-2. Add the optional read-only `window.__DC20_AGENT_STATE__` in dev/test.
-3. Add class-by-class recipe generation.
-4. Add JSON/PDF export assertions to an agentic sheet recipe.
-5. Expand oracle comparison to sheet-visible values once stable sheet hooks exist.
+Status: implemented for the diagnostic/generation boundary.
+
+1. The creation UI exposes the required stable hooks used by current smoke recipes.
+2. A read-only `window.__DC20_AGENT_STATE__` snapshot is available in development and
+   webdriver sessions with route, step completion, selections, budgets, and validation.
+3. `npm run e2e:agentic:generate -- --mode class-by-class` emits one curated-choice
+   recipe descriptor per source-audited class.
+4. JSON/PDF download assertions remain in deterministic `e2e/16` rather than duplicating
+   a slow agentic flow.
+5. Recipe `expectedSheet` assertions cover stable visible outputs, including Cleric
+   Darkvision 15.
 
 ---
 

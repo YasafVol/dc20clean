@@ -832,6 +832,30 @@ const CharacterCreation: React.FC<CharacterCreationProps> = ({ editCharacter }) 
 		}
 	};
 
+	useEffect(() => {
+		if (typeof window === 'undefined' || (!import.meta.env.DEV && !navigator.webdriver)) return;
+		(window as any).__DC20_AGENT_STATE__ = {
+			route: window.location.pathname,
+			flowId: 'character-creation',
+			currentStepId: steps.find((step) => step.number === state.currentStep)?.id,
+			completedStepIds: steps.filter((step) => isStepCompleted(step.number)).map((step) => step.id),
+			selectedOptionIds: {
+				classId: state.classId,
+				ancestryIds: [state.ancestry1Id, state.ancestry2Id].filter(Boolean),
+				traitIds: state.selectedTraitIds,
+				spellIds: Object.values(state.selectedSpells ?? {}),
+				maneuverIds: state.selectedManeuvers ?? []
+			},
+			budgets: {
+				ancestryRemaining: calculationResult?.ancestry?.ancestryPointsRemaining,
+				skillRemaining: calculationResult?.background?.skillPointsRemaining,
+				tradeRemaining: calculationResult?.background?.tradePointsRemaining,
+				languageRemaining: calculationResult?.background?.languagePointsRemaining
+			},
+			validationErrors: calculationResult?.validation?.errors ?? []
+		};
+	});
+
 	const areAllStepsCompleted = () => {
 		const results = steps.map((step) => ({
 			step: step.number,

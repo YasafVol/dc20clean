@@ -147,7 +147,9 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 - Expanded known maneuver rows link to the canonical Martial Manual card through
   `/martial-manual?maneuver={id}`. The Manual filters to, expands, and scrolls to that
   card, keeping one full-card presentation source.
-- TODO: Add sheet-side in-play enhancement spend validation against Stamina Spend Limit once the sheet models selected enhancements for a performed maneuver.
+- Expanded maneuver cards let players declare enhancements before Use. Session-only
+  selection totals SP costs, supports repeatable enhancements, blocks Use above the
+  calculator's Stamina Spend Limit, and clears the declaration after Use.
 
 #### Effects Sheet TODOs
 

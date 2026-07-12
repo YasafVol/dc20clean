@@ -204,8 +204,8 @@ test.describe('Character creation flow recipes', () => {
 				});
 				expect(createdCharacter?.id).toBeTruthy();
 
-				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('3');
-				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('1');
+				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('+3');
+				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('+1');
 
 				await page.getByRole('button', { name: /back/i }).first().click();
 				await page.waitForURL('**/menu');
@@ -246,8 +246,8 @@ test.describe('Character creation flow recipes', () => {
 				expect(updatedCharacter?.lastModified).not.toBe(createdCharacter?.lastModified);
 
 				await expect(page.getByRole('heading', { name: HUMAN_BARBARIAN_NAME })).toBeVisible();
-				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('2');
-				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('2');
+				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('+2');
+				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('+2');
 			},
 			() => snapshots
 		);

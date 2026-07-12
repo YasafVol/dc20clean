@@ -2116,6 +2116,15 @@ export const traitsData: Trait[] = [
 	}
 ];
 
+// Populate the structured contract for legacy-authored prerequisite arrays. Legacy
+// arrays have always meant "all required"; explicit requirements remain authoritative
+// for any-of and prohibition semantics.
+for (const trait of traitsData) {
+	if (trait.prerequisites?.length && !trait.requirements) {
+		trait.requirements = { hasAllTraits: [...trait.prerequisites] };
+	}
+}
+
 // Helper functions for accessing trait data
 export const getTraitData = (id: string): Trait | undefined => {
 	return traitsData.find((trait) => trait.id === id);

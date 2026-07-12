@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-07-13
 
 ---
 
@@ -319,6 +319,11 @@ The `prerequisites` field is still supported for simple single-trait requirement
 ```
 
 **Migration Note:** New traits should use `requirements.hasTrait` for "any-of" scenarios instead of `prerequisites`.
+
+At runtime, every remaining legacy `prerequisites` array is populated into
+`requirements.hasAllTraits`. Explicit structured requirements remain authoritative for
+any-of and prohibition semantics. A data test prevents prerequisite chains from escaping
+the structured contract.
 
 ---
 

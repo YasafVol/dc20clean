@@ -136,7 +136,9 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 - `spellPresentation.ts` builds contextual spell check/attack, damage, range, and
   in-play focus notes from saved/catalog spell data plus calculator-collected equipped effects.
-- Add a Character Sheet flow for opening the Spellbook to review, select, and replace known spells. Replacement should respect spell-slot restrictions from the calculator and must remain disabled for locked legacy characters.
+- The sheet exposes `Review Spellbook` and keeps replacement inside each row's edit
+  action. Replacement options are filtered through the calculator slot and Global Magic
+  Profile; locked/read-only sheets expose neither mutation control.
 
 #### Maneuver Sheet Notes
 

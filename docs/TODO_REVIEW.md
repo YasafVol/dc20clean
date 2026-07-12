@@ -44,7 +44,7 @@
 
 1. **[Complete] Complex Feature Host / Wild Form — 78/100**: the Features tab hosts a session-only template/trait builder sourced from eligible Beastborn traits.
 2. **[Complete] Central Effects / Rules Notes surface — 76/100**: the Features tab categorizes applied, collected, rules-only, and unsupported effects and exposes resolved Size.
-3. **Spellbook replacement flow — 74/100**: slot validation is defined; replacement navigation and confirmation behavior need a UX decision.
+3. **[Complete] Spellbook replacement flow — 74/100**: users can open the Spellbook for review and replace a row from calculator-valid options; locked sheets remain read-only.
 4. **MSL/SSL in-play enhancement workflow — 72/100**: calculator limits exist; performed-action state and declare-before-roll interaction are not modeled.
 5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.
 6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.

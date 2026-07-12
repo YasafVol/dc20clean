@@ -49,7 +49,7 @@
 5. **[Complete] Populate `EffectResolution` spell data — 70/100**: the source generator emits explicit attack/save metadata and reports coverage without guessing ambiguous prose.
 6. **[Complete] Populate ancestry `TraitRequirements` — 70/100**: legacy all-of prerequisite chains populate the structured contract; explicit any-of/prohibition rules stay authoritative.
 7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
-8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.
+8. **[Complete] Ancestry/traits subsystem split — 65/100**: docs and focused contract tests now separate trait ownership from ancestry composition without a risky file move.
 9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.
 
 ## 4. Low-confidence or deferred work

@@ -23,6 +23,8 @@ import type {
 	WeaponStyle
 } from '../../../lib/rulesdata/equipment/schemas/weaponSchema';
 import type { PhysicalDamageType } from '../../../lib/rulesdata/equipment/schemas/baseEquipment';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -58,6 +60,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
 	const [name, setName] = useState('');
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = weaponType === 'ranged' ? 1 : 2;
 
@@ -77,6 +80,19 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 		if (!weaponType) return [];
 		return getPropertiesForWeaponType(weaponType);
 	}, [weaponType]);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_WEAPONS, presetQuery, (preset) => [
+				preset.name,
+				preset.weaponType,
+				preset.category,
+				preset.damageType,
+				...preset.styles,
+				...preset.properties
+			]),
+		[presetQuery]
+	);
 
 	const hasMultiFaceted = selectedProperties.includes('multi-faceted');
 
@@ -264,15 +280,14 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
-						<div className="mb-2 flex gap-2">
-							<Badge variant="outline">Melee One-Handed</Badge>
-							<Badge variant="outline">Versatile</Badge>
-							<Badge variant="outline">Two-Handed</Badge>
-							<Badge variant="outline">Ranged</Badge>
-						</div>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<div className="max-h-96 overflow-y-auto">
 							<OptionGrid>
-								{PRESET_WEAPONS.slice(0, 12).map((preset) => (
+								{filteredPresets.map((preset) => (
 									<OptionCard
 										key={preset.id}
 										$selected={selectedPreset === preset.id}
@@ -303,16 +318,8 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack }) => {
 								))}
 							</OptionGrid>
 						</div>
-						{PRESET_WEAPONS.length > 12 && (
-							<Button
-								variant="ghost"
-								className="mt-2 w-full text-gray-400"
-								onClick={() => {
-									// Could add a modal or expand functionality
-								}}
-							>
-								View all {PRESET_WEAPONS.length} presets...
-							</Button>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No weapon presets match.</p>
 						)}
 					</div>
 

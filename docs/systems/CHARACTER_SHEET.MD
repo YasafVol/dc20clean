@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-07-12
+> Last Updated: 2026-07-13
 
 ## Recent UX additions
 
@@ -155,7 +155,10 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 #### Attack Sheet TODOs
 
-- Add a sheet-facing attack presentation helper that can apply active attack-scoped effects to rendered attack rows. First target: Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`, applied only to Unarmed Strike and melee weapon attacks. Current attack rows are persisted string data and do not safely encode the weapon category needed for this calculation.
+- `attackPresentation.ts` applies active attack-scoped effects without rewriting saved
+  attack rows. Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`
+  applies to catalog melee weapons and persisted Unarmed Strike rows; ranged and unknown
+  custom rows remain unchanged.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

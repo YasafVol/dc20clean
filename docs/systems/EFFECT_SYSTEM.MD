@@ -2,7 +2,7 @@
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-13
 
 ---
 
@@ -120,7 +120,9 @@ Maneuver counts remain progression-derived. Spellblade Spellcasting Path remains
 resource-derived from the hybrid progression, while its stamina regen remains
 class data.
 
-Current sheet TODO target: `MODIFY_STAT:martial_melee_damage` is recognized as an attack-row presentation effect, but not yet applied to persisted attack rows. It needs a sheet helper that knows whether the row is an Unarmed Strike or melee weapon before applying conditional bonuses such as Rage.
+`MODIFY_STAT:martial_melee_damage` is consumed by the sheet attack-presentation helper.
+It applies active conditional damage to catalog melee weapons and persisted Unarmed
+Strike rows without mutating stored attack strings.
 
 Champion Fighting Spirit's v0.10.5 Combat Readiness text is represented as a `GRANT_ABILITY` with target `combat_readiness_fortify`. The old `combat_readiness_brace` identity is a feature alias only; it must not be treated as a maneuver alias because `Brace` remains a current Defense maneuver.
 

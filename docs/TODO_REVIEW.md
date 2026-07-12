@@ -21,7 +21,7 @@
 2. **[Ready] Full maneuver-card flow from known sheet rows — 90/100**
    1. Source: `CHARACTER_SHEET.MD` Maneuver Sheet Notes.
    2. Requirements completed: reuse the Martial Manual presentation model; keep Use directly available; disable mutation for locked legacy characters; resolve old saved rows by catalog name.
-3. **[Ready] Attack presentation helper for Rage — 88/100**
+3. **[Complete] Attack presentation helper for Rage — 88/100**
    1. Sources: `CHARACTER_SHEET.MD`, `EFFECT_SYSTEM.MD`, and `CLASS_SYSTEM.MD`.
    2. Requirements completed: classify Unarmed Strike explicitly and catalog weapons through equipment metadata; treat unknown/custom rows as ineligible unless they carry explicit melee metadata; apply active conditional effects for display only; do not rewrite persisted damage strings.
 4. **[Ready] Spell presentation helper — 86/100**

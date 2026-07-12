@@ -447,6 +447,8 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 - Delete individual items
 - Export all to JSON
 - Import from JSON file
+- Duplicate any saved item as an independent `Copy`; the source remains unchanged and
+  the duplicate receives a new ID and timestamps.
 
 ### Preset Search
 
@@ -461,7 +463,7 @@ without a separate modal.
 
 - [ ] Integration with character creation (equip custom items)
 - [ ] Edit existing saved equipment
-- [ ] Duplicate/clone functionality
+- [x] Duplicate/clone functionality
 - [x] Search/filter presets
 - [ ] Mobile-optimized layout
 - [ ] Share equipment via URL/code

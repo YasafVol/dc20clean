@@ -10,7 +10,6 @@ import {
 	StyledFeatureGrid,
 	StyledFeatureItem,
 	StyledFeatureName,
-	StyledFeatureReadMore,
 	StyledNoFeaturesMessage,
 	StyledFeaturesContent
 } from '../styles/Features.styles';
@@ -34,6 +33,9 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 	// Organize features by source
 	const ancestryFeatures = features.filter((f) => f.source === 'ancestry');
 	const classFeatures = features.filter((f) => f.source === 'class');
+	const subclassFeatures = features.filter((f) => f.source === 'subclass');
+	const talentFeatures = features.filter((f) => f.source === 'talent');
+	const pathFeatures = features.filter((f) => f.source === 'path');
 	const choiceFeatures = features.filter((f) => f.source === 'choice');
 
 	return (
@@ -51,16 +53,15 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{ancestryFeatures.map((feature) => (
-								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
 									<StyledFeatureName $isMobile={effectiveIsMobile}>
 										{feature.name}
 									</StyledFeatureName>
-									<StyledFeatureReadMore
-										$isMobile={effectiveIsMobile}
-										onClick={() => onFeatureClick(feature)}
-									>
-										i
-									</StyledFeatureReadMore>
 								</StyledFeatureItem>
 							))}
 						</StyledFeatureGrid>
@@ -75,16 +76,84 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{classFeatures.map((feature) => (
-								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
 									<StyledFeatureName $isMobile={effectiveIsMobile}>
 										{feature.name}
 									</StyledFeatureName>
-									<StyledFeatureReadMore
-										$isMobile={effectiveIsMobile}
-										onClick={() => onFeatureClick(feature)}
-									>
-										i
-									</StyledFeatureReadMore>
+								</StyledFeatureItem>
+							))}
+						</StyledFeatureGrid>
+					</StyledFeatureCategory>
+				)}
+
+				{/* Subclass Features */}
+				{subclassFeatures.length > 0 && (
+					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							{t('characterSheet.featuresSubclassFeatures')}
+						</StyledFeatureCategoryTitle>
+						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
+							{subclassFeatures.map((feature) => (
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
+								</StyledFeatureItem>
+							))}
+						</StyledFeatureGrid>
+					</StyledFeatureCategory>
+				)}
+
+				{/* Path Progression */}
+				{pathFeatures.length > 0 && (
+					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							{t('characterSheet.featuresPathProgression')}
+						</StyledFeatureCategoryTitle>
+						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
+							{pathFeatures.map((feature) => (
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
+								</StyledFeatureItem>
+							))}
+						</StyledFeatureGrid>
+					</StyledFeatureCategory>
+				)}
+
+				{/* Talents */}
+				{talentFeatures.length > 0 && (
+					<StyledFeatureCategory $isMobile={effectiveIsMobile}>
+						<StyledFeatureCategoryTitle $isMobile={effectiveIsMobile}>
+							{t('characterSheet.featuresTalents')}
+						</StyledFeatureCategoryTitle>
+						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
+							{talentFeatures.map((feature) => (
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
+									<StyledFeatureName $isMobile={effectiveIsMobile}>
+										{feature.name}
+									</StyledFeatureName>
 								</StyledFeatureItem>
 							))}
 						</StyledFeatureGrid>
@@ -99,16 +168,15 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 						</StyledFeatureCategoryTitle>
 						<StyledFeatureGrid $isMobile={effectiveIsMobile}>
 							{choiceFeatures.map((feature) => (
-								<StyledFeatureItem $isMobile={effectiveIsMobile} key={feature.id}>
+								<StyledFeatureItem
+									$isMobile={effectiveIsMobile}
+									key={feature.id}
+									type="button"
+									onClick={() => onFeatureClick(feature)}
+								>
 									<StyledFeatureName $isMobile={effectiveIsMobile}>
 										{feature.name}
 									</StyledFeatureName>
-									<StyledFeatureReadMore
-										$isMobile={effectiveIsMobile}
-										onClick={() => onFeatureClick(feature)}
-									>
-										i
-									</StyledFeatureReadMore>
 								</StyledFeatureItem>
 							))}
 						</StyledFeatureGrid>

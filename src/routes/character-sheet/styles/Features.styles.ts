@@ -46,19 +46,29 @@ export const StyledFeatureGrid = styled.div<MobileStyledProps>`
 	gap: ${theme.spacing[2]};
 `;
 
-export const StyledFeatureItem = styled.div<MobileStyledProps>`
+export const StyledFeatureItem = styled.button<MobileStyledProps>`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	width: 100%;
 	padding: ${theme.spacing[3]};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.md};
 	background: ${theme.colors.bg.tertiary};
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
 		background: ${theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
+	}
+
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.accent.primary};
+		outline-offset: 2px;
 	}
 `;
 
@@ -67,29 +77,6 @@ export const StyledFeatureName = styled.span<MobileStyledProps>`
 	color: ${theme.colors.text.primary};
 	font-weight: ${theme.typography.fontWeight.medium};
 	flex: 1;
-`;
-
-export const StyledFeatureReadMore = styled.button<MobileStyledProps>`
-	background: transparent;
-	color: ${theme.colors.accent.primary};
-	border: 1px solid ${theme.colors.accent.primary};
-	border-radius: 50%;
-	width: 24px;
-	height: 24px;
-	cursor: pointer;
-	font-style: italic;
-	font-size: ${theme.typography.fontSize.xs};
-	font-weight: ${theme.typography.fontWeight.bold};
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	transition: all ${theme.transitions.fast};
-
-	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.bg.primary};
-	}
 `;
 
 export const StyledNoFeaturesMessage = styled.div<MobileStyledProps>`

@@ -44,14 +44,21 @@ import {
 
 interface ShieldBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomShield;
 }
 
-const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
+const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [shieldType, setShieldType] = useState<ShieldType | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [shieldType, setShieldType] = useState<ShieldType | null>(
+		initialEquipment?.shieldType ?? null
+	);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
 	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
@@ -172,8 +179,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 	const buildShield = (): CustomShield => {
 		const stats = calculateStats();
 
+		const now = new Date().toISOString();
 		const shield: CustomShield = {
-			id: `custom-shield-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-shield-${Date.now()}`,
 			category: 'shield',
 			name: name || 'Custom Shield',
 			shieldType: shieldType!,
@@ -188,8 +196,8 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 			hasAgilityDisadvantage: shieldType === 'heavy' || stats.hasRigid,
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(shield);

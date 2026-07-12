@@ -140,7 +140,9 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 - Maneuver rows preserve and render catalog AP/SP cost, range, reaction trigger, and enhancement text. Older saved rows can still resolve details from the current catalog by maneuver name.
 - The standalone `/martial-manual` route provides a Spellbook-like reference surface for all maneuvers and enhancements.
-- TODO: Add a Character Sheet flow for opening full maneuver cards from known maneuver rows, reusing the Martial Manual card presentation where practical.
+- Expanded known maneuver rows link to the canonical Martial Manual card through
+  `/martial-manual?maneuver={id}`. The Manual filters to, expands, and scrolls to that
+  card, keeping one full-card presentation source.
 - TODO: Add sheet-side in-play enhancement spend validation against Stamina Spend Limit once the sheet models selected enhancements for a performed maneuver.
 
 #### Effects Sheet TODOs

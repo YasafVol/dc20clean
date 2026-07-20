@@ -105,7 +105,7 @@ const Container = styled(motion.section)`
 `;
 
 // Wraps two BoxCards vertically inside a single grid column.
-// Used to stack Resources + Recovery (middle column) and Combat Stats + Utility (right column).
+// Used to stack Resources + Recovery in the middle column.
 const StackedColumn = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -145,18 +145,10 @@ const UtilitySection = styled.div`
 	border-top: 1px solid ${theme.colors.border.default};
 `;
 
-const BoxTitle = styled.h3`
-	color: ${theme.colors.text.primary};
-	font-size: ${theme.typography.fontSize.base};
-	font-weight: ${theme.typography.fontWeight.bold};
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	margin: 0 0 ${theme.spacing[1]} 0;
-	padding-bottom: ${theme.spacing[2]};
-	border-bottom: 2px solid ${theme.colors.border.default};
+const BoxActions = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 `;
 
 const ResourcesGroup = styled.div`
@@ -419,9 +411,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ delay: 0.1 }}
 			>
-				<BoxTitle>
-					<span>Health</span>
-					{hasHealthOverride && onHealthReset && (
+				{hasHealthOverride && onHealthReset && (
+					<BoxActions>
 						<BoxResetButton
 							onClick={onHealthReset}
 							whileHover={{ scale: 1.05 }}
@@ -429,8 +420,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						>
 							{t('characterSheet.heroReset')}
 						</BoxResetButton>
-					)}
-				</BoxTitle>
+					</BoxActions>
+				)}
 				<StatCard
 					label={t('characterSheet.heroHitPoints')}
 					current={currentHP}
@@ -468,9 +459,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.2 }}
 				>
-					<BoxTitle>
-						<span>{t('characterSheet.heroResources')}</span>
-						{hasResourcesOverride && onResourcesReset && (
+					{hasResourcesOverride && onResourcesReset && (
+						<BoxActions>
 							<BoxResetButton
 								onClick={onResourcesReset}
 								whileHover={{ scale: 1.05 }}
@@ -478,8 +468,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							>
 								{t('characterSheet.heroReset')}
 							</BoxResetButton>
-						)}
-					</BoxTitle>
+						</BoxActions>
+					)}
 					<ResourcesPairRow>
 						<StatCard
 							label={t('characterSheet.heroManaPoints')}
@@ -513,9 +503,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.3 }}
 				>
-					<BoxTitle>
-						<span>{t('characterSheet.heroRecovery')}</span>
-						{hasRecoveryOverride && onRecoveryReset && (
+					{hasRecoveryOverride && onRecoveryReset && (
+						<BoxActions>
 							<BoxResetButton
 								onClick={onRecoveryReset}
 								whileHover={{ scale: 1.05 }}
@@ -523,8 +512,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							>
 								{t('characterSheet.heroReset')}
 							</BoxResetButton>
-						)}
-					</BoxTitle>
+						</BoxActions>
+					)}
 					<ResourcesPairRow>
 						<StatCard
 							label={t('characterSheet.heroRestPoints')}
@@ -560,9 +549,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 				animate={{ opacity: 1, x: 0 }}
 				transition={{ delay: 0.4 }}
 			>
-				<BoxTitle>
-					<span>{t('characterSheet.heroCombatStats')}</span>
-					{hasCombatStatsOverride && onCombatStatsReset && (
+				{hasCombatStatsOverride && onCombatStatsReset && (
+					<BoxActions>
 						<BoxResetButton
 							onClick={onCombatStatsReset}
 							whileHover={{ scale: 1.05 }}
@@ -570,8 +558,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 						>
 							{t('characterSheet.heroReset')}
 						</BoxResetButton>
-					)}
-				</BoxTitle>
+					</BoxActions>
+				)}
 				<ResourcesGroup>
 					<DefensesGrid>
 						<DefenseItem

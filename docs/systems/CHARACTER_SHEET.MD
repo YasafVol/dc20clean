@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-20
 
 ## Recent UX additions
 
@@ -12,7 +12,8 @@
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
   - Responsive: 2 columns at <=1200px, 1 column at <=768px.
 - **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place increment/decrement controls directly around the value (`+ current / max −`); the redundant “Main” label is removed.
-- **Compact resource labels**: Hero resource cards use HP, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
+- **Hero card hierarchy**: The hero strip omits redundant Health, Resources, Recovery, and Combat Stats headings. Conditional reset actions remain available without reserving header space when no override exists.
+- **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
 - **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10.
 - **Attribute headers**: Might, Agility, Charisma, and INT use a compact `Attribute ±score (±save save)` reading order; duplicate abbreviation boxes are removed while score tooltips and clickable save rolls remain intact.
 - **Prime hierarchy**: Combat Mastery appears first. Prime follows the compact attribute-header pattern and owns the Awareness skill row inside its bordered section.

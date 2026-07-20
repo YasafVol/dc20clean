@@ -47,8 +47,10 @@
 - **Advantage note display**: `GRANT_ADV_ON_CHECK` effects are collected into `calculation.grantedAbilities` with type `advantage`, giving class features such as Commander Natural Leader a sheet-visible note without changing roll math.
 - **Collected rules notes**: Class features that are descriptive, flavor, or in-game-only should still enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` notes give the future Effects / Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
 - **Death threshold display**: `DeathExhaustion` consumes the saved/calculated
-  `finalDeathThreshold` magnitude and displays/applies it as a negative HP
-  threshold. This preserves calculator-applied modifiers such as Human Resolve.
+  `finalDeathThreshold` magnitude and applies it as a negative HP threshold. This
+  preserves calculator-applied modifiers such as Human Resolve. The current
+  health-status badge remains inside the HP card; the standalone threshold and
+  Death Steps are not rendered.
 
 New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 

@@ -5,8 +5,7 @@ interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
-// Stack the Health-Status row and Exhaustion row vertically inside the Health
-// card so they read as two short horizontal strips instead of two tall boxes.
+// Hosts the compact Exhaustion controls beneath the HP card.
 export const StyledDeathExhaustionContainer = styled.div<MobileStyledProps>`
 	display: flex;
 	flex-direction: column;
@@ -35,15 +34,6 @@ export const StyledExhaustionOnlyTitle = styled.div<MobileStyledProps>`
 	font-family: 'Inter', sans-serif;
 	white-space: nowrap;
 	margin: 0;
-`;
-
-export const StyledDeathThresholdLabel = styled.span`
-	font-size: ${theme.typography.fontSize.xs};
-	color: ${theme.colors.accent.primary};
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	margin: 0;
-	white-space: nowrap;
 `;
 
 export const StyledExhaustionHeader = styled.div`

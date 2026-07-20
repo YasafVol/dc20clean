@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { theme } from '../../styles/theme';
 import { StatCard } from './StatCard';
-import DeathExhaustion from '../DeathExhaustion';
+import DeathExhaustion, { HealthStatusIndicator } from '../DeathExhaustion';
 import { ConditionBadge, type ConditionBadgeType } from '../ConditionBadge';
 import CompactUtility from './CompactUtility';
 import { getConditionBadgesForAttribute } from '../../../../lib/services/conditionEffectsAnalyzer';
@@ -438,6 +438,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					onTempChange={onTempHPChange}
 					onMouseEnter={onHPMouseEnter}
 					onMouseLeave={onHPMouseLeave}
+					afterProgressBar={<HealthStatusIndicator isMobile={false} />}
 				/>
 				{showRageToggle && (
 					<>

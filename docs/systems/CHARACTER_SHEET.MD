@@ -12,6 +12,7 @@
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
   - Responsive: 2 columns at <=1200px, 1 column at <=768px.
 - **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current values use fixed-width tabular numeral slots so entering negative HP does not shift adjacent controls. The redundant “Main” label is removed. In the Health card, Temp HP is a standalone value below HP and above the bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
+- **HP formula tooltip**: HP hover keeps the shared tabular calculation tooltip, but dynamically splits calculator base HP into class progression (`Level · Class`) and Might rows, followed by every source-attributed HP modifier such as ancestry traits, class features, talents, and equipped items. A second table shows the displayed negative Death Threshold as Prime Attribute + Combat Mastery + source-attributed modifiers.
 - **Hero card hierarchy**: The hero strip omits redundant Health, Resources, Recovery, and Combat Stats headings. Conditional reset actions remain available without reserving header space when no override exists.
 - **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
 - **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10.
@@ -48,9 +49,9 @@
 - **Collected rules notes**: Class features that are descriptive, flavor, or in-game-only should still enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` notes give the future Effects / Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
 - **Death threshold display**: `DeathExhaustion` consumes the saved/calculated
   `finalDeathThreshold` magnitude and applies it as a negative HP threshold. This
-  preserves calculator-applied modifiers such as Human Resolve. The current
-  health-status badge remains inside the HP card; the standalone threshold and
-  Death Steps are not rendered.
+  preserves calculator-applied modifiers such as Human Resolve. The threshold
+  formula lives in the HP tooltip rather than a standalone row. The current
+  health-status badge remains inside the HP card; Death Steps are not rendered.
 
 New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rulebook PDF imported via Vite `?url` from `docs/assets/DC20 RPG 0.10.5 Beta v1.pdf`.
 

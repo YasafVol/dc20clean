@@ -72,6 +72,10 @@ import WeaponPopup from './components/WeaponPopup';
 import InventoryPopup from './components/InventoryPopup';
 import RulebookPanel from './components/RulebookPanel';
 import CalculationTooltip from './components/shared/CalculationTooltip';
+import {
+	createDeathThresholdTooltipBreakdown,
+	createHPTooltipBreakdown
+} from './components/shared/hpTooltipBreakdown';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
 import Attributes from './components/Attributes';
@@ -706,6 +710,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				return {
 					title: t('characterSheet.tooltipHP'),
 					breakdown: calculatedData?.breakdowns?.hpMax
+						? createHPTooltipBreakdown(
+								calculatedData.breakdowns.hpMax,
+								calculatedData.stats.finalMight,
+								characterData.level,
+								calculatedData.stats.className
+							)
+						: undefined,
+					additionalBreakdowns: calculatedData?.breakdowns?.death_threshold
+						? [
+								{
+									title: t('characterSheet.deathThreshold'),
+									breakdown: createDeathThresholdTooltipBreakdown(
+										calculatedData.breakdowns.death_threshold,
+										primeValue,
+										primeAttributeLabel,
+										combatMastery
+									)
+								}
+							]
+						: undefined
 				};
 			case 'mana':
 				return {
@@ -768,6 +792,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	};
 
 	const tooltipData = getTooltipData();
+	const additionalTooltipBreakdowns =
+		'additionalBreakdowns' in tooltipData ? tooltipData.additionalBreakdowns : undefined;
 
 	return (
 		<PageContainer>
@@ -1151,6 +1177,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 			<CalculationTooltip
 				title={tooltipData.title}
 				breakdown={tooltipData.breakdown}
+				additionalBreakdowns={additionalTooltipBreakdowns}
 				visible={tooltipState.visible}
 				positionX={tooltipState.x}
 				positionY={tooltipState.y}

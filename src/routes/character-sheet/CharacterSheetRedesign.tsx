@@ -449,6 +449,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		: undefined;
 	const currentHP = resources?.current?.currentHP ?? 0;
 	const maxHP = calculatedData?.breakdowns?.hpMax?.total ?? characterData.finalHPMax ?? 0;
+	const minHP = -(
+		calculatedData?.stats?.finalDeathThreshold ??
+		characterData.finalDeathThreshold ??
+		characterData.finalPrimeModifierValue + characterData.finalCombatMastery
+	);
 	const tempHP = resources?.current?.tempHP ?? 0;
 	const currentMP = resources?.current?.currentMP ?? 0;
 	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? characterData.finalMPMax ?? 0;
@@ -894,6 +899,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							<HeroSection
 								currentHP={currentHP}
 								maxHP={maxHP}
+								minHP={minHP}
 								tempHP={tempHP}
 								currentMana={currentMP}
 								maxMana={maxMP}

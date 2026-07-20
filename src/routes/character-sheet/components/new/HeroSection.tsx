@@ -13,6 +13,7 @@ interface HeroSectionProps {
 	// Resource values
 	currentHP: number;
 	maxHP: number;
+	minHP: number;
 	tempHP?: number;
 	currentMana: number;
 	maxMana: number;
@@ -330,6 +331,7 @@ const DefenseSubtext = styled.div`
 export const HeroSection: React.FC<HeroSectionProps> = ({
 	currentHP,
 	maxHP,
+	minHP,
 	tempHP,
 	currentMana,
 	maxMana,
@@ -426,6 +428,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					label={t('characterSheet.heroHitPoints')}
 					current={currentHP}
 					max={maxHP}
+					min={minHP}
 					temp={tempHP}
 					color="health"
 					size="large"

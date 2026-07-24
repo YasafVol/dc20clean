@@ -2,16 +2,17 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-07-20
+> Last Updated: 2026-07-24
 
 ## Recent UX additions
 
+- **Alternative sheet route**: `/character2/:id` renders the incremental alternative sheet under the same `CharacterSheetProvider`; `/character2/` resolves the most recently modified saved character. Its first slice contains only the identity/action header and horizontal HP/Mana/Stamina/Rest/Grit strip. It reuses `StatCard`, the existing reducer mutations, Long Rest behavior, stored-value PDF export, JSON export, and Rulebook article links. Mana and Stamina are each omitted when their maximum is zero. This route adds no schema or persistence path.
 - **Hero strip restructured to 3 columns**: `HeroSection` uses a responsive three-column layout:
   - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
   - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
   - Responsive: 2 columns at <=1200px, 1 column at <=768px.
-- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current values use fixed-width tabular numeral slots so entering negative HP does not shift adjacent controls. The redundant “Main” label is removed. In the Health card, Temp HP is a standalone value below HP and above the bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
+- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current and maximum values use equal-sized, equal-width tabular numeral slots around a centered separator, so different digit counts and negative HP do not unbalance the control. The alternative sheet stretches every resource card to the tallest card in its row. The redundant “Main” label is removed. In the Health card, Temp HP is an unframed standalone control below the HP progress bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
 - **HP formula tooltip**: HP hover keeps the shared tabular calculation tooltip, but dynamically splits calculator base HP into class progression (`Level · Class`) and Might rows, followed by every source-attributed HP modifier such as ancestry traits, class features, talents, and equipped items. A second table shows the displayed negative Death Threshold as Prime Attribute + Combat Mastery + source-attributed modifiers.
 - **Hero card hierarchy**: The hero strip omits redundant Health, Resources, Recovery, and Combat Stats headings. Conditional reset actions remain available without reserving header space when no override exists.
 - **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
@@ -85,6 +86,7 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | File                                | Role                                                              |
 | ----------------------------------- | ----------------------------------------------------------------- |
 | `CharacterSheetRouter.tsx`          | Entry point; provides context, routes to layout                   |
+| `alternative/`                      | Incrementally built `/character2` layout using the same provider  |
 | `CharacterSheetRedesign.tsx`        | Primary responsive layout (mobile/tablet/desktop via CSS)         |
 | `CharacterSheetDesktop.tsx`         | Desktop-only layout variant                                       |
 | `CharacterSheetMobile.tsx`          | Mobile layout with tab navigation                                 |

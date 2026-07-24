@@ -76,6 +76,13 @@ const ValueContainer = styled.div`
 	min-height: 2.5rem;
 `;
 
+const ValuePair = styled.span`
+	display: grid;
+	grid-template-columns: minmax(3ch, 1fr) auto minmax(3ch, 1fr);
+	align-items: baseline;
+	column-gap: ${theme.spacing[1]};
+`;
+
 const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
 	color: ${theme.colors.text.primary};
 	font-size: ${(props) => {
@@ -94,13 +101,24 @@ const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
 	display: inline-block;
 	min-width: 3ch;
 	padding-inline: 0.1ch;
-	text-align: center;
+	text-align: right;
 	font-variant-numeric: tabular-nums;
 `;
 
-const MaxValue = styled.span<{ $size: StatSize }>`
+const MaxValue = styled.span<{ $size: StatSize; $value?: boolean }>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
+		if (props.$value) {
+			switch (props.$size) {
+				case 'small':
+					return theme.typography.fontSize.xl;
+				case 'medium':
+					return theme.typography.fontSize['2xl'];
+				case 'large':
+					return theme.typography.fontSize['3xl'];
+			}
+		}
+
 		switch (props.$size) {
 			case 'small':
 				return theme.typography.fontSize.base;
@@ -110,7 +128,11 @@ const MaxValue = styled.span<{ $size: StatSize }>`
 				return theme.typography.fontSize.xl;
 		}
 	}};
-	font-weight: ${theme.typography.fontWeight.medium};
+	font-weight: ${(props) =>
+		props.$value ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
+	min-width: ${(props) => (props.$value ? '3ch' : 'auto')};
+	text-align: ${(props) => (props.$value ? 'left' : 'center')};
+	font-variant-numeric: tabular-nums;
 `;
 
 const ProgressBarContainer = styled.div`
@@ -206,11 +228,6 @@ const InlineControlGroup = styled.div`
 
 // Framed mini-stat so Temp HP remains distinct from the main HP value.
 const TempInlineGroup = styled(InlineControlGroup)`
-	background: ${theme.colors.bg.primary};
-	border: 1px solid ${TEMP_HP_COLOR};
-	border-radius: ${theme.borderRadius.md};
-	padding: ${theme.spacing[1]} ${theme.spacing[2]};
-
 	& button {
 		color: ${TEMP_HP_COLOR};
 		box-shadow: inset 0 0 0 1px ${TEMP_HP_COLOR};
@@ -326,22 +343,26 @@ export const StatCard: React.FC<StatCardProps> = ({
 						−
 					</ControlButton>
 				)}
-				<CurrentValue
-					$size={size}
-					$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
-					key={current}
-					initial={{ scale: 1.2 }}
-					animate={{ scale: 1 }}
-					transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-				>
-					{current}
-				</CurrentValue>
-				{max !== undefined && (
-					<>
-						<MaxValue $size={size}>/</MaxValue>
-						<MaxValue $size={size}>{max}</MaxValue>
-					</>
-				)}
+				<ValuePair>
+					<CurrentValue
+						$size={size}
+						$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
+						key={current}
+						initial={{ scale: 1.2 }}
+						animate={{ scale: 1 }}
+						transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+					>
+						{current}
+					</CurrentValue>
+					{max !== undefined && (
+						<>
+							<MaxValue $size={size}>/</MaxValue>
+							<MaxValue $size={size} $value>
+								{max}
+							</MaxValue>
+						</>
+					)}
+				</ValuePair>
 				{editable && onChange && (
 					<ControlButton
 						onClick={handleIncrement}
@@ -353,34 +374,6 @@ export const StatCard: React.FC<StatCardProps> = ({
 					</ControlButton>
 				)}
 			</ValueContainer>
-
-			{editable && onTempChange && temp !== undefined && (
-				<ControlsRow>
-					<TempInlineGroup>
-						<ControlButton
-							onClick={() => {
-								onTempChange(Math.max(0, temp - 1));
-							}}
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.95 }}
-							aria-label="Decrease Temp HP"
-						>
-							−
-						</ControlButton>
-						<InlineControlLabel>Temp HP {temp}</InlineControlLabel>
-						<ControlButton
-							onClick={() => {
-								onTempChange(temp + 1);
-							}}
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.95 }}
-							aria-label="Increase Temp HP"
-						>
-							+
-						</ControlButton>
-					</TempInlineGroup>
-				</ControlsRow>
-			)}
 
 			{showProgressBar && max !== undefined && (
 				<ProgressBarContainer data-testid="resource-progress-bar">
@@ -424,6 +417,34 @@ export const StatCard: React.FC<StatCardProps> = ({
 						/>
 					)}
 				</ProgressBarContainer>
+			)}
+
+			{editable && onTempChange && temp !== undefined && (
+				<ControlsRow>
+					<TempInlineGroup>
+						<ControlButton
+							onClick={() => {
+								onTempChange(Math.max(0, temp - 1));
+							}}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+							aria-label="Decrease Temp HP"
+						>
+							−
+						</ControlButton>
+						<InlineControlLabel>Temp HP {temp}</InlineControlLabel>
+						<ControlButton
+							onClick={() => {
+								onTempChange(temp + 1);
+							}}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+							aria-label="Increase Temp HP"
+						>
+							+
+						</ControlButton>
+					</TempInlineGroup>
+				</ControlsRow>
 			)}
 
 			{afterProgressBar}

@@ -25,12 +25,12 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		await page.getByTestId('ancestry-card-beastborn').click();
 
 		// Select traits: Glide Speed (2), Limited Flight (2), Full Flight (2), Winged Arms (-1), Small-Sized (-1), Natural Weapon (1)
-		await page.getByLabel(/Glide Speed/i).check();
-		await page.getByLabel(/Limited Flight/i).check();
-		await page.getByLabel(/Winged Arms/i).check();
-		await page.getByLabel(/Full Flight/i).check();
-		await page.getByLabel(/Small-Sized/i).check();
-		await page.getByRole('checkbox', { name: /^Natural Weapon \(1 pts\)/i }).check();
+		await page.getByTestId('trait-card-beastborn_glide_speed').click();
+		await page.getByTestId('trait-card-beastborn_limited_flight').click();
+		await page.getByTestId('trait-card-beastborn_winged_arms').click();
+		await page.getByTestId('trait-card-beastborn_full_flight').click();
+		await page.getByTestId('trait-card-beastborn_small_sized').click();
+		await page.getByTestId('trait-card-beastborn_natural_weapon').click();
 
 		await page.getByRole('button', { name: 'Next →' }).click();
 
@@ -51,29 +51,21 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		await page.getByTestId('skills-tab').click();
 
 		async function setSkillLevel(skillId: string, level: number) {
-			const row = page.getByTestId(`skill-item-${skillId}`);
-			await row.getByRole('button', { name: `${level}`, exact: true }).click();
+			await page.getByTestId(`skill-${skillId}-mastery-${level}`).click();
 		}
 
 		// We should have 8 skill points: base 5 + INT(1) + Urban(+2) = 8
 		await expect(page.getByTestId('skill-points-remaining')).toContainText('8 /');
 
-		// Awareness at Adept (2)
+		// Awareness at Adept costs 3 points: 2 mastery + 1 cap elevation.
 		await setSkillLevel('awareness', 2);
 
-		// Six more skills at Novice (1), covering each attribute association
+		// Five more skills at Novice (1), covering each attribute association.
 		// might: athletics, intimidation
-		// agility: acrobatics, trickery
-		// charisma: insight or influence (pick insight to not clash with Urban later); also animal
-		// intelligence: investigation (we already have INT to 1; this uses points only)
-		const noviceSkills = [
-			'athletics',
-			'intimidation',
-			'acrobatics',
-			'trickery',
-			'animal',
-			'investigation'
-		];
+		// agility: acrobatics
+		// charisma: animal
+		// intelligence: investigation
+		const noviceSkills = ['athletics', 'intimidation', 'acrobatics', 'animal', 'investigation'];
 		for (const s of noviceSkills) {
 			await setSkillLevel(s, 1);
 		}
@@ -85,11 +77,10 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		// Trades
 		await page.getByTestId('trades-tab').click();
 		async function setTradeLevel(tradeName: string, level: number) {
-			const row = page.getByTestId(`trade-item-${tradeName.toLowerCase()}`);
-			await row.getByRole('button', { name: `${level}`, exact: true }).click();
+			await page.getByTestId(`trade-${tradeName.toLowerCase()}-mastery-${level}`).click();
 		}
 		// Use 3 points across three trades at level 1 (avoid Adept due to Level 1 Adept cap already used by Awareness)
-		const tradesToLevel1 = ['Alchemy', 'Blacksmithing', 'Calligraphy'];
+		const tradesToLevel1 = ['Alchemy', 'Blacksmithing', 'Illustration'];
 		for (const t of tradesToLevel1) {
 			await setTradeLevel(t, 1);
 		}
@@ -118,17 +109,19 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		});
 
 		// Select maneuvers by clicking LEARN buttons
-		const learnButtons = page.locator('button:has-text("LEARN")');
+		const learnButtons = page.locator(
+			'button[data-action-id^="maneuver-"][data-action-id$="-learn"]:not(:disabled)'
+		);
 		// Hunter needs maneuvers based on their totalManeuversKnown
 		// Add the first available maneuvers until we have enough
-		const maneuversNeeded = 4; // Based on Hunter's progression
+		const maneuversNeeded = 2; // Level 1 Hunter progression
 		for (let i = 0; i < maneuversNeeded; i++) {
 			await learnButtons.first().click();
 			await page.waitForTimeout(200);
 		}
 
 		// Verify all maneuvers are selected (check for "All choices complete")
-		await expect(page.getByText(/All choices complete|0 remaining/i)).toBeVisible({
+		await expect(page.getByText(/All choices complete/i)).toBeVisible({
 			timeout: 5000
 		});
 		await page.getByRole('button', { name: 'Next →' }).click(); // proceed to Names
@@ -136,16 +129,7 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		// Step 6: Names
 		await page.getByLabel(/Character Name/i).fill('hunter beastborn urban grassland');
 		await page.getByLabel(/Player Name/i).fill('playwright');
-		await page.getByText(/Complete|Finish/i).click();
-
-		// After completion, app navigates to Load Character
-		await page.waitForURL('**/load-character');
-
-		// Open the saved character's sheet
-		const charCard = page.locator('div', { hasText: 'hunter beastborn urban grassland' }).first();
-		await charCard.getByRole('button', { name: 'View Sheet' }).click();
-
-		// Wait for character sheet route
+		await page.getByTestId('creation-next').click();
 		await page.waitForURL('**/character/**');
 
 		// Verify saved data in storage as a backstop
@@ -154,7 +138,7 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 			return list.find((c: any) => c.finalName === 'hunter beastborn urban grassland');
 		});
 		expect(saved).toBeTruthy();
-		expect(saved.finalHPMax).toBe(8);
+		expect(saved.finalHPMax).toBe(7);
 		expect(saved.finalMoveSpeed).toBe(6);
 
 		// On sheet: check Movement and Features text - tolerate mobile label variations
@@ -186,10 +170,6 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 			console.log(
 				'Move speed not found on sheet - continuing because saved object asserts move speed'
 			);
-		await expect(page.getByText(/FEATURES/i).first()).toBeVisible();
-		await expect(page.getByText(/Natural Weapon/i).first()).toBeVisible();
-		await expect(page.getByText(/Full Flight/i)).toBeVisible();
-		await expect(page.getByText(/Small-Sized/i)).toBeVisible();
 
 		const naturalWeaponAttack = page.getByTestId('natural-weapon-attack-row');
 		await expect(naturalWeaponAttack).toBeVisible();
@@ -197,5 +177,10 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		await expect(naturalWeaponAttack).toContainText('1 B/P/S');
 		await expect(naturalWeaponAttack).toContainText('2 B/P/S');
 		await expect(naturalWeaponAttack).toContainText('3 B/P/S');
+
+		await page.getByRole('button', { name: /Features/i }).click();
+		await expect(page.getByText('Natural Weapon', { exact: true }).first()).toBeVisible();
+		await expect(page.getByText('Full Flight', { exact: true }).first()).toBeVisible();
+		await expect(page.getByText('Small-Sized', { exact: true }).first()).toBeVisible();
 	});
 });

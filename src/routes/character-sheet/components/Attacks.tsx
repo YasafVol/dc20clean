@@ -19,6 +19,7 @@ import {
 	getVersatileDamage,
 	createEmptyAttackData
 } from '../../../lib/utils/weaponUtils';
+import { getNaturalWeaponAttack, isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -59,6 +60,12 @@ const InlineEmptyHint = styled.div`
 	padding: ${theme.spacing[2]} 0;
 `;
 
+const DerivedAttackName = styled.div`
+	min-width: 0;
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.semibold};
+`;
+
 export interface AttacksProps {
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
 	isMobile?: boolean;
@@ -92,6 +99,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const characterData = state.character;
+	const naturalWeaponAttack = getNaturalWeaponAttack(characterData.selectedTraitIds);
+	const displayedAttacks = naturalWeaponAttack ? [naturalWeaponAttack, ...attacks] : attacks;
 	const visibleWeapons = showAllWeapons ? weapons : inventoryWeapons;
 	const showNoInventoryWeaponsHint = !showAllWeapons && inventoryWeapons.length === 0;
 	const addWeaponSlot = () => {
@@ -247,12 +256,16 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 					</StyledHeaderColumn>
 				</StyledAttacksHeaderRow>
 
-				{attacks.length === 0 ? (
+				{displayedAttacks.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksNoWeapons')}
 					</StyledEmptyState>
 				) : (
-					attacks.map((attack, index) => {
+					displayedAttacks.map((attack, index) => {
+						const isDerivedNaturalWeapon = isNaturalWeaponAttack(attack);
+						const persistedAttackIndex = attacks.findIndex(
+							(persistedAttack) => persistedAttack.id === attack.id
+						);
 						const weapon = attack.weaponName
 							? weapons.find((w) => w.name === attack.weaponName)
 							: null;
@@ -269,36 +282,49 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						});
 
 						return (
-							<StyledAttackRow $isMobile={effectiveIsMobile} key={attack.id}>
-								{/* Remove Button */}
-								<DeleteButton
-									onClick={() => removeWeaponSlot(index)}
-									title={t('characterSheet.attacksRemoveWeapon')}
-									$isMobile={effectiveIsMobile}
-								/>
+							<StyledAttackRow
+								$isMobile={effectiveIsMobile}
+								key={attack.id}
+								data-testid={isDerivedNaturalWeapon ? 'natural-weapon-attack-row' : undefined}
+							>
+								{isDerivedNaturalWeapon ? (
+									<span aria-hidden="true" />
+								) : (
+									<DeleteButton
+										onClick={() => removeWeaponSlot(persistedAttackIndex)}
+										title={t('characterSheet.attacksRemoveWeapon')}
+										$isMobile={effectiveIsMobile}
+									/>
+								)}
 
 								{/* Weapon Selection */}
-								<StyledWeaponSelect
-									$isMobile={effectiveIsMobile}
-									value={attack.weaponName}
-									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
-									data-testid="weapon-name"
-								>
-									<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
-									{visibleWeapons.map((weapon) => (
-										<option key={weapon.name} value={weapon.name}>
-											{weapon.name} ({weapon.handedness})
-										</option>
-									))}
-									{/* Keep the saved weapon visible even if it's no longer in
-									    inventory (e.g. user sold it) so the row doesn't appear blank. */}
-									{attack.weaponName &&
-										!visibleWeapons.some((w) => w.name === attack.weaponName) && (
-											<option key={attack.weaponName} value={attack.weaponName}>
-												{attack.weaponName} {t('characterSheet.attacksNotInInventory')}
+								{isDerivedNaturalWeapon ? (
+									<DerivedAttackName data-testid="natural-weapon-attack">
+										{attack.name}
+									</DerivedAttackName>
+								) : (
+									<StyledWeaponSelect
+										$isMobile={effectiveIsMobile}
+										value={attack.weaponName}
+										onChange={(e: any) => handleWeaponSelect(persistedAttackIndex, e.target.value)}
+										data-testid="weapon-name"
+									>
+										<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
+										{visibleWeapons.map((weapon) => (
+											<option key={weapon.name} value={weapon.name}>
+												{weapon.name} ({weapon.handedness})
 											</option>
-										)}
-								</StyledWeaponSelect>
+										))}
+										{/* Keep the saved weapon visible even if it's no longer in
+										    inventory (e.g. user sold it) so the row doesn't appear blank. */}
+										{attack.weaponName &&
+											!visibleWeapons.some((w) => w.name === attack.weaponName) && (
+												<option key={attack.weaponName} value={attack.weaponName}>
+													{attack.weaponName} {t('characterSheet.attacksNotInInventory')}
+												</option>
+											)}
+									</StyledWeaponSelect>
+								)}
 
 								{/* Base Damage */}
 								<StyledDamageCell
@@ -362,7 +388,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 
 								{/* Damage Calculation Info */}
 								<div style={{ textAlign: 'center', fontSize: '1.1rem' }}>
-									{weapon ? (
+									{presentation.isSupportedAttack ? (
 										<StyledInfoIcon
 											$isMobile={effectiveIsMobile}
 											onClick={() => onAttackClick(attack, weapon)}

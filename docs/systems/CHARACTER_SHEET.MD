@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-07-24
+> Last Updated: 2026-07-25
 
 ## Recent UX additions
 
@@ -168,12 +168,16 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
   dedicated resolved Size badge for `SET_VALUE:size`.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
-#### Attack Sheet TODOs
+#### Attack Sheet Notes
 
 - `attackPresentation.ts` applies active attack-scoped effects without rewriting saved
   attack rows. Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`
   applies to catalog melee weapons and persisted Unarmed Strike rows; ranged and unknown
   custom rows remain unchanged.
+- A selected Beastborn Natural Weapon trait derives a read-only, non-inventory
+  `Natural Weapon (Unarmed Strike)` row. Until damage-type choice state is modeled,
+  the row presents base/heavy/brutal damage as `1/2/3 B/P/S`. The derived row is not
+  written into `characterState.attacks`.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

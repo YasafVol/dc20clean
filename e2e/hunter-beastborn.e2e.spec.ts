@@ -187,14 +187,15 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 				'Move speed not found on sheet - continuing because saved object asserts move speed'
 			);
 		await expect(page.getByText(/FEATURES/i).first()).toBeVisible();
-		await expect(page.getByText(/Natural Weapon/i)).toBeVisible();
+		await expect(page.getByText(/Natural Weapon/i).first()).toBeVisible();
 		await expect(page.getByText(/Full Flight/i)).toBeVisible();
 		await expect(page.getByText(/Small-Sized/i)).toBeVisible();
 
-		// TODO (future): Verify a Natural Weapon attack entry exists in Attacks section
-		// Example stub (enable after Attacks renders natural weapons):
-		// const attacksSection = page.getByText(/Attacks/i);
-		// await attacksSection.click();
-		// await expect(page.getByText(/Natural Weapon/i)).toBeVisible();
+		const naturalWeaponAttack = page.getByTestId('natural-weapon-attack-row');
+		await expect(naturalWeaponAttack).toBeVisible();
+		await expect(naturalWeaponAttack).toContainText('Natural Weapon (Unarmed Strike)');
+		await expect(naturalWeaponAttack).toContainText('1 B/P/S');
+		await expect(naturalWeaponAttack).toContainText('2 B/P/S');
+		await expect(naturalWeaponAttack).toContainText('3 B/P/S');
 	});
 });

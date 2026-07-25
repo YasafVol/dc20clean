@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-25
 
 ---
 
@@ -344,6 +344,9 @@ the structured contract.
 - `beastborn_additional_limb` now reflects the v0.10.5 1 Space limb, object handling, push/pull/grapple, and no Weapon/Shield/Spell Focus/Somatic use limitations.
 - `beastborn_capable_limb` costs 2 points and upgrades an Additional Limb to use Weapons, Shields, Spell Focuses, and Somatic Components. Its prerequisite remains `beastborn_additional_limb`.
 - `beastborn_natural_weapon_style` is the current v0.10.5 Natural Weapon trait. The stale `beastborn_natural_weapon_passive` record was removed.
+- `beastborn_natural_weapon` derives a read-only Unarmed Strike on the character sheet.
+  Its unresolved Bludgeoning/Piercing/Slashing choice is presented as `B/P/S`; this
+  display behavior does not add an attack to persisted character state.
 
 ---
 

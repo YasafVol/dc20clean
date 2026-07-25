@@ -59,7 +59,7 @@ interface DiceRollerProps {
 		total: number,
 		rollMode: RollMode,
 		modifier: number,
-		label: string,
+		label: string
 	) => void;
 }
 
@@ -288,7 +288,12 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 	return (
 		<StyledDiceRollerContainer $isExpanded={isExpanded}>
-			<StyledCollapseButton onClick={() => setIsExpanded(!isExpanded)} $isExpanded={isExpanded}>
+			<StyledCollapseButton
+				onClick={() => setIsExpanded(!isExpanded)}
+				$isExpanded={isExpanded}
+				aria-expanded={isExpanded}
+				aria-label="Toggle dice roller"
+			>
 				🎲
 			</StyledCollapseButton>
 

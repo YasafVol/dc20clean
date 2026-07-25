@@ -25,7 +25,6 @@ import { AnimatePresence } from 'framer-motion';
 import {
 	PageContainer,
 	Header,
-	ButtonRow,
 	PageTitle,
 	EmptyState,
 	EmptyStateTitle,
@@ -57,7 +56,8 @@ import {
 	CardButton,
 	FullWidthButton,
 	CompatibilityBadge,
-	UpgradeSummary
+	UpgradeSummary,
+	ImportButtonRow
 } from './LoadCharacter.styled';
 
 const getCharacterSortTime = (character: SavedCharacter): number => {
@@ -516,7 +516,7 @@ function LoadCharacter() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<ButtonRow>
+				<ImportButtonRow>
 					<SuccessButton
 						onClick={handleImportClick}
 						whileHover={{ scale: 1.05 }}
@@ -524,7 +524,7 @@ function LoadCharacter() {
 					>
 						{t('loadCharacter.importFromJson')}
 					</SuccessButton>
-				</ButtonRow>
+				</ImportButtonRow>
 			</Header>
 
 			<PageTitle

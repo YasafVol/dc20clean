@@ -67,6 +67,7 @@ export const StyledExhaustionTooltip = styled.div`
 	z-index: 1000;
 	margin-bottom: 5px;
 	box-shadow: 0 2px 8px var(--black-30);
+	display: none;
 	opacity: 0;
 	visibility: hidden;
 	transition:
@@ -84,6 +85,7 @@ export const StyledExhaustionTooltip = styled.div`
 	}
 
 	${StyledExhaustionLevel}:hover & {
+		display: block;
 		opacity: 1;
 		visibility: visible;
 	}

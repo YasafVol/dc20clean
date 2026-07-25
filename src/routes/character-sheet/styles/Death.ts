@@ -75,6 +75,7 @@ export const StyledHealthStatusTooltip = styled.div`
 		z-index: 1000;
 		margin-bottom: 5px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		display: none;
 		opacity: 0;
 		visibility: hidden;
 		transition:
@@ -85,6 +86,7 @@ export const StyledHealthStatusTooltip = styled.div`
 	}
 
 	&:hover::after {
+		display: block;
 		opacity: 1;
 		visibility: visible;
 	}

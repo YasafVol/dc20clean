@@ -2,7 +2,7 @@
  * useBreakpoint Hook
  *
  * Detects current screen size breakpoint for responsive behavior.
- * Returns: 'mobile' | 'tablet' | 'desktop' | 'wide'
+ * Returns: 'mobile' | 'tablet' | 'desktop'
  *
  * Usage:
  * const breakpoint = useBreakpoint();
@@ -12,15 +12,14 @@
 import { useState, useEffect } from 'react';
 import { theme } from '../styles/theme';
 
-export type Breakpoint = 'mobile' | 'tablet' | 'desktop' | 'wide';
+export type Breakpoint = 'mobile' | 'tablet' | 'desktop';
 
 export const useBreakpoint = (): Breakpoint => {
 	// Initialize with SSR-safe approach
 	const getBreakpoint = (width: number): Breakpoint => {
-		if (width <= theme.breakpoints.mobile) return 'mobile';
-		if (width <= theme.breakpoints.tablet) return 'tablet';
-		if (width <= theme.breakpoints.desktop) return 'desktop';
-		return 'wide';
+		if (width < theme.breakpoints.tablet) return 'mobile';
+		if (width < theme.breakpoints.desktop) return 'tablet';
+		return 'desktop';
 	};
 
 	const [breakpoint, setBreakpoint] = useState<Breakpoint>(() => {
@@ -51,10 +50,7 @@ export const useBreakpoint = (): Breakpoint => {
 // Convenience hooks for common checks
 export const useIsMobile = () => useBreakpoint() === 'mobile';
 export const useIsTablet = () => useBreakpoint() === 'tablet';
-export const useIsDesktop = () => {
-	const bp = useBreakpoint();
-	return bp === 'desktop' || bp === 'wide';
-};
+export const useIsDesktop = () => useBreakpoint() === 'desktop';
 export const useIsMobileOrTablet = () => {
 	const bp = useBreakpoint();
 	return bp === 'mobile' || bp === 'tablet';

@@ -36,6 +36,7 @@
 - **Maneuver row interaction**: Maneuver rows mirror spells: clicking the row toggles details, Use remains directly available, changing/removing a slot requires its trailing pencil action, and expansion state persists across sheet-tab changes until reload.
 - **Spell row readability**: Spell names use the sheet's primary foreground color and semibold weight so they remain legible against the dark row background.
 - **Desktop header hierarchy**: Character identity and sheet actions are stacked vertically so long names and the toolbar do not compete for one horizontal row.
+- **Tablet header and floating tools**: The tablet action toolbar stays on one horizontally scrollable row to limit sticky-header height. The collapsed Dice Roller is a narrow edge tab; expanding it restores the full panel inside the viewport.
 - **Ancestry identity**: The header shows the second ancestry only when it exists; legacy `Unknown` placeholders are suppressed with the separator.
 - **Class identity link**: When the saved class ID matches a generated Rulebook article, the `Level + Class` header metadata links directly to `/rulebook/classes/{classId}`; unmatched legacy IDs remain plain text instead of linking to a missing article.
 - **Feature progression display**: The Features tab renders all eligible core class features through the character's level, plus separate Subclass Features, Path Progression, and Talents sections. Talents include both ordinary `selectedTalents` and multiclass Talent selections; path entries resolve from `pathPointAllocations`. Missing selections are not inferred.
@@ -93,7 +94,8 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | `CharacterSheetClean.tsx`           | Legacy clean layout (desktop/mobile conditional)                  |
 | `hooks/CharacterSheetProvider.tsx`  | Context provider with state management, auto-save, selector hooks |
 | `hooks/useCharacterSheetReducer.ts` | Reducer for local character sheet state                           |
-| `hooks/useBreakpoint.ts`            | Responsive breakpoint detection                                   |
+| `hooks/useBreakpoint.ts`            | Three layout modes derived from two shared viewport thresholds    |
+| `src/styles/responsive.ts`          | Shared 768px and 1200px breakpoint values and media helpers       |
 
 ---
 

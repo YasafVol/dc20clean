@@ -2,6 +2,7 @@ import styled from 'styled-components';
 // Import static assets
 
 import mainBgImage from '../assets/Main.jpg';
+import { media } from '../styles/responsive';
 
 type StyledMenuVariant = 'character' | 'dm' | 'tools' | 'rulebook';
 
@@ -14,13 +15,17 @@ export const StyledContainer = styled.div`
 	padding: 2rem;
 	background: url('${mainBgImage}') center/cover no-repeat;
 	position: relative;
+
+	${media.mobile} {
+		padding: 1rem;
+	}
 `;
 
 export const StyledTitle = styled.h1`
 	margin-bottom: 0.2rem;
 	color: #fbbf24;
 	text-align: center;
-	font-size: 3rem;
+	font-size: clamp(2rem, 6vw, 3rem);
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	letter-spacing: 2px;
@@ -61,22 +66,22 @@ export const StyledSectionTitle = styled.h3`
 // Character section - Gold/Amber highlight
 export const StyledCharacterGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1rem;
 
-	@media (max-width: 599px) {
-		grid-template-columns: 1fr;
+	${media.tabletUp} {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 `;
 
 // DM Tools section - Purple highlight
 export const StyledDMGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1rem;
 
-	@media (max-width: 899px) {
-		grid-template-columns: 1fr;
+	${media.desktop} {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 `;
 
@@ -86,38 +91,38 @@ export const StyledDMGroup = styled.div`
 
 export const StyledDMGroupCards = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1rem;
 
-	@media (max-width: 599px) {
-		grid-template-columns: 1fr;
+	${media.tabletUp} {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 `;
 
 // Tools section - 4 columns
 export const StyledToolsGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	row-gap: 1.5rem;
 	column-gap: 1rem;
 
 	& > *:nth-child(5) {
-		grid-column: 2 / span 2;
+		grid-column: auto;
 	}
 
-	@media (max-width: 899px) {
-		grid-template-columns: repeat(2, 1fr);
+	${media.tablet} {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 
 		& > *:nth-child(5) {
 			grid-column: 1 / -1;
 		}
 	}
 
-	@media (max-width: 599px) {
-		grid-template-columns: 1fr;
+	${media.desktop} {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 
 		& > *:nth-child(5) {
-			grid-column: auto;
+			grid-column: 2 / span 2;
 		}
 	}
 `;
@@ -125,12 +130,12 @@ export const StyledToolsGrid = styled.div`
 // Old grid for backwards compatibility
 export const StyledMenuGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1.5rem;
 	max-width: 900px;
 	width: 100%;
 
-	@media (min-width: 600px) {
+	${media.tabletUp} {
 		grid-template-columns: repeat(6, 1fr);
 
 		& > *:nth-child(1) {
@@ -148,10 +153,6 @@ export const StyledMenuGrid = styled.div`
 		& > *:nth-child(5) {
 			grid-column: 5 / 7;
 		}
-	}
-
-	@media (max-width: 599px) {
-		grid-template-columns: 1fr;
 	}
 `;
 

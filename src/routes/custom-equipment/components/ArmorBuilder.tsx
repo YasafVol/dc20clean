@@ -14,6 +14,8 @@ import { validateArmor } from '../../../lib/rulesdata/equipment/validation/equip
 import { saveCustomArmor } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
 import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
 import type { CustomArmor, ArmorType } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -38,14 +40,20 @@ import {
 
 interface ArmorBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomArmor;
 }
 
-const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
+const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [armorType, setArmorType] = useState<ArmorType | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [armorType, setArmorType] = useState<ArmorType | null>(initialEquipment?.armorType ?? null);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
 
@@ -61,6 +69,16 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 		if (!armorType) return [];
 		return getPropertiesForArmorType(armorType);
 	}, [armorType]);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_ARMOR, presetQuery, (preset) => [
+				preset.name,
+				preset.armorType,
+				...(preset.hasPdr ? ['pdr'] : [])
+			]),
+		[presetQuery]
+	);
 
 	const validation = useMemo(() => {
 		if (!armorType) return { isValid: false, errors: [], warnings: [] };
@@ -152,8 +170,9 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 		const stats = calculateStats();
 		const armorTypeData = ARMOR_TYPES.find((t) => t.id === armorType);
 
+		const now = new Date().toISOString();
 		const armor: CustomArmor = {
-			id: `custom-armor-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-armor-${Date.now()}`,
 			category: 'armor',
 			name: name || 'Custom Armor',
 			armorType: armorType!,
@@ -168,8 +187,8 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 			hasAgilityDisadvantage: armorType === 'heavy' || stats.hasRigid,
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(armor);
@@ -228,8 +247,13 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<OptionGrid>
-							{PRESET_ARMOR.map((preset) => (
+							{filteredPresets.map((preset) => (
 								<OptionCard
 									key={preset.id}
 									$selected={selectedPreset === preset.id}
@@ -247,6 +271,9 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack }) => {
 								</OptionCard>
 							))}
 						</OptionGrid>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No armor presets match.</p>
+						)}
 					</div>
 
 					<ActionButtons>

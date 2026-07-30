@@ -18,6 +18,8 @@ import type {
 	CustomShield,
 	ShieldType
 } from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -42,14 +44,22 @@ import {
 
 interface ShieldBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomShield;
 }
 
-const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
+const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [shieldType, setShieldType] = useState<ShieldType | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [shieldType, setShieldType] = useState<ShieldType | null>(
+		initialEquipment?.shieldType ?? null
+	);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = 2;
 
@@ -65,6 +75,16 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 		if (!shieldType) return [];
 		return getPropertiesForShieldType(shieldType);
 	}, [shieldType]);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_SHIELDS, presetQuery, (preset) => [
+				preset.name,
+				preset.shieldType,
+				...preset.properties
+			]),
+		[presetQuery]
+	);
 
 	const validation = useMemo(() => {
 		if (!shieldType) return { isValid: false, errors: [], warnings: [] };
@@ -159,8 +179,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 	const buildShield = (): CustomShield => {
 		const stats = calculateStats();
 
+		const now = new Date().toISOString();
 		const shield: CustomShield = {
-			id: `custom-shield-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-shield-${Date.now()}`,
 			category: 'shield',
 			name: name || 'Custom Shield',
 			shieldType: shieldType!,
@@ -175,8 +196,8 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 			hasAgilityDisadvantage: shieldType === 'heavy' || stats.hasRigid,
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(shield);
@@ -240,8 +261,13 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<OptionGrid>
-							{PRESET_SHIELDS.map((preset) => (
+							{filteredPresets.map((preset) => (
 								<OptionCard
 									key={preset.id}
 									$selected={selectedPreset === preset.id}
@@ -263,6 +289,9 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack }) => {
 								</OptionCard>
 							))}
 						</OptionGrid>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No shield presets match.</p>
+						)}
 					</div>
 
 					<ActionButtons>

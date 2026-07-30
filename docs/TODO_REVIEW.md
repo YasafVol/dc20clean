@@ -33,10 +33,10 @@
 6. **[Ready] Cleric Dark/Knowledge domain E2E — 84/100**
    1. Source: `TESTING_SYSTEM.MD` section 6.
    2. Requirements are already explicit. Keep rule permutations in unit tests and use E2E only for creation, persistence, and sheet visibility.
-7. **[Ready] Equipment preset search/filter — 82/100**
+7. **[Complete] Equipment preset search/filter — 82/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: client-side name/type/property filter, no schema change, empty-state copy, and mobile-compatible controls.
-8. **[Ready] Equipment duplicate/clone — 80/100**
+8. **[Complete] Equipment duplicate/clone — 80/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: generate a new ID and timestamps, append `Copy` to the name, preserve mechanical fields, and open the duplicate for editing without mutating the source.
 
@@ -48,7 +48,7 @@
 4. **MSL/SSL in-play enhancement workflow — 72/100**: calculator limits exist; performed-action state and declare-before-roll interaction are not modeled.
 5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.
 6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.
-7. **Edit saved custom equipment — 68/100**: persistence exists; overwrite-versus-save-copy behavior needs a decision.
+7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
 8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.
 9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.
 

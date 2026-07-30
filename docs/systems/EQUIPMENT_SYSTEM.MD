@@ -2,7 +2,7 @@
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Status: Active
-> Last Updated: 2026-06-23
+> Last Updated: 2026-07-13
 >
 > **Menu Entry:** "Equipage" in Reference Tools section
 
@@ -447,15 +447,26 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 - Delete individual items
 - Export all to JSON
 - Import from JSON file
+- Duplicate any saved item as an independent `Copy`; the source remains unchanged and
+  the duplicate receives a new ID and timestamps.
+- Edit any saved item in its category builder. Saving preserves the stable item ID and
+  creation timestamp while refreshing its mechanical effects and update timestamp.
+
+### Preset Search
+
+All four builders expose client-side preset search on the first step. Search matches
+all entered tokens across preset names, equipment type, properties, and weapon styles.
+Weapon search replaces the former 12-item truncation, so every preset is selectable
+without a separate modal.
 
 ---
 
 ## 10. Future Enhancements
 
 - [ ] Integration with character creation (equip custom items)
-- [ ] Edit existing saved equipment
-- [ ] Duplicate/clone functionality
-- [ ] Search/filter presets
+- [x] Edit existing saved equipment
+- [x] Duplicate/clone functionality
+- [x] Search/filter presets
 - [ ] Mobile-optimized layout
 - [ ] Share equipment via URL/code
 

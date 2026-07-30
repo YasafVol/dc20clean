@@ -1,24 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterResources, useCharacterSheet } from '../hooks/CharacterSheetProvider';
-import { logger } from '../../../lib/utils/logger';
 import {
 	StyledDeathExhaustionContainer,
 	StyledExhaustionOnlyContainer,
-	StyledExhaustionOnlyTitle,
-	StyledDeathThresholdLabel
+	StyledExhaustionOnlyTitle
 } from '../styles/DeathExhaustion.styles';
 
 import {
-	StyledDeathContainer,
-	StyledDeathTitle,
 	StyledHealthStatus,
-	StyledDeathThreshold,
-	StyledDeathStepsContainer,
-	StyledDeathStepsTitle,
-	StyledDeathStepsGrid,
-	StyledDeathStep,
-	StyledDeathStepTooltip,
+	StyledInlineHealthStatus,
 	StyledHealthStatusTooltip
 } from '../styles/Death';
 
@@ -30,48 +21,58 @@ import {
 
 import { StyledExhaustionImpact } from '../styles/ExhaustionImpact.styles';
 
-import { getHealthStatus, getDeathSteps } from '../../../lib/rulesdata/death';
+import { getHealthStatus } from '../../../lib/rulesdata/death';
 
 interface DeathExhaustionProps {
 	isMobile?: boolean;
 }
 
+export const HealthStatusIndicator: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
+	const { state } = useCharacterSheet();
+	const resources = useCharacterResources();
+
+	if (!state.character || !resources) return null;
+
+	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
+	const characterData = state.character;
+	const deathThresholdMagnitude =
+		characterData.finalDeathThreshold ??
+		characterData.finalPrimeModifierValue + characterData.finalCombatMastery;
+	const healthStatus = getHealthStatus(
+		resources.current.currentHP,
+		characterData.finalHPMax,
+		-deathThresholdMagnitude
+	);
+
+	return (
+		<StyledInlineHealthStatus $isMobile={effectiveIsMobile}>
+			<StyledHealthStatusTooltip data-tooltip={healthStatus.effects.join('\n')}>
+				<StyledHealthStatus $status={healthStatus.status}>
+					{healthStatus.description.toUpperCase()}
+				</StyledHealthStatus>
+			</StyledHealthStatusTooltip>
+		</StyledInlineHealthStatus>
+	);
+};
+
 const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const { t } = useTranslation();
-	const { state, updateExhaustion, updateDeathStep } = useCharacterSheet();
+	const { state, updateExhaustion } = useCharacterSheet();
 	const resources = useCharacterResources();
 
 	if (!state.character || !resources) {
 		return <div>{t('characterSheet.deathLoading')}</div>;
 	}
 
-	const characterData = state.character;
-
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const currentValues = resources.current;
-	const deathThresholdMagnitude =
-		characterData.finalDeathThreshold ??
-		characterData.finalPrimeModifierValue + characterData.finalCombatMastery;
 
 	const onExhaustionChange = (level: number) => {
 		updateExhaustion(level);
 	};
 
-	const onDeathStepChange = (step: number) => {
-		// Calculate death threshold and max steps
-		const deathThreshold = -deathThresholdMagnitude;
-		const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
-
-		// Check if clicking on final step should mark as dead
-		const isDead = step === deathSteps.maxSteps;
-
-		// Update the death step in state
-		updateDeathStep(step, isDead);
-
-		logger.debug('ui', 'Death step changed', { step, isDead });
-	};
 	// Exhaustion level descriptions (based on DC20 rules)
 	const exhaustionLevels = [
 		{ level: 1, description: t('characterSheet.exhaustion1') },
@@ -81,43 +82,9 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 		{ level: 5, description: t('characterSheet.exhaustion5') }
 	];
 
-	// Pre-compute Health Status / Death Threshold here so the JSX below stays
-	// flat and we can render Death Steps as a third row when (and only when)
-	// the character is actually on Death's Door.
-	const deathThreshold = -deathThresholdMagnitude;
-	const healthStatus = getHealthStatus(
-		currentValues.currentHP,
-		characterData.finalHPMax,
-		deathThreshold
-	);
-	const deathSteps = getDeathSteps(currentValues.currentHP, deathThreshold);
-	const actualCurrentStep =
-		currentValues.deathSteps > 0 ? currentValues.deathSteps : deathSteps.currentStep;
-	const isActuallyDead = currentValues.isDead || deathSteps.isDead;
-
 	return (
 		<StyledDeathExhaustionContainer $isMobile={effectiveIsMobile}>
-			{/* Row 1: Health Status  — title | status badge | threshold (inline, centered) */}
-			<StyledDeathContainer $isMobile={effectiveIsMobile}>
-				<StyledDeathTitle $isMobile={effectiveIsMobile}>
-					{t('characterSheet.deathHealthStatus')}
-				</StyledDeathTitle>
-				<StyledHealthStatusTooltip data-tooltip={healthStatus.effects.join('\n')}>
-					<StyledHealthStatus $status={healthStatus.status}>
-						{healthStatus.description.toUpperCase()}
-					</StyledHealthStatus>
-				</StyledHealthStatusTooltip>
-				<div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-					<StyledDeathThresholdLabel>
-						{t('characterSheet.deathThreshold')}
-					</StyledDeathThresholdLabel>
-					<StyledDeathThreshold $isMobile={effectiveIsMobile}>
-						{deathThreshold}
-					</StyledDeathThreshold>
-				</div>
-			</StyledDeathContainer>
-
-			{/* Row 2: Exhaustion — title | 1 2 3 4 5 (inline) */}
+			{/* Exhaustion — title | 1 2 3 4 5 (inline) */}
 			<StyledExhaustionOnlyContainer data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
 				<StyledExhaustionOnlyTitle data-testid="exhaustion-btn" $isMobile={effectiveIsMobile}>
 					{t('characterSheet.exhaustionTitle')}
@@ -150,43 +117,6 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 				<StyledExhaustionImpact>
 					{exhaustionLevels.find((e) => e.level === currentValues.exhaustionLevel)?.description}
 				</StyledExhaustionImpact>
-			)}
-
-			{/* Optional Row 3b: Death Steps (only when character is on Death's Door) */}
-			{healthStatus.status === 'deaths-door' && (
-				<StyledDeathContainer $isMobile={effectiveIsMobile}>
-					<StyledDeathStepsContainer
-						$isMobile={effectiveIsMobile}
-						style={{ marginTop: 0, width: '100%' }}
-					>
-						<StyledDeathStepsTitle $isMobile={effectiveIsMobile}>
-							{t('characterSheet.deathSteps')} ({actualCurrentStep}/{deathSteps.maxSteps})
-						</StyledDeathStepsTitle>
-						<StyledDeathStepsGrid $isMobile={effectiveIsMobile}>
-							{Array.from({ length: deathSteps.maxSteps }, (_, index) => {
-								const step = index + 1;
-								const isFilled = step <= actualCurrentStep;
-								const isDead = isActuallyDead && step === deathSteps.maxSteps;
-
-								return (
-									<StyledDeathStep
-										key={step}
-										$filled={isFilled}
-										$isDead={isDead}
-										onClick={() => onDeathStepChange(step)}
-									>
-										{!isDead && step}
-										<StyledDeathStepTooltip>
-											{isDead
-												? t('characterSheet.deathDead')
-												: t('characterSheet.deathHPBelow', { step })}
-										</StyledDeathStepTooltip>
-									</StyledDeathStep>
-								);
-							})}
-						</StyledDeathStepsGrid>
-					</StyledDeathStepsContainer>
-				</StyledDeathContainer>
 			)}
 		</StyledDeathExhaustionContainer>
 	);

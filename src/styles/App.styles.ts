@@ -1,5 +1,6 @@
 // Styled components for App component
 import styled from 'styled-components';
+import { media } from './responsive';
 
 export const StyledApp = styled.div`
 	min-height: 100vh;
@@ -79,7 +80,7 @@ export const FixedAuthStatus = styled.div`
 		flex: 0 0 auto;
 	}
 
-	@media (max-width: 480px) {
+	${media.mobile} {
 		top: 0.5rem;
 		right: 0.5rem;
 		padding: 0.375rem;

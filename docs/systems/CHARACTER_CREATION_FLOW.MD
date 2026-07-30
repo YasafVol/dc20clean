@@ -11,6 +11,7 @@
 #### Stage Contract
 
 - Ordering is data-driven and uses stable step IDs: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells (conditional) → 7) Maneuvers (conditional) → 8) Character Name. A leveled hybrid can therefore have eight visible steps.
+- Responsive presentation uses the shared 768px and 1200px thresholds from `src/styles/responsive.ts`. Below 1200px, the compact/tablet header reserves vertical space for the fixed auth controls so Previous/Next and load-screen Import actions do not overlap them. The compact class list uses one column below 768px, two columns from 768–1199px, and three columns from 1200px.
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
 - Step navigation is gated. Users can move backward, but cannot jump forward through the stepper until prior steps are complete.
 - Class changes clear downstream class/level-dependent selections. Level changes clear level-dependent selections such as talents, path points, multiclass choice, cross-path spell list, spells, and maneuvers.

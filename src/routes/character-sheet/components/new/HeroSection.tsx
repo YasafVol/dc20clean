@@ -91,18 +91,11 @@ interface HeroSectionProps {
 
 const Container = styled(motion.section)`
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
 	gap: ${theme.spacing[4]};
 	margin-bottom: ${theme.spacing[4]};
 	align-items: stretch;
-
-	@media (max-width: 1200px) {
-		grid-template-columns: 1fr 1fr;
-	}
-
-	@media (max-width: 768px) {
-		grid-template-columns: 1fr;
-	}
+	min-width: 0;
 `;
 
 // Wraps two BoxCards vertically inside a single grid column.
@@ -161,30 +154,21 @@ const ResourcesGroup = styled.div`
 // Horizontal layout for the inner pair (Mana | Stamina, Rest | Grit).
 // Each StatCard takes equal width and is allowed to shrink (min-width: 0).
 const ResourcesPairRow = styled.div`
-	display: flex;
-	flex-direction: row;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: ${theme.spacing[3]};
 	align-items: stretch;
 
 	& > * {
-		flex: 1 1 0;
 		min-width: 0;
-	}
-
-	@media (max-width: 480px) {
-		flex-direction: column;
 	}
 `;
 
 const DefensesGrid = styled.div<{ $withMarginTop?: boolean }>`
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: ${theme.spacing[3]};
 	${(props) => props.$withMarginTop && `margin-top: ${theme.spacing[3]};`}
-
-	@media (max-width: 1400px) {
-		grid-template-columns: 1fr;
-	}
 `;
 
 const DefenseItem = styled(motion.div)<{ $clickable?: boolean }>`

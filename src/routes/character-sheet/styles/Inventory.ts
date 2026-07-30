@@ -49,9 +49,12 @@ export const StyledInventoryContainer = styled.div<MobileStyledProps>`
 	color: ${theme.colors.text.primary};
 `;
 
-export const StyledInventoryHeaderRow = styled.div`
+export const StyledInventoryHeaderRow = styled.div<{ $explicitEditMode?: boolean }>`
 	display: grid;
-	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
+	grid-template-columns: ${({ $explicitEditMode }) =>
+		$explicitEditMode
+			? '48px 100px 2fr 60px 30px 70px 56px'
+			: '30px 48px 100px 2fr 60px 30px 70px'};
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	border-bottom: 1px solid ${theme.colors.border.default};
@@ -66,12 +69,24 @@ export const StyledInventoryHeaderColumn = styled.span.withConfig({
 	text-align: ${(props) => props.align || 'left'};
 `;
 
-export const StyledInventoryRow = styled.div`
+export const StyledInventoryRow = styled.div<{ $explicitEditMode?: boolean }>`
 	display: grid;
-	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
+	grid-template-columns: ${({ $explicitEditMode }) =>
+		$explicitEditMode
+			? '48px 100px 2fr 60px 30px 70px 56px'
+			: '30px 48px 100px 2fr 60px 30px 70px'};
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	align-items: center;
+`;
+
+export const StyledInventoryValue = styled.div<{ $centered?: boolean }>`
+	min-width: 0;
+	overflow: hidden;
+	color: ${theme.colors.text.primary};
+	text-align: ${({ $centered }) => ($centered ? 'center' : 'left')};
+	text-overflow: ellipsis;
+	white-space: nowrap;
 `;
 
 export const StyledRemoveItemButton = styled.button`

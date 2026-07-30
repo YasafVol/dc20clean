@@ -64,8 +64,12 @@ export const HeaderContent = styled.div`
 	margin: 0 auto;
 	width: 100%;
 
+	${media.tablet} {
+		padding: 4.75rem ${theme.spacing[6]} ${theme.spacing[2]};
+	}
+
 	${media.mobile} {
-		padding: ${theme.spacing[2]} ${theme.spacing[4]};
+		padding: 4.25rem ${theme.spacing[4]} ${theme.spacing[2]};
 	}
 `;
 
@@ -102,6 +106,10 @@ export const MobileTitle = styled.span`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+
+	${media.mobile} {
+		display: none;
+	}
 
 	${media.desktop} {
 		display: none;

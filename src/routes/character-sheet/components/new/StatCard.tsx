@@ -19,7 +19,10 @@ interface StatCardProps {
 	onTempChange?: (value: number) => void;
 	onMouseEnter?: (e: React.MouseEvent) => void;
 	onMouseLeave?: () => void;
+	afterLabel?: React.ReactNode;
+	reserveAfterLabelSpace?: boolean;
 	afterProgressBar?: React.ReactNode;
+	animateOnMount?: boolean;
 	className?: string;
 }
 
@@ -49,7 +52,7 @@ const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
 	}
 `;
 
-const Label = styled.div<{ $size: StatSize }>`
+const Label = styled.div<{ $size: StatSize; $hasDetailSpace: boolean }>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
 		switch (props.$size) {
@@ -64,8 +67,20 @@ const Label = styled.div<{ $size: StatSize }>`
 	font-weight: ${theme.typography.fontWeight.medium};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	min-height: 2.5rem;
+	min-height: ${({ $hasDetailSpace }) => ($hasDetailSpace ? '1.25rem' : '2.5rem')};
 	text-align: center;
+`;
+
+const AfterLabelSlot = styled.div`
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	min-height: 1.5rem;
+	margin-bottom: ${theme.spacing[2]};
+
+	& > * {
+		margin-top: 0;
+	}
 `;
 
 const ValueContainer = styled.div`
@@ -74,6 +89,13 @@ const ValueContainer = styled.div`
 	justify-content: center;
 	gap: ${theme.spacing[2]};
 	min-height: 2.5rem;
+`;
+
+const ValuePair = styled.span`
+	display: grid;
+	grid-template-columns: minmax(3ch, 1fr) auto minmax(3ch, 1fr);
+	align-items: baseline;
+	column-gap: ${theme.spacing[1]};
 `;
 
 const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
@@ -94,13 +116,24 @@ const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
 	display: inline-block;
 	min-width: 3ch;
 	padding-inline: 0.1ch;
-	text-align: center;
+	text-align: right;
 	font-variant-numeric: tabular-nums;
 `;
 
-const MaxValue = styled.span<{ $size: StatSize }>`
+const MaxValue = styled.span<{ $size: StatSize; $value?: boolean }>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
+		if (props.$value) {
+			switch (props.$size) {
+				case 'small':
+					return theme.typography.fontSize.xl;
+				case 'medium':
+					return theme.typography.fontSize['2xl'];
+				case 'large':
+					return theme.typography.fontSize['3xl'];
+			}
+		}
+
 		switch (props.$size) {
 			case 'small':
 				return theme.typography.fontSize.base;
@@ -110,7 +143,11 @@ const MaxValue = styled.span<{ $size: StatSize }>`
 				return theme.typography.fontSize.xl;
 		}
 	}};
-	font-weight: ${theme.typography.fontWeight.medium};
+	font-weight: ${(props) =>
+		props.$value ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
+	min-width: ${(props) => (props.$value ? '3ch' : 'auto')};
+	text-align: ${(props) => (props.$value ? 'left' : 'center')};
+	font-variant-numeric: tabular-nums;
 `;
 
 const ProgressBarContainer = styled.div`
@@ -206,11 +243,6 @@ const InlineControlGroup = styled.div`
 
 // Framed mini-stat so Temp HP remains distinct from the main HP value.
 const TempInlineGroup = styled(InlineControlGroup)`
-	background: ${theme.colors.bg.primary};
-	border: 1px solid ${TEMP_HP_COLOR};
-	border-radius: ${theme.borderRadius.md};
-	padding: ${theme.spacing[1]} ${theme.spacing[2]};
-
 	& button {
 		color: ${TEMP_HP_COLOR};
 		box-shadow: inset 0 0 0 1px ${TEMP_HP_COLOR};
@@ -266,7 +298,10 @@ export const StatCard: React.FC<StatCardProps> = ({
 	onTempChange,
 	onMouseEnter,
 	onMouseLeave,
+	afterLabel,
+	reserveAfterLabelSpace = false,
 	afterProgressBar,
+	animateOnMount = true,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
@@ -307,13 +342,18 @@ export const StatCard: React.FC<StatCardProps> = ({
 			$size={size}
 			$color={colorValue}
 			className={className}
-			initial={{ opacity: 0, y: 20 }}
+			initial={animateOnMount ? { opacity: 0, y: 20 } : false}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			<Label $size={size}>{label}</Label>
+			<Label $size={size} $hasDetailSpace={reserveAfterLabelSpace || afterLabel !== undefined}>
+				{label}
+			</Label>
+			{(reserveAfterLabelSpace || afterLabel !== undefined) && (
+				<AfterLabelSlot>{afterLabel}</AfterLabelSlot>
+			)}
 
 			<ValueContainer>
 				{editable && onChange && (
@@ -326,22 +366,26 @@ export const StatCard: React.FC<StatCardProps> = ({
 						−
 					</ControlButton>
 				)}
-				<CurrentValue
-					$size={size}
-					$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
-					key={current}
-					initial={{ scale: 1.2 }}
-					animate={{ scale: 1 }}
-					transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-				>
-					{current}
-				</CurrentValue>
-				{max !== undefined && (
-					<>
-						<MaxValue $size={size}>/</MaxValue>
-						<MaxValue $size={size}>{max}</MaxValue>
-					</>
-				)}
+				<ValuePair>
+					<CurrentValue
+						$size={size}
+						$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
+						key={current}
+						initial={{ scale: 1.2 }}
+						animate={{ scale: 1 }}
+						transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+					>
+						{current}
+					</CurrentValue>
+					{max !== undefined && (
+						<>
+							<MaxValue $size={size}>/</MaxValue>
+							<MaxValue $size={size} $value>
+								{max}
+							</MaxValue>
+						</>
+					)}
+				</ValuePair>
 				{editable && onChange && (
 					<ControlButton
 						onClick={handleIncrement}
@@ -353,6 +397,50 @@ export const StatCard: React.FC<StatCardProps> = ({
 					</ControlButton>
 				)}
 			</ValueContainer>
+
+			{showProgressBar && max !== undefined && (
+				<ProgressBarContainer data-testid="resource-progress-bar">
+					{min < 0 && (
+						<>
+							{negativeFillPercent > 0 && (
+								<ProgressBar
+									data-testid="negative-hp-fill"
+									$color={NEGATIVE_HP_COLOR}
+									style={{ right: `${100 - zeroPositionPercent}%` }}
+									initial={animateOnMount ? { width: 0 } : false}
+									animate={{ width: `${negativeFillPercent}%` }}
+									transition={{ duration: 0.25, ease: 'easeOut' }}
+								/>
+							)}
+							<ZeroMarker
+								data-testid="zero-hp-marker"
+								aria-label="Zero HP"
+								style={{ left: `${zeroPositionPercent}%` }}
+							/>
+						</>
+					)}
+					{/* Normal HP starts at the zero marker and fills the larger positive zone. */}
+					{normalFillPercent > 0 && (
+						<ProgressBar
+							$color={colorValue}
+							style={{ left: `${zeroPositionPercent}%` }}
+							initial={animateOnMount ? { width: 0 } : false}
+							animate={{ width: `${normalFillPercent}%` }}
+							transition={{ duration: 0.25, ease: 'easeOut' }}
+						/>
+					)}
+					{/* Temp HP is always a separate gold segment. */}
+					{tempFillPercent > 0 && (
+						<ProgressBar
+							$color={TEMP_HP_COLOR}
+							style={{ left: `${zeroPositionPercent + normalFillPercent}%` }}
+							initial={animateOnMount ? { width: 0 } : false}
+							animate={{ width: `${tempFillPercent}%` }}
+							transition={{ duration: 0.25, ease: 'easeOut' }}
+						/>
+					)}
+				</ProgressBarContainer>
+			)}
 
 			{editable && onTempChange && temp !== undefined && (
 				<ControlsRow>
@@ -380,50 +468,6 @@ export const StatCard: React.FC<StatCardProps> = ({
 						</ControlButton>
 					</TempInlineGroup>
 				</ControlsRow>
-			)}
-
-			{showProgressBar && max !== undefined && (
-				<ProgressBarContainer data-testid="resource-progress-bar">
-					{min < 0 && (
-						<>
-							{negativeFillPercent > 0 && (
-								<ProgressBar
-									data-testid="negative-hp-fill"
-									$color={NEGATIVE_HP_COLOR}
-									style={{ right: `${100 - zeroPositionPercent}%` }}
-									initial={{ width: 0 }}
-									animate={{ width: `${negativeFillPercent}%` }}
-									transition={{ duration: 0.25, ease: 'easeOut' }}
-								/>
-							)}
-							<ZeroMarker
-								data-testid="zero-hp-marker"
-								aria-label="Zero HP"
-								style={{ left: `${zeroPositionPercent}%` }}
-							/>
-						</>
-					)}
-					{/* Normal HP starts at the zero marker and fills the larger positive zone. */}
-					{normalFillPercent > 0 && (
-						<ProgressBar
-							$color={colorValue}
-							style={{ left: `${zeroPositionPercent}%` }}
-							initial={{ width: 0 }}
-							animate={{ width: `${normalFillPercent}%` }}
-							transition={{ duration: 0.25, ease: 'easeOut' }}
-						/>
-					)}
-					{/* Temp HP is always a separate gold segment. */}
-					{tempFillPercent > 0 && (
-						<ProgressBar
-							$color={TEMP_HP_COLOR}
-							style={{ left: `${zeroPositionPercent + normalFillPercent}%` }}
-							initial={{ width: 0 }}
-							animate={{ width: `${tempFillPercent}%` }}
-							transition={{ duration: 0.25, ease: 'easeOut' }}
-						/>
-					)}
-				</ProgressBarContainer>
 			)}
 
 			{afterProgressBar}

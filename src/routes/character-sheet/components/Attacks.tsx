@@ -12,6 +12,7 @@ import {
 import { getAttackPresentation } from '../attackPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
+import RowEditControls from './shared/RowEditControls';
 import {
 	parseDamage,
 	getDamageType,
@@ -19,6 +20,8 @@ import {
 	getVersatileDamage,
 	createEmptyAttackData
 } from '../../../lib/utils/weaponUtils';
+import { getNaturalWeaponAttack, isNaturalWeaponAttack } from '../naturalWeaponAttack';
+import { getAncestryAttackTraits } from '../ancestryAttackTraits';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -30,6 +33,11 @@ import {
 	StyledEmptyState,
 	StyledAttackRow,
 	StyledWeaponSelect,
+	StyledWeaponName,
+	StyledAttackIdentity,
+	StyledAttackProperties,
+	StyledAttackProperty,
+	StyledAttackTraitNotes,
 	StyledDamageCell,
 	StyledInfoIcon,
 	StyledDamageTypeCell
@@ -62,15 +70,23 @@ const InlineEmptyHint = styled.div`
 export interface AttacksProps {
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
 	isMobile?: boolean;
+	showTitle?: boolean;
+	explicitEditMode?: boolean;
 }
 
-const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
+const Attacks: React.FC<AttacksProps> = ({
+	onAttackClick,
+	isMobile,
+	showTitle = true,
+	explicitEditMode = false
+}) => {
 	const { t } = useTranslation();
 	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
 	const inventory = useCharacterInventory();
 	const calculation = useCharacterCalculatedData();
 	const [showAllWeapons, setShowAllWeapons] = useState(false);
+	const [editingAttackIds, setEditingAttackIds] = useState<Set<string>>(new Set());
 
 	// Build the list of weapons currently in the character's inventory by matching
 	// inventory item names against the global weapons catalog. This becomes the
@@ -92,6 +108,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 
 	const characterData = state.character;
+	const naturalWeaponAttack = getNaturalWeaponAttack(characterData.selectedTraitIds);
+	const displayedAttacks = naturalWeaponAttack ? [naturalWeaponAttack, ...attacks] : attacks;
 	const visibleWeapons = showAllWeapons ? weapons : inventoryWeapons;
 	const showNoInventoryWeaponsHint = !showAllWeapons && inventoryWeapons.length === 0;
 	const addWeaponSlot = () => {
@@ -108,13 +126,30 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 			heavyHitEffect: ''
 		};
 		addAttack(newAttack);
+		if (explicitEditMode) {
+			setEditingAttackIds((current) => new Set(current).add(newAttack.id));
+		}
 	};
 
 	const removeWeaponSlot = (attackIndex: number) => {
 		const attackToRemove = attacks[attackIndex];
 		if (attackToRemove) {
 			removeAttack(attackToRemove.id);
+			setEditingAttackIds((current) => {
+				const next = new Set(current);
+				next.delete(attackToRemove.id);
+				return next;
+			});
 		}
+	};
+
+	const toggleAttackEditing = (attackId: string) => {
+		setEditingAttackIds((current) => {
+			const next = new Set(current);
+			if (next.has(attackId)) next.delete(attackId);
+			else next.add(attackId);
+			return next;
+		});
 	};
 
 	const handleWeaponSelect = (attackIndex: number, weaponName: string) => {
@@ -178,9 +213,11 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 	return (
 		<StyledAttacksSection $isMobile={effectiveIsMobile}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
-				<StyledAttacksTitle $isMobile={effectiveIsMobile}>
-					{t('characterSheet.attacksTitle')}
-				</StyledAttacksTitle>
+				{showTitle && (
+					<StyledAttacksTitle $isMobile={effectiveIsMobile}>
+						{t('characterSheet.attacksTitle')}
+					</StyledAttacksTitle>
+				)}
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<FilterToggleRow>
 						<input
@@ -204,8 +241,8 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 			)}
 
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
-				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile}>
-					<span></span> {/* Empty column for remove button */}
+				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile} $explicitEditMode={explicitEditMode}>
+					{!explicitEditMode && <span aria-hidden="true" />}
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksColumnWeapon')}
 					</StyledHeaderColumn>
@@ -245,14 +282,19 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						<StyledInfoIcon $isMobile={effectiveIsMobile}>i</StyledInfoIcon>
 					</StyledHeaderColumn>
+					{explicitEditMode && <span aria-hidden="true" />}
 				</StyledAttacksHeaderRow>
 
-				{attacks.length === 0 ? (
+				{displayedAttacks.length === 0 ? (
 					<StyledEmptyState $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksNoWeapons')}
 					</StyledEmptyState>
 				) : (
-					attacks.map((attack, index) => {
+					displayedAttacks.map((attack, index) => {
+						const isDerivedNaturalWeapon = isNaturalWeaponAttack(attack);
+						const persistedAttackIndex = attacks.findIndex(
+							(persistedAttack) => persistedAttack.id === attack.id
+						);
 						const weapon = attack.weaponName
 							? weapons.find((w) => w.name === attack.weaponName)
 							: null;
@@ -261,44 +303,94 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 						)
 							.filter(([, enabled]) => Boolean(enabled))
 							.map(([condition]) => condition);
-						const presentation = getAttackPresentation({
+						const basePresentation = getAttackPresentation({
 							attack,
 							weapon,
 							conditionalModifiers: calculation?.conditionalModifiers,
 							activeConditions
 						});
+						const traitPresentation = getAncestryAttackTraits({
+							selectedTraitIds: characterData.selectedTraitIds,
+							isNaturalWeapon: isDerivedNaturalWeapon,
+							isMartialMelee: basePresentation.isMartialMelee,
+							isSupportedAttack: basePresentation.isSupportedAttack
+						});
+						const presentation = getAttackPresentation({
+							attack,
+							weapon,
+							conditionalModifiers: calculation?.conditionalModifiers,
+							activeConditions,
+							brutalDamageBonus: traitPresentation.brutalDamageBonus
+						});
+						const isEditing =
+							!isDerivedNaturalWeapon && (!explicitEditMode || editingAttackIds.has(attack.id));
 
 						return (
-							<StyledAttackRow $isMobile={effectiveIsMobile} key={attack.id}>
-								{/* Remove Button */}
-								<DeleteButton
-									onClick={() => removeWeaponSlot(index)}
-									title={t('characterSheet.attacksRemoveWeapon')}
-									$isMobile={effectiveIsMobile}
-								/>
+							<StyledAttackRow
+								$isMobile={effectiveIsMobile}
+								$explicitEditMode={explicitEditMode}
+								key={attack.id}
+								data-testid={isDerivedNaturalWeapon ? 'natural-weapon-attack-row' : undefined}
+							>
+								{!explicitEditMode &&
+									(isDerivedNaturalWeapon ? (
+										<span aria-hidden="true" />
+									) : (
+										<DeleteButton
+											onClick={() => removeWeaponSlot(persistedAttackIndex)}
+											title={t('characterSheet.attacksRemoveWeapon')}
+											$isMobile={effectiveIsMobile}
+										/>
+									))}
 
 								{/* Weapon Selection */}
-								<StyledWeaponSelect
-									$isMobile={effectiveIsMobile}
-									value={attack.weaponName}
-									onChange={(e: any) => handleWeaponSelect(index, e.target.value)}
-									data-testid="weapon-name"
-								>
-									<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
-									{visibleWeapons.map((weapon) => (
-										<option key={weapon.name} value={weapon.name}>
-											{weapon.name} ({weapon.handedness})
-										</option>
-									))}
-									{/* Keep the saved weapon visible even if it's no longer in
-									    inventory (e.g. user sold it) so the row doesn't appear blank. */}
-									{attack.weaponName &&
-										!visibleWeapons.some((w) => w.name === attack.weaponName) && (
-											<option key={attack.weaponName} value={attack.weaponName}>
-												{attack.weaponName} {t('characterSheet.attacksNotInInventory')}
+								{isEditing ? (
+									<StyledWeaponSelect
+										$isMobile={effectiveIsMobile}
+										value={attack.weaponName}
+										onChange={(e: any) => handleWeaponSelect(persistedAttackIndex, e.target.value)}
+										data-testid="weapon-name"
+									>
+										<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
+										{visibleWeapons.map((weapon) => (
+											<option key={weapon.name} value={weapon.name}>
+												{weapon.name} ({weapon.handedness})
 											</option>
+										))}
+										{attack.weaponName &&
+											!visibleWeapons.some((w) => w.name === attack.weaponName) && (
+												<option key={attack.weaponName} value={attack.weaponName}>
+													{attack.weaponName} {t('characterSheet.attacksNotInInventory')}
+												</option>
+											)}
+									</StyledWeaponSelect>
+								) : (
+									<StyledAttackIdentity>
+										<StyledWeaponName
+											data-testid={isDerivedNaturalWeapon ? 'natural-weapon-attack' : undefined}
+										>
+											{isDerivedNaturalWeapon
+												? attack.name
+												: attack.weaponName || t('characterSheet.attacksSelectWeapon')}
+										</StyledWeaponName>
+										{traitPresentation.properties.length > 0 && (
+											<StyledAttackProperties aria-label="Attack properties">
+												{traitPresentation.properties.map((property) => (
+													<StyledAttackProperty key={property}>{property}</StyledAttackProperty>
+												))}
+											</StyledAttackProperties>
 										)}
-								</StyledWeaponSelect>
+										{traitPresentation.notes.length > 0 && (
+											<StyledAttackTraitNotes aria-label="Attack trait notes">
+												{traitPresentation.notes.map((note) => (
+													<span key={`${note.source}-${note.text}`}>
+														<strong>{note.source}:</strong> {note.text}
+													</span>
+												))}
+											</StyledAttackTraitNotes>
+										)}
+									</StyledAttackIdentity>
+								)}
 
 								{/* Base Damage */}
 								<StyledDamageCell
@@ -362,7 +454,7 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 
 								{/* Damage Calculation Info */}
 								<div style={{ textAlign: 'center', fontSize: '1.1rem' }}>
-									{weapon ? (
+									{presentation.isSupportedAttack ? (
 										<StyledInfoIcon
 											$isMobile={effectiveIsMobile}
 											onClick={() => onAttackClick(attack, weapon)}
@@ -375,6 +467,19 @@ const Attacks: React.FC<AttacksProps> = ({ onAttackClick, isMobile }) => {
 										'-'
 									)}
 								</div>
+
+								{explicitEditMode &&
+									(isDerivedNaturalWeapon ? (
+										<span aria-hidden="true" />
+									) : (
+										<RowEditControls
+											isEditing={isEditing}
+											onToggle={() => toggleAttackEditing(attack.id)}
+											onDelete={() => removeWeaponSlot(persistedAttackIndex)}
+											itemLabel="weapon"
+											isMobile={effectiveIsMobile}
+										/>
+									))}
 							</StyledAttackRow>
 						);
 					})

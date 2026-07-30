@@ -1,23 +1,32 @@
-# DC20Clean ? Character Sheet
+# DC20Clean – Character Sheet
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
+> Owns: Character-sheet state and presentation, in-play resource controls, sheet actions, auto-save coordination, responsive layouts, and read-only rendering.
+> Does not own: Character-creation rules, derived-stat formulas, persistence implementations, campaign authorization, or PDF field mapping.
+> Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-20
+> Last Updated: 2026-07-25
 
 ## Recent UX additions
 
-- **Hero strip restructured to 3 columns**: `HeroSection` uses a responsive three-column layout:
+- **Responsive contract**: The live menu and primary sheet use two shared viewport thresholds from `src/styles/responsive.ts`: tablet begins at 768px and desktop begins at 1200px. Compact layouts are the base below 768px; tablet layouts occupy 768–1199px; desktop layouts begin at 1200px. Component internals use fluid grids, wrapping, intrinsic minimums, and container queries instead of additional viewport breakpoints. The primary sheet keeps a stable 280px attribute column above the compact threshold. Spell and Maneuver rows switch between labelled cards and full table rows according to the tab container's available width, so crossing 1200px does not force a cramped table.
+- **Alternative sheet route**: `/character2/:id` renders the incremental alternative sheet under the same `CharacterSheetProvider`; `/character2/` resolves the most recently modified saved character. Every saved-character card on `/load-character` offers separate `View Sheet` and `Alternative Sheet` actions, with the current sheet remaining the default. The alternative sheet currently contains the identity/action header, horizontal HP/Mana/Stamina/Rest/Grit strip, an attribute-mastery section, a full-width combat strip, and a tabbed action/detail panel below them. The panel reuses the existing Attacks, Spells, Inventory, Maneuvers, Features, Conditions, and Notes content; its tab bar remains horizontally scrollable on narrow screens and switches content without entry animation. The active tab supplies the section label, so the alternative sheet suppresses each reused panel's duplicate top-level title while retaining controls, category headings, and active counts. The mastery section groups every Skill under its governing Attribute, assigns each selected Trade to its highest valid Attribute total, keeps Awareness under Prime, and sends Attribute Saves, Skills, and Trades to the shared automatic Dice Roller with active-condition modifiers. The combat strip gives Attack primary-action hierarchy, groups Save DC/Initiative/Move/Jump as tactical metrics, and presents PD/AD as paired Hit, Heavy Hit, and Brutal Hit threshold ladders beside a shared PDR/EDR/MDR status column. Read-only PDR/EDR/MDR indicators are sourced from categorical resistance grants. Attack and Initiative send to the same Dice Roller. It reuses `StatCard`, the existing reducer mutations, Long Rest behavior, stored-value PDF export, JSON export, and Rulebook article links. Mana and Stamina are each omitted when their maximum is zero. Alternative-sheet `StatCard` instances skip mount fade and initial bar-fill transitions while retaining value-change and control feedback. This route adds no schema or persistence path.
+- **Alternative sheet color roles**: Structural surfaces and passive values stay neutral; crystal blue identifies roll actions and interaction states; each Attribute color is limited to its title, top border, and filled mastery dots; both defenses use the purple defense family; resource colors retain their established meanings; green is reserved for active positive states such as damage reduction.
+- **Alternative tab interaction**: Subtle dividers separate the uppercase tabs; the active tab uses a crystal-tinted surface, inset outline, and thicker top accent. Editable rows in Attacks, Spells, Inventory, Maneuvers, and Notes share one explicit lifecycle: Add creates a row in edit mode, a trailing pencil enters edit mode, check finishes, and delete is available only while editing. Features and Conditions retain their existing view/control behavior. These changes are scoped to the alternative sheet where shared components also appear on the current sheet.
+- **Hero strip restructured to fluid columns**: `HeroSection` uses a container-driven layout:
   - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
   - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
-  - Responsive: 2 columns at <=1200px, 1 column at <=768px.
-- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current values use fixed-width tabular numeral slots so entering negative HP does not shift adjacent controls. The redundant “Main” label is removed. In the Health card, Temp HP is a standalone value below HP and above the bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
+  - Cards keep an 18rem intrinsic minimum and move between three, two, and one columns according to the width available inside the sheet, without adding viewport breakpoints.
+  - Mana/Stamina and Rest/Grit remain two equal inner columns, and the three defense values remain one equal row, at every hero width that renders the desktop/tablet sheet.
+- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current and maximum values use equal-sized, equal-width tabular numeral slots around a centered separator, so different digit counts and negative HP do not unbalance the control. The alternative sheet stretches every resource card to the tallest card in its row and reserves an equal-height status row in every card, keeping all progress bars aligned. The calculated Health Status chip sits close beneath the HP label with separation from the value. The redundant “Main” label is removed. In the Health card, Temp HP is an unframed standalone control below the HP progress bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
 - **HP formula tooltip**: HP hover keeps the shared tabular calculation tooltip, but dynamically splits calculator base HP into class progression (`Level · Class`) and Might rows, followed by every source-attributed HP modifier such as ancestry traits, class features, talents, and equipped items. A second table shows the displayed negative Death Threshold as Prime Attribute + Combat Mastery + source-attributed modifiers.
 - **Hero card hierarchy**: The hero strip omits redundant Health, Resources, Recovery, and Combat Stats headings. Conditional reset actions remain available without reserving header space when no override exists.
 - **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
 - **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10.
 - **Attribute headers**: Might, Agility, Charisma, and INT use a compact `Attribute ±score (±save save)` reading order; duplicate abbreviation boxes are removed while score tooltips and clickable save rolls remain intact.
-- **Prime hierarchy**: Combat Mastery appears first. Prime follows the compact attribute-header pattern and owns the Awareness skill row inside its bordered section.
+- **Prime hierarchy**: Prime occupies the first column beside the four Attributes, uses their exact header structure and spacing, and owns Awareness. Compact Combat Mastery sits directly beneath Prime. Both cards use purple top-border accents, with Combat Mastery using a 30%-lighter treatment. Awareness and every Attribute skill list share the same top baseline.
 - **CompactUtility component** (`components/new/CompactUtility.tsx`): compact replacement for the old Utility tab:
   1. Move | Jump as two mini stat cards in one row.
   2. GP | SP | CP inline editable pills.
@@ -35,6 +44,7 @@
 - **Maneuver row interaction**: Maneuver rows mirror spells: clicking the row toggles details, Use remains directly available, changing/removing a slot requires its trailing pencil action, and expansion state persists across sheet-tab changes until reload.
 - **Spell row readability**: Spell names use the sheet's primary foreground color and semibold weight so they remain legible against the dark row background.
 - **Desktop header hierarchy**: Character identity and sheet actions are stacked vertically so long names and the toolbar do not compete for one horizontal row.
+- **Tablet header and floating tools**: The tablet action toolbar stays on one horizontally scrollable row to limit sticky-header height. The collapsed Dice Roller is a narrow edge tab; expanding it restores the full panel inside the viewport.
 - **Ancestry identity**: The header shows the second ancestry only when it exists; legacy `Unknown` placeholders are suppressed with the separator.
 - **Class identity link**: When the saved class ID matches a generated Rulebook article, the `Level + Class` header metadata links directly to `/rulebook/classes/{classId}`; unmatched legacy IDs remain plain text instead of linking to a missing article.
 - **Feature progression display**: The Features tab renders all eligible core class features through the character's level, plus separate Subclass Features, Path Progression, and Talents sections. Talents include both ordinary `selectedTalents` and multiclass Talent selections; path entries resolve from `pathPointAllocations`. Missing selections are not inferred.
@@ -85,13 +95,15 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | File                                | Role                                                              |
 | ----------------------------------- | ----------------------------------------------------------------- |
 | `CharacterSheetRouter.tsx`          | Entry point; provides context, routes to layout                   |
+| `alternative/`                      | Incrementally built `/character2` layout using the same provider  |
 | `CharacterSheetRedesign.tsx`        | Primary responsive layout (mobile/tablet/desktop via CSS)         |
 | `CharacterSheetDesktop.tsx`         | Desktop-only layout variant                                       |
 | `CharacterSheetMobile.tsx`          | Mobile layout with tab navigation                                 |
 | `CharacterSheetClean.tsx`           | Legacy clean layout (desktop/mobile conditional)                  |
 | `hooks/CharacterSheetProvider.tsx`  | Context provider with state management, auto-save, selector hooks |
 | `hooks/useCharacterSheetReducer.ts` | Reducer for local character sheet state                           |
-| `hooks/useBreakpoint.ts`            | Responsive breakpoint detection                                   |
+| `hooks/useBreakpoint.ts`            | Three layout modes derived from two shared viewport thresholds    |
+| `src/styles/responsive.ts`          | Shared 768px and 1200px breakpoint values and media helpers       |
 
 ---
 
@@ -166,12 +178,25 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
   dedicated resolved Size badge for `SET_VALUE:size`.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
-#### Attack Sheet TODOs
+#### Attack Sheet Notes
 
 - `attackPresentation.ts` applies active attack-scoped effects without rewriting saved
   attack rows. Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`
   applies to catalog melee weapons and persisted Unarmed Strike rows; ranged and unknown
   custom rows remain unchanged.
+- `ancestryAttackTraits.ts` interprets selected ancestry trait IDs for attack-row
+  presentation without rewriting saved attacks. Orc Brutal Strikes adds +1 only to the
+  displayed Brutal damage of supported melee weapons and Unarmed Strikes. Finishing Blow
+  and Beastborn Charge remain condition-dependent notes and never change the displayed
+  damage automatically.
+- A selected Beastborn Natural Weapon trait derives a read-only, non-inventory
+  `Natural Weapon (Unarmed Strike)` row. Until damage-type choice state is modeled,
+  the row presents base/heavy/brutal damage as `1/2/3 B/P/S`. The derived row is not
+  written into `characterState.attacks`. Selected Natural Weapon extensions are rendered
+  on that row as properties or rules notes: Reach, ranged range, Concealable, Style
+  enhancement eligibility, Rend, and Venomous. Long-Limbed appears on every supported
+  melee attack. Natural Weapon Style does not infer a style because the character model
+  does not currently persist that choice.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

@@ -93,7 +93,7 @@ export const ClassGrid = styled.div`
 	grid-template-columns: 1fr;
 	gap: ${theme.spacing[6]};
 
-	${media.tabletDown} {
+	${media.tablet} {
 		grid-template-columns: repeat(2, 1fr);
 	}
 

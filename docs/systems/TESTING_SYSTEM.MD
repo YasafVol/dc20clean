@@ -69,6 +69,13 @@ npm run e2e:agentic:summarize
 
 Known environment note: browser/E2E failures can be environment-driven when Playwright browsers are missing. For rules migration slices, focused server tests plus source-audit validators are the stronger first signal.
 
+Responsive UI changes must verify the shared boundary pairs rather than arbitrary device names:
+
+1. Compact/tablet: 767px and 768px.
+2. Tablet/desktop: 1199px and 1200px.
+3. Include at least one narrow phone width, currently 390px, and assert `document.documentElement.scrollWidth <= window.innerWidth`.
+4. Prefer component-width assertions and visible controls over screenshot-only checks.
+
 ---
 
 ## 3. Coverage Contract

@@ -3,6 +3,8 @@
  * Modern, dark color palette with excellent contrast
  */
 
+import { breakpoints, media } from '../../../styles/responsive';
+
 export const theme = {
 	// Background colors
 	colors: {
@@ -216,35 +218,10 @@ export const theme = {
 		tooltip: 1600
 	},
 
-	// Responsive Breakpoints (px values)
-	breakpoints: {
-		mobile: 768,
-		tablet: 1024,
-		desktop: 1440,
-		wide: 1920
-	}
+	// Two shared responsive thresholds: compact -> tablet -> desktop.
+	breakpoints
 } as const;
 
 export type Theme = typeof theme;
 
-// Media Query Helpers - Reusable across all components
-// Usage: ${media.mobile} { styles... }
-export const media = {
-	// Mobile-first approach: styles apply to this size and DOWN
-	mobile: `@media (max-width: ${theme.breakpoints.mobile}px)`,
-
-	// Tablet range: between mobile and desktop
-	tablet: `@media (min-width: ${theme.breakpoints.mobile + 1}px) and (max-width: ${theme.breakpoints.tablet}px)`,
-
-	// Tablet and below (mobile + tablet)
-	tabletDown: `@media (max-width: ${theme.breakpoints.tablet}px)`,
-
-	// Desktop and up
-	desktop: `@media (min-width: ${theme.breakpoints.tablet + 1}px)`,
-
-	// Wide screens
-	wide: `@media (min-width: ${theme.breakpoints.wide}px)`,
-
-	// Hover-capable devices (prevents hover effects on touch devices)
-	hover: '@media (hover: hover) and (pointer: fine)'
-} as const;
+export { media };

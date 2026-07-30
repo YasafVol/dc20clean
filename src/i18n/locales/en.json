@@ -566,6 +566,7 @@
 		"backToMenu": "← Back to Menu",
 		"importFromJson": "📥 Import from JSON",
 		"viewSheet": "View Sheet",
+		"viewAlternativeSheet": "Alternative Sheet",
 		"exportPdf": "Export PDF",
 		"edit": "Edit",
 		"levelUp": "Level Up",

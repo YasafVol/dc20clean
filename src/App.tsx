@@ -5,6 +5,7 @@ import CharacterCreation from './routes/character-creation/CharacterCreation.tsx
 import { CharacterProvider } from './lib/stores/characterContext';
 import LoadCharacter from './routes/character-creation/LoadCharacter.tsx';
 import CharacterSheetRouter from './routes/character-sheet/CharacterSheetRouter';
+import AlternativeCharacterSheetRouter from './routes/character-sheet/alternative/AlternativeCharacterSheetRouter';
 import LevelUp from './routes/character-creation/LevelUp';
 import Menu from './components/Menu.tsx';
 import Spellbook from './routes/spellbook/Spellbook.tsx';
@@ -159,6 +160,8 @@ function App() {
 						/>
 						<Route path="/custom-equipment" element={<CustomEquipment />} />
 						<Route path="/character/:id" element={<CharacterSheetRouteWrapper />} />
+						<Route path="/character2" element={<AlternativeCharacterSheetRouteWrapper />} />
+						<Route path="/character2/:id" element={<AlternativeCharacterSheetRouteWrapper />} />
 						<Route
 							path="/character/:id/edit"
 							element={
@@ -189,6 +192,11 @@ function App() {
 function CharacterSheetRouteWrapper() {
 	const { id } = useParams();
 	return id ? <CharacterSheetRouter characterId={id} /> : null;
+}
+
+function AlternativeCharacterSheetRouteWrapper() {
+	const { id } = useParams();
+	return <AlternativeCharacterSheetRouter characterId={id} />;
 }
 
 function CampaignCharacterViewWrapper() {

@@ -24,9 +24,9 @@ const emberFloat = keyframes`
 export const StyledDiceRollerContainer = styled.div<{ $isExpanded: boolean }>`
 	position: fixed;
 	bottom: 1rem;
-	right: 1rem;
-	width: ${(props) => (props.$isExpanded ? '380px' : '60px')};
-	height: ${(props) => (props.$isExpanded ? 'auto' : '60px')};
+	right: ${(props) => (props.$isExpanded ? '1rem' : '0')};
+	width: ${(props) => (props.$isExpanded ? '380px' : '24px')};
+	height: ${(props) => (props.$isExpanded ? 'auto' : '48px')};
 	background: linear-gradient(135deg, rgba(26, 27, 38, 0.85), rgba(36, 40, 59, 0.9));
 	border: 2px solid var(--crystal-primary-40);
 	border-radius: 12px;
@@ -59,9 +59,9 @@ export const StyledDiceRollerContainer = styled.div<{ $isExpanded: boolean }>`
 
 	@media (max-width: 768px) {
 		bottom: 4.5rem; /* Give 10-20px clearance above mobile nav */
-		right: 0.5rem;
-		width: ${(props) => (props.$isExpanded ? '260px' : '50px')};
-		height: ${(props) => (props.$isExpanded ? 'auto' : '50px')};
+		right: ${(props) => (props.$isExpanded ? '0.5rem' : '0')};
+		width: ${(props) => (props.$isExpanded ? '260px' : '24px')};
+		height: ${(props) => (props.$isExpanded ? 'auto' : '42px')};
 		z-index: 999; /* Below mobile nav to prevent conflicts */
 	}
 `;
@@ -75,9 +75,9 @@ export const StyledCollapseButton = styled.button<{ $isExpanded: boolean }>`
 	height: ${(props) => (props.$isExpanded ? '30px' : '100%')};
 	background: linear-gradient(135deg, var(--crystal-primary-30), var(--crystal-secondary-50));
 	border: 2px solid var(--crystal-primary-60);
-	border-radius: ${(props) => (props.$isExpanded ? '6px' : '12px')};
+	border-radius: ${(props) => (props.$isExpanded ? '6px' : '10px 0 0 10px')};
 	color: var(--crystal-primary-light);
-	font-size: ${(props) => (props.$isExpanded ? '1rem' : '1.5rem')};
+	font-size: ${(props) => (props.$isExpanded ? '1rem' : '1rem')};
 	cursor: pointer;
 	display: flex;
 	align-items: center;

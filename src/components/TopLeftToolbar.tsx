@@ -49,8 +49,9 @@ export const TopLeftToolbar: React.FC = () => {
 	// and overlap with the fixed toolbar.
 	const hiddenPaths = [
 		/^\/character\/[^/]+\/?$/, // character sheet (has its own header back button)
+		/^\/character2(?:\/[^/]+)?\/?$/, // alternative character sheet (has its own menu)
 		/^\/dm\/monsters\/[^/]+\/?$/, // monster designer
-		/^\/dm\/encounters\/[^/]+\/?$/, // encounter planner
+		/^\/dm\/encounters\/[^/]+\/?$/ // encounter planner
 	];
 	if (hiddenPaths.some((re) => re.test(location.pathname))) return null;
 

@@ -56,6 +56,21 @@ describe('getAttackPresentation', () => {
 		).toMatchObject({ isSupportedAttack: true, baseDamage: '1 B', heavyDamage: '2 B' });
 	});
 
+	it('presents an unresolved Natural Weapon damage type across every hit tier', () => {
+		expect(
+			getAttackPresentation({
+				attack: attack('Unarmed Strike', '1 B/P/S'),
+				weapon: null
+			})
+		).toMatchObject({
+			isSupportedAttack: true,
+			baseDamage: '1 B/P/S',
+			heavyDamage: '2 B/P/S',
+			brutalDamage: '3 B/P/S',
+			damageType: 'bludgeoning/piercing/slashing'
+		});
+	});
+
 	it('does not apply melee effects when the condition is inactive', () => {
 		expect(
 			getAttackPresentation({
@@ -64,5 +79,15 @@ describe('getAttackPresentation', () => {
 				conditionalModifiers: [rageModifier]
 			})
 		).toMatchObject({ conditionalDamageBonus: 0, baseDamage: '1 S' });
+	});
+
+	it('applies a brutal-only bonus without changing base or heavy damage', () => {
+		expect(
+			getAttackPresentation({
+				attack: attack('Longsword'),
+				weapon: meleeWeapon,
+				brutalDamageBonus: 1
+			})
+		).toMatchObject({ baseDamage: '1 S', heavyDamage: '2 S', brutalDamage: '4 S' });
 	});
 });

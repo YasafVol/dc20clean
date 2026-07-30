@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { theme } from './theme';
+import { media, theme } from './theme';
 
 export const StyledFeaturePopupOverlay = styled.div`
 	position: fixed;
@@ -26,8 +26,8 @@ export const StyledFeaturePopupContent = styled.div`
 	box-shadow: ${theme.shadows.xl};
 	box-sizing: border-box;
 
-	@media (max-width: 768px) {
-		width: calc(100vw - 10rem);
+	${media.mobile} {
+		width: calc(100vw - ${theme.spacing[8]});
 		margin: 5rem ${theme.spacing[4]} ${theme.spacing[4]} ${theme.spacing[4]};
 		padding: ${theme.spacing[6]};
 	}
@@ -42,7 +42,7 @@ export const StyledFeaturePopupHeader = styled.div`
 	padding-bottom: ${theme.spacing[4]};
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
+	${media.mobile} {
 		margin-bottom: ${theme.spacing[4]};
 		padding-bottom: ${theme.spacing[3]};
 		align-items: flex-start;
@@ -59,14 +59,10 @@ export const StyledFeaturePopupTitle = styled.h2`
 	word-wrap: break-word;
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
-		font-size: ${theme.typography.fontSize.xl};
+	${media.mobile} {
+		font-size: clamp(${theme.typography.fontSize.lg}, 5vw, ${theme.typography.fontSize.xl});
 		line-height: ${theme.typography.lineHeight.tight};
 		margin-right: ${theme.spacing[2]};
-	}
-
-	@media (max-width: 480px) {
-		font-size: ${theme.typography.fontSize.lg};
 	}
 `;
 
@@ -90,7 +86,7 @@ export const StyledFeaturePopupClose = styled.button`
 	}
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
+	${media.mobile} {
 		width: 36px;
 		height: 36px;
 		font-size: ${theme.typography.fontSize['2xl']};
@@ -106,14 +102,9 @@ export const StyledFeaturePopupDescription = styled.div`
 	overflow-wrap: break-word;
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
-		font-size: ${theme.typography.fontSize.sm};
+	${media.mobile} {
+		font-size: clamp(${theme.typography.fontSize.xs}, 3.5vw, ${theme.typography.fontSize.sm});
 		line-height: ${theme.typography.lineHeight.normal};
-	}
-
-	@media (max-width: 480px) {
-		font-size: ${theme.typography.fontSize.xs};
-		line-height: ${theme.typography.lineHeight.tight};
 	}
 `;
 

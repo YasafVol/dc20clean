@@ -1,8 +1,12 @@
 # DC20Clean – Database & Storage System
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
+> Owns: Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.
+> Does not own: Game-rule interpretation, derived-stat calculation, feature workflows, or presentation behavior.
+> Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
+> Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-21
 
 ---
 

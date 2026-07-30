@@ -1,10 +1,12 @@
 # DC20Clean – Equipage (Custom Equipment System)
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
+> Owns: Custom weapon, armor, shield, and spell-focus schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
+> Does not own: General character inventory, generic effect semantics, character-sheet equip state, or PDF export mapping.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-13
->
-> **Menu Entry:** "Equipage" in Reference Tools section
+> Last Updated: 2026-07-21
 
 ---
 

@@ -1,8 +1,12 @@
 # DC20Clean - Testing System
 
 > Purpose: Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.
+> Owns: Test-layer policy, test placement, validation commands, E2E standards, agentic QA conventions, and repository-wide quality gates.
+> Does not own: Subsystem behavior, business acceptance semantics, source rules content, or feature-specific ownership boundaries.
+> Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
+> Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-07-12
+> Last Updated: 2026-07-25
 
 ---
 

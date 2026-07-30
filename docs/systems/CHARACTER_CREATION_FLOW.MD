@@ -1,8 +1,14 @@
-### Character Creation Flow System Spec
+# DC20Clean – Character Creation Flow System
 
-> Last Updated: 2026-07-11
+> Purpose: Canonical reference for the multi-stage character-creation, edit, level-up, completion, and explicit rules-upgrade flows.
+> Owns: Wizard stage order, navigation gates, cross-stage state transitions, completion actions, and flow-level coordination between stages.
+> Does not own: Subsystem rule definitions, derived-stat formulas, storage-adapter implementations, PDF transformation, or character-sheet behavior.
+> Authoritative source: `src/routes/character-creation/`, `src/lib/stores/characterContext.tsx`, and `src/lib/services/characterCompletion.ts`.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Status: Active
+> Last Updated: 2026-07-25
 
-#### Purpose
+#### Purpose Details
 
 - Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
 - Capture inputs, outputs, and validation rules per stage based on the React components in `src/routes/character-creation`

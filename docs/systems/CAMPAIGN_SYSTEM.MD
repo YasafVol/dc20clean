@@ -1,8 +1,12 @@
 # DC20Clean — Campaign System
 
 > Purpose: Multi-player campaign layer: campaign management, membership, character sharing, live event notifications, and read-only sheet viewing.
+> Owns: Campaign membership and permissions, join codes, character sharing, campaign events, campaign notifications, and campaign-scoped sheet access.
+> Does not own: General character persistence, ordinary character-sheet behavior, authentication infrastructure, or character calculation.
+> Authoritative source: `convex/campaigns.ts`, campaign tables in `convex/schema.ts`, `src/lib/hooks/useCampaigns.ts`, and `src/routes/campaigns/`.
+> Related systems: [Database](./DATABASE_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-21
 
 ---
 

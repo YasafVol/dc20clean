@@ -1,8 +1,12 @@
 # DC20Clean – Class System
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
+> Owns: Class and subclass definitions, class features, talents, class progression data, feature choices, and class-specific grants.
+> Does not own: Generic effect semantics, derived-stat formulas, spell or maneuver catalogs, or wizard stage orchestration.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/classes-v0105-report.json`, `docs/migration/class-feature-effect-classification.json`, and `src/lib/rulesdata/classes-data/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-21
 
 ---
 

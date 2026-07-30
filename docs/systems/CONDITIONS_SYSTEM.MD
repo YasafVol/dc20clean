@@ -1,8 +1,12 @@
 # DC20Clean - Conditions System
 
 > Purpose: Source-audited condition catalog, condition interaction effects, active condition tracking, and sheet-facing automation.
+> Owns: Canonical condition data, condition IDs, condition normalization, active-condition presentation, and supported condition-effect summaries.
+> Does not own: Generic effect schemas, encounter turn simulation, automatic target resolution, forced movement, or damage application.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/conditions-v0105-report.json`, and `src/lib/rulesdata/conditions/conditions.data.ts`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-21
 
 ## Source Audit
 

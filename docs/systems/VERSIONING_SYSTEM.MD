@@ -1,8 +1,12 @@
 # DC20Clean – Internal Versioning System
 
 > Purpose: Canonical policy for schema, rules, PDF, and system-source versioning.
+> Owns: Version-lane definitions, rules-version normalization, compatibility classification, upgrade routing, schema-version policy, PDF-version routing policy, and source-version metadata requirements.
+> Does not own: Subsystem rules content, storage implementation details, PDF field mapping, or feature-specific migration UI.
+> Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
+> Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-21
 
 ---
 

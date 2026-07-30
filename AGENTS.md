@@ -1,128 +1,93 @@
 # Repository Guidelines
 
-> Last updated: 2026-06-19
+> Last Updated: 2026-07-21
 
-## Rule
+## Documentation Authority
 
-Before planning or implementing any feature, identify the relevant system(s) and read the matching spec(s) in `docs/systems/`.
+1. The active specifications in `docs/systems/` are authoritative for system behavior, ownership, boundaries, and maintenance guidance.
+2. This file is only a governance and routing document. Do not copy volatile facts such as catalog counts, implementation status, formulas, or detailed file maps into it.
+3. Use source inspection to verify concrete implementation details after the relevant system docs have scoped the work.
+4. If an active system doc conflicts with source behavior, treat the document as stale and update it in the same change.
 
-After completing any feature fix/implementation that changes behavior, data flow, or architecture:
+## Required Workflow
 
-- Update the relevant `docs/systems/*.MD` spec(s) in the same change.
-- Add/refresh a `Last Updated: YYYY-MM-DD` timestamp in each updated system doc.
-- Do not leave system docs stale relative to shipped code.
+1. Before planning or implementing a non-trivial change:
+   1. Identify the affected systems using the routing section below.
+   2. Read each affected system doc.
+   3. Inspect the referenced source and tests.
+2. After changing behavior, data flow, ownership, or architecture:
+   1. Update every affected `docs/systems/*` specification in the same change.
+   2. Refresh its `Last Updated: YYYY-MM-DD` field.
+   3. Keep its boundary metadata accurate: `Purpose`, `Owns`, `Does not own`, `Authoritative source`, and `Related systems`.
+3. Do not leave active system docs stale relative to shipped code.
 
-## Quick Start
+## Stable Read Routing
 
-```bash
-npm install
-npm run dev
-```
+1. Tests and quality:
+   1. Read `TESTING_SYSTEM.MD`.
+   2. Then read the system doc for the behavior under test.
+2. Class features:
+   1. Read `CLASS_SYSTEM.MD`.
+   2. Read `EFFECT_SYSTEM.MD` and `CALCULATION_SYSTEM.MD` when effects or derived values change.
+   3. Read `FEATURE_ID_NAMING_CONVENTION.md` when IDs change.
+3. Ancestries and traits:
+   1. Read `ANCESTRY_SYSTEM.MD` and `TRAITS_SYSTEM.MD`.
+   2. Read `EFFECT_SYSTEM.MD` when trait effects change.
+4. Character calculations:
+   1. Read `CALCULATION_SYSTEM.MD` and `EFFECT_SYSTEM.MD`.
+5. Spells:
+   1. Read `SPELLS_SYSTEM.MD`.
+   2. Read `CLASS_SYSTEM.MD` and `CALCULATION_SYSTEM.MD` when access or budgets change.
+6. Maneuvers:
+   1. Read `MARTIALS_SYSTEM.MD`.
+   2. Read `LEVELING_SYSTEM.MD` and `CLASS_SYSTEM.MD` when access or budgets change.
+7. Background skills, trades, and languages:
+   1. Read `BACKGROUND_SYSTEM.MD` and `CALCULATION_SYSTEM.MD`.
+8. Character creation flow:
+   1. Read `CHARACTER_CREATION_FLOW.MD`.
+   2. Read the docs for every stage or subsystem affected by the change.
+9. Leveling and multiclassing:
+   1. Read `LEVELING_SYSTEM.MD`, `CLASS_SYSTEM.MD`, and `CHARACTER_CREATION_FLOW.MD`.
+10. Character sheet:
+    1. Read `CHARACTER_SHEET.MD`.
+    2. Read `CALCULATION_SYSTEM.MD` when displaying or mutating calculated values.
+11. Equipment builder:
+    1. Read `EQUIPMENT_SYSTEM.MD`.
+    2. Read `EFFECT_SYSTEM.MD` when equipment effects change.
+12. Conditions:
+    1. Read `CONDITIONS_SYSTEM.MD`.
+    2. Read `EFFECT_SYSTEM.MD` and `CHARACTER_SHEET.MD` when condition interactions or sheet behavior change.
+13. Monster tools:
+    1. Read `MONSTER_SYSTEM_SPEC.MD` and `DATABASE_SYSTEM.MD`.
+14. Encounter tools:
+    1. Read `ENCOUNTER_SYSTEM_SPEC.MD`, `MONSTER_SYSTEM_SPEC.MD`, and `DATABASE_SYSTEM.MD`.
+15. Campaigns:
+    1. Read `CAMPAIGN_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, and `CHARACTER_SHEET.MD`.
+16. Storage and persistence:
+    1. Read `DATABASE_SYSTEM.MD`.
+    2. Read `VERSIONING_SYSTEM.MD` when compatibility or migration behavior changes.
+17. PDF export:
+    1. Read `PDF_EXPORT_SYSTEM.MD` and `CALCULATION_SYSTEM.MD`.
+    2. Read `VERSIONING_SYSTEM.MD` when routing or compatibility changes.
+18. Versioning, migrations, compatibility, and rules upgrades:
+    1. Read `VERSIONING_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, and `PDF_EXPORT_SYSTEM.MD`.
+19. Rulebook:
+    1. Read `RULEBOOK_SYSTEM.MD`.
+20. Repository-wide architecture, tooling, or composition:
+    1. Read `PROJECT_TECHNICAL_OVERVIEW.MD`.
 
-Optional Convex setup for cloud storage/auth:
+All paths above are relative to `docs/systems/`.
 
-```bash
-npx convex dev --once
-```
+## Documentation Definition of Done
 
-- Storage is hybrid: `localStorage` by default, Convex cloud when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` are set.
-- `.env.local` is untracked and must be created per machine.
-
----
-
-## System Docs
-
-### Architecture and Cross-Cutting
-
-Read these first for any feature work -- they define how data flows and how effects are applied across the entire app.
-
-| Doc                                          | What it covers                                                                                                                                         | Key code                                                                             |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `docs/systems/PROJECT_TECHNICAL_OVERVIEW.MD` | Tech stack (React 19, Vite 6, Tailwind 4), project structure, dev scripts, CI, PR guidelines, code style                                               | repo-wide                                                                            |
-| `docs/systems/TESTING_SYSTEM.MD`             | Testing policy: source audits, Vitest layers, Playwright E2E scope, coverage contract, current E2E inventory                                           | `package.json`, `playwright.config.ts`, `e2e/*`, `src/**/*.test.*`                   |
-| `docs/systems/VERSIONING_SYSTEM.MD`          | Internal versioning policy: app/package, schemaVersion, rulesVersion, PDF version, subsystem source metadata, compatibility and upgrade rules          | `src/lib/rulesdata/versioning/*`, `src/lib/types/schemaVersion.ts`                   |
-| `docs/systems/EFFECT_SYSTEM.MD`              | Canonical effect type catalog, stacking rules, choice resolution, condition interaction effects (v0.10). Read whenever adding or modifying any effect. | `src/lib/types/effectSystem.ts`, calculator effect analyzers                         |
-| `docs/systems/CALCULATION_SYSTEM.MD`         | 13-stage derived stat pipeline: formulas, dependency graph, mastery cap validation, breakdown output. Read whenever changing how stats are computed.   | `src/lib/services/enhancedCharacterCalculator.ts`, `src/lib/utils/characterState.ts` |
-
-### Character Creation
-
-The wizard flow and every subsystem that feeds into it.
-
-| Doc                                       | What it covers                                                                                                                      | Key code                                                                                                          |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `docs/systems/CHARACTER_CREATION_FLOW.MD` | Multi-stage wizard orchestration, stage ordering, state contracts, completion/validation rules, data flow between UI and calculator | `src/routes/character-creation/*`, `src/lib/stores/characterContext.tsx`                                          |
-| `docs/systems/CLASS_SYSTEM.MD`            | Class/subclass data, feature definitions, progression tables, checklists for adding classes/features, v0.10 notes                   | `src/lib/rulesdata/classes-data/*` (features, progressions, loaders)                                              |
-| `docs/systems/ANCESTRY_SYSTEM.MD`         | Ancestry selection, ancestry points, trait grants, trait effect pipeline, troubleshooting                                           | `src/lib/rulesdata/ancestries/*`, `src/routes/character-creation/AncestrySelector.tsx`                            |
-| `docs/systems/BACKGROUND_SYSTEM.MD`       | Skills/trades/languages point budgets, point conversions, mastery cap validation, calculation formulas                              | `src/routes/character-creation/Background.tsx`, calculator background stages                                      |
-| `docs/systems/LEVELING_SYSTEM.MD`         | Level-up budgets (1-10), progression aggregation, path allocation bonuses, multiclass pointers, talent effects, UI gating           | `src/lib/rulesdata/classes-data/classProgressionResolver.ts`, `src/routes/character-creation/LevelingChoices.tsx` |
-| `docs/systems/SPELLS_SYSTEM.MD`           | Spell data model (125 spells, 8 schools, 3 sources), assignment rules, tag system, enhancement system, tiered architecture          | `src/lib/rulesdata/spells-data/*`, `src/lib/services/spellAssignment.ts`                                          |
-| `docs/systems/MARTIALS_SYSTEM.MD`         | Maneuver data (Attack/Defense/Grapple/Utility), budget derivation from class progression and path bonuses, validation               | `src/lib/rulesdata/martials/*`, `src/routes/character-creation/Maneuvers.tsx`                                     |
-| `docs/systems/TRAITS_SYSTEM.MD`           | Trait catalog (239 traits), prerequisite chains, effect typing, runtime processing pipeline, test suite (34 tests)                  | `src/lib/rulesdata/ancestries/traits.ts`, trait selection components                                              |
-| `docs/systems/EQUIPMENT_SYSTEM.MD`        | Custom equipment builder (weapons, armor, shields, spell focuses), point-buy validation, property requirements, presets             | `src/lib/rulesdata/equipment/*`, `src/routes/custom-equipment/*`                                                  |
-
-### Character Sheet
-
-| Doc                               | What it covers                                                                                                                                               | Key code                                                      |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `docs/systems/CHARACTER_SHEET.MD` | Full component architecture (50+ components), context provider data flow, responsive layouts (desktop/mobile), section-to-data-source map, popups, auto-save | `src/routes/character-sheet/*` (hooks/, components/, styles/) |
-
-### DM Tools
-
-| Doc                                     | What it covers                                                                                                                                        | Key code                                             |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `docs/systems/MONSTER_SYSTEM_SPEC.MD`   | Monster designer using DC20 point-buy: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing | `src/routes/dm/monsters/*`, `convex/monsters.ts`     |
-| `docs/systems/ENCOUNTER_SYSTEM_SPEC.MD` | Encounter planner: budget formulas (party size x level), difficulty scaling, monster slotting, validation thresholds                                  | `src/routes/dm/encounters/*`, `convex/encounters.ts` |
-
-### Campaigns
-
-| Doc                                    | What it covers                                                                                                                                                       | Key code                                                                 |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `docs/systems/CAMPAIGN_SYSTEM.MD`      | Campaign schema (3 tables), role-based permission model, join-code security, event system, read-only sheet mode, toast notification pipeline, known limitations      | `src/routes/campaigns/*`, `convex/campaigns.ts`, `src/lib/hooks/useCampaigns.ts` |
-
-### Infrastructure
-
-| Doc                                 | What it covers                                                                                                                            | Key code                        |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `docs/systems/DATABASE_SYSTEM.MD`   | Hybrid localStorage/Convex persistence, schema definitions, authentication (Convex Auth), migration strategies, storage abstraction layer | `src/lib/storage/*`, `convex/*` |
-| `docs/systems/PDF_EXPORT_SYSTEM.MD` | Client-side PDF generation pipeline, field mapping, v0.10 template (v0.9.5 fallback), authentication gating, movement system integration  | `src/lib/pdf/*`                 |
-
-### Conventions
-
-| Doc                                            | What it covers                                                                                                        |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `docs/systems/FEATURE_ID_NAMING_CONVENTION.md` | Stable feature ID format: `{class}_{feature_slug}[_{level}]`. Naming rules, conversion examples, validation criteria. |
-
----
-
-## What to Read for Common Tasks
-
-Use this routing table to find the 2-4 docs relevant to your task.
-
-| Task                                                                  | Read these docs                                                                       |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Adding or changing **test coverage**                                  | `TESTING_SYSTEM`, then the system doc for the behavior under test                     |
-| Adding or modifying a **class feature**                               | `CLASS_SYSTEM`, `EFFECT_SYSTEM`, `CALCULATION_SYSTEM`, `FEATURE_ID_NAMING_CONVENTION` |
-| Adding or modifying an **ancestry or trait**                          | `ANCESTRY_SYSTEM`, `TRAITS_SYSTEM`, `EFFECT_SYSTEM`                                   |
-| Changing **character stat calculations**                              | `CALCULATION_SYSTEM`, `EFFECT_SYSTEM`                                                 |
-| Working on **spells** (data, assignment, UI)                          | `SPELLS_SYSTEM`, `CLASS_SYSTEM`, `CALCULATION_SYSTEM`                                 |
-| Working on **maneuvers**                                              | `MARTIALS_SYSTEM`, `LEVELING_SYSTEM`, `CLASS_SYSTEM`                                  |
-| Modifying **background** (skills, trades, languages)                  | `BACKGROUND_SYSTEM`, `CALCULATION_SYSTEM`                                             |
-| Working on **character sheet** UI                                     | `CHARACTER_SHEET`, `CALCULATION_SYSTEM`                                               |
-| Modifying **character creation flow** or adding a stage               | `CHARACTER_CREATION_FLOW`, `LEVELING_SYSTEM`                                          |
-| Working on **leveling or multiclass**                                 | `LEVELING_SYSTEM`, `CLASS_SYSTEM`, `CHARACTER_CREATION_FLOW`                          |
-| Working on **equipment builder**                                      | `EQUIPMENT_SYSTEM`                                                                    |
-| Working on **DM monster tools**                                       | `MONSTER_SYSTEM_SPEC`, `DATABASE_SYSTEM`                                              |
-| Working on **DM encounter planner**                                   | `ENCOUNTER_SYSTEM_SPEC`, `MONSTER_SYSTEM_SPEC`, `DATABASE_SYSTEM`                     |
-| Working on **campaigns**                                              | `CAMPAIGN_SYSTEM`, `DATABASE_SYSTEM`, `CHARACTER_SHEET`                               |
-| Modifying **storage or persistence**                                  | `DATABASE_SYSTEM`                                                                     |
-| Working on **PDF export**                                             | `PDF_EXPORT_SYSTEM`, `CALCULATION_SYSTEM`                                             |
-| Changing **versioning, migrations, compatibility, or rules upgrades** | `VERSIONING_SYSTEM`, `DATABASE_SYSTEM`, `PDF_EXPORT_SYSTEM`                           |
-
----
+1. The implementation and focused tests are complete.
+2. Every affected active system doc reflects the shipped behavior and current ownership boundary.
+3. Boundary metadata and `Last Updated` fields are current.
+4. Related system docs agree on shared flows and contracts.
+5. Historical plans remain evidence only and are not presented as active specifications.
 
 ## Coding and Review Expectations
 
-- Use Conventional Commits.
-- Keep changes focused and avoid unrelated refactors.
-- Update relevant docs when behavior or architecture changes.
-- Never commit secrets from `.env`, `.env.local`, or similar files.
+1. Use Conventional Commits.
+2. Keep changes focused and avoid unrelated refactors.
+3. Never commit secrets from `.env`, `.env.local`, or similar files.

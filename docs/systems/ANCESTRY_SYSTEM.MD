@@ -1,8 +1,12 @@
 # DC20Clean – Ancestry System
 
 > Purpose: Reference for ancestry data, ancestry trait pools, ancestry-point selection, and ancestry creation UI.
+> Owns: Ancestry definitions, ancestry composition, ancestry selection, ancestry-point spending, and ancestry-facing trait availability.
+> Does not own: Trait mechanics, generic effect semantics, derived-stat formulas, or the overall character-creation sequence.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/ancestries-v0105-report.json`, and `src/lib/rulesdata/ancestries/ancestries.ts`.
+> Related systems: [Traits](./TRAITS_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD).
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-21
 
 ---
 

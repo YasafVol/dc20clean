@@ -1,8 +1,12 @@
 # DC20Clean – Calculation & Derived Stats System
 
 > Purpose: Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.
+> Owns: Pure character calculation, effect aggregation order, budgets, validation results, derived-stat outputs, and calculation breakdowns.
+> Does not own: Rules catalogs, user-interface workflows, persistence backends, PDF field mapping, or encounter runtime state.
+> Authoritative source: `src/lib/services/enhancedCharacterCalculator.ts` and `src/lib/services/calculatorModules/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Background](./BACKGROUND_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-07-12
+> Last Updated: 2026-07-21
 
 ---
 

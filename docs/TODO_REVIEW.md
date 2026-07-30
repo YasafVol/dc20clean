@@ -50,7 +50,7 @@
 6. **[Complete] Populate ancestry `TraitRequirements` — 70/100**: legacy all-of prerequisite chains populate the structured contract; explicit any-of/prohibition rules stay authoritative.
 7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
 8. **[Complete] Ancestry/traits subsystem split — 65/100**: docs and focused contract tests now separate trait ownership from ancestry composition without a risky file move.
-9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.
+9. **[Complete] Agentic QA next slice — 62/100**: gate policy is explicit, webdriver/dev snapshots expose diagnostics, and class-by-class descriptors generate from audited class data.
 
 ## 4. Low-confidence or deferred work
 

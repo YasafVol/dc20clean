@@ -64,7 +64,7 @@ export const StyledSpellsContainer = styled.div<MobileStyledProps>`
 
 export const StyledSpellsHeaderRow = styled.div<MobileStyledProps>`
 	display: grid;
-	grid-template-columns: 40px 2fr 1fr 1fr 0.8fr 0.8fr 1fr 0.8fr;
+	grid-template-columns: 2fr 1fr 1fr 0.8fr 0.8fr 1fr 1.2fr;
 	gap: ${theme.spacing[2]};
 	padding: ${theme.spacing[2]};
 	background: ${theme.colors.bg.elevated};
@@ -91,18 +91,48 @@ export const StyledEmptyState = styled.div<MobileStyledProps>`
 
 export const StyledSpellRow = styled.div<MobileStyledProps>`
 	display: grid;
-	grid-template-columns: 40px 2fr 1fr 1fr 0.8fr 0.8fr 1fr 0.8fr;
+	grid-template-columns: 2fr 1fr 1fr 0.8fr 0.8fr 1fr 1.2fr;
 	gap: ${theme.spacing[2]};
 	padding: ${theme.spacing[2]};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.sm};
 	background: ${theme.colors.bg.primary};
 	align-items: center;
+	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
 		background: ${theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
+	}
+`;
+
+export const StyledSpellActions = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledSpellActionButton = styled.button`
+	min-width: 32px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	background: transparent;
+	color: ${theme.colors.text.secondary};
+	cursor: pointer;
+	font-size: ${theme.typography.fontSize.xs};
+	transition: all ${theme.transitions.fast};
+
+	&:hover {
+		border-color: ${theme.colors.accent.primary};
+		color: ${theme.colors.accent.primary};
+		background: ${theme.colors.bg.elevated};
 	}
 `;
 
@@ -183,8 +213,9 @@ interface BoldSpellCellProps extends MobileStyledProps {
 }
 
 export const StyledBoldSpellCell = styled(StyledSpellCell)<BoldSpellCellProps>`
-	font-weight: bold;
-	color: ${(props) => (props$boldMobile && props.$isMobile ? '#f5d020' : '#2c3e50')};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: ${(props) =>
+		props.$boldMobile && props.$isMobile ? '#f5d020' : theme.colors.text.primary};
 `;
 
 export const StyledPreparedCheckbox = styled.input`
@@ -282,29 +313,5 @@ export const StyledSpellEnhancement = styled.div<MobileStyledProps>`
 
 	strong {
 		color: ${theme.colors.accent.primary};
-	}
-`;
-
-export const StyledSpellToggleContainer = styled.div<MobileStyledProps>`
-	padding: ${theme.spacing[2]};
-	text-align: center;
-	border-top: 1px solid ${theme.colors.border.default};
-	background: ${theme.colors.bg.secondary};
-	border-radius: 0 0 ${theme.borderRadius.md} ${theme.borderRadius.md};
-`;
-
-export const StyledSpellToggleButton = styled.button<MobileStyledProps>`
-	background: transparent;
-	border: 1px solid ${theme.colors.accent.primary};
-	border-radius: ${theme.borderRadius.sm};
-	padding: ${theme.spacing[1]} ${theme.spacing[2]};
-	font-size: ${theme.typography.fontSize.xs};
-	cursor: pointer;
-	color: ${theme.colors.accent.primary};
-	transition: all ${theme.transitions.fast};
-
-	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.text.inverse};
 	}
 `;

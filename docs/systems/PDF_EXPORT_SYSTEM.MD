@@ -3,7 +3,7 @@
 > Purpose
 >
 > Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-11
 
 ---
 
@@ -124,8 +124,9 @@ PDF export is best effort for unsupported or future rules versions. If the routi
   - Add “Export PDF” button to character sheet and load-character surfaces.
   - Implement export wiring as stored character → transformer → filler → download.
   - Provide success/error messaging and dynamic filename.
-- **Milestone 3 – Testing (Planned)**
-  - Add Playwright spec for export/download validation (no export E2E spec in repo yet).
+- **Milestone 3 – Testing (Implemented)**
+  - `e2e/16-character-sheet-export.e2e.spec.ts` validates stored JSON/PDF downloads and reopening the same character.
+  - `e2e/17-character-creation-final-actions.e2e.spec.ts` validates autosave-before-PDF, current-rules PDF naming/header, and sheet navigation.
   - Consider unit tests for `transformSavedCharacterToPdfData` covering key sections.
 
 ---
@@ -223,5 +224,5 @@ import { FeatureGateButton } from '@/components/auth';
 
 ---
 
-> Last updated: 2026-06-25
+> Last updated: 2026-07-11
 > Maintainer: @DC20Clean-Team

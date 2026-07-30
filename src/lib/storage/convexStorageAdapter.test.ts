@@ -52,4 +52,33 @@ describe('prepareCharacterForSave', () => {
 		});
 		expect('tradeMasteryLimitElevations' in payload).toBe(false);
 	});
+
+	it('removes export, creation-input, and calculator-only fields before Convex saves', () => {
+		const payload = prepareCharacterForSave({
+			...baseCharacter,
+			exportedAt: '2026-07-11T18:54:03.816Z',
+			exportVersion: '1.0',
+			selectedSpells: { first: 'mockery' },
+			selectedManeuvers: ['trip'],
+			finalAttributePoints: 12,
+			manaSpendLimit: 1,
+			staminaSpendLimit: 1,
+			grantedAbilities: [],
+			conditionalModifiers: []
+		} as SavedCharacter & Record<string, unknown>);
+
+		for (const field of [
+			'exportedAt',
+			'exportVersion',
+			'selectedSpells',
+			'selectedManeuvers',
+			'finalAttributePoints',
+			'manaSpendLimit',
+			'staminaSpendLimit',
+			'grantedAbilities',
+			'conditionalModifiers'
+		]) {
+			expect(field in payload).toBe(false);
+		}
+	});
 });

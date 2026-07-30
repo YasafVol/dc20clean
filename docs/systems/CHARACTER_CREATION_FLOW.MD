@@ -1,6 +1,6 @@
 ### Character Creation Flow System Spec
 
-> Last Updated: 2026-06-28
+> Last Updated: 2026-07-11
 
 #### Purpose
 
@@ -17,6 +17,7 @@
 - Draft state carries both `schemaVersion` and `rulesVersion`; missing `rulesVersion` is inferred as `dc20-0.10`.
 - Edit and level-up entry points check runtime compatibility before initializing the wizard. `upgrade-required` v0.10 characters can use the explicit upgrade action on the load-character page; unsupported rules versions remain view-only.
 - Character completion writes only the target record through `saveCharacter()`: new creation saves the completed character, edit preserves the original character ID, and level-up builds the recalculated character without first saving a temporary copy. These flows must not batch-save the full character list because Convex validates each record independently and unrelated stale records can block the active character.
+- Character completion leaves `ancestry2Name` unset when no second ancestry is selected; it must not persist an `Unknown` placeholder for an absent optional ancestry.
 - The explicit v0.10 to current-version action shows its migration plan, creates a new current-rules draft, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and unlocks edit/level-up only on the new copy. Migration never mutates the old instance. Consolidated language aliases keep the strongest fluency; removed languages no longer consume points and mark the new copy as `needs-review`.
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell slot validity, maneuver validity)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
@@ -87,7 +88,9 @@
   - Inputs: `state.finalName`, `state.finalPlayerName`
   - Completion rule: both fields non-empty
   - UI: name generation is a secondary inline action beside the character name input.
+  - For signed-in Google users, an empty Player Name defaults once to the account display name. Existing or user-entered values are never overwritten, and the field remains editable.
   - Final actions render below the Player Name field: `Finish & Go to Sheet` is the primary action; `Print PDF` autosaves the completed character, exports from the saved record, then opens the saved character sheet.
+  - `e2e/17-character-creation-final-actions.e2e.spec.ts` covers both actions through the shared Human Barbarian recipe, including PDF validation and the no-download finish path.
   - Outputs: final naming data for persistence
   - Agent/browser hooks: name fields expose `data-testid="character-name-input"` / `data-field-id="character-name"` and `data-testid="player-name-input"` / `data-field-id="player-name"`.
 

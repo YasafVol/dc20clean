@@ -9,12 +9,11 @@ import { useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	AttributeSection,
 	AttributeHeader,
-	AttributeBox,
-	AttributeAbbreviation,
 	AttributeValue,
 	AttributeInfo,
 	AttributeName,
 	AttributeSave,
+	AttributeContext,
 	SkillRow,
 	SkillName,
 	SkillBonusContainer,
@@ -104,163 +103,121 @@ const Attributes: React.FC<AttributesProps> = ({
 		));
 	};
 
+	const formatSigned = (value: number): string => `${value >= 0 ? '+' : ''}${value}`;
+
+	const renderAttributeHeader = ({
+		nameKey,
+		tooltipLabel,
+		value,
+		save,
+		breakdown,
+		testId
+	}: {
+		nameKey: string;
+		tooltipLabel: string;
+		value: number;
+		save: number;
+		breakdown?: EnhancedStatBreakdown;
+		testId?: string;
+	}) => (
+		<AttributeHeader>
+			<AttributeInfo $isMobile={isMobile}>
+				<AttributeName $isMobile={isMobile}>{t(`characterSheet.${nameKey}`)}</AttributeName>
+				<Tooltip
+					content={
+						breakdown ? createEnhancedTooltip(tooltipLabel, breakdown) : `${value} ${tooltipLabel}`
+					}
+					position="top"
+				>
+					<AttributeValue $isMobile={isMobile} data-testid={testId}>
+						{formatSigned(value)}
+					</AttributeValue>
+				</Tooltip>
+				<AttributeSave
+					$isMobile={isMobile}
+					onClick={() => onSkillClick?.(`${tooltipLabel} Save`, save)}
+					style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
+				>
+					({formatSigned(save)} {t('characterSheet.attrSave').toLowerCase()})
+				</AttributeSave>
+			</AttributeInfo>
+		</AttributeHeader>
+	);
+
 	return (
 		<>
-			{/* Prime Modifier & Awareness */}
-			<PrimeSection $isMobile={isMobile}>
-				<PrimeLabel $isMobile={isMobile}>{t('characterSheet.attrPrime')}</PrimeLabel>
-				<PrimeValue $isMobile={isMobile}>
-					{usePrimeCapRule ? `+${primeValue}` : `${primeAttributeLabel} +${primeValue}`}
-				</PrimeValue>
-			</PrimeSection>
-
 			{/* Combat Mastery */}
 			<PrimeSection $isMobile={isMobile}>
 				<PrimeLabel $isMobile={isMobile}>{t('characterSheet.attrCombatMastery')}</PrimeLabel>
 				<PrimeValue $isMobile={isMobile}>+{state.character?.finalCombatMastery || 0}</PrimeValue>
 			</PrimeSection>
 
-			{/* Awareness (Prime skill) */}
-			{renderSkills(skillsByAttribute.prime)}
+			{/* Prime Modifier & Awareness */}
+			<AttributeSection $isMobile={isMobile}>
+				<AttributeHeader>
+					<AttributeInfo $isMobile={isMobile}>
+						<AttributeName $isMobile={isMobile}>{t('characterSheet.attrPrime')}</AttributeName>
+						<AttributeValue $isMobile={isMobile}>{formatSigned(primeValue)}</AttributeValue>
+						{!usePrimeCapRule && (
+							<AttributeContext $isMobile={isMobile}>
+								({primeAttributeLabel.toLowerCase()})
+							</AttributeContext>
+						)}
+					</AttributeInfo>
+				</AttributeHeader>
+				{renderSkills(skillsByAttribute.prime)}
+			</AttributeSection>
 
 			{/* Might Section */}
 			<AttributeSection $isMobile={isMobile}>
-				<AttributeHeader>
-					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>
-							{t('characterSheet.attrMightAbbr')}
-						</AttributeAbbreviation>
-						<Tooltip
-							content={
-								breakdowns?.attribute_might
-									? createEnhancedTooltip('Might', breakdowns.attribute_might)
-									: `${characterData.finalMight} Might`
-							}
-							position="top"
-						>
-							<AttributeValue $isMobile={isMobile} data-testid="sheet-attribute-might-value">
-								{characterData.finalMight}
-							</AttributeValue>
-						</Tooltip>
-					</AttributeBox>
-					<AttributeInfo $isMobile={isMobile}>
-						<AttributeName $isMobile={isMobile}>{t('characterSheet.attrMight')}</AttributeName>
-						<AttributeSave
-							$isMobile={isMobile}
-							onClick={() => onSkillClick?.('Might Save', characterData.finalSaveMight)}
-							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
-						>
-							{t('characterSheet.attrSave')} +{characterData.finalSaveMight}
-						</AttributeSave>
-					</AttributeInfo>
-				</AttributeHeader>
+				{renderAttributeHeader({
+					nameKey: 'attrMight',
+					tooltipLabel: 'Might',
+					value: characterData.finalMight,
+					save: characterData.finalSaveMight,
+					breakdown: breakdowns?.attribute_might,
+					testId: 'sheet-attribute-might-value'
+				})}
 
 				{renderSkills(skillsByAttribute.might)}
 			</AttributeSection>
 
 			{/* Agility Section */}
 			<AttributeSection $isMobile={isMobile}>
-				<AttributeHeader>
-					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>
-							{t('characterSheet.attrAgilityAbbr')}
-						</AttributeAbbreviation>
-						<Tooltip
-							content={
-								breakdowns?.attribute_agility
-									? createEnhancedTooltip('Agility', breakdowns.attribute_agility)
-									: `${characterData.finalAgility} Agility`
-							}
-							position="top"
-						>
-							<AttributeValue $isMobile={isMobile} data-testid="sheet-attribute-agility-value">
-								{characterData.finalAgility}
-							</AttributeValue>
-						</Tooltip>
-					</AttributeBox>
-					<AttributeInfo $isMobile={isMobile}>
-						<AttributeName $isMobile={isMobile}>{t('characterSheet.attrAgility')}</AttributeName>
-						<AttributeSave
-							$isMobile={isMobile}
-							onClick={() => onSkillClick?.('Agility Save', characterData.finalSaveAgility)}
-							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
-						>
-							{t('characterSheet.attrSave')} +{characterData.finalSaveAgility}
-						</AttributeSave>
-					</AttributeInfo>
-				</AttributeHeader>
+				{renderAttributeHeader({
+					nameKey: 'attrAgility',
+					tooltipLabel: 'Agility',
+					value: characterData.finalAgility,
+					save: characterData.finalSaveAgility,
+					breakdown: breakdowns?.attribute_agility,
+					testId: 'sheet-attribute-agility-value'
+				})}
 
 				{renderSkills(skillsByAttribute.agility)}
 			</AttributeSection>
 
 			{/* Charisma Section */}
 			<AttributeSection $isMobile={isMobile}>
-				<AttributeHeader>
-					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>
-							{t('characterSheet.attrCharismaAbbr')}
-						</AttributeAbbreviation>
-						<Tooltip
-							content={
-								breakdowns?.attribute_charisma
-									? createEnhancedTooltip('Charisma', breakdowns.attribute_charisma)
-									: `${characterData.finalCharisma} Charisma`
-							}
-							position="top"
-						>
-							<AttributeValue $isMobile={isMobile}>{characterData.finalCharisma}</AttributeValue>
-						</Tooltip>
-					</AttributeBox>
-					<AttributeInfo $isMobile={isMobile}>
-						<AttributeName $isMobile={isMobile}>{t('characterSheet.attrCharisma')}</AttributeName>
-						<AttributeSave
-							$isMobile={isMobile}
-							onClick={() => onSkillClick?.('Charisma Save', characterData.finalSaveCharisma)}
-							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
-						>
-							{t('characterSheet.attrSave')} +{characterData.finalSaveCharisma}
-						</AttributeSave>
-					</AttributeInfo>
-				</AttributeHeader>
+				{renderAttributeHeader({
+					nameKey: 'attrCharisma',
+					tooltipLabel: 'Charisma',
+					value: characterData.finalCharisma,
+					save: characterData.finalSaveCharisma,
+					breakdown: breakdowns?.attribute_charisma
+				})}
 
 				{renderSkills(skillsByAttribute.charisma)}
 			</AttributeSection>
 
 			{/* Intelligence Section */}
 			<AttributeSection $isMobile={isMobile}>
-				<AttributeHeader>
-					<AttributeBox $isMobile={isMobile}>
-						<AttributeAbbreviation $isMobile={isMobile}>
-							{t('characterSheet.attrIntelligenceAbbr')}
-						</AttributeAbbreviation>
-						<Tooltip
-							content={
-								breakdowns?.attribute_intelligence
-									? createEnhancedTooltip('Intelligence', breakdowns.attribute_intelligence)
-									: `${characterData.finalIntelligence} Intelligence`
-							}
-							position="top"
-						>
-							<AttributeValue $isMobile={isMobile}>
-								{characterData.finalIntelligence}
-							</AttributeValue>
-						</Tooltip>
-					</AttributeBox>
-					<AttributeInfo $isMobile={isMobile}>
-						<AttributeName $isMobile={isMobile}>
-							{t('characterSheet.attrIntelligence')}
-						</AttributeName>
-						<AttributeSave
-							$isMobile={isMobile}
-							onClick={() =>
-								onSkillClick?.('Intelligence Save', characterData.finalSaveIntelligence)
-							}
-							style={{ cursor: onSkillClick ? 'pointer' : 'default' }}
-						>
-							{t('characterSheet.attrSave')} +{characterData.finalSaveIntelligence}
-						</AttributeSave>
-					</AttributeInfo>
-				</AttributeHeader>
+				{renderAttributeHeader({
+					nameKey: 'attrIntelligenceAbbr',
+					tooltipLabel: 'Intelligence',
+					value: characterData.finalIntelligence,
+					save: characterData.finalSaveIntelligence,
+					breakdown: breakdowns?.attribute_intelligence
+				})}
 
 				{renderSkills(skillsByAttribute.intelligence)}
 			</AttributeSection>

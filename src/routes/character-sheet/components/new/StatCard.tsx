@@ -106,22 +106,6 @@ const MaxValue = styled.span<{ $size: StatSize }>`
 	font-weight: ${theme.typography.fontWeight.medium};
 `;
 
-const TempValue = styled.span<{ $size: StatSize; $color: string }>`
-	color: ${(props) => props.$color};
-	font-size: ${(props) => {
-		switch (props.$size) {
-			case 'small':
-				return theme.typography.fontSize.xs;
-			case 'medium':
-				return theme.typography.fontSize.sm;
-			case 'large':
-				return theme.typography.fontSize.sm;
-		}
-	}};
-	opacity: 0.9;
-	margin-left: ${theme.spacing[2]};
-`;
-
 const ProgressBarContainer = styled.div`
 	width: 100%;
 	height: 6px;
@@ -143,9 +127,8 @@ const ProgressBar = styled(motion.div)<{ $color: string }>`
 // max via temp HP. Sits next to the normal resource colour inside the bar.
 const TEMP_HP_COLOR = theme.colors.accent.warning;
 
-// Row that holds the Main +/- and (when present) a small Temp HP pill. Both
-// groups are centered as a single cluster; if the card is too narrow the
-// pill wraps to its own line below — still centered.
+// Secondary control row used only for Temp HP. Main resource controls flank
+// the value directly in ValueContainer.
 const ControlsRow = styled.div`
 	display: flex;
 	align-items: center;
@@ -155,15 +138,13 @@ const ControlsRow = styled.div`
 	flex-wrap: wrap;
 `;
 
-// Compact inline group: "MAIN  −  +" sitting flush-left on its own row.
 const InlineControlGroup = styled.div`
 	display: flex;
 	align-items: center;
 	gap: ${theme.spacing[2]};
 `;
 
-// Same inline group but framed as its own small box so Temp HP visually
-// reads as a distinct mini-stat next to Main HP.
+// Framed mini-stat so Temp HP remains distinct from the main HP value.
 const TempInlineGroup = styled(InlineControlGroup)`
 	background: ${theme.colors.bg.primary};
 	border: 1px solid ${theme.colors.border.default};
@@ -286,6 +267,16 @@ export const StatCard: React.FC<StatCardProps> = ({
 			<Label $size={size}>{label}</Label>
 
 			<ValueContainer>
+				{editable && onChange && (
+					<ControlButton
+						onClick={handleIncrement}
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.95 }}
+						aria-label={`Increase ${label}`}
+					>
+						+
+					</ControlButton>
+				)}
 				<CurrentValue
 					$size={size}
 					$color={isOverMax ? TEMP_HP_COLOR : colorValue}
@@ -302,10 +293,15 @@ export const StatCard: React.FC<StatCardProps> = ({
 						<MaxValue $size={size}>{max}</MaxValue>
 					</>
 				)}
-				{temp !== undefined && temp !== 0 && (
-					<TempValue $size={size} $color={TEMP_HP_COLOR}>
-						{temp > 0 ? `+${temp}` : temp} temp
-					</TempValue>
+				{editable && onChange && (
+					<ControlButton
+						onClick={handleDecrement}
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.95 }}
+						aria-label={`Decrease ${label}`}
+					>
+						−
+					</ControlButton>
 				)}
 			</ValueContainer>
 
@@ -331,69 +327,38 @@ export const StatCard: React.FC<StatCardProps> = ({
 				</ProgressBarContainer>
 			)}
 
-			{editable && onChange && (
+			{editable && onTempChange && temp !== undefined && (
 				<ControlsRow>
-					{/* Left: MAIN −/+ flush to the left edge of the card. */}
-					<InlineControlGroup>
-						<InlineControlLabel>Main</InlineControlLabel>
+					<TempInlineGroup>
 						<ControlButton
-							onClick={handleDecrement}
+							onClick={() => {
+								onTempChange(temp + 1);
+								if (onChange) {
+									onChange(current + 1);
+								}
+							}}
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.95 }}
-						>
-							−
-						</ControlButton>
-						<ControlButton
-							onClick={handleIncrement}
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.95 }}
+							aria-label="Increase Temp HP"
 						>
 							+
 						</ControlButton>
-					</InlineControlGroup>
-
-					{/* Right: TEMP HP in its own little framed box, only when supported. */}
-					{onTempChange && temp !== undefined && (
-						<TempInlineGroup>
-							<InlineControlLabel>Temp HP</InlineControlLabel>
-							<ControlButton
-								onClick={() => {
-									// Temp HP MINUS:
-									// - Always reduce temp tracker by 1 (clamped at 0).
-									// - If current is currently above max, that means the temp buffer
-									//   is actively boosting HP, so also reduce current by 1.
-									// - If current is at or below max, the temp buffer isn't being
-									//   "used" so current stays put.
-									const newTemp = Math.max(0, temp - 1);
-									onTempChange(newTemp);
-									if (onChange && max !== undefined && current > max) {
-										onChange(Math.max(0, current - 1));
-									}
-								}}
-								whileHover={{ scale: 1.1 }}
-								whileTap={{ scale: 0.95 }}
-							>
-								−
-							</ControlButton>
-							<ControlButton
-								onClick={() => {
-									// Temp HP PLUS:
-									// - Increment temp tracker by 1.
-									// - Also increment current HP by 1 so the grant gives an
-									//   immediate HP boost. Max stays unchanged; when current
-									//   exceeds max the bar shows a gold overflow segment.
-									onTempChange(temp + 1);
-									if (onChange) {
-										onChange(current + 1);
-									}
-								}}
-								whileHover={{ scale: 1.1 }}
-								whileTap={{ scale: 0.95 }}
-							>
-								+
-							</ControlButton>
-						</TempInlineGroup>
-					)}
+						<InlineControlLabel>Temp HP {temp}</InlineControlLabel>
+						<ControlButton
+							onClick={() => {
+								const newTemp = Math.max(0, temp - 1);
+								onTempChange(newTemp);
+								if (onChange && max !== undefined && current > max) {
+									onChange(Math.max(0, current - 1));
+								}
+							}}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+							aria-label="Decrease Temp HP"
+						>
+							−
+						</ControlButton>
+					</TempInlineGroup>
 				</ControlsRow>
 			)}
 		</Container>

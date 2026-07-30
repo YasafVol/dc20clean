@@ -190,6 +190,8 @@ import {
 	StyledSectionTitle,
 	StyledCharacterGrid,
 	StyledDMGrid,
+	StyledDMGroup,
+	StyledDMGroupCards,
 	StyledToolsGrid,
 	StyledTextContent,
 	StyledMenuCard,
@@ -269,49 +271,52 @@ function Menu() {
 				</StyledCharacterGrid>
 			</StyledMenuSection>
 
-			{/* DM Tools Section - Only visible when authenticated */}
+			{/* Authenticated tools - one desktop row */}
 			{isAuthenticated && (
 				<StyledMenuSection>
-					<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
 					<StyledDMGrid>
-						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
-							<StyledIcon $variant="dm">
-								<EncounterIcon />
-							</StyledIcon>
-							<StyledTextContent>
-								<StyledCardTitle $variant="dm">{t('menu.encounterPlanner')}</StyledCardTitle>
-							</StyledTextContent>
-						</StyledMenuCard>
+						<StyledDMGroup>
+							<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
+							<StyledDMGroupCards>
+								<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
+									<StyledIcon $variant="dm">
+										<EncounterIcon />
+									</StyledIcon>
+									<StyledTextContent>
+										<StyledCardTitle $variant="dm">{t('menu.encounterPlanner')}</StyledCardTitle>
+									</StyledTextContent>
+								</StyledMenuCard>
 
-						<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
-							<StyledIcon $variant="dm">
-								<MonsterIcon />
-							</StyledIcon>
-							<StyledTextContent>
-								<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
-							</StyledTextContent>
-						</StyledMenuCard>
-					</StyledDMGrid>
-				</StyledMenuSection>
-			)}
+								<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
+									<StyledIcon $variant="dm">
+										<MonsterIcon />
+									</StyledIcon>
+									<StyledTextContent>
+										<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
+									</StyledTextContent>
+								</StyledMenuCard>
+							</StyledDMGroupCards>
+						</StyledDMGroup>
 
-			{/* Campaigns Section - Only visible when authenticated and Convex enabled */}
-			{isAuthenticated && isConvexEnabled && (
-				<StyledMenuSection>
-					<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
-					<StyledDMGrid>
-						<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
-							<StyledIcon $variant="dm">Map</StyledIcon>
-							<StyledTextContent>
-								<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
-							</StyledTextContent>
-						</StyledMenuCard>
-						<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
-							<StyledIcon $variant="dm">Key</StyledIcon>
-							<StyledTextContent>
-								<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
-							</StyledTextContent>
-						</StyledMenuCard>
+						{isConvexEnabled && (
+							<StyledDMGroup>
+								<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
+								<StyledDMGroupCards>
+									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
+										<StyledIcon $variant="dm">Map</StyledIcon>
+										<StyledTextContent>
+											<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
+										</StyledTextContent>
+									</StyledMenuCard>
+									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
+										<StyledIcon $variant="dm">Key</StyledIcon>
+										<StyledTextContent>
+											<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
+										</StyledTextContent>
+									</StyledMenuCard>
+								</StyledDMGroupCards>
+							</StyledDMGroup>
+						)}
 					</StyledDMGrid>
 				</StyledMenuSection>
 			)}

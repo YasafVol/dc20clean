@@ -22,7 +22,9 @@
 - Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
 - Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
-- The fixed top-right toolbar keeps authentication as the rightmost primary action. Language switching is secondary and must include text, not only a flag icon, so it cannot be mistaken for sign-in.
+- The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
+- Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The two groups stack below 900px, and their cards stack below 600px.
+- The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
 
 ## Local Setup
 

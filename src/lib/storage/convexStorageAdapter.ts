@@ -63,6 +63,21 @@ function hasRecordEntries(value: unknown): boolean {
 	return !!value && typeof value === 'object' && Object.keys(value).length > 0;
 }
 
+const NON_PERSISTED_CHARACTER_FIELDS = [
+	// JSON export envelope metadata.
+	'exportedAt',
+	'exportVersion',
+	// Character-creation inputs represented by the persisted display arrays.
+	'selectedSpells',
+	'selectedManeuvers',
+	// Enhanced calculator outputs that are not part of SavedCharacter storage.
+	'finalAttributePoints',
+	'manaSpendLimit',
+	'staminaSpendLimit',
+	'grantedAbilities',
+	'conditionalModifiers'
+] as const;
+
 export function prepareCharacterForSave(character: SavedCharacter): SavedCharacter {
 	const payload = {
 		...character,
@@ -71,7 +86,13 @@ export function prepareCharacterForSave(character: SavedCharacter): SavedCharact
 		// Convert Record<string, number> to string[] for database compatibility
 		selectedTalents: convertTalentsToArray(character.selectedTalents as any),
 		characterState: sanitizeCharacterStateForConvex(character.characterState) as CharacterState
-	};
+	} as SavedCharacter & Record<string, unknown>;
+
+	// Upgrade recalculation and JSON imports can carry transient fields through
+	// object spreads. Convex table validators reject unknown document fields.
+	for (const field of NON_PERSISTED_CHARACTER_FIELDS) {
+		delete payload[field];
+	}
 
 	// Prod Convex can lag frontend schema deploys. Do not send empty optional root
 	// records that older strict table validators reject.

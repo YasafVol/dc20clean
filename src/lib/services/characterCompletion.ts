@@ -167,7 +167,9 @@ export const completeCharacter = async (
 			ancestry1Id: characterState.ancestry1Id,
 			ancestry1Name: calculationResult.stats.ancestry1Name || 'Unknown',
 			ancestry2Id: characterState.ancestry2Id,
-			ancestry2Name: calculationResult.stats.ancestry2Name || 'Unknown',
+			ancestry2Name: characterState.ancestry2Id
+				? calculationResult.stats.ancestry2Name || 'Unknown'
+				: undefined,
 
 			// Map from calculation result to final* schema
 			finalMight: calculationResult.stats.finalMight,

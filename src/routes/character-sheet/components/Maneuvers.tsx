@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Check, Pencil } from 'lucide-react';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
@@ -9,7 +10,6 @@ import {
 } from '../../../lib/rulesdata/martials/maneuverFormatting';
 import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import { logger } from '../../../lib/utils/logger';
-import { theme } from '../styles/theme';
 import DeleteButton from './shared/DeleteButton';
 import RichDescription from './RichDescription';
 import {
@@ -25,22 +25,23 @@ import {
 	StyledManeuverSelect,
 	StyledManeuverTypeFilter,
 	StyledManeuverCell,
-	StyledManeuverNameCell,
 	StyledAddManeuverButton,
 	StyledManeuverDescriptionContainer,
 	StyledManeuverDescriptionHeader,
 	StyledManeuverDescriptionLabel,
-	StyledManeuverToggleButton,
 	StyledManeuverDescriptionText,
 	StyledManeuverMetaInfo,
 	StyledManeuverEnhancement,
 	StyledManeuverEnhancementCost,
 	StyledManeuverEnhancementHeader,
 	StyledManeuverEnhancements,
-	StyledManeuverDescriptionCollapsed,
 	StyledClickableNameCell,
-	StyledTimingCell
+	StyledTimingCell,
+	StyledManeuverActions,
+	StyledManeuverActionButton
 } from '../styles/Maneuvers.styles';
+
+const expandedManeuverSessionState = new Map<string, Set<string>>();
 
 export interface ManeuversProps {
 	onManeuverClick: (maneuver: Maneuver) => void;
@@ -49,7 +50,12 @@ export interface ManeuversProps {
 	isMobile?: boolean;
 }
 
-const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, readOnly = false, isMobile }) => {
+const Maneuvers: React.FC<ManeuversProps> = ({
+	onManeuverClick: _onManeuverClick,
+	onManeuverUse,
+	readOnly = false,
+	isMobile
+}) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
@@ -61,11 +67,18 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
 	const [typeFilter, setTypeFilter] = useState<string>('all');
+	const expansionSessionKey = state.character.id;
 	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(() => {
-		const expanded = new Set<string>();
-		// Start with all maneuvers collapsed
-		return expanded;
+		const cached = expandedManeuverSessionState.get(expansionSessionKey);
+		if (!cached) return new Set();
+		const currentManeuverIds = new Set(maneuvers.map((maneuver) => maneuver.id));
+		return new Set([...cached].filter((maneuverId) => currentManeuverIds.has(maneuverId)));
 	});
+	const [editingManeuverIds, setEditingManeuverIds] = useState<Set<string>>(new Set());
+
+	useEffect(() => {
+		expandedManeuverSessionState.set(expansionSessionKey, new Set(expandedManeuvers));
+	}, [expandedManeuvers, expansionSessionKey]);
 
 	logger.debug('ui', 'Maneuvers component received', {
 		maneuversCount: maneuvers.length,
@@ -104,6 +117,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 			notes: ''
 		};
 		addManeuver(newManeuver);
+		setEditingManeuverIds((prev) => new Set(prev).add(newManeuver.id));
 	};
 
 	const removeManeuverSlot = (maneuverIndex: number) => {
@@ -153,6 +167,24 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 				newSet.add(maneuverId);
 			}
 			return newSet;
+		});
+	};
+
+	const handleManeuverRowClick = (event: React.MouseEvent<HTMLDivElement>, maneuverId: string) => {
+		const target = event.target as HTMLElement;
+		if (target.closest('button, select, input, textarea, a')) return;
+		toggleManeuverExpansion(maneuverId);
+	};
+
+	const toggleManeuverEditing = (maneuverId: string) => {
+		setEditingManeuverIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(maneuverId)) {
+				next.delete(maneuverId);
+			} else {
+				next.add(maneuverId);
+			}
+			return next;
 		});
 	};
 
@@ -230,7 +262,6 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 
 			<StyledManeuversContainer $isMobile={effectiveIsMobile}>
 				<StyledManeuversHeaderRow $isMobile={effectiveIsMobile}>
-					<span></span> {/* Empty column for remove button */}
 					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.maneuversColumnName')}
 					</StyledManeuverHeaderColumn>
@@ -243,6 +274,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 					<StyledManeuverHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.maneuversColumnTiming')}
 					</StyledManeuverHeaderColumn>
+					<span aria-hidden="true" />
 				</StyledManeuversHeaderRow>
 
 				{filteredCharacterManeuvers.length === 0 ? (
@@ -265,26 +297,19 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 							: null;
 						const maneuverDetails = selectedManeuver ?? maneuver;
 						const maneuverEnhancements = maneuverDetails.enhancements ?? [];
+						const isEditing = editingManeuverIds.has(maneuver.id);
 
 						return (
 							<React.Fragment key={maneuver.id}>
-								<StyledManeuverRow $isMobile={effectiveIsMobile}>
-									{/* Remove Button - only show in edit mode */}
-									{!readOnly && (
-										<DeleteButton
-											onClick={() => removeManeuverSlot(originalIndex)}
-											$isMobile={effectiveIsMobile}
-										/>
-									)}
-
+								<StyledManeuverRow
+									$isMobile={effectiveIsMobile}
+									data-testid={`maneuver-row-${maneuver.id}`}
+									aria-expanded={expandedManeuvers.has(maneuver.id)}
+									onClick={(event) => handleManeuverRowClick(event, maneuver.id)}
+								>
 									{/* Maneuver Name - show as text in read-only mode, dropdown in edit mode */}
-									{readOnly ? (
-										<StyledClickableNameCell
-											$isMobile={effectiveIsMobile}
-											onClick={() => {
-												if (selectedManeuver) onManeuverClick(selectedManeuver);
-											}}
-										>
+									{readOnly || !isEditing ? (
+										<StyledClickableNameCell $isMobile={effectiveIsMobile}>
 											{maneuver.name || t('characterSheet.maneuversUnknownManeuver')}
 										</StyledClickableNameCell>
 									) : (
@@ -338,22 +363,38 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 										{maneuverDetails.range ? ` • ${maneuverDetails.range}` : ''}
 									</StyledTimingCell>
 
-									{/* Use Button */}
-									{!readOnly && onManeuverUse && (
-										<button
-											onClick={(e) => { e.stopPropagation(); onManeuverUse(maneuver); }}
-											style={{
-												padding: '0.15rem 0.5rem',
-												fontSize: '0.7rem',
-												borderRadius: '4px',
-												border: '1px solid #444',
-												background: 'transparent',
-												color: '#aaa',
-												cursor: 'pointer',
-												marginLeft: '0.5rem',
-											}}
-										>Use</button>
-									)}
+									<StyledManeuverActions>
+										{!readOnly && onManeuverUse && (
+											<StyledManeuverActionButton
+												onClick={() => onManeuverUse(maneuver)}
+												title="Use maneuver"
+											>
+												Use
+											</StyledManeuverActionButton>
+										)}
+										{!readOnly && (
+											<StyledManeuverActionButton
+												onClick={() => toggleManeuverEditing(maneuver.id)}
+												aria-label={
+													isEditing ? 'Finish Editing Maneuver Slot' : 'Edit Maneuver Slot'
+												}
+												title={isEditing ? 'Finish editing maneuver slot' : 'Edit maneuver slot'}
+												data-testid={`edit-maneuver-${maneuver.id}`}
+											>
+												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
+											</StyledManeuverActionButton>
+										)}
+										{!readOnly && isEditing && (
+											<DeleteButton
+												onClick={(event) => {
+													event.stopPropagation();
+													removeManeuverSlot(originalIndex);
+												}}
+												title="Remove maneuver slot"
+												$isMobile={effectiveIsMobile}
+											/>
+										)}
+									</StyledManeuverActions>
 								</StyledManeuverRow>
 
 								{/* Expandable Description Section */}
@@ -361,17 +402,11 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 									<StyledManeuverDescriptionContainer $isMobile={effectiveIsMobile}>
 										<StyledManeuverDescriptionHeader $isMobile={effectiveIsMobile}>
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
-												{t('characterSheet.maneuversDescription')}
+												{maneuverDetails.name}
 											</StyledManeuverDescriptionLabel>
-											<StyledManeuverToggleButton
-												$isMobile={effectiveIsMobile}
-												onClick={() => toggleManeuverExpansion(maneuver.id)}
-											>
-												{t('characterSheet.maneuversHideDescription')}
-											</StyledManeuverToggleButton>
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
-											<strong>{maneuverDetails.name}:</strong>
+											<strong>{t('characterSheet.maneuversDescription')}:</strong>
 											<br />
 											<RichDescription text={maneuverDetails.description || ''} />
 										</StyledManeuverDescriptionText>
@@ -413,18 +448,6 @@ const Maneuvers: React.FC<ManeuversProps> = ({ onManeuverClick, onManeuverUse, r
 											</StyledManeuverEnhancements>
 										)}
 									</StyledManeuverDescriptionContainer>
-								)}
-
-								{/* Show Description Button (when collapsed) */}
-								{maneuverDetails.name && !expandedManeuvers.has(maneuver.id) && (
-									<StyledManeuverDescriptionCollapsed $isMobile={effectiveIsMobile}>
-										<StyledManeuverToggleButton
-											$isMobile={effectiveIsMobile}
-											onClick={() => toggleManeuverExpansion(maneuver.id)}
-										>
-											Show Description
-										</StyledManeuverToggleButton>
-									</StyledManeuverDescriptionCollapsed>
 								)}
 							</React.Fragment>
 						);

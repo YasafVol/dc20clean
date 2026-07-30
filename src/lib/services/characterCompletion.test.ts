@@ -148,6 +148,16 @@ describe('completeCharacter', () => {
 		expect(saveAllCharactersMock).not.toHaveBeenCalled();
 	});
 
+	it('does not persist an Unknown placeholder when no second ancestry is selected', async () => {
+		const completed = await completeCharacter(characterState, {
+			onShowSnackbar: vi.fn(),
+			persist: false
+		});
+
+		expect(completed?.ancestry2Id).toBeNull();
+		expect(completed?.ancestry2Name).toBeUndefined();
+	});
+
 	it('can build a completed character without persisting it', async () => {
 		const completed = await completeCharacter(characterState, {
 			onShowSnackbar: vi.fn(),

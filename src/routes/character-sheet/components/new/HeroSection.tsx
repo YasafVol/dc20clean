@@ -29,6 +29,8 @@ interface HeroSectionProps {
 	precisionADBrutalThreshold?: number;
 	precisionDR: number;
 	areaAD: number;
+	areaADHeavyThreshold?: number;
+	areaADBrutalThreshold?: number;
 
 	// Combat stats
 	attackBonus: number;
@@ -328,6 +330,9 @@ const DefenseSubtext = styled.div`
 	margin-top: ${theme.spacing[1]};
 	font-size: ${theme.typography.fontSize.xs};
 	color: ${theme.colors.text.secondary};
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
 `;
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -347,6 +352,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	precisionADBrutalThreshold,
 	precisionDR,
 	areaAD,
+	areaADHeavyThreshold,
+	areaADBrutalThreshold,
 	attackBonus,
 	saveDC,
 	initiative,
@@ -579,8 +586,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 								disabled={!onPrecisionADChange}
 							/>
 							<DefenseSubtext>
-								Heavy {precisionADHeavyThreshold ?? precisionAD + 5} | Brutal{' '}
-								{precisionADBrutalThreshold ?? precisionAD + 10}
+								<span>Heavy {precisionADHeavyThreshold ?? precisionAD + 5}</span>
+								<span>Brutal {precisionADBrutalThreshold ?? precisionAD + 10}</span>
 							</DefenseSubtext>
 						</DefenseItem>
 						<DefenseItem
@@ -606,6 +613,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 								onChange={(e) => onAreaADChange?.(Number(e.target.value))}
 								disabled={!onAreaADChange}
 							/>
+							<DefenseSubtext>
+								<span>Heavy {areaADHeavyThreshold ?? areaAD + 5}</span>
+								<span>Brutal {areaADBrutalThreshold ?? areaAD + 10}</span>
+							</DefenseSubtext>
 						</DefenseItem>
 					</DefensesGrid>
 					<DefensesGrid $withMarginTop>

@@ -2,7 +2,7 @@
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
 > Status: Active
-> Last Updated: 2026-07-09
+> Last Updated: 2026-07-11
 
 ---
 
@@ -162,6 +162,13 @@ surfaces before storage consumers or Convex mutations handle the character.
 Convex writes must run character state through this normalizer because table
 validators require complete `resources.current` and currency fields, while
 older local or cloud records may contain partial nested objects.
+
+`prepareCharacterForSave()` also removes non-persisted JSON export metadata,
+character-creation selection inputs, and calculator-only outputs before Convex
+writes. Upgrade recalculation and JSON import use object spreads, so those
+transient fields can otherwise reach the strict character table validator and
+cause `characters:create` to fail even when the saved character fields are
+valid.
 
 ---
 

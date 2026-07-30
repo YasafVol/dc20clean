@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-06-28
+> Last Updated: 2026-07-12
 
 ## Recent UX additions
 
@@ -11,6 +11,11 @@
   - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
   - Responsive: 2 columns at <=1200px, 1 column at <=768px.
+- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place increment/decrement controls directly around the value (`+ current / max −`); the redundant “Main” label is removed.
+- **Compact resource labels**: Hero resource cards use HP, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
+- **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10.
+- **Attribute headers**: Might, Agility, Charisma, and INT use a compact `Attribute ±score (±save save)` reading order; duplicate abbreviation boxes are removed while score tooltips and clickable save rolls remain intact.
+- **Prime hierarchy**: Combat Mastery appears first. Prime follows the compact attribute-header pattern and owns the Awareness skill row inside its bordered section.
 - **CompactUtility component** (`components/new/CompactUtility.tsx`): compact replacement for the old Utility tab:
   1. Move | Jump as two mini stat cards in one row.
   2. GP | SP | CP inline editable pills.
@@ -23,6 +28,13 @@
 - **Inventory**: Each row shows a compact inline summary (e.g. `1B • Versatile • Reach`, `PD +11 • AD +10`) below the item name. Custom items with a description get a gold accent variant of the info icon so annotated items are visible at a glance.
 - **Notes**: Replaced the single textarea with a multi-note list (per-note title + body, delete with confirm, "+ New Note" button). Backwards-compatible: legacy single-string notes are auto-wrapped on first load; storage uses a `__NOTES_V2__` JSON marker prefix inside the existing `notes.playerNotes` string so no reducer/schema changes were required.
 - **Spells**: Added a "✏️ Custom Spell..." dropdown option that flips a spell row into freeform editable mode (name + school + duration + AP/MP + range + description). Detection is automatic on reload — any spell name not in the catalog renders as custom.
+- **Spell row interaction**: Clicking a spell row expands or collapses its description. Cast remains directly available; changing or removing a slot requires opening its trailing pencil action.
+- **Spell expansion session state**: A fresh sheet page load starts with spell descriptions collapsed. Expansion choices persist while switching between sheet tabs, then reset on the next full page load.
+- **Maneuver row interaction**: Maneuver rows mirror spells: clicking the row toggles details, Use remains directly available, changing/removing a slot requires its trailing pencil action, and expansion state persists across sheet-tab changes until reload.
+- **Spell row readability**: Spell names use the sheet's primary foreground color and semibold weight so they remain legible against the dark row background.
+- **Desktop header hierarchy**: Character identity and sheet actions are stacked vertically so long names and the toolbar do not compete for one horizontal row.
+- **Ancestry identity**: The header shows the second ancestry only when it exists; legacy `Unknown` placeholders are suppressed with the separator.
+- **Class identity link**: When the saved class ID matches a generated Rulebook article, the `Level + Class` header metadata links directly to `/rulebook/classes/{classId}`; unmatched legacy IDs remain plain text instead of linking to a missing article.
 - **Compatibility-preserving sheet fallbacks**: `CompactUtility` now falls back to stored `SavedCharacter.finalMoveSpeed`, `SavedCharacter.finalJumpDistance`, and persisted inventory currency when compatibility fences suppress fresh calculator output. The spells table resolves legacy spell display-name aliases through the canonical spell catalog before deciding a row is custom, so renamed legacy spells still render with catalog details.
 - **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
 - **Active condition mechanics**: `ActiveConditionsTracker` stores non-stacking conditions by base ID and stack-using conditions as concrete IDs like `slowed-2`. `conditionEffectsAnalyzer` normalizes those IDs for badges and rolls, applies Disoriented only to mental saves, Weakened only to physical saves, Restrained as immobilized, and Exhaustion as a flat numeric penalty on checks/saves.
@@ -106,6 +118,8 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 | `components/Maneuvers.tsx`        | `SavedCharacter.maneuvers` + Martials data   | Maneuver management with type filtering, AP/SP cost, range, trigger, and enhancement display |
 | `components/Features.tsx`         | Class/trait feature definitions              | Character features/traits display                                                            |
 | `components/EnhancedFeatures.tsx` | Feature definitions + effect attribution     | Enhanced features with source attribution                                                    |
+
+Campaign-only queries, mutations, event producers, and feed notifications mount behind `isConvexEnabled`. The localStorage-default sheet must not render a component that calls a Convex hook because no `ConvexProvider` exists in that mode.
 
 #### Complex Feature Host TODO
 
@@ -277,7 +291,7 @@ Campaign members can view a shared character sheet in read-only mode. The same `
 
 ```typescript
 export function CharacterSheetProvider({ children, characterId, campaignId }) {
-  const readOnly = !!campaignId;
+	const readOnly = !!campaignId;
 }
 ```
 
@@ -287,8 +301,8 @@ When `campaignId` is present, the character is fetched via `characters.getByIdFo
 
 ```typescript
 const campaignCharacter = useQuery(
-  api.characters.getByIdForMember,
-  campaignId ? { campaignId, characterId } : 'skip'
+	api.characters.getByIdForMember,
+	campaignId ? { campaignId, characterId } : 'skip'
 );
 ```
 
@@ -312,12 +326,12 @@ Read-only — viewing <characterName>'s sheet
 
 ### 8.6 Related files
 
-| File | Role |
-| ---- | ---- |
-| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | `readOnly` flag, load path, save guards |
-| `src/routes/character-sheet/CharacterSheetRedesign.tsx` | Read-only banner |
-| `src/routes/campaigns/CampaignCharacterView.tsx` | Route that passes `campaignId` to the provider |
-| `convex/characters.ts` (`getByIdForMember`) | Three-layer guarded query |
+| File                                                          | Role                                           |
+| ------------------------------------------------------------- | ---------------------------------------------- |
+| `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | `readOnly` flag, load path, save guards        |
+| `src/routes/character-sheet/CharacterSheetRedesign.tsx`       | Read-only banner                               |
+| `src/routes/campaigns/CampaignCharacterView.tsx`              | Route that passes `campaignId` to the provider |
+| `convex/characters.ts` (`getByIdForMember`)                   | Three-layer guarded query                      |
 
 See `docs/systems/CAMPAIGN_SYSTEM.MD` for the full campaign architecture.
 

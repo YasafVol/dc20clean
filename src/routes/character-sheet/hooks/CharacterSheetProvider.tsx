@@ -45,6 +45,7 @@ import { useAppAuth } from '../../../components/auth/AuthModeContext';
 import type { DiceRollResult, RollMode } from '../components/DiceRoller';
 import type { SpellData } from '../../../types';
 import type { ManeuverData } from '../../../types';
+import { buildProgressionFeatureEntries } from '../featureDisplay';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -1060,23 +1061,12 @@ export function useCharacterFeatures() {
 			}
 		}
 
-		// Get class features from the new class features structure
+		features.push(...buildProgressionFeatureEntries(character));
+
+		// Get selected class feature choices from the new class features structure
 		const selectedClassFeatures = findClassByName(character.className);
 
 		if (selectedClassFeatures) {
-			// Add level 1 core features
-			selectedClassFeatures.coreFeatures
-				.filter((feature: any) => feature.levelGained === 1)
-				.forEach((feature: any) => {
-					features.push({
-						id: feature.featureName,
-						name: feature.featureName,
-						description: feature.description,
-						source: 'class',
-						sourceDetail: `${selectedClassFeatures.className} (Lvl 1)`
-					});
-				});
-
 			// Add selected feature choices
 			if (character.selectedFeatureChoices) {
 				try {

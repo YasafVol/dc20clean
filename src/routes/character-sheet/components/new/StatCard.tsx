@@ -19,7 +19,10 @@ interface StatCardProps {
 	onTempChange?: (value: number) => void;
 	onMouseEnter?: (e: React.MouseEvent) => void;
 	onMouseLeave?: () => void;
+	afterLabel?: React.ReactNode;
+	reserveAfterLabelSpace?: boolean;
 	afterProgressBar?: React.ReactNode;
+	animateOnMount?: boolean;
 	className?: string;
 }
 
@@ -49,7 +52,7 @@ const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
 	}
 `;
 
-const Label = styled.div<{ $size: StatSize }>`
+const Label = styled.div<{ $size: StatSize; $hasDetailSpace: boolean }>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
 		switch (props.$size) {
@@ -64,8 +67,20 @@ const Label = styled.div<{ $size: StatSize }>`
 	font-weight: ${theme.typography.fontWeight.medium};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	min-height: 2.5rem;
+	min-height: ${({ $hasDetailSpace }) => ($hasDetailSpace ? '1.25rem' : '2.5rem')};
 	text-align: center;
+`;
+
+const AfterLabelSlot = styled.div`
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	min-height: 1.5rem;
+	margin-bottom: ${theme.spacing[2]};
+
+	& > * {
+		margin-top: 0;
+	}
 `;
 
 const ValueContainer = styled.div`
@@ -283,7 +298,10 @@ export const StatCard: React.FC<StatCardProps> = ({
 	onTempChange,
 	onMouseEnter,
 	onMouseLeave,
+	afterLabel,
+	reserveAfterLabelSpace = false,
 	afterProgressBar,
+	animateOnMount = true,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
@@ -324,13 +342,18 @@ export const StatCard: React.FC<StatCardProps> = ({
 			$size={size}
 			$color={colorValue}
 			className={className}
-			initial={{ opacity: 0, y: 20 }}
+			initial={animateOnMount ? { opacity: 0, y: 20 } : false}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			<Label $size={size}>{label}</Label>
+			<Label $size={size} $hasDetailSpace={reserveAfterLabelSpace || afterLabel !== undefined}>
+				{label}
+			</Label>
+			{(reserveAfterLabelSpace || afterLabel !== undefined) && (
+				<AfterLabelSlot>{afterLabel}</AfterLabelSlot>
+			)}
 
 			<ValueContainer>
 				{editable && onChange && (
@@ -384,7 +407,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 									data-testid="negative-hp-fill"
 									$color={NEGATIVE_HP_COLOR}
 									style={{ right: `${100 - zeroPositionPercent}%` }}
-									initial={{ width: 0 }}
+									initial={animateOnMount ? { width: 0 } : false}
 									animate={{ width: `${negativeFillPercent}%` }}
 									transition={{ duration: 0.25, ease: 'easeOut' }}
 								/>
@@ -401,7 +424,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 						<ProgressBar
 							$color={colorValue}
 							style={{ left: `${zeroPositionPercent}%` }}
-							initial={{ width: 0 }}
+							initial={animateOnMount ? { width: 0 } : false}
 							animate={{ width: `${normalFillPercent}%` }}
 							transition={{ duration: 0.25, ease: 'easeOut' }}
 						/>
@@ -411,7 +434,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 						<ProgressBar
 							$color={TEMP_HP_COLOR}
 							style={{ left: `${zeroPositionPercent + normalFillPercent}%` }}
-							initial={{ width: 0 }}
+							initial={animateOnMount ? { width: 0 } : false}
 							animate={{ width: `${tempFillPercent}%` }}
 							transition={{ duration: 0.25, ease: 'easeOut' }}
 						/>

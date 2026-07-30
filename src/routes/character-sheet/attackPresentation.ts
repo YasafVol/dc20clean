@@ -8,6 +8,7 @@ interface AttackPresentationInput {
 	weapon: Weapon | null;
 	conditionalModifiers?: ConditionalModifier[];
 	activeConditions?: Iterable<string>;
+	brutalDamageBonus?: number;
 }
 
 export interface AttackPresentation {
@@ -30,7 +31,8 @@ export function getAttackPresentation({
 	attack,
 	weapon,
 	conditionalModifiers = [],
-	activeConditions = []
+	activeConditions = [],
+	brutalDamageBonus = 0
 }: AttackPresentationInput): AttackPresentation {
 	const active = new Set(activeConditions);
 	const normalizedName = (attack.weaponName || attack.name).trim().toLocaleLowerCase();
@@ -69,7 +71,7 @@ export function getAttackPresentation({
 		conditionalDamageBonus,
 		baseDamage,
 		heavyDamage: addDamage(heavyBase, conditionalDamageBonus),
-		brutalDamage: addDamage(brutalBase, conditionalDamageBonus),
+		brutalDamage: addDamage(brutalBase, conditionalDamageBonus + brutalDamageBonus),
 		damageType: parsed.typeDisplay,
 		note:
 			conditionalDamageBonus > 0

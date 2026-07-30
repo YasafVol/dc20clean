@@ -113,6 +113,29 @@ describe('StatCard HP range', () => {
 		).toEqual(['Decrease HP', 'Increase HP', 'Decrease Temp HP', 'Increase Temp HP']);
 	});
 
+	it('renders inline content immediately after the label', () => {
+		render(
+			<StatCard
+				label="HP"
+				current={-1}
+				max={8}
+				onChange={vi.fn()}
+				afterLabel={<div data-testid="health-status">Death's Door</div>}
+				reserveAfterLabelSpace
+			/>
+		);
+
+		expect(screen.getByText('HP').nextElementSibling).toContainElement(
+			screen.getByTestId('health-status')
+		);
+	});
+
+	it('reserves the label-detail row when it has no content', () => {
+		render(<StatCard label="Mana" current={9} max={9} onChange={vi.fn()} reserveAfterLabelSpace />);
+
+		expect(screen.getByText('Mana').nextElementSibling).toBeEmptyDOMElement();
+	});
+
 	it('renders inline content immediately after the progress bar', () => {
 		render(
 			<StatCard

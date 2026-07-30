@@ -6,6 +6,7 @@ import { allItems, type InventoryItem } from '../../../lib/rulesdata/inventoryIt
 import { getAllCustomEquipment } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import DeleteButton from './shared/DeleteButton';
+import RowEditControls from './shared/RowEditControls';
 import {
 	StyledInventorySection,
 	StyledInventoryTitle,
@@ -20,7 +21,8 @@ import {
 	StyledInventoryInfoIcon,
 	StyledInventoryCost,
 	StyledEmptyInventory,
-	StyledInventoryCheckbox
+	StyledInventoryCheckbox,
+	StyledInventoryValue
 } from '../styles/Inventory';
 import { theme } from '../styles/theme';
 
@@ -80,9 +82,18 @@ function formatCustomEquipmentCategory(
 export interface InventoryProps {
 	onItemClick: (inventoryData: InventoryItemData, item: InventoryItem | null) => void;
 	isMobile?: boolean;
+	showInfoHeader?: boolean;
+	showTitle?: boolean;
+	explicitEditMode?: boolean;
 }
 
-const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) => {
+const Inventory: React.FC<InventoryProps> = ({
+	onItemClick,
+	isMobile = false,
+	showInfoHeader = true,
+	showTitle = true,
+	explicitEditMode = false
+}) => {
 	const { t } = useTranslation();
 	const { updateInventory } = useCharacterSheet();
 	const inventoryData = useCharacterInventory();
@@ -93,6 +104,7 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 	// Track which Custom inventory slots are in freeform text-input mode (by item id)
 	const [freeformItemIds, setFreeformItemIds] = useState<Set<string>>(new Set());
+	const [editingItemIds, setEditingItemIds] = useState<Set<string>>(new Set());
 
 	// On mount / when inventory changes, initialise freeform set from persisted data:
 	// any Custom item that has a name but no customEquipmentId is freeform.
@@ -121,6 +133,9 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			isEquipped: false
 		};
 		updateInventory([...inventory, newInventoryItem]);
+		if (explicitEditMode) {
+			setEditingItemIds((current) => new Set(current).add(newInventoryItem.id));
+		}
 	};
 
 	const removeInventorySlot = (inventoryIndex: number) => {
@@ -129,12 +144,26 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 		updateInventory(updatedInventory);
 		// Clean up freeform tracking
 		if (removedItem) {
+			setEditingItemIds((current) => {
+				const next = new Set(current);
+				next.delete(removedItem.id);
+				return next;
+			});
 			setFreeformItemIds((prev) => {
 				const next = new Set(prev);
 				next.delete(removedItem.id);
 				return next;
 			});
 		}
+	};
+
+	const toggleItemEditing = (itemId: string) => {
+		setEditingItemIds((current) => {
+			const next = new Set(current);
+			if (next.has(itemId)) next.delete(itemId);
+			else next.add(itemId);
+			return next;
+		});
 	};
 
 	const handleInventoryItemSelect = (
@@ -443,9 +472,11 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 	return (
 		<StyledInventorySection $isMobile={isMobile}>
-			<StyledInventoryTitle $isMobile={isMobile}>
-				{t('characterSheet.inventoryTitle')}
-			</StyledInventoryTitle>
+			{showTitle && (
+				<StyledInventoryTitle $isMobile={isMobile}>
+					{t('characterSheet.inventoryTitle')}
+				</StyledInventoryTitle>
+			)}
 
 			{/* Add Item Button */}
 			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
@@ -453,8 +484,8 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 			</StyledAddItemButton>
 
 			<StyledInventoryContainer $isMobile={isMobile}>
-				<StyledInventoryHeaderRow>
-					<span></span> {/* Empty column for remove button */}
+				<StyledInventoryHeaderRow $explicitEditMode={explicitEditMode}>
+					{!explicitEditMode && <span aria-hidden="true" />}
 					<StyledInventoryHeaderColumn align="center">Eq.</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn>
 						{t('characterSheet.inventoryColumnType')}
@@ -466,11 +497,12 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 						{t('characterSheet.inventoryColumnCount')}
 					</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">
-						<StyledInventoryInfoIcon>i</StyledInventoryInfoIcon>
+						{showInfoHeader ? <StyledInventoryInfoIcon>i</StyledInventoryInfoIcon> : null}
 					</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn align="center">
 						{t('characterSheet.inventoryColumnCost')}
 					</StyledInventoryHeaderColumn>
+					{explicitEditMode && <span aria-hidden="true" />}
 				</StyledInventoryHeaderRow>
 
 				{inventory.length === 0 ? (
@@ -485,48 +517,60 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 
 						// For Custom items, determine if the info icon should be clickable
 						const hasCustomInfo = isCustomType && !!item.itemName;
+						const isEditing = !explicitEditMode || editingItemIds.has(item.id);
 
 						return (
-							<StyledInventoryRow key={item.id}>
-								{/* Remove Button */}
-								<DeleteButton
-									onClick={() => removeInventorySlot(index)}
-									title={t('characterSheet.inventoryRemoveItem')}
-									$isMobile={isMobile}
-								/>
+							<StyledInventoryRow key={item.id} $explicitEditMode={explicitEditMode}>
+								{!explicitEditMode && (
+									<DeleteButton
+										onClick={() => removeInventorySlot(index)}
+										title={t('characterSheet.inventoryRemoveItem')}
+										$isMobile={isMobile}
+									/>
+								)}
 
 								<StyledInventoryCheckbox
 									$isMobile={isMobile}
 									type="checkbox"
 									checked={!!item.isEquipped}
-									disabled={!item.itemName}
+									disabled={!item.itemName || !isEditing}
 									onChange={(e) => handleEquippedChange(index, e.target.checked)}
 									title="Equipped"
 									aria-label={`item-equipped-${index + 1}`}
 								/>
 
 								{/* Item Type */}
-								<StyledInventorySelect
-									$isMobile={isMobile}
-									value={item.itemType}
-									onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
-								>
-									<option value="">{t('characterSheet.inventorySelectType')}</option>
-									<option value="Weapon">Weapon</option>
-									<option value="Armor">Armor</option>
-									<option value="Shield">Shield</option>
-									<option value="Adventuring Supply">Adventuring Supply</option>
-									<option value="Potion">Healing Potion</option>
-									<option value="Custom">
+								{isEditing ? (
+									<StyledInventorySelect
+										$isMobile={isMobile}
+										value={item.itemType}
+										onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
+									>
+										<option value="">{t('characterSheet.inventorySelectType')}</option>
+										<option value="Weapon">Weapon</option>
+										<option value="Armor">Armor</option>
+										<option value="Shield">Shield</option>
+										<option value="Adventuring Supply">Adventuring Supply</option>
+										<option value="Potion">Healing Potion</option>
+										<option value="Custom">
+											{isCustomType
+												? formatCustomEquipmentCategory(item.customEquipmentCategory)
+												: 'Custom'}
+										</option>
+									</StyledInventorySelect>
+								) : (
+									<StyledInventoryValue>
 										{isCustomType
 											? formatCustomEquipmentCategory(item.customEquipmentCategory)
-											: 'Custom'}
-									</option>
-								</StyledInventorySelect>
+											: item.itemType || '—'}
+									</StyledInventoryValue>
+								)}
 
 								{/* Item Name + inline summary stacked in the same grid cell */}
 								<ItemNameCell>
-									{isCustomType ? (
+									{!isEditing ? (
+										<StyledInventoryValue>{item.itemName || '—'}</StyledInventoryValue>
+									) : isCustomType ? (
 										renderCustomNameColumn(item, index)
 									) : (
 										<StyledInventorySelect
@@ -556,13 +600,19 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								</ItemNameCell>
 
 								{/* Count */}
-								<StyledInventoryInput
-									$isMobile={isMobile}
-									type="number"
-									min="1"
-									value={item.count}
-									onChange={(e) => handleInventoryCountChange(index, parseInt(e.target.value) || 1)}
-								/>
+								{isEditing ? (
+									<StyledInventoryInput
+										$isMobile={isMobile}
+										type="number"
+										min="1"
+										value={item.count}
+										onChange={(e) =>
+											handleInventoryCountChange(index, parseInt(e.target.value) || 1)
+										}
+									/>
+								) : (
+									<StyledInventoryValue $centered>{item.count}</StyledInventoryValue>
+								)}
 
 								{/* Info Indicator — accent variant when a custom item has a description */}
 								<div style={{ textAlign: 'center' }}>
@@ -608,6 +658,16 @@ const Inventory: React.FC<InventoryProps> = ({ onItemClick, isMobile = false }) 
 								<StyledInventoryCost>
 									{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
 								</StyledInventoryCost>
+
+								{explicitEditMode && (
+									<RowEditControls
+										isEditing={isEditing}
+										onToggle={() => toggleItemEditing(item.id)}
+										onDelete={() => removeInventorySlot(index)}
+										itemLabel="inventory item"
+										isMobile={isMobile}
+									/>
+								)}
 							</StyledInventoryRow>
 						);
 					})

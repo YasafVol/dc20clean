@@ -58,9 +58,12 @@ export const StyledAttacksContainer = styled.div<MobileStyledProps>`
 	}
 `;
 
-export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
+export const StyledAttacksHeaderRow = styled.div<
+	MobileStyledProps & { $explicitEditMode?: boolean }
+>`
 	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr;
+	grid-template-columns: ${({ $explicitEditMode }) =>
+		$explicitEditMode ? '2fr 1fr 1fr 1fr 0.7fr 0.5fr 0.8fr' : '0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr'};
 	gap: ${theme.spacing[3]};
 	margin-bottom: ${theme.spacing[3]};
 	border-bottom: 1px solid ${theme.colors.border.default};
@@ -68,13 +71,14 @@ export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
 	align-items: center;
 
 	@media (max-width: 768px) {
-		grid-template-columns: 25px 1fr 45px 40px;
+		grid-template-columns: ${({ $explicitEditMode }) =>
+			$explicitEditMode ? '1fr 45px 40px 52px' : '25px 1fr 45px 40px'};
 		gap: 0.2rem;
 		font-size: 0.7rem;
 
-		& > *:nth-child(4),
-		& > *:nth-child(5),
-		& > *:nth-child(7) {
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 3 : 4)}),
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 4 : 5)}),
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 6 : 7)}) {
 			display: none;
 		}
 	}
@@ -91,11 +95,6 @@ export const StyledHeaderColumn = styled.span<{ $align?: string; $isMobile?: boo
 
 	@media (max-width: 768px) {
 		font-size: 0.7rem;
-		&:nth-child(4),
-		&:nth-child(5),
-		&:nth-child(7) {
-			display: none;
-		}
 	}
 `;
 
@@ -106,9 +105,10 @@ export const StyledEmptyState = styled.div<MobileStyledProps>`
 	color: ${theme.colors.text.muted};
 `;
 
-export const StyledAttackRow = styled.div<MobileStyledProps>`
+export const StyledAttackRow = styled.div<MobileStyledProps & { $explicitEditMode?: boolean }>`
 	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr;
+	grid-template-columns: ${({ $explicitEditMode }) =>
+		$explicitEditMode ? '2fr 1fr 1fr 1fr 0.7fr 0.5fr 0.8fr' : '0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr'};
 	gap: ${theme.spacing[3]};
 	margin-bottom: ${theme.spacing[3]};
 	align-items: center;
@@ -121,13 +121,14 @@ export const StyledAttackRow = styled.div<MobileStyledProps>`
 	}
 
 	@media (max-width: 768px) {
-		grid-template-columns: 25px 1fr 45px 40px;
+		grid-template-columns: ${({ $explicitEditMode }) =>
+			$explicitEditMode ? '1fr 45px 40px 52px' : '25px 1fr 45px 40px'};
 		gap: 0.2rem;
 		font-size: 0.7rem;
 
-		& > *:nth-child(4),
-		& > *:nth-child(5),
-		& > *:nth-child(7) {
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 3 : 4)}),
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 4 : 5)}),
+		& > *:nth-child(${({ $explicitEditMode }) => ($explicitEditMode ? 6 : 7)}) {
 			display: none;
 		}
 	}
@@ -177,6 +178,54 @@ export const StyledWeaponSelect = styled.select<MobileStyledProps>`
 	@media (max-width: 768px) {
 		font-size: 0.6rem;
 		padding: 0.1rem;
+	}
+`;
+
+export const StyledWeaponName = styled.div`
+	min-width: 0;
+	overflow: hidden;
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	text-overflow: ellipsis;
+	white-space: nowrap;
+`;
+
+export const StyledAttackIdentity = styled.div`
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledAttackProperties = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledAttackProperty = styled.span`
+	width: fit-content;
+	padding: 1px ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.accent.primary};
+	background: ${theme.colors.bg.tertiary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	line-height: ${theme.typography.lineHeight.tight};
+`;
+
+export const StyledAttackTraitNotes = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.xs};
+	line-height: ${theme.typography.lineHeight.tight};
+
+	strong {
+		color: ${theme.colors.text.secondary};
+		font-weight: ${theme.typography.fontWeight.semibold};
 	}
 `;
 

@@ -23,6 +23,7 @@ interface ActiveConditionsTrackerProps {
 	onToggleCondition: (conditionId: string) => void;
 	onSetConditionStacks?: (conditionId: string, stacks: number) => void;
 	isMobile?: boolean;
+	showTitle?: boolean;
 }
 
 const Container = styled.section<{ $isMobile?: boolean }>`
@@ -266,7 +267,8 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	activeConditions,
 	onToggleCondition,
 	onSetConditionStacks,
-	isMobile = false
+	isMobile = false,
+	showTitle = true
 }) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
@@ -345,7 +347,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	return (
 		<Container $isMobile={isMobile}>
 			<Header>
-				<Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>
+				{showTitle && <Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>}
 				<ActiveCount>
 					{t('characterSheet.conditionsActive', { count: activeConditions.length })}
 				</ActiveCount>

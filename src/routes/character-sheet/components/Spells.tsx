@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Check, Pencil } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
@@ -16,7 +15,7 @@ import {
 } from '../hooks/CharacterSheetProvider';
 import { getSpellPresentation } from '../spellPresentation';
 import { logger } from '../../../lib/utils/logger';
-import DeleteButton from './shared/DeleteButton';
+import RowEditControls from './shared/RowEditControls';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -121,13 +120,15 @@ export interface SpellsProps {
 	readOnly?: boolean; // New prop for read-only display
 	isMobile?: boolean;
 	onSpellCast?: (spell: SpellData) => void;
+	showTitle?: boolean;
 }
 
 const Spells: React.FC<SpellsProps> = ({
 	onSpellClick: _onSpellClick,
 	readOnly = false,
 	isMobile,
-	onSpellCast
+	onSpellCast,
+	showTitle = true
 }) => {
 	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
@@ -339,7 +340,7 @@ const Spells: React.FC<SpellsProps> = ({
 	return (
 		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
-				<StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>
+				{showTitle && <StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>}
 				{!isLocked && (
 					<StyledSpellsControls $isMobile={effectiveIsMobile} data-testid="spells-controls">
 						<Link
@@ -612,23 +613,13 @@ const Spells: React.FC<SpellsProps> = ({
 											</StyledSpellActionButton>
 										)}
 										{!isLocked && (
-											<StyledSpellActionButton
-												onClick={() => toggleSpellEditing(spell.id)}
-												aria-label={isEditing ? 'Finish Editing Spell Slot' : 'Edit Spell Slot'}
-												title={isEditing ? 'Finish editing spell slot' : 'Edit spell slot'}
-												data-testid={`edit-spell-${spell.id}`}
-											>
-												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
-											</StyledSpellActionButton>
-										)}
-										{!isLocked && isEditing && (
-											<DeleteButton
-												onClick={(event) => {
-													event.stopPropagation();
-													removeSpellSlot(originalIndex);
-												}}
-												title="Remove spell slot"
-												$isMobile={effectiveIsMobile}
+											<RowEditControls
+												isEditing={isEditing}
+												onToggle={() => toggleSpellEditing(spell.id)}
+												onDelete={() => removeSpellSlot(originalIndex)}
+												itemLabel="spell slot"
+												isMobile={effectiveIsMobile}
+												toggleTestId={`edit-spell-${spell.id}`}
 											/>
 										)}
 									</StyledSpellActions>

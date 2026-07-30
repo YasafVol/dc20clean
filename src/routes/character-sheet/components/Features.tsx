@@ -17,9 +17,10 @@ import {
 interface FeaturesProps {
 	onFeatureClick: (feature: FeatureData) => void;
 	isMobile?: boolean;
+	showTitle?: boolean;
 }
 
-const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
+const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile, showTitle = true }) => {
 	const { t } = useTranslation();
 	const { state } = useCharacterSheet();
 	const features = useCharacterFeatures(); // Use our enhanced hook!
@@ -40,9 +41,11 @@ const Features: React.FC<FeaturesProps> = ({ onFeatureClick, isMobile }) => {
 
 	return (
 		<StyledFeaturesContainer $isMobile={effectiveIsMobile}>
-			<StyledFeaturesTitle $isMobile={effectiveIsMobile}>
-				{t('characterSheet.featuresTitle')}
-			</StyledFeaturesTitle>
+			{showTitle && (
+				<StyledFeaturesTitle $isMobile={effectiveIsMobile}>
+					{t('characterSheet.featuresTitle')}
+				</StyledFeaturesTitle>
+			)}
 
 			<StyledFeaturesContent $isMobile={effectiveIsMobile}>
 				{/* Ancestry Traits */}

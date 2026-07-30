@@ -136,6 +136,11 @@ function LoadCharacter() {
 		navigate(`/character/${character.id}`);
 	};
 
+	const handleViewAlternativeSheet = (character: SavedCharacter, event: React.MouseEvent) => {
+		event.stopPropagation();
+		navigate(`/character2/${character.id}`);
+	};
+
 	const findCurrentRulesCopy = (character: SavedCharacter, characters = savedCharacters) =>
 		characters.find(
 			(candidate) =>
@@ -649,6 +654,14 @@ function LoadCharacter() {
 										whileTap={{ scale: 0.95 }}
 									>
 										{t('loadCharacter.viewSheet')}
+									</CardButton>
+									<CardButton
+										$variant="secondary"
+										onClick={(e) => handleViewAlternativeSheet(character, e)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{t('loadCharacter.viewAlternativeSheet')}
 									</CardButton>
 									<CardButton
 										onClick={(e) => handleExportPdf(character, e)}

@@ -1,6 +1,10 @@
 # DC20Clean – Traits System
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
+> Owns: Trait definitions, trait IDs, prerequisites, trait choices, trait validation, trait effect declarations, and trait-facing UI behavior.
+> Does not own: Ancestry composition, generic effect semantics, derived-stat formulas, or overall ancestry-stage orchestration.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/ancestries-v0105-report.json`, and `src/lib/rulesdata/ancestries/traits.ts`.
+> Related systems: [Ancestries](./ANCESTRY_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD).
 > Status: Active
 > Last Updated: 2026-07-25
 
@@ -60,6 +64,11 @@ Notes:
 - Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings. See also `docs/systems/EFFECT_SYSTEM.MD`.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
 - For resource maximums, use `hpMax`, `spMax`, and `mpMax` as `target` values. Avoid `mp` (not processed for maximums).
+- Attack-facing ancestry abilities that remain `GRANT_ABILITY` are interpreted by
+  `src/routes/character-sheet/ancestryAttackTraits.ts`. It scopes trait notes and
+  properties to supported attacks and applies Orc Brutal Strikes only to displayed
+  Brutal damage. Conditional traits such as Finishing Blow and Charge remain notes;
+  the sheet does not assume their trigger occurred.
 
 ### Acceptance Criteria (Traits)
 

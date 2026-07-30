@@ -33,7 +33,7 @@ export const StyledDot = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
 	border: 1px solid ${(props) => (props.$isMobile ? 'var(--mobile-border)' : '#414868')};
 	background: ${(props) => {
 		if (props.$filled) {
-			return '#7DCFFF'; /* Tokyo Night blue for all breakpoints */
+			return 'var(--mastery-dot-color, #7DCFFF)';
 		} else {
 			return props.$isMobile ? 'var(--mobile-bg-secondary)' : '#1A1B26';
 		}

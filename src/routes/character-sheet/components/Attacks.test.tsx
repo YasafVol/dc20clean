@@ -16,7 +16,16 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 		updateAttack: vi.fn(),
 		state: {
 			character: {
-				selectedTraitIds: ['beastborn_natural_weapon'],
+				selectedTraitIds: [
+					'beastborn_natural_weapon',
+					'beastborn_extended_natural_weapon',
+					'beastborn_long_limbed',
+					'beastborn_natural_projectile',
+					'beastborn_natural_weapon_style',
+					'beastborn_retractable_natural_weapon',
+					'beastborn_rend',
+					'beastborn_venomous_natural_weapon'
+				],
 				characterState: { ui: { activeConditions: {} } }
 			}
 		}
@@ -34,6 +43,13 @@ describe('Attacks', () => {
 		expect(row).toHaveTextContent('1 B/P/S');
 		expect(row).toHaveTextContent('2 B/P/S');
 		expect(row).toHaveTextContent('3 B/P/S');
+		expect(row).toHaveTextContent('Reach +1 Space');
+		expect(row).toHaveTextContent('Reach');
+		expect(row).toHaveTextContent('Ranged 10 Spaces');
+		expect(row).toHaveTextContent('Concealable');
+		expect(row).toHaveTextContent('Natural Weapon Style');
+		expect(row).toHaveTextContent('Rend');
+		expect(row).toHaveTextContent('Venomous');
 		expect(within(row).queryByRole('combobox')).not.toBeInTheDocument();
 		expect(within(row).queryByTitle('characterSheet.attacksRemoveWeapon')).not.toBeInTheDocument();
 	});

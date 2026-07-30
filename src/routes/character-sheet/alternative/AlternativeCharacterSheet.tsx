@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Snackbar, { type SnackbarVariant } from '../../../components/Snackbar';
 import { useAppAuth } from '../../../components/auth/AuthModeContext';
 import { downloadCharacterPdf } from '../../../lib/pdf/exportPdf';
+import { getDiceModifierForAction } from '../../../lib/services/conditionEffectsAnalyzer';
 import { getDefaultStorage } from '../../../lib/storage';
 import { getRulebookArticle, getRulebookArticlePath } from '../../rulebook/rulebookData';
+import { HealthStatusIndicator } from '../components/DeathExhaustion';
+import DiceRoller, { type DiceRollerRef } from '../components/DiceRoller';
 import { StatCard } from '../components/new/StatCard';
 import {
 	useCharacterCalculatedData,
@@ -31,6 +34,9 @@ import {
 	SheetHeader,
 	SheetPage
 } from './AlternativeCharacterSheet.styles';
+import AlternativeCombatResourceSection from './AlternativeCombatResourceSection';
+import AlternativeMasterySection, { type RollActionType } from './AlternativeMasterySection';
+import AlternativeTabbedContent from './AlternativeTabbedContent';
 
 interface Feedback {
 	message: string;
@@ -54,10 +60,12 @@ export default function AlternativeCharacterSheet() {
 		updateGritPoints,
 		updateRestPoints,
 		updateExhaustion,
+		handleDiceRoll,
 		handleLongRestEvent
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
+	const diceRollerRef = useRef<DiceRollerRef>(null);
 	const [feedback, setFeedback] = useState<Feedback | null>(null);
 
 	if (state.loading) {
@@ -93,6 +101,17 @@ export default function AlternativeCharacterSheet() {
 	const maxRest = calculatedData?.breakdowns?.restPoints?.total ?? character.finalRestPoints ?? 0;
 	const currentGrit = resources?.current.currentGritPoints ?? 0;
 	const maxGrit = calculatedData?.breakdowns?.gritPoints?.total ?? character.finalGritPoints ?? 0;
+	const attackBonus =
+		calculatedData?.stats?.finalAttackSpellCheck ?? character.finalAttackSpellCheck ?? 0;
+	const saveDC = calculatedData?.stats?.finalSaveDC ?? character.finalSaveDC ?? 0;
+	const initiative =
+		calculatedData?.stats?.finalInitiativeBonus ?? character.finalInitiativeBonus ?? 0;
+	const moveSpeed = calculatedData?.stats?.finalMoveSpeed ?? character.finalMoveSpeed ?? 0;
+	const jumpDistance = calculatedData?.stats?.finalJumpDistance ?? character.finalJumpDistance ?? 0;
+	const precisionDefense = calculatedData?.stats?.finalPD ?? character.finalPD ?? 0;
+	const areaDefense = calculatedData?.stats?.finalAD ?? character.finalAD ?? 0;
+	const physicalDamageReduction = calculatedData?.stats?.finalPDR ?? character.finalPDR ?? 0;
+	const resistances = calculatedData?.resistances ?? character.resistances ?? [];
 
 	const classPath = getArticlePath(`classes/${character.classId}`);
 	const ancestry1Path = getArticlePath(
@@ -168,6 +187,16 @@ export default function AlternativeCharacterSheet() {
 		}
 	};
 
+	const handleActionRoll = (label: string, bonus: number, actionType: RollActionType) => {
+		const activeConditions = character.characterState?.activeConditions ?? [];
+		const diceModifier = getDiceModifierForAction(activeConditions, actionType);
+		diceRollerRef.current?.addRollWithModifier(
+			bonus - diceModifier.penalty,
+			label,
+			diceModifier.mode
+		);
+	};
+
 	return (
 		<SheetPage>
 			<SheetContent>
@@ -206,13 +235,6 @@ export default function AlternativeCharacterSheet() {
 							<span>
 								{t('characterSheet.level')} {character.level || 1}
 							</span>
-							{classPath ? (
-								<MetaLink to={classPath}>
-									{character.className || t('characterSheet.adventurer')}
-								</MetaLink>
-							) : (
-								<span>{character.className || t('characterSheet.adventurer')}</span>
-							)}
 							{ancestry1Path ? (
 								<MetaLink to={ancestry1Path}>
 									{character.ancestry1Name || t('characterSheet.unknown')}
@@ -226,6 +248,13 @@ export default function AlternativeCharacterSheet() {
 								) : (
 									<span>{ancestry2Name}</span>
 								))}
+							{classPath ? (
+								<MetaLink to={classPath}>
+									{character.className || t('characterSheet.adventurer')}
+								</MetaLink>
+							) : (
+								<span>{character.className || t('characterSheet.adventurer')}</span>
+							)}
 						</CharacterMeta>
 					</Identity>
 
@@ -268,6 +297,9 @@ export default function AlternativeCharacterSheet() {
 							editable={!readOnly}
 							onChange={updateHP}
 							onTempChange={updateTempHP}
+							afterLabel={<HealthStatusIndicator isMobile={false} />}
+							reserveAfterLabelSpace
+							animateOnMount={false}
 						/>
 					</ResourceCardSlot>
 					{maxMP > 0 && (
@@ -280,6 +312,8 @@ export default function AlternativeCharacterSheet() {
 								size="medium"
 								editable={!readOnly}
 								onChange={updateMP}
+								reserveAfterLabelSpace
+								animateOnMount={false}
 							/>
 						</ResourceCardSlot>
 					)}
@@ -293,6 +327,8 @@ export default function AlternativeCharacterSheet() {
 								size="medium"
 								editable={!readOnly}
 								onChange={updateSP}
+								reserveAfterLabelSpace
+								animateOnMount={false}
 							/>
 						</ResourceCardSlot>
 					)}
@@ -305,6 +341,8 @@ export default function AlternativeCharacterSheet() {
 							size="medium"
 							editable={!readOnly}
 							onChange={updateRestPoints}
+							reserveAfterLabelSpace
+							animateOnMount={false}
 						/>
 					</ResourceCardSlot>
 					<ResourceCardSlot>
@@ -316,11 +354,31 @@ export default function AlternativeCharacterSheet() {
 							size="medium"
 							editable={!readOnly}
 							onChange={updateGritPoints}
+							reserveAfterLabelSpace
+							animateOnMount={false}
 						/>
 					</ResourceCardSlot>
 				</ResourceSection>
+
+				<AlternativeMasterySection onRoll={handleActionRoll} />
+
+				<AlternativeCombatResourceSection
+					attackBonus={attackBonus}
+					saveDC={saveDC}
+					initiative={initiative}
+					moveSpeed={moveSpeed}
+					jumpDistance={jumpDistance}
+					precisionDefense={precisionDefense}
+					areaDefense={areaDefense}
+					physicalDamageReduction={physicalDamageReduction}
+					resistances={resistances}
+					onRoll={handleActionRoll}
+				/>
+
+				<AlternativeTabbedContent />
 			</SheetContent>
 
+			<DiceRoller ref={diceRollerRef} onRoll={handleDiceRoll} />
 			<Snackbar
 				message={feedback?.message ?? ''}
 				isVisible={feedback !== null}

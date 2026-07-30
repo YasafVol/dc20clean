@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Pencil } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
@@ -16,7 +15,7 @@ import {
 } from '../hooks/CharacterSheetProvider';
 import { calculateEnhancementStaminaSpend } from '../maneuverEnhancementSpend';
 import { logger } from '../../../lib/utils/logger';
-import DeleteButton from './shared/DeleteButton';
+import RowEditControls from './shared/RowEditControls';
 import RichDescription from './RichDescription';
 import {
 	StyledManeuversSection,
@@ -54,13 +53,15 @@ export interface ManeuversProps {
 	onManeuverUse?: (maneuver: ManeuverData) => void;
 	readOnly?: boolean;
 	isMobile?: boolean;
+	showTitle?: boolean;
 }
 
 const Maneuvers: React.FC<ManeuversProps> = ({
 	onManeuverClick: _onManeuverClick,
 	onManeuverUse,
 	readOnly = false,
-	isMobile
+	isMobile,
+	showTitle = true
 }) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
@@ -215,7 +216,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	return (
 		<StyledManeuversSection $isMobile={effectiveIsMobile}>
 			<StyledManeuversHeader $isMobile={effectiveIsMobile}>
-				<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
+				{showTitle && (
+					<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
+				)}
 				<StyledManeuversControls $isMobile={effectiveIsMobile}>
 					{!readOnly && (
 						<>
@@ -401,25 +404,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 											</StyledManeuverActionButton>
 										)}
 										{!readOnly && (
-											<StyledManeuverActionButton
-												onClick={() => toggleManeuverEditing(maneuver.id)}
-												aria-label={
-													isEditing ? 'Finish Editing Maneuver Slot' : 'Edit Maneuver Slot'
-												}
-												title={isEditing ? 'Finish editing maneuver slot' : 'Edit maneuver slot'}
-												data-testid={`edit-maneuver-${maneuver.id}`}
-											>
-												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
-											</StyledManeuverActionButton>
-										)}
-										{!readOnly && isEditing && (
-											<DeleteButton
-												onClick={(event) => {
-													event.stopPropagation();
-													removeManeuverSlot(originalIndex);
-												}}
-												title="Remove maneuver slot"
-												$isMobile={effectiveIsMobile}
+											<RowEditControls
+												isEditing={isEditing}
+												onToggle={() => toggleManeuverEditing(maneuver.id)}
+												onDelete={() => removeManeuverSlot(originalIndex)}
+												itemLabel="maneuver slot"
+												isMobile={effectiveIsMobile}
+												toggleTestId={`edit-maneuver-${maneuver.id}`}
 											/>
 										)}
 									</StyledManeuverActions>

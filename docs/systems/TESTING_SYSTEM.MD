@@ -208,6 +208,13 @@ Minimum acceptance cases:
 - Dragonborn Cleric selecting Dark Domain reaches the sheet and displays Darkvision 15.
 - Cleric selecting Knowledge Domain can set Arcana/History/Nature/Occultism/Religion to rank 2 without validation blocking completion.
 
+Status: implemented through the level-3 Cleric canonical agentic recipe. The recipe
+selects Knowledge + Dark, combines Dark with Dragonborn Darkvision, asserts persisted
+domain choices and Darkvision 15 through the calculator oracle, and now asserts
+`Darkvision 15` on the sheet. Focused unit coverage remains authoritative for all five
+Knowledge Trade cap elevations because one character cannot afford five simultaneous
+rank-2 purchases at that level.
+
 ---
 
 ## 7. E2E Standards

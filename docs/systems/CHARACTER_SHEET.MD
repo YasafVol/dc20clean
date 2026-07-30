@@ -2,7 +2,7 @@
 
 > Purpose: End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.
 > Status: Active
-> Last Updated: 2026-07-12
+> Last Updated: 2026-07-13
 
 ## Recent UX additions
 
@@ -125,37 +125,49 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
 
 #### Complex Feature Host TODO
 
-- Add a reusable Character Sheet complex-feature host that is always present as a sheet section and populates module panels from character-owned features/effects, not hardcoded class names.
-- First module: local-only Druid Wild Form builder. It should render when the character has `druid_wild_form` or a collected `GRANT_ABILITY` effect targeting `wild_form`, including access from Druid class progression, multiclass feature pickup, talents, or future equivalent grants.
+- `ComplexFeatureHost` mounts in the Features tab and discovers modules from owned
+  feature IDs or collected effects.
+- The first module is the local-only Druid Wild Form builder. It renders for
+  `druid_wild_form` or a collected `GRANT_ABILITY:wild_form` grant.
 - Wild Form builder scope: reactive page state only; no saved-character schema, no persistence, no migration. Derived values should calculate on render with memoized browser state, and formula details should live in tooltips while the pane shows final values.
 - Wild Form source data: include source templates (Defensive, Grappler, Parkour, Infiltrator), Wild Form Traits, and non-negative Beastborn expanded Beast Traits from `src/lib/rulesdata/ancestries/ancestries.ts` / `traits.ts`. Treat Wild Form's built-in natural weapon as satisfying natural-weapon prerequisites, but do not include Beastborn origin/default traits such as `beastborn_beastkind`.
 
 #### Spell Sheet TODOs
 
-- Add a pure sheet-facing helper that builds calculated spell presentation stats from the saved spell, character calculation output, active effects, and equipped spell focus effects. The UI should consume this helper for spell attack/check bonuses, focus-driven damage/range adjustments, and any "applies in play" notes instead of duplicating rules logic inside `components/Spells.tsx` or `SpellPopup.tsx`.
-- Add a Character Sheet flow for opening the Spellbook to review, select, and replace known spells. Replacement should respect spell-slot restrictions from the calculator and must remain disabled for locked legacy characters.
+- `spellPresentation.ts` builds contextual spell check/attack, damage, range, and
+  in-play focus notes from saved/catalog spell data plus calculator-collected equipped effects.
+- The sheet exposes `Review Spellbook` and keeps replacement inside each row's edit
+  action. Replacement options are filtered through the calculator slot and Global Magic
+  Profile; locked/read-only sheets expose neither mutation control.
 
 #### Maneuver Sheet Notes
 
 - Maneuver rows preserve and render catalog AP/SP cost, range, reaction trigger, and enhancement text. Older saved rows can still resolve details from the current catalog by maneuver name.
 - The standalone `/martial-manual` route provides a Spellbook-like reference surface for all maneuvers and enhancements.
-- TODO: Add a Character Sheet flow for opening full maneuver cards from known maneuver rows, reusing the Martial Manual card presentation where practical.
-- TODO: Add sheet-side in-play enhancement spend validation against Stamina Spend Limit once the sheet models selected enhancements for a performed maneuver.
+- Expanded known maneuver rows link to the canonical Martial Manual card through
+  `/martial-manual?maneuver={id}`. The Manual filters to, expands, and scrolls to that
+  card, keeping one full-card presentation source.
+- Expanded maneuver cards let players declare enhancements before Use. Session-only
+  selection totals SP costs, supports repeatable enhancements, blocks Use above the
+  calculator's Stamina Spend Limit, and clears the declaration after Use.
 
 #### Effects Sheet TODOs
 
-- Add a centralized sheet-facing effect presentation service that takes `EnhancedCalculationResult` plus source-attributed effects and returns categorized rows for:
+- `effectPresentation.ts` takes source-attributed effects and returns categorized rows for:
   - calculator-applied effects already represented in stat/budget breakdowns,
   - collected sheet effects (`movements`, `senses`, `resistances`, `vulnerabilities`, `combatTraining`),
   - manual in-game effects (`GRANT_ABILITY`, `conditionalModifiers`, non-condition `GRANT_ADV_ON_SAVE`),
   - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
-- Wire that service into a Character Sheet “Effects / Rules Notes” surface so every selected trait, feature, talent, and equipped item effect has a visible home even when it is not numerically automated.
-- Add a dedicated Size pane/field on the Character Sheet. `SET_VALUE:size` is currently acceptable as a collected/unapplied effect because the sheet has no dedicated size surface; once the surface exists, consume the resolved size effect there.
+- The Features tab renders those rows in an “Effects & Rules Notes” surface, including a
+  dedicated resolved Size badge for `SET_VALUE:size`.
 - Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
 
 #### Attack Sheet TODOs
 
-- Add a sheet-facing attack presentation helper that can apply active attack-scoped effects to rendered attack rows. First target: Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`, applied only to Unarmed Strike and melee weapon attacks. Current attack rows are persisted string data and do not safely encode the weapon category needed for this calculation.
+- `attackPresentation.ts` applies active attack-scoped effects without rewriting saved
+  attack rows. Barbarian Rage `MODIFY_STAT:martial_melee_damage +1 while_raging`
+  applies to catalog melee weapons and persisted Unarmed Strike rows; ranged and unknown
+  custom rows remain unchanged.
 
 v0.10.5 level 5 Expert Features intentionally keep the old `<class>_level_5_placeholder` IDs. Saved characters that already reference those IDs render the updated Expert Feature names, benefits, and modeled effects without needing a destructive ID rewrite.
 

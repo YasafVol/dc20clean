@@ -2,7 +2,7 @@
 
 > Purpose: Reference for ancestry data, ancestry trait pools, ancestry-point selection, and ancestry creation UI.
 > Status: Active
-> Last Updated: 2026-06-21
+> Last Updated: 2026-07-13
 
 ---
 
@@ -63,22 +63,25 @@ Note: Class features can modify ancestry budgets via effects (e.g., Cleric “An
 
 ---
 
-## Refactor TODO: Split Ancestry and Traits into Subsystems
+## Ancestry and Trait Subsystem Boundary
 
-The current implementation and docs still treat ancestry and traits as one large system. They should be modeled as two related subsystems:
+The implementation and docs model ancestry and traits as two related subsystems:
 
 - **Ancestry subsystem**: owns ancestry records, core/non-core ancestry availability, default and expanded trait pools, ancestry-point budgets, variant trait set references, and the character-creation selection flow.
 - **Trait subsystem**: owns the reusable trait catalog, trait costs, prerequisites, effect definitions, effect confidence/automation classification, and calculator/sheet effect integration.
 
-Target shape:
+Current boundary:
 
 - Keep `docs/systems/ANCESTRY_SYSTEM.MD` focused on ancestry selection and trait-pool composition.
 - Keep `docs/systems/TRAITS_SYSTEM.MD` focused on individual trait data and effects.
 - Move duplicated trait checklist/testing details out of this doc and into `TRAITS_SYSTEM.MD`.
 - Keep the generated v0.10.5 ancestry audit script/report able to validate both layers, but have tests assert ancestry concerns and trait concerns in separate describe blocks or separate files.
-- Consider file-level separation once the docs are clean: ancestry data can stay in `ancestries/ancestries.ts`; trait catalog may remain in `ancestries/traits.ts` for now, but should be treated as the trait subsystem boundary.
+- Ancestry data stays in `ancestries/ancestries.ts`; the trait catalog remains in
+  `ancestries/traits.ts` as the trait subsystem boundary.
+- `traits.contract.test.ts` owns the focused trait-record and structured-reference
+  contract. The broader ancestry audit continues validating cross-layer composition.
 
-Do not make this a behavior refactor until the 0.10.5 data audit is stable; the first pass should be documentation and test-boundary cleanup only.
+This boundary intentionally changes no runtime behavior or storage shape.
 
 ---
 

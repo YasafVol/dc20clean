@@ -2,7 +2,7 @@
 
 > Purpose: Source-audited condition catalog, condition interaction effects, active condition tracking, and sheet-facing automation.
 > Status: Active
-> Last Updated: 2026-06-20
+> Last Updated: 2026-07-13
 
 ## Source Audit
 
@@ -73,5 +73,7 @@ Current automated active-condition effects:
 ## TODO
 
 - Apply or surface all remaining in-play condition mechanics from the source catalog. Not yet fully automated: Bleeding/Burning start-of-turn damage, Charmed target restriction, Doomed HP/healing reduction, Exposed incoming attack advantage, Frightened source movement/check restriction, Paralyzed/Unconscious critical hit and auto-save failure details, Petrified resistance/vulnerability/suspension details, Stunned/Surprised AP max reduction, Taunted target restriction, Terrified forced action logic, and Tethered distance logic.
-- Add a sheet-facing "condition effects summary" surface for active effects that cannot be cleanly applied to roll math.
+- The Conditions tab renders a manual-effects summary for active mechanics that cannot
+  be cleanly applied to roll math. Concrete stack IDs substitute their current value;
+  encounter targets, timing, damage, and forced actions remain player-managed.
 - Keep source metadata out of character-sheet grouping unless it becomes useful as an optional debug/audit view.

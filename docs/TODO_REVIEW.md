@@ -18,19 +18,19 @@
    1. Source: `TESTING_SYSTEM.MD` section 5.2.
    2. Requirements: prove `lastModified`, then `completedAt`, then `createdAt` fallback ordering; prove an import becomes first without reload.
    3. First implementation: `e2e/18-load-character-ordering.e2e.spec.ts`.
-2. **[Ready] Full maneuver-card flow from known sheet rows — 90/100**
+2. **[Complete] Full maneuver-card flow from known sheet rows — 90/100**
    1. Source: `CHARACTER_SHEET.MD` Maneuver Sheet Notes.
    2. Requirements completed: reuse the Martial Manual presentation model; keep Use directly available; disable mutation for locked legacy characters; resolve old saved rows by catalog name.
-3. **[Ready] Attack presentation helper for Rage — 88/100**
+3. **[Complete] Attack presentation helper for Rage — 88/100**
    1. Sources: `CHARACTER_SHEET.MD`, `EFFECT_SYSTEM.MD`, and `CLASS_SYSTEM.MD`.
    2. Requirements completed: classify Unarmed Strike explicitly and catalog weapons through equipment metadata; treat unknown/custom rows as ineligible unless they carry explicit melee metadata; apply active conditional effects for display only; do not rewrite persisted damage strings.
-4. **[Ready] Spell presentation helper — 86/100**
+4. **[Complete] Spell presentation helper — 86/100**
    1. Sources: `CHARACTER_SHEET.MD` and `EQUIPMENT_SYSTEM.MD`.
    2. Requirements completed: pure helper input is saved spell + calculation + active effects + equipped focus effects; output owns check, damage, range, and play-note presentation; locked legacy sheets may render stored values but cannot replace spells.
-5. **[Ready] Active-condition effects summary — 85/100**
+5. **[Complete] Active-condition effects summary — 85/100**
    1. Sources: `CONDITIONS_SYSTEM.MD` and `CHARACTER_SHEET.MD`.
    2. Requirements completed: summarize non-roll mechanics with source condition, timing, and unresolved player action; do not simulate targets, turns, forced movement, or damage application.
-6. **[Ready] Cleric Dark/Knowledge domain E2E — 84/100**
+6. **[Complete] Cleric Dark/Knowledge domain E2E — 84/100**
    1. Source: `TESTING_SYSTEM.MD` section 6.
    2. Requirements are already explicit. Keep rule permutations in unit tests and use E2E only for creation, persistence, and sheet visibility.
 7. **[Complete] Equipment preset search/filter — 82/100**
@@ -42,14 +42,14 @@
 
 ## 3. Medium-confidence work
 
-1. **Complex Feature Host / Wild Form — 78/100**: module boundary is clear; Wild Form source-template and trait-selection UX still needs a compact interaction spec.
-2. **Central Effects / Rules Notes surface — 76/100**: aggregation inputs are defined; categorization, duplication rules, and placement need a UI decision.
-3. **Spellbook replacement flow — 74/100**: slot validation is defined; replacement navigation and confirmation behavior need a UX decision.
-4. **MSL/SSL in-play enhancement workflow — 72/100**: calculator limits exist; performed-action state and declare-before-roll interaction are not modeled.
-5. **Populate `EffectResolution` spell data — 70/100**: schema exists; source mapping and completeness acceptance need an audit report.
-6. **Populate ancestry `TraitRequirements` — 70/100**: schema exists; source mapping and choice-restriction semantics need an audit report.
+1. **[Complete] Complex Feature Host / Wild Form — 78/100**: the Features tab hosts a session-only template/trait builder sourced from eligible Beastborn traits.
+2. **[Complete] Central Effects / Rules Notes surface — 76/100**: the Features tab categorizes applied, collected, rules-only, and unsupported effects and exposes resolved Size.
+3. **[Complete] Spellbook replacement flow — 74/100**: users can open the Spellbook for review and replace a row from calculator-valid options; locked sheets remain read-only.
+4. **[Complete] MSL/SSL in-play enhancement workflow — 72/100**: maneuver enhancements are declared session-side, total SP against SSL, and block Use when over limit.
+5. **[Complete] Populate `EffectResolution` spell data — 70/100**: the source generator emits explicit attack/save metadata and reports coverage without guessing ambiguous prose.
+6. **[Complete] Populate ancestry `TraitRequirements` — 70/100**: legacy all-of prerequisite chains populate the structured contract; explicit any-of/prohibition rules stay authoritative.
 7. **[Complete] Edit saved custom equipment — 68/100**: edits preserve the stable item ID; duplication remains the explicit save-copy path.
-8. **Ancestry/traits subsystem split — 65/100**: desired boundary is documented; migration sequence and measurable payoff are not.
+8. **[Complete] Ancestry/traits subsystem split — 65/100**: docs and focused contract tests now separate trait ownership from ancestry composition without a risky file move.
 9. **Agentic QA next slice — 62/100**: tasks are listed; required gate policy, runtime budget, and CI ownership remain undecided.
 
 ## 4. Low-confidence or deferred work

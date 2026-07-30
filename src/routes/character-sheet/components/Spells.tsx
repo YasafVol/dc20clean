@@ -2,13 +2,19 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Check, Pencil } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { SpellData } from '../../../types';
 import type { Spell } from '../../../lib/rulesdata/schemas/spell.schema';
 import { ALL_SPELLS as allSpells, getSpellById } from '../../../lib/rulesdata/spells-data';
 import { RULES_ALIASES } from '../../../lib/rulesdata/versioning/aliases';
 import { SpellSchool } from '../../../lib/rulesdata/schemas/spell.schema';
 import { formatSpellEnhancementCost } from '../../../lib/rulesdata/spells-data/spellCost';
-import { useCharacterSpells, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterCalculatedData,
+	useCharacterSpells,
+	useCharacterSheet
+} from '../hooks/CharacterSheetProvider';
+import { getSpellPresentation } from '../spellPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import {
@@ -37,6 +43,7 @@ import {
 } from '../styles/Spells';
 import { theme } from '../styles/theme';
 import RichDescription from './RichDescription';
+import { matchesSpellSlot } from '../../../lib/services/spellFiltering';
 
 /** Sentinel dropdown value that switches a spell row into freeform custom mode. */
 const CUSTOM_SPELL_VALUE = '__custom_spell__';
@@ -125,10 +132,12 @@ const Spells: React.FC<SpellsProps> = ({
 	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
+	const calculation = useCharacterCalculatedData();
 
 	if (!state.character) {
 		return <div>{t('characterSheet.spellsLoading')}</div>;
 	}
+	const isLocked = readOnly || !calculation;
 
 	// Mobile detection logic
 	const effectiveIsMobile = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 768);
@@ -331,8 +340,14 @@ const Spells: React.FC<SpellsProps> = ({
 		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
 				<StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>
-				{!readOnly && (
+				{!isLocked && (
 					<StyledSpellsControls $isMobile={effectiveIsMobile} data-testid="spells-controls">
+						<Link
+							to="/spellbook"
+							className="rounded border border-amber-500/50 px-3 py-2 text-sm font-semibold text-amber-300"
+						>
+							Review Spellbook
+						</Link>
 						<StyledFilterLabel $isMobile={effectiveIsMobile}>Filter by School:</StyledFilterLabel>
 						<StyledSchoolFilter
 							$isMobile={effectiveIsMobile}
@@ -414,9 +429,9 @@ const Spells: React.FC<SpellsProps> = ({
 						{schoolFilter !== 'all'
 							? t('characterSheet.spellsNoSpellsFilter', {
 									school: schoolFilter,
-									action: readOnly ? '' : t('characterSheet.spellsClickToAdd')
+									action: isLocked ? '' : t('characterSheet.spellsClickToAdd')
 								})
-							: readOnly
+							: isLocked
 								? t('characterSheet.spellsNoSpellsKnown')
 								: t('characterSheet.spellsNoSpellsSelected')}
 					</StyledEmptyState>
@@ -428,6 +443,22 @@ const Spells: React.FC<SpellsProps> = ({
 						const selectedSpell = resolveCatalogSpell(spell.spellName) ?? null;
 						const isCustom = customSpellIds.has(spell.id);
 						const isEditing = editingSpellIds.has(spell.id);
+						const spellSlot = calculation?.spellsKnownSlots?.[originalIndex];
+						const presentationSpell = selectedSpell ?? {
+							range: spell.range,
+							effects: (spell.effects ?? []).map((effect) => ({
+								title: '',
+								description: effect.description
+							}))
+						};
+						const presentation = getSpellPresentation({
+							spell: presentationSpell,
+							baseAttackSpellCheck:
+								calculation?.stats.finalAttackSpellCheck ??
+								state.character.finalAttackSpellCheck ??
+								0,
+							grantedAbilities: calculation?.grantedAbilities
+						});
 
 						return (
 							<React.Fragment key={spell.id}>
@@ -438,7 +469,7 @@ const Spells: React.FC<SpellsProps> = ({
 									onClick={(event) => handleSpellRowClick(event, spell.id)}
 								>
 									{/* Spell Name */}
-									{readOnly || !isEditing ? (
+									{isLocked || !isEditing ? (
 										<StyledBoldSpellCell $isMobile={effectiveIsMobile} $boldMobile={true}>
 											{spell.spellName || 'Unknown Spell'}
 										</StyledBoldSpellCell>
@@ -468,6 +499,16 @@ const Spells: React.FC<SpellsProps> = ({
 												)}
 											{filteredSpells
 												.filter((spellOption) => {
+													if (
+														spellSlot &&
+														!matchesSpellSlot(
+															spellOption,
+															spellSlot,
+															calculation?.globalMagicProfile
+														)
+													) {
+														return false;
+													}
 													// Don't show spells that are already selected by other spell slots
 													const isAlreadySelected = spells.some(
 														(existingSpell) =>
@@ -489,7 +530,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* School */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly && isEditing ? (
+										{isCustom && !isLocked && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.school}
@@ -503,7 +544,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* Duration */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly && isEditing ? (
+										{isCustom && !isLocked && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.duration}
@@ -517,7 +558,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* AP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly && isEditing ? (
+										{isCustom && !isLocked && isEditing ? (
 											<SpellCellInput
 												type="number"
 												min="0"
@@ -533,7 +574,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* MP Cost */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly && isEditing ? (
+										{isCustom && !isLocked && isEditing ? (
 											<SpellCellInput
 												type="number"
 												min="0"
@@ -549,7 +590,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 									{/* Range */}
 									<StyledSpellCell $isMobile={effectiveIsMobile}>
-										{isCustom && !readOnly && isEditing ? (
+										{isCustom && !isLocked && isEditing ? (
 											<SpellCellInput
 												type="text"
 												value={spell.range}
@@ -557,12 +598,12 @@ const Spells: React.FC<SpellsProps> = ({
 												onChange={(e) => updateSpell(spell.id, 'range', e.target.value)}
 											/>
 										) : (
-											spell.range || ''
+											presentation.range || ''
 										)}
 									</StyledSpellCell>
 
 									<StyledSpellActions>
-										{!readOnly && onSpellCast && (
+										{!isLocked && onSpellCast && (
 											<StyledSpellActionButton
 												onClick={() => onSpellCast(spell)}
 												title="Cast spell"
@@ -570,7 +611,7 @@ const Spells: React.FC<SpellsProps> = ({
 												Cast
 											</StyledSpellActionButton>
 										)}
-										{!readOnly && (
+										{!isLocked && (
 											<StyledSpellActionButton
 												onClick={() => toggleSpellEditing(spell.id)}
 												aria-label={isEditing ? 'Finish Editing Spell Slot' : 'Edit Spell Slot'}
@@ -580,7 +621,7 @@ const Spells: React.FC<SpellsProps> = ({
 												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
 											</StyledSpellActionButton>
 										)}
-										{!readOnly && isEditing && (
+										{!isLocked && isEditing && (
 											<DeleteButton
 												onClick={(event) => {
 													event.stopPropagation();
@@ -602,6 +643,18 @@ const Spells: React.FC<SpellsProps> = ({
 										</StyledSpellDescriptionHeader>
 
 										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
+											{(presentation.usesSpellAttack || presentation.usesSpellCheck) && (
+												<div className="mb-3 rounded border border-amber-500/40 bg-amber-500/10 p-2">
+													<strong>
+														Spell modifier: {presentation.checkBonus >= 0 ? '+' : ''}
+														{presentation.checkBonus}
+													</strong>
+													{presentation.damageBonus > 0 && ` • Damage +${presentation.damageBonus}`}
+													{presentation.notes.map((note) => (
+														<div key={note}>{note}</div>
+													))}
+												</div>
+											)}
 											<strong>Description:</strong>
 											<br />
 											{selectedSpell.effects?.map((effect, effectIndex) => (
@@ -647,7 +700,7 @@ const Spells: React.FC<SpellsProps> = ({
 										</StyledSpellDescriptionHeader>
 										<StyledSpellDescriptionContent $isMobile={effectiveIsMobile}>
 											<strong>{t('characterSheet.spellsDescriptionLabel')}</strong>
-											{readOnly || !isEditing ? (
+											{isLocked || !isEditing ? (
 												<div style={{ whiteSpace: 'pre-wrap', marginTop: '0.5rem' }}>
 													{spell.effects?.[0]?.description || ''}
 												</div>

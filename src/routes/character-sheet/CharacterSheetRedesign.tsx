@@ -49,6 +49,9 @@ import { HeroSection } from './components/new/HeroSection';
 
 // Import condition analyzer
 import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
+import EffectsRulesNotes from './components/EffectsRulesNotes';
+import ActiveConditionSummary from './components/ActiveConditionSummary';
+import ComplexFeatureHost from './components/ComplexFeatureHost';
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -1015,7 +1018,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													isMobile={isMobile}
 												/>
 											)}
-											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+											{activeTab === 'features' && (
+												<>
+													<Features onFeatureClick={openFeaturePopup} />
+													<EffectsRulesNotes />
+													<ComplexFeatureHost />
+												</>
+											)}
 											{activeTab === 'conditions' && (
 												<>
 													<ActiveConditionsTracker
@@ -1024,6 +1033,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														}
 														onToggleCondition={toggleActiveCondition}
 														onSetConditionStacks={setActiveConditionStacks}
+													/>
+													<ActiveConditionSummary
+														activeConditions={
+															state.character?.characterState?.activeConditions || []
+														}
 													/>
 												</>
 											)}
@@ -1082,13 +1096,24 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										isMobile={isMobile}
 									/>
 								)}
-								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+								{activeTab === 'features' && (
+									<>
+										<Features onFeatureClick={openFeaturePopup} />
+										<EffectsRulesNotes />
+										<ComplexFeatureHost />
+									</>
+								)}
 								{activeTab === 'conditions' && (
-									<ActiveConditionsTracker
-										activeConditions={state.character?.characterState?.activeConditions || []}
-										onToggleCondition={toggleActiveCondition}
-										onSetConditionStacks={setActiveConditionStacks}
-									/>
+									<>
+										<ActiveConditionsTracker
+											activeConditions={state.character?.characterState?.activeConditions || []}
+											onToggleCondition={toggleActiveCondition}
+											onSetConditionStacks={setActiveConditionStacks}
+										/>
+										<ActiveConditionSummary
+											activeConditions={state.character?.characterState?.activeConditions || []}
+										/>
+									</>
 								)}
 								{activeTab === 'knowledge' && (
 									<>

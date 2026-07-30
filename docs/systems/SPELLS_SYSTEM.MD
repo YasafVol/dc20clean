@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-13
 
 ---
 
@@ -21,17 +21,16 @@
   - `src/routes/character-creation/*` (spell pickers where applicable)
   - `src/routes/character-sheet/*` (spell list, filters, actions)
 
-### Equipage Integration TODO
+### Equipage Integration
 
-Equipped Spell Focus properties should be reflected in spell viewing wherever possible:
+The sheet's pure `spellPresentation.ts` helper reflects equipped Spell Focus properties
+in spell viewing:
 
 - `Powerful`: show Spell Attack damage as increased by `+1`.
 - `Reach`: flag or adjust spells with Range `1` to show `+1 Space`.
 - `Long-Ranged`: flag or adjust spells with Range greater than `1` to show `+5 Spaces`.
-- `Vicious`: include the equipped focus bonus in spell attack/to-hit display once the
-  sheet exposes a distinct spell attack bonus.
-- `Channeling`: include the equipped focus bonus in spell check display once spell
-  checks are modeled separately from the generic attack/spell check.
+- `Vicious`: adds to the displayed modifier for spells whose rules text calls for a Spell Attack.
+- `Channeling`: adds to the displayed modifier for spells whose rules text calls for a Spell Check.
 
 This belongs with the Equipage effect pipeline: the focus effects should come from
 equipped inventory rows, not from every saved focus in Equipage storage.
@@ -167,6 +166,11 @@ the deterministic audit artifact: it includes counts, school totals, parser exce
 one entry per spell with ID, source, school, tags, cost, range, duration, sustained/legacy cantrip
 flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
 overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
+
+The generator populates structured `EffectResolution` metadata when source prose has
+an explicit Spell Attack versus PD/AD, a target Save, or both. Ambiguous and non-roll
+effects remain unset rather than receiving guessed mechanics; the report records
+deterministic resolution coverage.
 
 ### 3.3 Deterministic Audit Boundary
 

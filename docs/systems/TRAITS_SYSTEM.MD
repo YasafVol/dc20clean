@@ -2,7 +2,7 @@
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-07-13
 
 ---
 
@@ -50,6 +50,7 @@ flowchart LR
 | Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)               |
 |                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface                           |
 | Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present                 |
+|                       | `src/lib/rulesdata/ancestries/traits.contract.test.ts`                                    | Focused trait records and structured requirement references              |
 | Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns                |
 | State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI                   |
 | UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context                       |
@@ -319,6 +320,11 @@ The `prerequisites` field is still supported for simple single-trait requirement
 ```
 
 **Migration Note:** New traits should use `requirements.hasTrait` for "any-of" scenarios instead of `prerequisites`.
+
+At runtime, every remaining legacy `prerequisites` array is populated into
+`requirements.hasAllTraits`. Explicit structured requirements remain authoritative for
+any-of and prohibition semantics. A data test prevents prerequisite chains from escaping
+the structured contract.
 
 ---
 

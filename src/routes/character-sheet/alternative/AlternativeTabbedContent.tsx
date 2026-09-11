@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { FeatureData, InventoryItemData } from '../../../types';
+import type { AttackData, FeatureData, InventoryItemData } from '../../../types';
 import type { InventoryItem, Weapon } from '../../../lib/rulesdata/inventoryItems';
 import ActiveConditionSummary from '../components/ActiveConditionSummary';
 import ActiveConditionsTracker from '../components/ActiveConditionsTracker';
+import AttackPopup from '../components/AttackPopup';
 import Attacks from '../components/Attacks';
 import ComplexFeatureHost from '../components/ComplexFeatureHost';
 import EffectsRulesNotes from '../components/EffectsRulesNotes';
@@ -14,7 +15,6 @@ import InventoryPopup from '../components/InventoryPopup';
 import Maneuvers from '../components/Maneuvers';
 import PlayerNotes from '../components/PlayerNotes';
 import Spells from '../components/Spells';
-import WeaponPopup from '../components/WeaponPopup';
 import { useCharacterConditions, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import {
 	TabBadge,
@@ -41,7 +41,10 @@ export default function AlternativeTabbedContent() {
 	const conditionStatuses = useCharacterConditions();
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
-	const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
+	const [selectedAttack, setSelectedAttack] = useState<{
+		attack: AttackData;
+		weapon: Weapon | null;
+	} | null>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
 		inventoryData: InventoryItemData;
 		item: InventoryItem | null;
@@ -117,9 +120,7 @@ export default function AlternativeTabbedContent() {
 							<Attacks
 								showTitle={false}
 								explicitEditMode
-								onAttackClick={(_attack, weapon) => {
-									if (weapon) setSelectedWeapon(weapon);
-								}}
+								onAttackClick={(attack, weapon) => setSelectedAttack({ attack, weapon })}
 							/>
 						)}
 						{activeTab === 'spells' && (
@@ -171,7 +172,7 @@ export default function AlternativeTabbedContent() {
 				</AlternativeSectionDisclosure>
 			</TabbedContent>
 
-			<WeaponPopup weapon={selectedWeapon} onClose={() => setSelectedWeapon(null)} />
+			<AttackPopup selectedAttack={selectedAttack} onClose={() => setSelectedAttack(null)} />
 			<InventoryPopup
 				selectedInventoryItem={selectedInventoryItem}
 				onClose={() => setSelectedInventoryItem(null)}

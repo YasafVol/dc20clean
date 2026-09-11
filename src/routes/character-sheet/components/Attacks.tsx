@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Info } from 'lucide-react';
 import type { AttackData } from '../../../types';
 import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
 import {
@@ -34,13 +35,15 @@ import {
 	StyledAttackRow,
 	StyledWeaponSelect,
 	StyledWeaponName,
+	StyledWeaponMeta,
 	StyledAttackIdentity,
 	StyledAttackProperties,
 	StyledAttackProperty,
 	StyledAttackTraitNotes,
 	StyledDamageCell,
-	StyledInfoIcon,
-	StyledDamageTypeCell
+	StyledInfoButton,
+	StyledDamageTypeCell,
+	StyledAttackActions
 } from '../styles/Attacks';
 import { theme } from '../styles/theme';
 
@@ -52,12 +55,19 @@ const FilterToggleRow = styled.label`
 	color: ${theme.colors.text.secondary};
 	cursor: pointer;
 	user-select: none;
-	margin-left: ${theme.spacing[3]};
-
 	input {
 		cursor: pointer;
 		accent-color: ${theme.colors.accent.primary};
 	}
+`;
+
+const AttacksToolbar = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: ${theme.spacing[3]};
+	margin-left: auto;
+	flex-wrap: wrap;
 `;
 
 const InlineEmptyHint = styled.div`
@@ -66,6 +76,14 @@ const InlineEmptyHint = styled.div`
 	font-style: italic;
 	padding: ${theme.spacing[2]} 0;
 `;
+
+const formatDamageAmount = (damage: string): string => {
+	const amounts = damage.match(/\d+/g);
+	return amounts?.join(' / ') ?? '-';
+};
+
+const formatDamageType = (damage: string): string =>
+	parseDamage(damage).type.split('/').join(' / ');
 
 export interface AttacksProps {
 	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
@@ -211,14 +229,14 @@ const Attacks: React.FC<AttacksProps> = ({
 	};
 
 	return (
-		<StyledAttacksSection $isMobile={effectiveIsMobile}>
+		<StyledAttacksSection $isMobile={effectiveIsMobile} $embedded={explicitEditMode}>
 			<StyledAttacksHeader $isMobile={effectiveIsMobile}>
 				{showTitle && (
 					<StyledAttacksTitle $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksTitle')}
 					</StyledAttacksTitle>
 				)}
-				<div style={{ display: 'flex', alignItems: 'center' }}>
+				<AttacksToolbar>
 					<FilterToggleRow>
 						<input
 							type="checkbox"
@@ -234,55 +252,32 @@ const Attacks: React.FC<AttacksProps> = ({
 					>
 						+ {t('characterSheet.attacksAddWeapon')}
 					</StyledAddWeaponButton>
-				</div>
+				</AttacksToolbar>
 			</StyledAttacksHeader>
 			{showNoInventoryWeaponsHint && attacks.length > 0 && (
 				<InlineEmptyHint>{t('characterSheet.attacksNoInventoryWeapons')}</InlineEmptyHint>
 			)}
 
 			<StyledAttacksContainer $isMobile={effectiveIsMobile}>
-				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile} $explicitEditMode={explicitEditMode}>
-					{!explicitEditMode && <span aria-hidden="true" />}
+				<StyledAttacksHeaderRow $isMobile={effectiveIsMobile}>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile}>
 						{t('characterSheet.attacksColumnWeapon')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
-						{t('characterSheet.attacksColumnBaseDmg')
-							.split(' ')
-							.map((word, i) => (
-								<React.Fragment key={i}>
-									{word}
-									{i === 0 && <br />}
-								</React.Fragment>
-							))}
+						{t('characterSheet.attacksColumnBaseDmg')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
-						{t('characterSheet.attacksColumnHeavyDmg')
-							.split(' ')
-							.map((word, i) => (
-								<React.Fragment key={i}>
-									{word}
-									{i === 0 && <br />}
-								</React.Fragment>
-							))}
+						{t('characterSheet.attacksColumnHeavyDmg')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
-						{t('characterSheet.attacksColumnBrutalDmg')
-							.split(' ')
-							.map((word, i) => (
-								<React.Fragment key={i}>
-									{word}
-									{i === 0 && <br />}
-								</React.Fragment>
-							))}
+						{t('characterSheet.attacksColumnBrutalDmg')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
 						{t('characterSheet.attacksColumnType')}
 					</StyledHeaderColumn>
 					<StyledHeaderColumn $isMobile={effectiveIsMobile} $align="center">
-						<StyledInfoIcon $isMobile={effectiveIsMobile}>i</StyledInfoIcon>
+						{t('characterSheet.attacksColumnActions')}
 					</StyledHeaderColumn>
-					{explicitEditMode && <span aria-hidden="true" />}
 				</StyledAttacksHeaderRow>
 
 				{displayedAttacks.length === 0 ? (
@@ -290,13 +285,13 @@ const Attacks: React.FC<AttacksProps> = ({
 						{t('characterSheet.attacksNoWeapons')}
 					</StyledEmptyState>
 				) : (
-					displayedAttacks.map((attack, index) => {
+					displayedAttacks.map((attack) => {
 						const isDerivedNaturalWeapon = isNaturalWeaponAttack(attack);
 						const persistedAttackIndex = attacks.findIndex(
 							(persistedAttack) => persistedAttack.id === attack.id
 						);
 						const weapon = attack.weaponName
-							? weapons.find((w) => w.name === attack.weaponName)
+							? (weapons.find((w) => w.name === attack.weaponName) ?? null)
 							: null;
 						const activeConditions = Object.entries(
 							characterData.characterState?.ui?.activeConditions ?? {}
@@ -324,25 +319,20 @@ const Attacks: React.FC<AttacksProps> = ({
 						});
 						const isEditing =
 							!isDerivedNaturalWeapon && (!explicitEditMode || editingAttackIds.has(attack.id));
+						const displayName = isDerivedNaturalWeapon
+							? t('characterSheet.attacksNaturalWeapon')
+							: attack.weaponName || t('characterSheet.attacksSelectWeapon');
+						const damageType = presentation.isSupportedAttack
+							? formatDamageType(weapon?.damage || attack.damage)
+							: '-';
 
 						return (
 							<StyledAttackRow
 								$isMobile={effectiveIsMobile}
-								$explicitEditMode={explicitEditMode}
+								$derived={isDerivedNaturalWeapon}
 								key={attack.id}
 								data-testid={isDerivedNaturalWeapon ? 'natural-weapon-attack-row' : undefined}
 							>
-								{!explicitEditMode &&
-									(isDerivedNaturalWeapon ? (
-										<span aria-hidden="true" />
-									) : (
-										<DeleteButton
-											onClick={() => removeWeaponSlot(persistedAttackIndex)}
-											title={t('characterSheet.attacksRemoveWeapon')}
-											$isMobile={effectiveIsMobile}
-										/>
-									))}
-
 								{/* Weapon Selection */}
 								{isEditing ? (
 									<StyledWeaponSelect
@@ -369,10 +359,13 @@ const Attacks: React.FC<AttacksProps> = ({
 										<StyledWeaponName
 											data-testid={isDerivedNaturalWeapon ? 'natural-weapon-attack' : undefined}
 										>
-											{isDerivedNaturalWeapon
-												? attack.name
-												: attack.weaponName || t('characterSheet.attacksSelectWeapon')}
+											{displayName}
 										</StyledWeaponName>
+										{isDerivedNaturalWeapon && (
+											<StyledWeaponMeta>
+												{t('characterSheet.attacksNaturalWeaponMeta')}
+											</StyledWeaponMeta>
+										)}
 										{traitPresentation.properties.length > 0 && (
 											<StyledAttackProperties aria-label="Attack properties">
 												{traitPresentation.properties.map((property) => (
@@ -395,91 +388,80 @@ const Attacks: React.FC<AttacksProps> = ({
 								{/* Base Damage */}
 								<StyledDamageCell
 									$isMobile={effectiveIsMobile}
-									title={
-										weapon
-											? `Base weapon damage: ${weapon.damage}${getVersatileDamage(weapon) ? ` (${getVersatileDamage(weapon)?.twoHanded} when two-handed)` : ''}`
-											: ''
-									}
+									$tone="hit"
 									data-testid="weapon-damage"
 								>
-									{presentation.isSupportedAttack ? presentation.baseDamage : '-'}
+									{presentation.isSupportedAttack
+										? formatDamageAmount(presentation.baseDamage)
+										: '-'}
 								</StyledDamageCell>
 
 								{/* Heavy Damage */}
 								<StyledDamageCell
 									$isMobile={effectiveIsMobile}
-									color="#d2691e"
-									title={
-										weapon
-											? weapon.properties.includes('Impact')
-												? `Heavy Hit: ${calculateDamage(weapon, 'heavy')} damage (base ${weapon.damage} + 1 heavy + 1 impact) + Target must make Might Save or be knocked Prone and pushed 5 feet`
-												: `Heavy Hit: ${calculateDamage(weapon, 'heavy')} damage (base ${weapon.damage} + 1 heavy)`
-											: ''
-									}
+									$tone="heavy"
+									data-testid="weapon-heavy-damage"
 								>
-									{presentation.isSupportedAttack ? (
-										<>
-											{presentation.heavyDamage}
-											{weapon?.properties.includes('Impact') && (
-												<div style={{ fontSize: '0.6rem' }}>+Prone/Push</div>
-											)}
-										</>
-									) : (
-										'-'
-									)}
+									{presentation.isSupportedAttack
+										? formatDamageAmount(presentation.heavyDamage)
+										: '-'}
 								</StyledDamageCell>
 
 								{/* Brutal Damage */}
 								<StyledDamageCell
 									$isMobile={effectiveIsMobile}
-									color="#dc143c"
-									title={
-										weapon
-											? weapon.properties.includes('Impact')
-												? `Brutal Hit: ${calculateDamage(weapon, 'brutal')} damage (base ${weapon.damage} + 2 brutal + 1 impact)`
-												: `Brutal Hit: ${calculateDamage(weapon, 'brutal')} damage (base ${weapon.damage} + 2 brutal)`
-											: ''
-									}
+									$tone="brutal"
+									data-testid="weapon-brutal-damage"
 								>
-									{presentation.isSupportedAttack ? presentation.brutalDamage : '-'}
+									{presentation.isSupportedAttack
+										? formatDamageAmount(presentation.brutalDamage)
+										: '-'}
 								</StyledDamageCell>
 
 								{/* Damage Type */}
 								<StyledDamageTypeCell
 									$isMobile={effectiveIsMobile}
-									title={weapon ? `${getDamageType(weapon.damage)} damage` : ''}
+									data-testid="weapon-damage-type"
+									aria-label={
+										presentation.isSupportedAttack ? `${presentation.damageType} damage` : undefined
+									}
 								>
-									{presentation.isSupportedAttack ? presentation.damageType : '-'}
+									{damageType}
 								</StyledDamageTypeCell>
 
 								{/* Damage Calculation Info */}
-								<div style={{ textAlign: 'center', fontSize: '1.1rem' }}>
-									{presentation.isSupportedAttack ? (
-										<StyledInfoIcon
+								<StyledAttackActions>
+									{presentation.isSupportedAttack && (!explicitEditMode || !isEditing) && (
+										<StyledInfoButton
+											type="button"
 											$isMobile={effectiveIsMobile}
 											onClick={() => onAttackClick(attack, weapon)}
 											data-testid="info-btn"
-											aria-label={`attack-info-${index + 1}`}
+											aria-label={t('characterSheet.attacksViewDetails', {
+												weapon: displayName
+											})}
 										>
-											i
-										</StyledInfoIcon>
-									) : (
-										'-'
+											<Info size={14} aria-hidden="true" />
+										</StyledInfoButton>
 									)}
-								</div>
-
-								{explicitEditMode &&
-									(isDerivedNaturalWeapon ? (
-										<span aria-hidden="true" />
-									) : (
-										<RowEditControls
-											isEditing={isEditing}
-											onToggle={() => toggleAttackEditing(attack.id)}
-											onDelete={() => removeWeaponSlot(persistedAttackIndex)}
-											itemLabel="weapon"
-											isMobile={effectiveIsMobile}
-										/>
-									))}
+									{explicitEditMode
+										? !isDerivedNaturalWeapon && (
+												<RowEditControls
+													isEditing={isEditing}
+													onToggle={() => toggleAttackEditing(attack.id)}
+													onDelete={() => removeWeaponSlot(persistedAttackIndex)}
+													itemLabel="weapon"
+													isMobile={effectiveIsMobile}
+												/>
+											)
+										: !isDerivedNaturalWeapon && (
+												<DeleteButton
+													onClick={() => removeWeaponSlot(persistedAttackIndex)}
+													title={t('characterSheet.attacksRemoveWeapon')}
+													$isMobile={effectiveIsMobile}
+												/>
+											)}
+								</StyledAttackActions>
 							</StyledAttackRow>
 						);
 					})

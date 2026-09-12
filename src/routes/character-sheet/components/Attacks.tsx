@@ -11,6 +11,7 @@ import {
 	useCharacterSheet
 } from '../hooks/CharacterSheetProvider';
 import { getAttackPresentation } from '../attackPresentation';
+import type { AttackPresentation } from '../attackPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import RowEditControls from './shared/RowEditControls';
@@ -86,7 +87,11 @@ const formatDamageType = (damage: string): string =>
 	parseDamage(damage).type.split('/').join(' / ');
 
 export interface AttacksProps {
-	onAttackClick: (attack: AttackData, weapon: Weapon | null) => void;
+	onAttackClick: (
+		attack: AttackData,
+		weapon: Weapon | null,
+		presentation: AttackPresentation
+	) => void;
 	isMobile?: boolean;
 	showTitle?: boolean;
 	explicitEditMode?: boolean;
@@ -138,8 +143,6 @@ const Attacks: React.FC<AttacksProps> = ({
 			attackBonus: 0,
 			damage: '',
 			damageType: 'slashing',
-			critRange: '20',
-			critDamage: '',
 			brutalDamage: '',
 			heavyHitEffect: ''
 		};
@@ -209,8 +212,6 @@ const Attacks: React.FC<AttacksProps> = ({
 			? `${versatileInfo.oneHanded} (${versatileInfo.twoHanded} two-handed)`
 			: weapon.damage;
 
-		const critRange = '20'; // Default crit range
-		const critDamage = calculateDamage(weapon, 'normal');
 		const brutalDamage = calculateDamage(weapon, 'brutal');
 		const heavyHitEffect = weapon.properties.includes('Impact') ? '+1 damage on Heavy Hit' : '';
 
@@ -221,8 +222,6 @@ const Attacks: React.FC<AttacksProps> = ({
 			attackBonus: 0,
 			damage: damageString,
 			damageType,
-			critRange,
-			critDamage,
 			brutalDamage,
 			heavyHitEffect
 		};
@@ -435,7 +434,7 @@ const Attacks: React.FC<AttacksProps> = ({
 										<StyledInfoButton
 											type="button"
 											$isMobile={effectiveIsMobile}
-											onClick={() => onAttackClick(attack, weapon)}
+										onClick={() => onAttackClick(attack, weapon, presentation)}
 											data-testid="info-btn"
 											aria-label={t('characterSheet.attacksViewDetails', {
 												weapon: displayName

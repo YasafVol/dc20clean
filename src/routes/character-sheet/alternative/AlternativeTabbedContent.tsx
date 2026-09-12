@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AttackData, FeatureData, InventoryItemData } from '../../../types';
 import type { InventoryItem, Weapon } from '../../../lib/rulesdata/inventoryItems';
+import type { AttackPresentation } from '../attackPresentation';
 import ActiveConditionSummary from '../components/ActiveConditionSummary';
 import ActiveConditionsTracker from '../components/ActiveConditionsTracker';
 import AttackPopup from '../components/AttackPopup';
@@ -44,6 +45,7 @@ export default function AlternativeTabbedContent() {
 	const [selectedAttack, setSelectedAttack] = useState<{
 		attack: AttackData;
 		weapon: Weapon | null;
+		presentation: AttackPresentation;
 	} | null>(null);
 	const [selectedInventoryItem, setSelectedInventoryItem] = useState<{
 		inventoryData: InventoryItemData;
@@ -120,7 +122,9 @@ export default function AlternativeTabbedContent() {
 							<Attacks
 								showTitle={false}
 								explicitEditMode
-								onAttackClick={(attack, weapon) => setSelectedAttack({ attack, weapon })}
+								onAttackClick={(attack, weapon, presentation) =>
+									setSelectedAttack({ attack, weapon, presentation })
+								}
 							/>
 						)}
 						{activeTab === 'spells' && (

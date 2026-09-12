@@ -29,8 +29,6 @@ export function getNaturalWeaponAttack(selectedTraitIds: unknown): AttackData | 
 		attackBonus: 0,
 		damage: '1 B/P/S',
 		damageType: 'bludgeoning/piercing/slashing',
-		critRange: '20',
-		critDamage: '1 B/P/S',
 		brutalDamage: '3 B/P/S',
 		heavyHitEffect: ''
 	};

@@ -10,8 +10,6 @@ const attack = (name: string, damage = '1 S'): AttackData => ({
 	attackBonus: 0,
 	damage,
 	damageType: 'slashing',
-	critRange: '20',
-	critDamage: '',
 	brutalDamage: '',
 	heavyHitEffect: ''
 });

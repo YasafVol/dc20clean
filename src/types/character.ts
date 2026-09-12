@@ -255,8 +255,6 @@ export interface AttackData {
 	attackBonus: number;
 	damage: string;
 	damageType: string;
-	critRange: string;
-	critDamage: string;
 	brutalDamage: string;
 	heavyHitEffect: string;
 }

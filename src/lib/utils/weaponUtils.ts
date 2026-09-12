@@ -203,8 +203,6 @@ export function createEmptyAttackData(weaponName?: string): any {
 		attackBonus: 0,
 		damage: '0 B',
 		damageType: 'bludgeoning',
-		critRange: '20',
-		critDamage: '0 B',
 		brutalDamage: '0 B',
 		heavyHitEffect: ''
 	};

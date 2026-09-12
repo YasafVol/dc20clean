@@ -29,6 +29,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 			character: {
 				selectedTraitIds: [
 					'beastborn_natural_weapon',
+					'orc_brutal_strikes',
 					'beastborn_extended_natural_weapon',
 					'beastborn_long_limbed',
 					'beastborn_natural_projectile',
@@ -55,7 +56,7 @@ describe('Attacks', () => {
 		expect(row).toHaveTextContent('Unarmed Strike · Derived');
 		expect(within(row).getByTestId('weapon-damage')).toHaveTextContent('1');
 		expect(within(row).getByTestId('weapon-heavy-damage')).toHaveTextContent('2');
-		expect(within(row).getByTestId('weapon-brutal-damage')).toHaveTextContent('3');
+		expect(within(row).getByTestId('weapon-brutal-damage')).toHaveTextContent('4');
 		expect(within(row).getByTestId('weapon-damage-type')).toHaveTextContent('B / P / S');
 		expect(within(row).getByTestId('weapon-damage-type')).toHaveAccessibleName(
 			'bludgeoning/piercing/slashing damage'
@@ -70,6 +71,14 @@ describe('Attacks', () => {
 		expect(within(row).queryByRole('combobox')).not.toBeInTheDocument();
 		expect(within(row).queryByTitle('characterSheet.attacksRemoveWeapon')).not.toBeInTheDocument();
 		fireEvent.click(within(row).getByRole('button', { name: 'View details for Natural Weapon' }));
-		expect(onAttackClick).toHaveBeenCalledWith(expect.any(Object), null);
+		expect(onAttackClick).toHaveBeenCalledWith(
+			expect.any(Object),
+			null,
+			expect.objectContaining({
+				baseDamage: '1 B/P/S',
+				heavyDamage: '2 B/P/S',
+				brutalDamage: '4 B/P/S'
+			})
+		);
 	});
 });

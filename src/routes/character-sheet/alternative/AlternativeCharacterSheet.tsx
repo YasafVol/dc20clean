@@ -27,6 +27,7 @@ import {
 	MenuTrigger,
 	MetaLink,
 	PageMessage,
+	ResourceCards,
 	ResourceCardSlot,
 	ResourceSection,
 	SheetButton,
@@ -36,6 +37,7 @@ import {
 } from './AlternativeCharacterSheet.styles';
 import AlternativeCombatResourceSection from './AlternativeCombatResourceSection';
 import AlternativeMasterySection, { type RollActionType } from './AlternativeMasterySection';
+import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
 import AlternativeTabbedContent from './AlternativeTabbedContent';
 
 interface Feedback {
@@ -285,79 +287,86 @@ export default function AlternativeCharacterSheet() {
 				</SheetHeader>
 
 				<ResourceSection aria-label="Character resources">
-					<ResourceCardSlot>
-						<StatCard
-							label="HP"
-							current={currentHP}
-							max={maxHP}
-							min={minHP}
-							temp={tempHP}
-							color="health"
-							size="medium"
-							editable={!readOnly}
-							onChange={updateHP}
-							onTempChange={updateTempHP}
-							afterLabel={<HealthStatusIndicator isMobile={false} />}
-							reserveAfterLabelSpace
-							animateOnMount={false}
-						/>
-					</ResourceCardSlot>
-					{maxMP > 0 && (
-						<ResourceCardSlot>
-							<StatCard
-								label="Mana"
-								current={currentMP}
-								max={maxMP}
-								color="mana"
-								size="medium"
-								editable={!readOnly}
-								onChange={updateMP}
-								reserveAfterLabelSpace
-								animateOnMount={false}
-							/>
-						</ResourceCardSlot>
-					)}
-					{maxSP > 0 && (
-						<ResourceCardSlot>
-							<StatCard
-								label="Stamina"
-								current={currentSP}
-								max={maxSP}
-								color="stamina"
-								size="medium"
-								editable={!readOnly}
-								onChange={updateSP}
-								reserveAfterLabelSpace
-								animateOnMount={false}
-							/>
-						</ResourceCardSlot>
-					)}
-					<ResourceCardSlot>
-						<StatCard
-							label="Rest"
-							current={currentRest}
-							max={maxRest}
-							color="grit"
-							size="medium"
-							editable={!readOnly}
-							onChange={updateRestPoints}
-							reserveAfterLabelSpace
-							animateOnMount={false}
-						/>
-					</ResourceCardSlot>
-					<ResourceCardSlot>
-						<StatCard
-							label="Grit"
-							current={currentGrit}
-							max={maxGrit}
-							color="grit"
-							size="medium"
-							editable={!readOnly}
-							onChange={updateGritPoints}
-							reserveAfterLabelSpace
-							animateOnMount={false}
-						/>
-					</ResourceCardSlot>
+					<AlternativeSectionDisclosure
+						id="alternative-resources"
+						title={t('characterSheet.sectionResources')}
+					>
+						<ResourceCards data-testid="alternative-resource-cards">
+							<ResourceCardSlot>
+								<StatCard
+									label="HP"
+									current={currentHP}
+									max={maxHP}
+									min={minHP}
+									temp={tempHP}
+									color="health"
+									size="medium"
+									editable={!readOnly}
+									onChange={updateHP}
+									onTempChange={updateTempHP}
+									afterLabel={<HealthStatusIndicator isMobile={false} />}
+									reserveAfterLabelSpace
+									animateOnMount={false}
+								/>
+							</ResourceCardSlot>
+							{maxMP > 0 && (
+								<ResourceCardSlot>
+									<StatCard
+										label="Mana"
+										current={currentMP}
+										max={maxMP}
+										color="mana"
+										size="medium"
+										editable={!readOnly}
+										onChange={updateMP}
+										reserveAfterLabelSpace
+										animateOnMount={false}
+									/>
+								</ResourceCardSlot>
+							)}
+							{maxSP > 0 && (
+								<ResourceCardSlot>
+									<StatCard
+										label="Stamina"
+										current={currentSP}
+										max={maxSP}
+										color="stamina"
+										size="medium"
+										editable={!readOnly}
+										onChange={updateSP}
+										reserveAfterLabelSpace
+										animateOnMount={false}
+									/>
+								</ResourceCardSlot>
+							)}
+							<ResourceCardSlot>
+								<StatCard
+									label="Rest"
+									current={currentRest}
+									max={maxRest}
+									color="grit"
+									size="medium"
+									editable={!readOnly}
+									onChange={updateRestPoints}
+									reserveAfterLabelSpace
+									animateOnMount={false}
+								/>
+							</ResourceCardSlot>
+							<ResourceCardSlot>
+								<StatCard
+									label="Grit"
+									current={currentGrit}
+									max={maxGrit}
+									color="grit"
+									size="medium"
+									editable={!readOnly}
+									onChange={updateGritPoints}
+									reserveAfterLabelSpace
+									animateOnMount={false}
+								/>
+							</ResourceCardSlot>
+						</ResourceCards>
+					</AlternativeSectionDisclosure>
 				</ResourceSection>
 
 				<AlternativeMasterySection onRoll={handleActionRoll} />

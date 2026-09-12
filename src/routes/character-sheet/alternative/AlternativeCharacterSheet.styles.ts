@@ -206,9 +206,7 @@ export const MenuAction = styled.button`
 `;
 
 export const ResourceSection = styled.section`
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-	gap: ${theme.spacing[3]};
+	display: block;
 	padding: ${theme.spacing[6]};
 	background: ${theme.colors.bg.elevated};
 	border: 1px solid ${theme.colors.border.default};
@@ -216,8 +214,18 @@ export const ResourceSection = styled.section`
 	box-shadow: ${theme.shadows.lg};
 
 	${media.mobile} {
-		grid-template-columns: 1fr;
 		padding: ${theme.spacing[4]};
+	}
+`;
+
+export const ResourceCards = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+	gap: ${theme.spacing[3]};
+	width: 100%;
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
 	}
 `;
 

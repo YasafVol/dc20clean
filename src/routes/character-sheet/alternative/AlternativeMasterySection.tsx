@@ -26,6 +26,7 @@ import {
 	TradeRows
 } from './AlternativeMasterySection.styles';
 import { theme } from '../styles/theme';
+import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
 
 export type RollActionType =
 	| 'attack'
@@ -168,75 +169,81 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 
 	return (
 		<MasterySection aria-label="Attributes, skills, and trades">
-			<MasterySidebar>
-				<PrimeCard>
-					<AttributeHeader>
-						<AttributeName $color={theme.colors.accent.secondary}>
-							{t('characterSheet.attrPrime')}
-						</AttributeName>
-						<AttributeNumbers>{formatSigned(primeValue)}</AttributeNumbers>
-					</AttributeHeader>
-					<MasteryRows>
-						<ActionRow
-							item={awareness}
-							onClick={() => onRoll(awareness.name, awareness.bonus, 'mental-check')}
-						/>
-					</MasteryRows>
-				</PrimeCard>
-				<CombatMasteryCard>
-					<CardLabel>{t('characterSheet.attrCombatMastery')}</CardLabel>
-					<CardValue>{formatSigned(combatMastery)}</CardValue>
-				</CombatMasteryCard>
-			</MasterySidebar>
-
-			{ATTRIBUTE_KEYS.map((attribute) => (
-				<AttributeCard key={attribute} $color={theme.colors.attribute[attribute]}>
-					<AttributeHeader>
-						<AttributeName $color={theme.colors.attribute[attribute]}>
-							{attributeLabels[attribute].toLowerCase()}
-						</AttributeName>
-						<AttributeNumbers>
-							{formatSigned(attributeValues[attribute])}
-							<SaveButton
-								type="button"
-								aria-label={`Roll ${attributeLabels[attribute]} save ${formatSigned(
-									saveValues[attribute]
-								)}`}
-								onClick={() =>
-									onRoll(
-										`${attributeLabels[attribute]} ${t('characterSheet.attrSave')}`,
-										saveValues[attribute],
-										saveActionType(attribute)
-									)
-								}
-							>
-								({formatSigned(saveValues[attribute])} {t('characterSheet.attrSave').toLowerCase()})
-							</SaveButton>
-						</AttributeNumbers>
-					</AttributeHeader>
-
-					<MasteryRows>
-						{skillGroups[attribute].map((skill) => (
+			<AlternativeSectionDisclosure
+				id="alternative-attributes"
+				title={t('characterSheet.sectionAttributes')}
+			>
+				<MasterySidebar>
+					<PrimeCard>
+						<AttributeHeader>
+							<AttributeName $color={theme.colors.accent.secondary}>
+								{t('characterSheet.attrPrime')}
+							</AttributeName>
+							<AttributeNumbers>{formatSigned(primeValue)}</AttributeNumbers>
+						</AttributeHeader>
+						<MasteryRows>
 							<ActionRow
-								key={skill.id}
-								item={skill}
-								onClick={() => onRoll(skill.name, skill.bonus, checkActionType(attribute))}
+								item={awareness}
+								onClick={() => onRoll(awareness.name, awareness.bonus, 'mental-check')}
 							/>
-						))}
-						{tradeGroups[attribute].length > 0 && (
-							<TradeRows>
-								{tradeGroups[attribute].map((trade) => (
-									<ActionRow
-										key={trade.id}
-										item={trade}
-										onClick={() => onRoll(trade.name, trade.bonus, checkActionType(attribute))}
-									/>
-								))}
-							</TradeRows>
-						)}
-					</MasteryRows>
-				</AttributeCard>
-			))}
+						</MasteryRows>
+					</PrimeCard>
+					<CombatMasteryCard>
+						<CardLabel>{t('characterSheet.attrCombatMastery')}</CardLabel>
+						<CardValue>{formatSigned(combatMastery)}</CardValue>
+					</CombatMasteryCard>
+				</MasterySidebar>
+
+				{ATTRIBUTE_KEYS.map((attribute) => (
+					<AttributeCard key={attribute} $color={theme.colors.attribute[attribute]}>
+						<AttributeHeader>
+							<AttributeName $color={theme.colors.attribute[attribute]}>
+								{attributeLabels[attribute].toLowerCase()}
+							</AttributeName>
+							<AttributeNumbers>
+								{formatSigned(attributeValues[attribute])}
+								<SaveButton
+									type="button"
+									aria-label={`Roll ${attributeLabels[attribute]} save ${formatSigned(
+										saveValues[attribute]
+									)}`}
+									onClick={() =>
+										onRoll(
+											`${attributeLabels[attribute]} ${t('characterSheet.attrSave')}`,
+											saveValues[attribute],
+											saveActionType(attribute)
+										)
+									}
+								>
+									({formatSigned(saveValues[attribute])}{' '}
+									{t('characterSheet.attrSave').toLowerCase()})
+								</SaveButton>
+							</AttributeNumbers>
+						</AttributeHeader>
+
+						<MasteryRows>
+							{skillGroups[attribute].map((skill) => (
+								<ActionRow
+									key={skill.id}
+									item={skill}
+									onClick={() => onRoll(skill.name, skill.bonus, checkActionType(attribute))}
+								/>
+							))}
+							{tradeGroups[attribute].length > 0 && (
+								<TradeRows>
+									{tradeGroups[attribute].map((trade) => (
+										<ActionRow
+											key={trade.id}
+											item={trade}
+											onClick={() => onRoll(trade.name, trade.bonus, checkActionType(attribute))}
+										/>
+									))}
+								</TradeRows>
+							)}
+						</MasteryRows>
+					</AttributeCard>
+				))}
+			</AlternativeSectionDisclosure>
 		</MasterySection>
 	);
 }

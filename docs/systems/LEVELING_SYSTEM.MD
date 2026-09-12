@@ -1,10 +1,12 @@
 # DC20Clean – Leveling System
 
-> **Purpose**  
-> This document is the single authoritative reference for the character leveling system. It outlines the data flow, calculation logic, and UI interactions required to create a character at any level from 1 to 10 (DC20 v0.10.5 max level).
->
-> **Status:** ✅ **Complete** - Core leveling functionality implemented with DC20 v0.10.5 progression tables.
-> **Last Updated:** 2026-06-27
+> Purpose: Canonical reference for level progression, path allocations, talents, subclass timing, multiclass choices, and level-dependent creation budgets.
+> Owns: Progression aggregation inputs, leveling choices and budgets, path progression, talent spending, subclass selection timing, and multiclass selection rules.
+> Does not own: Base class feature definitions, generic effect semantics, final stat formulas, or the overall character-creation flow.
+> Authoritative source: The class progression tables in `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/leveling-v0105-review.json`, `src/lib/rulesdata/classes-data/classProgressionResolver.ts`, and `src/lib/rulesdata/progression/`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
+> Status: Active
+> Last Updated: 2026-07-21
 
 ---
 

@@ -5,7 +5,11 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		page,
 		context
 	}) => {
-		await context.addInitScript(() => localStorage.clear());
+		await context.addInitScript(() => {
+			if (sessionStorage.getItem('hunter-e2e-storage-cleared')) return;
+			localStorage.clear();
+			sessionStorage.setItem('hunter-e2e-storage-cleared', 'true');
+		});
 
 		await page.goto('/');
 		await page.getByRole('button', { name: /Create Character/i }).click();
@@ -131,6 +135,8 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		await page.getByLabel(/Player Name/i).fill('playwright');
 		await page.getByTestId('creation-next').click();
 		await page.waitForURL('**/character/**');
+		const characterId = page.url().split('/').pop();
+		expect(characterId).toBeTruthy();
 
 		// Verify saved data in storage as a backstop
 		const saved = await page.evaluate(() => {
@@ -173,14 +179,30 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 
 		const naturalWeaponAttack = page.getByTestId('natural-weapon-attack-row');
 		await expect(naturalWeaponAttack).toBeVisible();
-		await expect(naturalWeaponAttack).toContainText('Natural Weapon (Unarmed Strike)');
-		await expect(naturalWeaponAttack).toContainText('1 B/P/S');
-		await expect(naturalWeaponAttack).toContainText('2 B/P/S');
-		await expect(naturalWeaponAttack).toContainText('3 B/P/S');
+		await expect(naturalWeaponAttack).toContainText('Natural Weapon');
+		await expect(naturalWeaponAttack).toContainText('Unarmed Strike · Derived');
+		await expect(naturalWeaponAttack.getByTestId('weapon-damage')).toHaveText('1');
+		await expect(naturalWeaponAttack.getByTestId('weapon-heavy-damage')).toHaveText('2');
+		await expect(naturalWeaponAttack.getByTestId('weapon-brutal-damage')).toHaveText('3');
+		await expect(naturalWeaponAttack.getByTestId('weapon-damage-type')).toHaveText('B / P / S');
 
 		await page.getByRole('button', { name: /Features/i }).click();
 		await expect(page.getByText('Natural Weapon', { exact: true }).first()).toBeVisible();
 		await expect(page.getByText('Full Flight', { exact: true }).first()).toBeVisible();
 		await expect(page.getByText('Small-Sized', { exact: true }).first()).toBeVisible();
+
+		await page.goto(`/character2/${characterId}`);
+		const alternativeNaturalWeapon = page.getByTestId('natural-weapon-attack-row');
+		await alternativeNaturalWeapon.scrollIntoViewIfNeeded();
+		await expect(alternativeNaturalWeapon).toBeVisible();
+		await expect(alternativeNaturalWeapon).toContainText('Unarmed Strike · Derived');
+		await expect(alternativeNaturalWeapon.getByTestId('weapon-damage-type')).toHaveText(
+			'B / P / S'
+		);
+		await expect(
+			alternativeNaturalWeapon.getByRole('button', {
+				name: /View details for Natural Weapon/i
+			})
+		).toBeVisible();
 	});
 });

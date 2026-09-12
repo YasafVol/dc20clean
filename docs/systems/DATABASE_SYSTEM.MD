@@ -1,8 +1,12 @@
 # DC20Clean – Database & Storage System
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
+> Owns: Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.
+> Does not own: Game-rule interpretation, derived-stat calculation, feature workflows, or presentation behavior.
+> Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
+> Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-09-12
 
 ---
 
@@ -95,6 +99,8 @@ interface CharacterState {
 ```
 
 `activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. `characterState.ui.activeConditions` stores older toggle-style UI condition state for compatibility. `defenseOverrides` stores manual precision/area defense overrides from the redesigned sheet.
+
+Attack objects no longer create or type the obsolete `critRange` and `critDamage` keys. The permissive attack storage boundary continues to accept older saved objects containing those keys; current character-sheet code ignores them, so this retirement does not require an in-place migration or schema-version bump.
 
 ---
 

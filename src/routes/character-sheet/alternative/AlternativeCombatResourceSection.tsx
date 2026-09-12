@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { Resistance } from '../../../lib/services/calculatorModules/abilityCollection';
 import Tooltip from '../components/Tooltip';
 import { theme } from '../styles/theme';
@@ -30,6 +31,7 @@ import {
 	TacticalGrid,
 	TacticalMetric
 } from './AlternativeCombatResourceSection.styles';
+import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
 
 interface AlternativeCombatResourceSectionProps {
 	attackBonus: number;
@@ -144,83 +146,89 @@ export default function AlternativeCombatResourceSection({
 	resistances,
 	onRoll
 }: AlternativeCombatResourceSectionProps) {
+	const { t } = useTranslation();
 	const damageReduction = getDamageReductionState(physicalDamageReduction, resistances);
 
 	return (
 		<CombatResourceSection aria-label="Alternative combat">
-			<ActionPanel>
-				<AttackButton
-					type="button"
-					aria-label={`Roll Attack ${formatSigned(attackBonus)}`}
-					onClick={() => onRoll('Attack', attackBonus, 'attack')}
-				>
-					<ActionCopy>
-						<ActionEyebrow>Primary roll</ActionEyebrow>
-						<ActionLabel>Attack</ActionLabel>
-					</ActionCopy>
-					<ActionValue>{formatSigned(attackBonus)}</ActionValue>
-				</AttackButton>
-				<TacticalGrid>
-					<TacticalMetric>
-						<MetricLabel>Save DC</MetricLabel>
-						<MetricValue>{saveDC}</MetricValue>
-					</TacticalMetric>
-					<TacticalButton
+			<AlternativeSectionDisclosure
+				id="alternative-combat"
+				title={t('characterSheet.sectionCombat')}
+			>
+				<ActionPanel>
+					<AttackButton
 						type="button"
-						aria-label={`Roll Initiative ${formatSigned(initiative)}`}
-						onClick={() => onRoll('Initiative', initiative, 'physical-check')}
+						aria-label={`Roll Attack ${formatSigned(attackBonus)}`}
+						onClick={() => onRoll('Attack', attackBonus, 'attack')}
 					>
-						<MetricLabel>Initiative</MetricLabel>
-						<MetricValue $actionable>{formatSigned(initiative)}</MetricValue>
-					</TacticalButton>
-					<TacticalMetric>
-						<MetricLabel>Move</MetricLabel>
-						<MetricValue>{moveSpeed}</MetricValue>
-					</TacticalMetric>
-					<TacticalMetric>
-						<MetricLabel>Jump</MetricLabel>
-						<MetricValue>{jumpDistance}</MetricValue>
-					</TacticalMetric>
-				</TacticalGrid>
-			</ActionPanel>
+						<ActionCopy>
+							<ActionEyebrow>Primary roll</ActionEyebrow>
+							<ActionLabel>Attack</ActionLabel>
+						</ActionCopy>
+						<ActionValue>{formatSigned(attackBonus)}</ActionValue>
+					</AttackButton>
+					<TacticalGrid>
+						<TacticalMetric>
+							<MetricLabel>Save DC</MetricLabel>
+							<MetricValue>{saveDC}</MetricValue>
+						</TacticalMetric>
+						<TacticalButton
+							type="button"
+							aria-label={`Roll Initiative ${formatSigned(initiative)}`}
+							onClick={() => onRoll('Initiative', initiative, 'physical-check')}
+						>
+							<MetricLabel>Initiative</MetricLabel>
+							<MetricValue $actionable>{formatSigned(initiative)}</MetricValue>
+						</TacticalButton>
+						<TacticalMetric>
+							<MetricLabel>Move</MetricLabel>
+							<MetricValue>{moveSpeed}</MetricValue>
+						</TacticalMetric>
+						<TacticalMetric>
+							<MetricLabel>Jump</MetricLabel>
+							<MetricValue>{jumpDistance}</MetricValue>
+						</TacticalMetric>
+					</TacticalGrid>
+				</ActionPanel>
 
-			<DefensePanel role="group" aria-label="Defense thresholds">
-				<DefenseCards>
-					<DefenseDisplay
-						label="Precision Defense"
-						abbreviation="PD"
-						value={precisionDefense}
-						color={theme.colors.accent.secondary}
-					/>
-					<DefenseDisplay
-						label="Area Defense"
-						abbreviation="AD"
-						value={areaDefense}
-						color={theme.colors.accent.secondary}
-					/>
-				</DefenseCards>
+				<DefensePanel role="group" aria-label="Defense thresholds">
+					<DefenseCards>
+						<DefenseDisplay
+							label="Precision Defense"
+							abbreviation="PD"
+							value={precisionDefense}
+							color={theme.colors.accent.secondary}
+						/>
+						<DefenseDisplay
+							label="Area Defense"
+							abbreviation="AD"
+							value={areaDefense}
+							color={theme.colors.accent.secondary}
+						/>
+					</DefenseCards>
 
-				<ReductionCard>
-					<ReductionTitle>Damage Reduction</ReductionTitle>
-					<ReductionIndicators aria-label="Damage reduction">
-						<ReductionIndicator
-							label="PDR"
-							active={damageReduction.pdr}
-							tooltip={DAMAGE_REDUCTION_TOOLTIPS.pdr}
-						/>
-						<ReductionIndicator
-							label="EDR"
-							active={damageReduction.edr}
-							tooltip={DAMAGE_REDUCTION_TOOLTIPS.edr}
-						/>
-						<ReductionIndicator
-							label="MDR"
-							active={damageReduction.mdr}
-							tooltip={DAMAGE_REDUCTION_TOOLTIPS.mdr}
-						/>
-					</ReductionIndicators>
-				</ReductionCard>
-			</DefensePanel>
+					<ReductionCard>
+						<ReductionTitle>Damage Reduction</ReductionTitle>
+						<ReductionIndicators aria-label="Damage reduction">
+							<ReductionIndicator
+								label="PDR"
+								active={damageReduction.pdr}
+								tooltip={DAMAGE_REDUCTION_TOOLTIPS.pdr}
+							/>
+							<ReductionIndicator
+								label="EDR"
+								active={damageReduction.edr}
+								tooltip={DAMAGE_REDUCTION_TOOLTIPS.edr}
+							/>
+							<ReductionIndicator
+								label="MDR"
+								active={damageReduction.mdr}
+								tooltip={DAMAGE_REDUCTION_TOOLTIPS.mdr}
+							/>
+						</ReductionIndicators>
+					</ReductionCard>
+				</DefensePanel>
+			</AlternativeSectionDisclosure>
 		</CombatResourceSection>
 	);
 }

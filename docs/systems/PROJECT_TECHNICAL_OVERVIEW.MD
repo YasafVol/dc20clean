@@ -1,8 +1,12 @@
 # Project Technical Overview
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
+> Owns: Repository-wide stack, runtime composition, project structure, development commands, CI status, code standards, and PR conventions.
+> Does not own: Detailed subsystem behavior, rules content, feature acceptance criteria, or subsystem-specific data contracts.
+> Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
+> Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-25
 
 ## Tech Stack
 

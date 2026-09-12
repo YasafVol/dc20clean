@@ -1,8 +1,12 @@
 # DC20Clean – Effect System
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
+> Owns: The canonical effect contract, effect targets, stacking semantics, choice resolution rules, and generic effect-processing expectations.
+> Does not own: Feature-specific rules content, user-interface presentation, persistence, or the final derived-stat formulas that consume effects.
+> Authoritative source: `src/lib/rulesdata/schemas/character.schema.ts`, `src/lib/types/effectSystem.ts`, and the calculator effect-collection modules.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Classes](./CLASS_SYSTEM.MD), [Traits](./TRAITS_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-21
 
 ---
 

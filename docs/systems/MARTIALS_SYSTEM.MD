@@ -1,8 +1,12 @@
 # DC20Clean - Martials System (Maneuvers)
 
 > Purpose: Canonical reference for maneuver data, budget calculation, and creation/sheet integration.
+> Owns: Maneuver catalog data, maneuver IDs and formatting, maneuver selection rules, maneuver enhancements, and maneuver-facing creation and sheet behavior.
+> Does not own: Class/path progression grants, generic derived-stat calculation, effect semantics outside maneuvers, or encounter resolution.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/maneuvers-v0105-report.json`, and `src/lib/rulesdata/martials/`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-07-12
+> Last Updated: 2026-07-21
 
 ---
 

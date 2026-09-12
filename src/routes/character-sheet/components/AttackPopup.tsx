@@ -1,8 +1,9 @@
 import React from 'react';
 import type { AttackData } from '../../../types';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
+import { getAttackPresentation, type AttackPresentation } from '../attackPresentation';
+import { isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import {
-	calculateDamage,
 	getVersatileDamage,
 	getWeaponRange,
 	getWeaponFeatures,
@@ -14,19 +15,27 @@ import {
 	StyledFeaturePopupHeader,
 	StyledFeaturePopupTitle,
 	StyledFeaturePopupClose,
-	StyledFeaturePopupDescription
+	StyledFeaturePopupDescription,
+	StyledFeaturePopupSeparatedDetail
 } from '../styles/FeaturePopup';
+
+const formatDamageAmount = (damage: string): string => damage.match(/\d+/g)?.join(' / ') ?? '-';
 
 interface AttackPopupProps {
 	selectedAttack: {
 		attack: AttackData;
 		weapon: Weapon | null;
+		presentation?: AttackPresentation;
 	} | null;
 	onClose: () => void;
 }
 
 const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) => {
 	if (!selectedAttack) return null;
+	const presentation =
+		selectedAttack.presentation ??
+		getAttackPresentation({ attack: selectedAttack.attack, weapon: selectedAttack.weapon });
+	const isDerivedNaturalWeapon = isNaturalWeaponAttack(selectedAttack.attack);
 
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>
@@ -35,7 +44,13 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 					<StyledFeaturePopupTitle>
 						{selectedAttack.weapon?.name || selectedAttack.attack.name || 'Unknown Weapon'}
 					</StyledFeaturePopupTitle>
-					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
+					<StyledFeaturePopupClose
+						type="button"
+						aria-label="Close attack details"
+						onClick={onClose}
+					>
+						×
+					</StyledFeaturePopupClose>
 				</StyledFeaturePopupHeader>
 				<StyledFeaturePopupDescription>
 					{selectedAttack.weapon ? (
@@ -81,11 +96,11 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 							)}
 							<br />
 							<strong>Damage Calculations:</strong>
-							<br />• <strong>Hit:</strong> {calculateDamage(selectedAttack.weapon, 'normal')}
+							<br />• <strong>Hit:</strong> {formatDamageAmount(presentation.baseDamage)}
 							<br />• <strong>Heavy Hit (+5):</strong>{' '}
-							{calculateDamage(selectedAttack.weapon, 'heavy')}
+							{formatDamageAmount(presentation.heavyDamage)}
 							<br />• <strong>Brutal Hit (+10):</strong>{' '}
-							{calculateDamage(selectedAttack.weapon, 'brutal')}
+							{formatDamageAmount(presentation.brutalDamage)}
 							<br />
 							<br />
 							{selectedAttack.weapon.properties.length > 0 && (
@@ -102,32 +117,22 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 						</>
 					) : (
 						<>
-							<strong>Custom Attack</strong>
+							<strong>{isDerivedNaturalWeapon ? 'Derived Attack' : 'Custom Attack'}</strong>
 							<br />
-							<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
-							<br />
-							<strong>Damage:</strong> {selectedAttack.attack.damage}
-							<br />
-							<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
-							<br />
-							{selectedAttack.attack.critRange && (
+							{!isDerivedNaturalWeapon && selectedAttack.attack.attackBonus !== 0 && (
 								<>
-									<strong>Crit Range:</strong> {selectedAttack.attack.critRange}
+									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
 									<br />
 								</>
 							)}
-							{selectedAttack.attack.critDamage && (
-								<>
-									<strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}
-									<br />
-								</>
-							)}
-							{selectedAttack.attack.brutalDamage && (
-								<>
-									<strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}
-									<br />
-								</>
-							)}
+							<strong>Hit:</strong> {formatDamageAmount(presentation.baseDamage)}
+							<br />
+							<strong>Heavy Hit:</strong> {formatDamageAmount(presentation.heavyDamage)}
+							<br />
+							<strong>Brutal Hit:</strong> {formatDamageAmount(presentation.brutalDamage)}
+							<StyledFeaturePopupSeparatedDetail data-testid="attack-damage-type">
+								<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
+							</StyledFeaturePopupSeparatedDetail>
 							{selectedAttack.attack.heavyHitEffect && (
 								<>
 									<strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}

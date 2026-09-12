@@ -1,9 +1,20 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Attacks from './Attacks';
 
 vi.mock('react-i18next', () => ({
-	useTranslation: () => ({ t: (key: string) => key })
+	useTranslation: () => ({
+		t: (key: string, options?: { weapon?: string }) => {
+			const translations: Record<string, string> = {
+				'characterSheet.attacksNaturalWeapon': 'Natural Weapon',
+				'characterSheet.attacksNaturalWeaponMeta': 'Unarmed Strike · Derived'
+			};
+			if (key === 'characterSheet.attacksViewDetails') {
+				return `View details for ${options?.weapon}`;
+			}
+			return translations[key] ?? key;
+		}
+	})
 }));
 
 vi.mock('../hooks/CharacterSheetProvider', () => ({
@@ -18,6 +29,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 			character: {
 				selectedTraitIds: [
 					'beastborn_natural_weapon',
+					'orc_brutal_strikes',
 					'beastborn_extended_natural_weapon',
 					'beastborn_long_limbed',
 					'beastborn_natural_projectile',
@@ -36,13 +48,19 @@ afterEach(cleanup);
 
 describe('Attacks', () => {
 	it('renders Beastborn Natural Weapon as a read-only Unarmed Strike', () => {
-		render(<Attacks onAttackClick={vi.fn()} />);
+		const onAttackClick = vi.fn();
+		render(<Attacks onAttackClick={onAttackClick} />);
 
 		const row = screen.getByTestId('natural-weapon-attack-row');
-		expect(row).toHaveTextContent('Natural Weapon (Unarmed Strike)');
-		expect(row).toHaveTextContent('1 B/P/S');
-		expect(row).toHaveTextContent('2 B/P/S');
-		expect(row).toHaveTextContent('3 B/P/S');
+		expect(row).toHaveTextContent('Natural Weapon');
+		expect(row).toHaveTextContent('Unarmed Strike · Derived');
+		expect(within(row).getByTestId('weapon-damage')).toHaveTextContent('1');
+		expect(within(row).getByTestId('weapon-heavy-damage')).toHaveTextContent('2');
+		expect(within(row).getByTestId('weapon-brutal-damage')).toHaveTextContent('4');
+		expect(within(row).getByTestId('weapon-damage-type')).toHaveTextContent('B / P / S');
+		expect(within(row).getByTestId('weapon-damage-type')).toHaveAccessibleName(
+			'bludgeoning/piercing/slashing damage'
+		);
 		expect(row).toHaveTextContent('Reach +1 Space');
 		expect(row).toHaveTextContent('Reach');
 		expect(row).toHaveTextContent('Ranged 10 Spaces');
@@ -52,5 +70,15 @@ describe('Attacks', () => {
 		expect(row).toHaveTextContent('Venomous');
 		expect(within(row).queryByRole('combobox')).not.toBeInTheDocument();
 		expect(within(row).queryByTitle('characterSheet.attacksRemoveWeapon')).not.toBeInTheDocument();
+		fireEvent.click(within(row).getByRole('button', { name: 'View details for Natural Weapon' }));
+		expect(onAttackClick).toHaveBeenCalledWith(
+			expect.any(Object),
+			null,
+			expect.objectContaining({
+				baseDamage: '1 B/P/S',
+				heavyDamage: '2 B/P/S',
+				brutalDamage: '4 B/P/S'
+			})
+		);
 	});
 });

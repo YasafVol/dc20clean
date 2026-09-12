@@ -1,8 +1,12 @@
 # Rulebook System
 
 > Purpose: Passive in-app reading surface for the DC20 rules Markdown.
+> Owns: Rulebook source ingestion, generated article boundaries, table of contents, search index, routes, lazy loading, and reader presentation.
+> Does not own: Rules interpretation, character data, game calculations, character creation, or mutation of rules content at runtime.
+> Authoritative source: `docs/assets/dc20-0.10.5/marker-ingestion/DC20 RPG 0.10.5 Beta v1.cleaned.md`, `docs/assets/dc20-0.10.5/rulebook-artifact/manifest.json`, and `src/routes/rulebook/`.
+> Related systems: [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD), [Testing](./TESTING_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-07-21
 
 ## 1. Scope
 

@@ -1,8 +1,12 @@
 # DC20Clean – Spells System (v0.10.5)
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
+> Owns: Spell catalog generation, spell IDs and taxonomy, spell eligibility and selection, enhancements, and spell-facing creation, sheet, and reference behavior.
+> Does not own: Class progression slot grants, generic derived-stat calculation, equipment rules outside spell focuses, or rules-upgrade policy.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, and `src/lib/rulesdata/spells-data/`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-13
+> Last Updated: 2026-07-21
 
 ---
 

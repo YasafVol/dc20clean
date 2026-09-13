@@ -465,6 +465,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							max={maxMana}
 							color="mana"
 							size="medium"
+							compactValueLayout
 							showProgressBar
 							editable
 							onChange={onManaChange}
@@ -477,6 +478,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							max={maxStamina}
 							color="stamina"
 							size="medium"
+							compactValueLayout
 							showProgressBar
 							editable
 							onChange={onStaminaChange}
@@ -509,6 +511,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							max={maxRest}
 							color="grit"
 							size="medium"
+							compactValueLayout
 							showProgressBar
 							editable
 							onChange={onRestChange}
@@ -521,6 +524,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							max={maxGrit}
 							color="grit"
 							size="medium"
+							compactValueLayout
 							showProgressBar
 							editable
 							onChange={onGritChange}

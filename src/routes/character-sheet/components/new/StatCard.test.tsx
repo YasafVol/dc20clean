@@ -136,6 +136,17 @@ describe('StatCard HP range', () => {
 		expect(screen.getByText('Mana').nextElementSibling).toBeEmptyDOMElement();
 	});
 
+	it('uses the compact value layout only when requested', () => {
+		const { rerender } = render(
+			<StatCard label="Stamina" current={1} max={1} onChange={vi.fn()} compactValueLayout />
+		);
+
+		expect(document.querySelector('[data-value-layout="compact"]')).toBeInTheDocument();
+
+		rerender(<StatCard label="Stamina" current={1} max={1} onChange={vi.fn()} />);
+		expect(document.querySelector('[data-value-layout="standard"]')).toBeInTheDocument();
+	});
+
 	it('renders inline content immediately after the progress bar', () => {
 		render(
 			<StatCard

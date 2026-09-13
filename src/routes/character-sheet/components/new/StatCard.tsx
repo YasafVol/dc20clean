@@ -23,10 +23,15 @@ interface StatCardProps {
 	reserveAfterLabelSpace?: boolean;
 	afterProgressBar?: React.ReactNode;
 	animateOnMount?: boolean;
+	compactValueLayout?: boolean;
 	className?: string;
 }
 
-const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
+const Container = styled(motion.div)<{
+	$size: StatSize;
+	$color: string;
+	$compactValueLayout: boolean;
+}>`
 	background: ${theme.colors.bg.secondary};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${(props) => {
@@ -34,7 +39,7 @@ const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
 			case 'small':
 				return theme.spacing[3];
 			case 'medium':
-				return theme.spacing[4];
+				return props.$compactValueLayout ? theme.spacing[3] : theme.spacing[4];
 			case 'large':
 				return theme.spacing[6];
 		}
@@ -83,29 +88,41 @@ const AfterLabelSlot = styled.div`
 	}
 `;
 
-const ValueContainer = styled.div`
-	display: flex;
+const ValueContainer = styled.div<{ $compactValueLayout: boolean }>`
+	display: ${({ $compactValueLayout }) => ($compactValueLayout ? 'grid' : 'flex')};
+	grid-template-columns: ${({ $compactValueLayout }) =>
+		$compactValueLayout ? '24px minmax(0, 1fr) 24px' : 'none'};
 	align-items: center;
 	justify-content: center;
-	gap: ${theme.spacing[2]};
+	gap: ${({ $compactValueLayout }) => ($compactValueLayout ? theme.spacing[1] : theme.spacing[2])};
 	min-height: 2.5rem;
 `;
 
-const ValuePair = styled.span`
+const ValuePair = styled.span<{ $compactValueLayout: boolean }>`
 	display: grid;
-	grid-template-columns: minmax(3ch, 1fr) auto minmax(3ch, 1fr);
+	grid-template-columns: ${({ $compactValueLayout }) =>
+		$compactValueLayout
+			? 'minmax(0, 1fr) auto minmax(0, 1fr)'
+			: 'minmax(3ch, 1fr) auto minmax(3ch, 1fr)'};
 	align-items: baseline;
-	column-gap: ${theme.spacing[1]};
+	column-gap: ${({ $compactValueLayout }) => ($compactValueLayout ? '2px' : theme.spacing[1])};
+	min-width: 0;
 `;
 
-const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
+const CurrentValue = styled(motion.span)<{
+	$size: StatSize;
+	$color: string;
+	$compactValueLayout: boolean;
+}>`
 	color: ${theme.colors.text.primary};
 	font-size: ${(props) => {
 		switch (props.$size) {
 			case 'small':
 				return theme.typography.fontSize.xl;
 			case 'medium':
-				return theme.typography.fontSize['2xl'];
+				return props.$compactValueLayout
+					? theme.typography.fontSize.xl
+					: theme.typography.fontSize['2xl'];
 			case 'large':
 				return theme.typography.fontSize['3xl'];
 		}
@@ -114,13 +131,17 @@ const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
 	line-height: ${theme.typography.lineHeight.tight};
 	color: ${(props) => props.$color};
 	display: inline-block;
-	min-width: 3ch;
+	min-width: ${({ $compactValueLayout }) => ($compactValueLayout ? '0' : '3ch')};
 	padding-inline: 0.1ch;
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 `;
 
-const MaxValue = styled.span<{ $size: StatSize; $value?: boolean }>`
+const MaxValue = styled.span<{
+	$size: StatSize;
+	$value?: boolean;
+	$compactValueLayout: boolean;
+}>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
 		if (props.$value) {
@@ -128,7 +149,9 @@ const MaxValue = styled.span<{ $size: StatSize; $value?: boolean }>`
 				case 'small':
 					return theme.typography.fontSize.xl;
 				case 'medium':
-					return theme.typography.fontSize['2xl'];
+					return props.$compactValueLayout
+						? theme.typography.fontSize.xl
+						: theme.typography.fontSize['2xl'];
 				case 'large':
 					return theme.typography.fontSize['3xl'];
 			}
@@ -145,7 +168,7 @@ const MaxValue = styled.span<{ $size: StatSize; $value?: boolean }>`
 	}};
 	font-weight: ${(props) =>
 		props.$value ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
-	min-width: ${(props) => (props.$value ? '3ch' : 'auto')};
+	min-width: ${(props) => (props.$value && !props.$compactValueLayout ? '3ch' : '0')};
 	text-align: ${(props) => (props.$value ? 'left' : 'center')};
 	font-variant-numeric: tabular-nums;
 `;
@@ -258,13 +281,13 @@ const InlineControlLabel = styled.span`
 	white-space: nowrap;
 `;
 
-const ControlButton = styled(motion.button)`
+const ControlButton = styled(motion.button)<{ $compactValueLayout?: boolean }>`
 	background: ${theme.colors.bg.tertiary};
 	color: ${theme.colors.text.primary};
 	border: none;
 	border-radius: ${theme.borderRadius.md};
-	width: 28px;
-	height: 28px;
+	width: ${({ $compactValueLayout }) => ($compactValueLayout ? '24px' : '28px')};
+	height: ${({ $compactValueLayout }) => ($compactValueLayout ? '24px' : '28px')};
 	cursor: pointer;
 	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.bold};
@@ -302,9 +325,11 @@ export const StatCard: React.FC<StatCardProps> = ({
 	reserveAfterLabelSpace = false,
 	afterProgressBar,
 	animateOnMount = true,
+	compactValueLayout = false,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
+	const useCompactValueLayout = compactValueLayout && editable && onChange !== undefined;
 
 	// Temp HP is a separate pool. It does not raise current HP or maximum HP,
 	// and incoming damage consumes it before reducing current HP.
@@ -341,6 +366,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 		<Container
 			$size={size}
 			$color={colorValue}
+			$compactValueLayout={useCompactValueLayout}
 			className={className}
 			initial={animateOnMount ? { opacity: 0, y: 20 } : false}
 			animate={{ opacity: 1, y: 0 }}
@@ -355,9 +381,13 @@ export const StatCard: React.FC<StatCardProps> = ({
 				<AfterLabelSlot>{afterLabel}</AfterLabelSlot>
 			)}
 
-			<ValueContainer>
+			<ValueContainer
+				$compactValueLayout={useCompactValueLayout}
+				data-value-layout={useCompactValueLayout ? 'compact' : 'standard'}
+			>
 				{editable && onChange && (
 					<ControlButton
+						$compactValueLayout={useCompactValueLayout}
 						onClick={handleDecrement}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}
@@ -366,10 +396,11 @@ export const StatCard: React.FC<StatCardProps> = ({
 						−
 					</ControlButton>
 				)}
-				<ValuePair>
+				<ValuePair $compactValueLayout={useCompactValueLayout}>
 					<CurrentValue
 						$size={size}
 						$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
+						$compactValueLayout={useCompactValueLayout}
 						key={current}
 						initial={{ scale: 1.2 }}
 						animate={{ scale: 1 }}
@@ -379,8 +410,10 @@ export const StatCard: React.FC<StatCardProps> = ({
 					</CurrentValue>
 					{max !== undefined && (
 						<>
-							<MaxValue $size={size}>/</MaxValue>
-							<MaxValue $size={size} $value>
+							<MaxValue $size={size} $compactValueLayout={useCompactValueLayout}>
+								/
+							</MaxValue>
+							<MaxValue $size={size} $value $compactValueLayout={useCompactValueLayout}>
 								{max}
 							</MaxValue>
 						</>
@@ -388,6 +421,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 				</ValuePair>
 				{editable && onChange && (
 					<ControlButton
+						$compactValueLayout={useCompactValueLayout}
 						onClick={handleIncrement}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}

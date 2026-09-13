@@ -10,6 +10,7 @@ import {
 	MobileDeleteButton,
 	MobileSelect
 } from '../../styles/CharacterSheetMobile.styles';
+import { sortByName } from '../../catalogSorting';
 
 interface MobileAttacksSectionProps {
 	attacks: any[];
@@ -57,7 +58,7 @@ const MobileAttacksSection: React.FC<MobileAttacksSectionProps> = ({
 									}}
 								>
 									<option value="">Select a weapon...</option>
-									{weapons.map((weapon) => (
+									{sortByName(weapons).map((weapon) => (
 										<option key={weapon.name} value={weapon.name}>
 											{weapon.name} ({weapon.type})
 										</option>

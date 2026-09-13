@@ -16,6 +16,7 @@ import {
 import { calculateEnhancementStaminaSpend } from '../maneuverEnhancementSpend';
 import { logger } from '../../../lib/utils/logger';
 import RowEditControls from './shared/RowEditControls';
+import { sortByName } from '../catalogSorting';
 import RichDescription from './RichDescription';
 import {
 	StyledManeuversSection,
@@ -47,6 +48,7 @@ import {
 } from '../styles/Maneuvers.styles';
 
 const expandedManeuverSessionState = new Map<string, Set<string>>();
+const sortedManeuvers = sortByName(allManeuvers);
 
 export interface ManeuversProps {
 	onManeuverClick: (maneuver: Maneuver) => void;
@@ -99,9 +101,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	// Filter maneuvers based on selected type
 	const filteredManeuvers = useMemo(() => {
 		if (typeFilter === 'all') {
-			return allManeuvers;
+			return sortedManeuvers;
 		}
-		return allManeuvers.filter((maneuver) => maneuver.type === typeFilter);
+		return sortedManeuvers.filter((maneuver) => maneuver.type === typeFilter);
 	}, [typeFilter]);
 
 	// Filter character's maneuvers based on selected type

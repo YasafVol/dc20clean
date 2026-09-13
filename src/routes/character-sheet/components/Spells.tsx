@@ -43,9 +43,11 @@ import {
 import { theme } from '../styles/theme';
 import RichDescription from './RichDescription';
 import { matchesSpellSlot } from '../../../lib/services/spellFiltering';
+import { sortByName } from '../catalogSorting';
 
 /** Sentinel dropdown value that switches a spell row into freeform custom mode. */
 const CUSTOM_SPELL_VALUE = '__custom_spell__';
+const sortedSpells = sortByName(allSpells);
 
 // Keeps expansion choices while the user moves between sheet tabs. Module state
 // intentionally resets on a full page load, so every new page session starts
@@ -184,9 +186,9 @@ const Spells: React.FC<SpellsProps> = ({
 	// Filter spells based on selected school
 	const filteredSpells = useMemo(() => {
 		if (schoolFilter === 'all') {
-			return allSpells;
+			return sortedSpells;
 		}
-		return allSpells.filter((spell) => spell.school === schoolFilter);
+		return sortedSpells.filter((spell) => spell.school === schoolFilter);
 	}, [schoolFilter]);
 
 	// Filter character's spells based on selected school

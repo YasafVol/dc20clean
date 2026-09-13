@@ -7,6 +7,7 @@ import { getAllCustomEquipment } from '../../../lib/rulesdata/equipment/storage/
 import { useCharacterInventory, useCharacterSheet } from '../hooks/CharacterSheetProvider';
 import DeleteButton from './shared/DeleteButton';
 import RowEditControls from './shared/RowEditControls';
+import { sortByName } from '../catalogSorting';
 import {
 	StyledInventorySection,
 	StyledInventoryTitle,
@@ -22,7 +23,8 @@ import {
 	StyledInventoryCost,
 	StyledEmptyInventory,
 	StyledInventoryCheckbox,
-	StyledInventoryValue
+	StyledInventoryValue,
+	StyledInventoryField
 } from '../styles/Inventory';
 import { theme } from '../styles/theme';
 
@@ -95,12 +97,13 @@ const Inventory: React.FC<InventoryProps> = ({
 	explicitEditMode = false
 }) => {
 	const { t } = useTranslation();
-	const { updateInventory } = useCharacterSheet();
+	const { updateInventory, readOnly } = useCharacterSheet();
 	const inventoryData = useCharacterInventory();
 	const inventory = inventoryData.items;
 
 	// Load all saved Equipage items from localStorage
-	const customEquipment = useMemo(() => getAllCustomEquipment(), []);
+	const customEquipment = useMemo(() => sortByName(getAllCustomEquipment()), []);
+	const sortedCatalogItems = useMemo(() => sortByName(allItems), []);
 
 	// Track which Custom inventory slots are in freeform text-input mode (by item id)
 	const [freeformItemIds, setFreeformItemIds] = useState<Set<string>>(new Set());
@@ -387,6 +390,14 @@ const Inventory: React.FC<InventoryProps> = ({
 				if (it.properties?.length) bits.push(it.properties.join(', '));
 				return bits.join(' • ');
 			}
+			case 'Spell Focus': {
+				const bits: string[] = [];
+				if (it.hands) {
+					bits.push(it.hands === 'two-handed' ? 'Two-Handed' : 'One-Handed');
+				}
+				if (it.properties?.length) bits.push(it.properties.join(', '));
+				return bits.join(' • ');
+			}
 			case 'Potion': {
 				const bits: string[] = [];
 				if (it.healing) bits.push(`Heals ${it.healing}`);
@@ -479,13 +490,15 @@ const Inventory: React.FC<InventoryProps> = ({
 			)}
 
 			{/* Add Item Button */}
-			<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
-				+ {t('characterSheet.inventoryAddItem')}
-			</StyledAddItemButton>
+			{!readOnly && (
+				<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
+					+ {t('characterSheet.inventoryAddItem')}
+				</StyledAddItemButton>
+			)}
 
 			<StyledInventoryContainer $isMobile={isMobile}>
-				<StyledInventoryHeaderRow $explicitEditMode={explicitEditMode}>
-					{!explicitEditMode && <span aria-hidden="true" />}
+				<StyledInventoryHeaderRow $explicitEditMode={explicitEditMode} $readOnly={readOnly}>
+					{!explicitEditMode && !readOnly && <span aria-hidden="true" />}
 					<StyledInventoryHeaderColumn align="center">Eq.</StyledInventoryHeaderColumn>
 					<StyledInventoryHeaderColumn>
 						{t('characterSheet.inventoryColumnType')}
@@ -502,7 +515,7 @@ const Inventory: React.FC<InventoryProps> = ({
 					<StyledInventoryHeaderColumn align="center">
 						{t('characterSheet.inventoryColumnCost')}
 					</StyledInventoryHeaderColumn>
-					{explicitEditMode && <span aria-hidden="true" />}
+					{explicitEditMode && !readOnly && <span aria-hidden="true" />}
 				</StyledInventoryHeaderRow>
 
 				{inventory.length === 0 ? (
@@ -517,105 +530,135 @@ const Inventory: React.FC<InventoryProps> = ({
 
 						// For Custom items, determine if the info icon should be clickable
 						const hasCustomInfo = isCustomType && !!item.itemName;
-						const isEditing = !explicitEditMode || editingItemIds.has(item.id);
+						const isEditing = !readOnly && (!explicitEditMode || editingItemIds.has(item.id));
 
 						return (
-							<StyledInventoryRow key={item.id} $explicitEditMode={explicitEditMode}>
-								{!explicitEditMode && (
-									<DeleteButton
-										onClick={() => removeInventorySlot(index)}
-										title={t('characterSheet.inventoryRemoveItem')}
-										$isMobile={isMobile}
-									/>
+							<StyledInventoryRow
+								key={item.id}
+								$explicitEditMode={explicitEditMode}
+								$readOnly={readOnly}
+							>
+								{!readOnly && !explicitEditMode && (
+									<StyledInventoryField $area="actions">
+										<DeleteButton
+											onClick={() => removeInventorySlot(index)}
+											title={t('characterSheet.inventoryRemoveItem')}
+											$isMobile={isMobile}
+										/>
+									</StyledInventoryField>
 								)}
 
-								<StyledInventoryCheckbox
-									$isMobile={isMobile}
-									type="checkbox"
-									checked={!!item.isEquipped}
-									disabled={!item.itemName || !isEditing}
-									onChange={(e) => handleEquippedChange(index, e.target.checked)}
-									title="Equipped"
-									aria-label={`item-equipped-${index + 1}`}
-								/>
+								<StyledInventoryField
+									$area="equipped"
+									data-label={t('characterSheet.inventoryColumnEquipped')}
+								>
+									<StyledInventoryCheckbox
+										$isMobile={isMobile}
+										type="checkbox"
+										checked={!!item.isEquipped}
+										disabled={readOnly || !item.itemName || !isEditing}
+										onChange={(e) => handleEquippedChange(index, e.target.checked)}
+										title={t('characterSheet.inventoryColumnEquipped')}
+										aria-label={`item-equipped-${index + 1}`}
+									/>
+								</StyledInventoryField>
 
 								{/* Item Type */}
-								{isEditing ? (
-									<StyledInventorySelect
-										$isMobile={isMobile}
-										value={item.itemType}
-										onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
-									>
-										<option value="">{t('characterSheet.inventorySelectType')}</option>
-										<option value="Weapon">Weapon</option>
-										<option value="Armor">Armor</option>
-										<option value="Shield">Shield</option>
-										<option value="Adventuring Supply">Adventuring Supply</option>
-										<option value="Potion">Healing Potion</option>
-										<option value="Custom">
-											{isCustomType
-												? formatCustomEquipmentCategory(item.customEquipmentCategory)
-												: 'Custom'}
-										</option>
-									</StyledInventorySelect>
-								) : (
-									<StyledInventoryValue>
-										{isCustomType
-											? formatCustomEquipmentCategory(item.customEquipmentCategory)
-											: item.itemType || '—'}
-									</StyledInventoryValue>
-								)}
-
-								{/* Item Name + inline summary stacked in the same grid cell */}
-								<ItemNameCell>
-									{!isEditing ? (
-										<StyledInventoryValue>{item.itemName || '—'}</StyledInventoryValue>
-									) : isCustomType ? (
-										renderCustomNameColumn(item, index)
-									) : (
+								<StyledInventoryField
+									$area="type"
+									data-label={t('characterSheet.inventoryColumnType')}
+								>
+									{isEditing ? (
 										<StyledInventorySelect
 											$isMobile={isMobile}
-											value={item.itemName}
-											onChange={(e) => handleInventoryItemSelect(index, e.target.value, true)}
-											disabled={!item.itemType}
-											data-testid="item-name"
+											value={item.itemType}
+											onChange={(e) => handleInventoryItemSelect(index, e.target.value, false)}
 										>
-											<option value="">{t('characterSheet.inventorySelectItem')}</option>
-											{item.itemType &&
-												allItems
-													.filter((i) => i.itemType === item.itemType)
-													.map((itemData) => (
-														<option key={itemData.name} value={itemData.name}>
-															{itemData.name}
-														</option>
-													))}
+											<option value="">{t('characterSheet.inventorySelectType')}</option>
+											<option value="Weapon">Weapon</option>
+											<option value="Armor">Armor</option>
+											<option value="Shield">Shield</option>
+											<option value="Adventuring Supply">Adventuring Supply</option>
+											<option value="Spell Focus">Spell Focus</option>
+											<option value="Potion">Healing Potion</option>
+											<option value="Custom">
+												{isCustomType
+													? formatCustomEquipmentCategory(item.customEquipmentCategory)
+													: 'Custom'}
+											</option>
 										</StyledInventorySelect>
+									) : (
+										<StyledInventoryValue>
+											{isCustomType
+												? formatCustomEquipmentCategory(item.customEquipmentCategory)
+												: item.itemType || '—'}
+										</StyledInventoryValue>
 									)}
-									{(() => {
-										const summary = buildInlineSummary(selectedItem ?? null, item);
-										return summary ? (
-											<InlineItemSummary title={summary}>{summary}</InlineItemSummary>
-										) : null;
-									})()}
-								</ItemNameCell>
+								</StyledInventoryField>
+
+								{/* Item Name + inline summary stacked in the same grid cell */}
+								<StyledInventoryField
+									$area="item"
+									data-label={t('characterSheet.inventoryColumnItem')}
+								>
+									<ItemNameCell>
+										{!isEditing ? (
+											<StyledInventoryValue>{item.itemName || '—'}</StyledInventoryValue>
+										) : isCustomType ? (
+											renderCustomNameColumn(item, index)
+										) : (
+											<StyledInventorySelect
+												$isMobile={isMobile}
+												value={item.itemName}
+												onChange={(e) => handleInventoryItemSelect(index, e.target.value, true)}
+												disabled={!item.itemType}
+												data-testid="item-name"
+											>
+												<option value="">{t('characterSheet.inventorySelectItem')}</option>
+												{item.itemType &&
+													sortedCatalogItems
+														.filter((i) => i.itemType === item.itemType)
+														.map((itemData) => (
+															<option key={itemData.name} value={itemData.name}>
+																{itemData.name}
+															</option>
+														))}
+											</StyledInventorySelect>
+										)}
+										{(() => {
+											const summary = buildInlineSummary(selectedItem ?? null, item);
+											return summary ? (
+												<InlineItemSummary title={summary}>{summary}</InlineItemSummary>
+											) : null;
+										})()}
+									</ItemNameCell>
+								</StyledInventoryField>
 
 								{/* Count */}
-								{isEditing ? (
-									<StyledInventoryInput
-										$isMobile={isMobile}
-										type="number"
-										min="1"
-										value={item.count}
-										onChange={(e) =>
-											handleInventoryCountChange(index, parseInt(e.target.value) || 1)
-										}
-									/>
-								) : (
-									<StyledInventoryValue $centered>{item.count}</StyledInventoryValue>
-								)}
+								<StyledInventoryField
+									$area="count"
+									data-label={t('characterSheet.inventoryColumnCount')}
+								>
+									{isEditing ? (
+										<StyledInventoryInput
+											$isMobile={isMobile}
+											type="number"
+											min="1"
+											value={item.count}
+											onChange={(e) =>
+												handleInventoryCountChange(index, parseInt(e.target.value) || 1)
+											}
+										/>
+									) : (
+										<StyledInventoryValue $centered>{item.count}</StyledInventoryValue>
+									)}
+								</StyledInventoryField>
 
 								{/* Info Indicator — accent variant when a custom item has a description */}
-								<div style={{ textAlign: 'center' }}>
+								<StyledInventoryField
+									$area="info"
+									data-label={t('characterSheet.inventoryColumnDetails')}
+								>
 									{selectedItem ? (
 										<StyledInventoryInfoIcon
 											$isMobile={isMobile}
@@ -652,21 +695,28 @@ const Inventory: React.FC<InventoryProps> = ({
 									) : (
 										'-'
 									)}
-								</div>
+								</StyledInventoryField>
 
 								{/* Cost */}
-								<StyledInventoryCost>
-									{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
-								</StyledInventoryCost>
+								<StyledInventoryField
+									$area="cost"
+									data-label={t('characterSheet.inventoryColumnCost')}
+								>
+									<StyledInventoryCost>
+										{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
+									</StyledInventoryCost>
+								</StyledInventoryField>
 
-								{explicitEditMode && (
-									<RowEditControls
-										isEditing={isEditing}
-										onToggle={() => toggleItemEditing(item.id)}
-										onDelete={() => removeInventorySlot(index)}
-										itemLabel="inventory item"
-										isMobile={isMobile}
-									/>
+								{!readOnly && explicitEditMode && (
+									<StyledInventoryField $area="actions">
+										<RowEditControls
+											isEditing={isEditing}
+											onToggle={() => toggleItemEditing(item.id)}
+											onDelete={() => removeInventorySlot(index)}
+											itemLabel="inventory item"
+											isMobile={isMobile}
+										/>
+									</StyledInventoryField>
 								)}
 							</StyledInventoryRow>
 						);

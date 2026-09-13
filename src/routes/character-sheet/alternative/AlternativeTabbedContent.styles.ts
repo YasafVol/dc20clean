@@ -97,6 +97,9 @@ export const TabBadge = styled.span`
 export const TabPanel = styled.div`
 	padding: ${theme.spacing[6]};
 	overflow-x: hidden;
+	min-width: 0;
+	container-name: sheet-tabs;
+	container-type: inline-size;
 
 	${media.mobile} {
 		padding: ${theme.spacing[4]};

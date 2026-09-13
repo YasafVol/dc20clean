@@ -10,6 +10,7 @@ import {
 	MobileDeleteButton,
 	MobileSelect
 } from '../../styles/CharacterSheetMobile.styles';
+import { sortByName } from '../../catalogSorting';
 
 interface MobileSpellsSectionProps {
 	spells: any[];
@@ -64,7 +65,7 @@ const MobileSpellsSection: React.FC<MobileSpellsSectionProps> = ({
 										}}
 									>
 										<option value="">Select a spell...</option>
-										{allSpells.map((ruleSpell) => (
+										{sortByName(allSpells).map((ruleSpell) => (
 											<option
 												key={ruleSpell.name}
 												value={ruleSpell.name}

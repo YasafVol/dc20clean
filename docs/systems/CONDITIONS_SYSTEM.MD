@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/conditions-v0105-report.json`, and `src/lib/rulesdata/conditions/conditions.data.ts`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ## Source Audit
 
@@ -66,6 +66,11 @@ Condition immunities, resistances, and vulnerabilities are modeled through the e
 | Condition interactions   | `Conditions.tsx`                       | Displays immunities, resistances, and vulnerabilities from aggregated effects |
 | Active condition tracker | `ActiveConditionsTracker.tsx`          | Lets users toggle active conditions and set stack values                      |
 | Roll badges/modifiers    | `conditionEffectsAnalyzer.ts`          | Applies selected active condition mechanics to sheet rolls and badges         |
+
+Weapon attack details resolve enhancement riders through this catalog. Condition text
+is nested under the relevant weapon style; Bleeding also links to the structured
+Medicine action rule in `src/lib/rulesdata/coreActions.ts`. This is reference text only
+and does not automate Bleeding damage or recovery.
 
 Current automated active-condition effects:
 

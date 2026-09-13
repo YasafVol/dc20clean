@@ -21,14 +21,14 @@
   - **Col 3**: Combat Stats with compact movement, currency, senses, resistances, vulnerabilities, and combat training.
   - Cards keep an 18rem intrinsic minimum and move between three, two, and one columns according to the width available inside the sheet, without adding viewport breakpoints.
   - Mana/Stamina and Rest/Grit remain two equal inner columns, and the three defense values remain one equal row, at every hero width that renders the desktop/tablet sheet.
-- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current and maximum values use equal-sized, equal-width tabular numeral slots around a centered separator, so different digit counts and negative HP do not unbalance the control. The alternative sheet stretches every resource card to the tallest card in its row and reserves an equal-height status row in every card, keeping all progress bars aligned. The calculated Health Status chip sits close beneath the HP label with separation from the value. The redundant “Main” label is removed. In the Health card, Temp HP is an unframed standalone control below the HP progress bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
+- **Resource controls**: Editable HP, Mana, Stamina, Rest, Grit, and Temp HP values place decrement/increment controls directly around the value (`− current / max +`); current and maximum values use equal-sized, equal-width tabular numeral slots around a centered separator, so different digit counts and negative HP do not unbalance the control. The primary sheet's paired Mana/Stamina and Rest/Grit cards use smaller controls, type, and spacing so the separator remains legible in their narrow columns; the alternative sheet retains the standard layout. The alternative sheet stretches every resource card to the tallest card in its row and reserves an equal-height status row in every card, keeping all progress bars aligned. The calculated Health Status chip sits close beneath the HP label with separation from the value. The redundant “Main” label is removed. In the Health card, Temp HP is an unframed standalone control below the HP progress bar; changing it never changes current or maximum HP. The bar reserves 25% of its width for negative HP and 75% for normal HP, with a subtle zero marker between them; negative HP fills and animates leftward from zero in alert red. Current HP and Temp HP render as separate resource-coloured and yellow segments. Damage consumes Temp HP first, then HP. HP can decrease to the calculated negative Death Threshold.
 - **Resource row layout**: The disclosure header sits outside a nested `auto-fit` card grid, so only visible resource cards determine the column count and divide the full row equally.
 - **HP formula tooltip**: HP hover keeps the shared tabular calculation tooltip, but dynamically splits calculator base HP into class progression (`Level · Class`) and Might rows, followed by every source-attributed HP modifier such as ancestry traits, class features, talents, and equipped items. A second table shows the displayed negative Death Threshold as Prime Attribute + Combat Mastery + source-attributed modifiers.
 - **Hero card hierarchy**: The hero strip omits redundant Health, Resources, Recovery, and Combat Stats headings. Conditional reset actions remain available without reserving header space when no override exists.
 - **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
-- **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10.
+- **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10. On the alternative sheet, hovering the PD or AD abbreviation shows the canonical formula, its live component values, active source-attributed bonuses, and any displayed override.
 - **Attribute headers**: Might, Agility, Charisma, and INT use a compact `Attribute ±score (±save save)` reading order; duplicate abbreviation boxes are removed while score tooltips and clickable save rolls remain intact.
-- **Prime hierarchy**: Prime occupies the first column beside the four Attributes, uses their exact header structure and spacing, and owns Awareness. Compact Combat Mastery sits directly beneath Prime. Both cards use purple top-border accents, with Combat Mastery using a 30%-lighter treatment. Awareness and every Attribute skill list share the same top baseline.
+- **Prime hierarchy**: Prime occupies the first column beside the four Attributes, uses their exact header structure and spacing, and owns Awareness. Compact Combat Mastery sits directly beneath Prime and labels Mana Spend Limit immediately under its title. Its single-ring info control opens the MSL rule, level calculation, example, and Sorcerer Meta Magic exception. Both cards use purple top-border accents, with Combat Mastery using a 30%-lighter treatment. Awareness and every Attribute skill list share the same top baseline.
 - **CompactUtility component** (`components/new/CompactUtility.tsx`): compact replacement for the old Utility tab:
   1. Move | Jump as two mini stat cards in one row.
   2. GP | SP | CP inline editable pills.
@@ -36,13 +36,15 @@
 - **Utility tab removed from navigation**: movement and currency are integrated into the hero strip.
 
 - **Header actions**: Added `Long Rest` (full reset of HP/MP/SP/Rest Points + clears temp HP and Exhaustion via reducer methods) and `Rulebook` (opens `RulebookPanel`, a slide-in side panel embedding the DC20 core rulebook PDF in the browser's native viewer for built-in search).
-- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. The 48 named standard weapons are expanded from the equipment system's 45 authoritative preset stat blocks, preventing a second sheet-specific rules table. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
-- **Attack table hierarchy**: Header and rows share one grid and identical horizontal padding. Rows present numeric Hit, Heavy, and Brutal values, show physical damage type once as `B`, `P`, `S`, or a slash-separated combination, and consolidate details plus editing into a fixed Actions column. Derived Beastborn Natural Weapon rows use `Natural Weapon` with `Unarmed Strike · Derived` secondary text and a subdued read-only surface. The catalog checkbox is grouped with Add Weapon and labelled `Include catalog weapons`. The alternative sheet removes the redundant inner Attacks border, while all layouts use row separators and keyboard-accessible detail buttons.
+- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. Inventory and catalog weapon choices are sorted alphabetically. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
+- **Attack table hierarchy**: Header and rows share one grid and identical horizontal padding. Rows present numeric Hit, Heavy, and Brutal values, show physical damage type once as `B`, `P`, `S`, or a slash-separated combination, and consolidate details plus editing into a fixed Actions column. The detail control occupies the final action slot so it stays aligned across rows. Derived Beastborn Natural Weapon rows use `Natural Weapon` with `Unarmed Strike · Derived` secondary text and a subdued read-only surface. The catalog checkbox is grouped with Add Weapon and labelled `Include catalog weapons`. The alternative sheet removes the redundant inner Attacks border, while all layouts use row separators and keyboard-accessible detail buttons.
 - **Attack rows are damage-focused**: the sheet-wide Attack/Spell check is calculated in the hero combat stats and exported from `finalAttackSpellCheck`; weapon rows do not calculate or display a separate weapon attack bonus.
 - **Attack detail terminology**: Attack details use the same computed Hit, Heavy Hit, and Brutal Hit presentation as the table, including applicable ancestry and active-condition modifiers. Tier rows show numeric damage only and separate the damage type into its own spaced detail row. Derived Natural Weapon details omit the irrelevant stored attack bonus. Legacy `critRange` and `critDamage` values are ignored and are no longer created or represented by the runtime `AttackData` model.
+- **Attack detail rules**: Standard weapon popups show a compact weapon summary and damage-tier table, followed by default-open Properties & Features and Weapon Style disclosures. Disclosure badges occupy one fixed column so property counts and enhancement costs align. Full condition and recovery rules remain nested and collapsed by default. The sheet's 48 named standard weapons are expanded from the equipment system's 45 authoritative preset stat blocks, so selection, damage, properties, styles, and popup explanations share one rules source. Property text resolves from the equipment property catalog, style/enhancement text resolves from the style catalog, condition text resolves from the condition catalog, and Bleeding recovery resolves from the structured Medicine action rule.
 - **Popup close placement**: Shared character-sheet popup close controls are anchored to the popup frame's top-right corner rather than participating in title layout; headers reserve space so long titles cannot overlap the control.
-- **Inventory**: Each row shows a compact inline summary (e.g. `1B • Versatile • Reach`, `PD +11 • AD +10`) below the item name. Custom items with a description get a gold accent variant of the info icon so annotated items are visible at a glance.
+- **Inventory**: Each row shows a compact inline summary (e.g. `1B • Versatile • Reach`, `PD +11 • AD +10`) below the item name. Item selectors are sorted alphabetically and include the canonical preset Spell Focus catalog. Equipped preset focuses contribute their modeled properties. Custom items with a description get a gold accent variant of the info icon so annotated items are visible at a glance. Inside narrow tab containers, the desktop table becomes labelled two-column item cards instead of overflowing horizontally.
 - **Notes**: Replaced the single textarea with a multi-note list (per-note title + body, delete with confirm, "+ New Note" button). Backwards-compatible: legacy single-string notes are auto-wrapped on first load; storage uses a `__NOTES_V2__` JSON marker prefix inside the existing `notes.playerNotes` string so no reducer/schema changes were required.
+- **Catalog picker ordering**: Weapon, spell, maneuver, and inventory-item name pickers are sorted alphabetically in desktop and mobile sheet layouts. Placeholder and custom-entry choices retain their fixed positions.
 - **Spells**: Added a "✏️ Custom Spell..." dropdown option that flips a spell row into freeform editable mode (name + school + duration + AP/MP + range + description). Detection is automatic on reload — any spell name not in the catalog renders as custom.
 - **Spell row interaction**: Clicking a spell row expands or collapses its description. Cast remains directly available; changing or removing a slot requires opening its trailing pencil action.
 - **Spell expansion session state**: A fresh sheet page load starts with spell descriptions collapsed. Expansion choices persist while switching between sheet tabs, then reset on the next full page load.
@@ -54,6 +56,7 @@
 - **Class identity link**: When the saved class ID matches a generated Rulebook article, the `Level + Class` header metadata links directly to `/rulebook/classes/{classId}`; unmatched legacy IDs remain plain text instead of linking to a missing article.
 - **Feature progression display**: The Features tab renders all eligible core class features through the character's level, plus separate Subclass Features, Path Progression, and Talents sections. Talents include both ordinary `selectedTalents` and multiclass Talent selections; path entries resolve from `pathPointAllocations`. Missing selections are not inferred.
 - **Feature row interaction**: Every Features-tab row is a full-width keyboard-accessible button that opens its detail popup; separate info icons are not rendered.
+- **Feature category disclosure**: Each non-empty Features category starts expanded and has an independent accessible disclosure control. Category content stays mounted while hidden, and the alternative sheet preserves disclosure choices across tab switches.
 - **Compatibility-preserving sheet fallbacks**: `CompactUtility` now falls back to stored `SavedCharacter.finalMoveSpeed`, `SavedCharacter.finalJumpDistance`, and persisted inventory currency when compatibility fences suppress fresh calculator output. The spells table resolves legacy spell display-name aliases through the canonical spell catalog before deciding a row is custom, so renamed legacy spells still render with catalog details.
 - **Condition keyword tooltips**: New shared `RichDescription` component scans description text for condition names (handles stacking suffix e.g. `Slowed 2`, `Burning 3`) and renders matched tokens as accent-coloured, hover/tap-activated tooltip targets. Wired into `FeaturePopup`, `SpellPopup`, inline spell descriptions in `Spells.tsx`, `Maneuvers.tsx`, `InventoryPopup` info rows, and `EnhancedFeatures` ability descriptions. Mobile uses tap-to-toggle; desktop uses hover with click-outside dismiss. Catalog source: `src/lib/rulesdata/conditions/conditions.data.ts`.
 - **Active condition mechanics**: `ActiveConditionsTracker` stores non-stacking conditions by base ID and stack-using conditions as concrete IDs like `slowed-2`. `conditionEffectsAnalyzer` normalizes those IDs for badges and rolls, applies Disoriented only to mental saves, Weakened only to physical saves, Restrained as immobilized, and Exhaustion as a flat numeric penalty on checks/saves.
@@ -331,26 +334,26 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 ## 8. Read-Only Mode (Campaign Viewing)
 
-Campaign members can view a shared character sheet in read-only mode. The same `CharacterSheetProvider` is used; a single `campaignId` prop switches the provider into this mode.
+Campaign members can view a shared character in read-only mode through either the Primary or Alternative presentation. The presentation does not own the campaign connection: both render the same authorized record under one `CharacterSheetProvider`.
 
 ### 8.1 Trigger
 
-`CharacterSheetProvider` accepts `campaignId?: string`. When the prop is set, `readOnly = true` for the entire provider instance:
+`CharacterSheetProvider` accepts `campaignId?: string` and `campaignCharacterDocId?: string`. `campaignId` enables read-only mode; the optional record ID selects the exact campaign roster record.
+
+`CampaignCharacterView` owns the presentation switch. The default is Primary; `?sheet=alternative` selects Alternative while preserving the campaign and exact character-record parameters.
 
 ```typescript
-export function CharacterSheetProvider({ children, characterId, campaignId }) {
-	const readOnly = !!campaignId;
-}
+<CharacterSheetProvider campaignId={campaignId} characterId={characterId} campaignCharacterDocId={characterDocId} />
 ```
 
 ### 8.2 Load path
 
-When `campaignId` is present, the character is fetched via `characters.getByIdForMember` (a Convex query with a three-layer auth + membership + sharing guard) rather than local storage:
+When `campaignId` is present, the character is fetched via the guarded `characters.getByIdForMember` query rather than local storage. Current roster links pass both the app ID and Convex record ID; the backend requires them to identify the same connected record.
 
 ```typescript
 const campaignCharacter = useQuery(
 	api.characters.getByIdForMember,
-	campaignId ? { campaignId, characterId } : 'skip'
+	campaignId ? { campaignId, characterId, characterDocId } : 'skip'
 );
 ```
 
@@ -364,9 +367,11 @@ const campaignCharacter = useQuery(
 
 `useCharacterSheetReducer` receives `readOnly`. All state-mutating callbacks (HP changes, condition toggles, inventory edits, etc.) guard with `if (readOnly) return`, so the sheet renders the live data without allowing writes.
 
-### 8.5 Read-only banner
+The Attacks, Inventory, Spells, Maneuvers, Conditions, and Notes panels suppress mutation controls in read-only mode. Inventory detail popups render custom fields as values instead of inputs; filtering, detail expansion, and presentation navigation remain available.
 
-`CharacterSheetRedesign.tsx` renders a banner at the top of the sheet when `readOnly` is truthy:
+### 8.5 Presentation controls and banners
+
+`CampaignCharacterView.tsx` renders common navigation, a Primary/Alternative switch, and a read-only label. `CharacterSheetRedesign.tsx` also renders its existing banner when `readOnly` is truthy:
 
 ```
 Read-only — viewing <characterName>'s sheet
@@ -378,7 +383,7 @@ Read-only — viewing <characterName>'s sheet
 | ------------------------------------------------------------- | ---------------------------------------------- |
 | `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx` | `readOnly` flag, load path, save guards        |
 | `src/routes/character-sheet/CharacterSheetRedesign.tsx`       | Read-only banner                               |
-| `src/routes/campaigns/CampaignCharacterView.tsx`              | Route that passes `campaignId` to the provider |
+| `src/routes/campaigns/CampaignCharacterView.tsx`              | Shared read-only route and presentation switch |
 | `convex/characters.ts` (`getByIdForMember`)                   | Three-layer guarded query                      |
 
 See `docs/systems/CAMPAIGN_SYSTEM.MD` for the full campaign architecture.

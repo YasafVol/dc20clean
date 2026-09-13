@@ -6,20 +6,22 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-07-25
+> Last Updated: 2026-09-13
 
 ---
 
 ## 1. Test Layers
 
-| Layer                    | Tooling                   | Location                                            | Purpose                                                                               |
-| ------------------------ | ------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Source audits            | Node scripts              | `scripts/*/dc20-0105-*.mjs`, `scripts/classes/*.ts` | Compare runtime rules data to the v0.10.5 source artifact and generated reports       |
-| Rules data tests         | Vitest                    | `src/lib/rulesdata/**/*.test.ts`, `*.spec.ts`       | Validate schemas, IDs, source drift, generated catalogs, and feature references       |
-| Calculator tests         | Vitest                    | `src/lib/services/**/*.test.ts`, `*.spec.ts`        | Validate exact mechanical outcomes from selected effects and character inputs         |
-| UI logic/component tests | Vitest + Testing Library  | `src/routes/**/*.test.tsx`, `*.logic.test.ts`       | Validate local UI state, reducers, step gating, and component rendering               |
-| E2E tests                | Playwright                | `e2e/*.e2e.spec.ts`                                 | Validate representative user journeys, persistence, import/export, and sheet surfaces |
-| Agentic browser QA       | Playwright + repo scripts | `e2e/agentic/*`, `scripts/e2e/*`                    | Run declarative character recipes, collect artifacts, and compare results to oracles  |
+| Layer                    | Tooling                   | Location                                            | Purpose                                                                                  |
+| ------------------------ | ------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Source audits            | Node scripts              | `scripts/*/dc20-0105-*.mjs`, `scripts/classes/*.ts` | Compare runtime rules data to the v0.10.5 source artifact and generated reports          |
+| Rules data tests         | Vitest                    | `src/lib/rulesdata/**/*.test.ts`, `*.spec.ts`       | Validate schemas, IDs, source drift, generated catalogs, and feature references          |
+| Calculator tests         | Vitest                    | `src/lib/services/**/*.test.ts`, `*.spec.ts`        | Validate exact mechanical outcomes from selected effects and character inputs            |
+| UI logic/component tests | Vitest + Testing Library  | `src/routes/**/*.test.tsx`, `*.logic.test.ts`       | Validate local UI state, reducers, step gating, and component rendering                  |
+| Convex domain tests      | Vitest + `convex-test`    | `convex/**/*.test.ts`                               | Validate authenticated backend lifecycles against isolated in-memory Convex state        |
+| Acceptance features      | Gherkin                   | `e2e/features/*.feature`                            | Define readable cross-surface lifecycle contracts mapped to executable lower-layer tests |
+| E2E tests                | Playwright                | `e2e/*.e2e.spec.ts`                                 | Validate representative user journeys, persistence, import/export, and sheet surfaces    |
+| Agentic browser QA       | Playwright + repo scripts | `e2e/agentic/*`, `scripts/e2e/*`                    | Run declarative character recipes, collect artifacts, and compare results to oracles     |
 
 Use the lowest layer that can prove the behavior. Do not move combinatorial rules math into E2E when a deterministic calculator test can prove it faster and with better failure messages.
 
@@ -31,6 +33,7 @@ Primary gates:
 
 ```bash
 npm run test:unit -- --project server --run <focused files>
+npm run test:unit -- --project convex --run <focused Convex files>
 npm run test:e2e -- --project=desktop <focused e2e spec>
 git diff --check
 ```
@@ -58,9 +61,7 @@ npm run test:unit -- --run
 npm run test:e2e
 ```
 
-Vitest uses separate `client` (browser) and `server` (Node) projects. Tests that
-stub `import.meta.env` or process-backed environment state must stay in the
-server project and be excluded from the browser project.
+Vitest uses `client` (browser), `server` (Node), and `convex` (Edge runtime) projects. Tests that stub `import.meta.env` or process-backed environment state must stay in the server project and be excluded from the browser project. Convex function tests use `convex-test` and authenticate with `t.withIdentity`.
 
 Agentic browser QA gates:
 
@@ -98,6 +99,16 @@ Agentic browser QA is the escalation layer for broad permutation coverage. It
 should generate and execute bounded recipes, not replace lower-level source,
 rules-data, or calculator tests.
 
+### 3.1 Cross-Surface Lifecycle Features
+
+For a lifecycle that spans UI presentations, backend records, permissions, and subscriptions:
+
+1. Write the complete readable contract in `e2e/features/*.feature`.
+2. Back deterministic domain behavior with executable tests at the lowest sufficient layer.
+3. Keep scenario names aligned between the feature and executable tests.
+4. Add focused component or Playwright coverage for routing and presentation-specific wiring.
+5. Do not count a `.feature` file alone as regression protection.
+
 ---
 
 ## 4. Current E2E Inventory
@@ -118,6 +129,7 @@ rules-data, or calculator tests.
 | `e2e/16-character-sheet-export.e2e.spec.ts`           | Imported character JSON/PDF downloads, stored-value metadata, PDF validity, and reopen-after-export                                                                                                                                                    |
 | `e2e/17-character-creation-final-actions.e2e.spec.ts` | Final-step controls, autosave-before-PDF, current-rules filename/header, sheet navigation, and no-download finish path                                                                                                                                 |
 | `e2e/18-load-character-ordering.e2e.spec.ts`          | Load-character newest-first ordering across timestamp fallbacks and immediate reordering after JSON import                                                                                                                                             |
+| `e2e/19-resource-value-layout.e2e.spec.ts`            | Primary-sheet paired resource controls do not overlap; alternative-sheet resources retain the standard layout                                                                                                                                          |
 | `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
 | `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
 | `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |

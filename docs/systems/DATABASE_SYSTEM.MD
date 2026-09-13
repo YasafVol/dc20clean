@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-12
+> Last Updated: 2026-09-13
 
 ---
 
@@ -21,12 +21,12 @@ The DC20 Character Creator uses a **hybrid storage model**:
 
 ### 1.1 Data Domains
 
-| Domain               | Tables                                              | Status                         |
-| -------------------- | --------------------------------------------------- | ------------------------------ |
-| Characters           | `characters`                                        | Active (Convex + localStorage) |
-| DM Tools: Monsters   | `monsters`, `customFeatures`                        | Active (Convex)                |
-| DM Tools: Encounters | `encounters`                                        | Active (Convex)                |
-| Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents`    | Active (Convex only)           |
+| Domain               | Tables                                           | Status                         |
+| -------------------- | ------------------------------------------------ | ------------------------------ |
+| Characters           | `characters`                                     | Active (Convex + localStorage) |
+| DM Tools: Monsters   | `monsters`, `customFeatures`                     | Active (Convex)                |
+| DM Tools: Encounters | `encounters`                                     | Active (Convex)                |
+| Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents` | Active (Convex only)           |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -576,44 +576,47 @@ See `docs/systems/CAMPAIGN_SYSTEM.MD` for full schema details, permission model,
 
 ### 9.1 `campaigns`
 
-| Field          | Type              | Notes                                        |
-| -------------- | ----------------- | -------------------------------------------- |
-| `userId`       | `Id<'users'>`     | Creator / DM                                 |
-| `id`           | `string`          | App-generated id, e.g. `camp_<uuid>`         |
-| `code`         | `string`          | 6-char alphanumeric join code                |
-| `name`         | `string`          |                                              |
-| `description`  | `string?`         |                                              |
-| `createdAt`    | `string`          | ISO timestamp                                |
-| `lastModified` | `string`          | ISO timestamp                                |
-| `deletedAt`    | `string?`         | Soft-delete                                  |
+| Field          | Type          | Notes                                |
+| -------------- | ------------- | ------------------------------------ |
+| `userId`       | `Id<'users'>` | Creator / DM                         |
+| `id`           | `string`      | App-generated id, e.g. `camp_<uuid>` |
+| `code`         | `string`      | 6-char alphanumeric join code        |
+| `name`         | `string`      |                                      |
+| `description`  | `string?`     |                                      |
+| `createdAt`    | `string`      | ISO timestamp                        |
+| `lastModified` | `string`      | ISO timestamp                        |
+| `deletedAt`    | `string?`     | Soft-delete                          |
 
 Indexes: `by_user` (userId), `by_app_id` (id — note: `by_id` is Convex-reserved), `by_code` (code).
 
 ### 9.2 `campaignMembers`
 
-| Field                 | Type              | Notes                                        |
-| --------------------- | ----------------- | -------------------------------------------- |
-| `campaignId`          | `Id<'campaigns'>` |                                              |
-| `userId`              | `Id<'users'>`     |                                              |
-| `role`                | `'dm' \| 'co_dm' \| 'player'` |                                |
-| `sharedCharacterIds`  | `string[]`        | App-level character ids shared by this member |
-| `displayName`         | `string?`         | Captured at join time                        |
-| `joinedAt`            | `string`          | ISO timestamp                                |
-| `deletedAt`           | `string?`         | Soft-delete                                  |
+| Field                   | Type                          | Notes                                                     |
+| ----------------------- | ----------------------------- | --------------------------------------------------------- |
+| `campaignId`            | `Id<'campaigns'>`             |                                                           |
+| `userId`                | `Id<'users'>`                 |                                                           |
+| `role`                  | `'dm' \| 'co_dm' \| 'player'` |                                                           |
+| `sharedCharacterIds`    | `string[]`                    | Compatibility copy of app-level character IDs             |
+| `sharedCharacterDocIds` | `Id<'characters'>[]?`         | Authoritative connected records; optional for legacy rows |
+| `displayName`           | `string?`                     | Captured at join time                                     |
+| `joinedAt`              | `string`                      | ISO timestamp                                             |
+| `deletedAt`             | `string?`                     | Soft-delete                                               |
 
 Indexes: `by_campaign` (campaignId), `by_user` (userId), `by_campaign_and_user` (campaignId, userId).
 
+When `sharedCharacterDocIds` exists, campaign reads treat it as authoritative. Rows without it resolve `sharedCharacterIds` only within the member owner's characters and are lazily upgraded on reconnect. The optional field is an additive Convex table migration; it does not change the saved-character schema.
+
 ### 9.3 `campaignEvents`
 
-| Field          | Type              | Notes                                        |
-| -------------- | ----------------- | -------------------------------------------- |
-| `campaignId`   | `Id<'campaigns'>` |                                              |
-| `type`         | `string`          | e.g. `well_bloodied`, `member_joined`        |
-| `actorUserId`  | `Id<'users'>`     |                                              |
-| `characterId`  | `string?`         | App-level character id                       |
-| `payload`      | `any`             | Event-specific data                          |
-| `createdAt`    | `string`          | ISO timestamp                                |
-| `deletedAt`    | `string?`         | Soft-delete                                  |
+| Field         | Type              | Notes                                 |
+| ------------- | ----------------- | ------------------------------------- |
+| `campaignId`  | `Id<'campaigns'>` |                                       |
+| `type`        | `string`          | e.g. `well_bloodied`, `member_joined` |
+| `actorUserId` | `Id<'users'>`     |                                       |
+| `characterId` | `string?`         | App-level character id                |
+| `payload`     | `any`             | Event-specific data                   |
+| `createdAt`   | `string`          | ISO timestamp                         |
+| `deletedAt`   | `string?`         | Soft-delete                           |
 
 Indexes: `by_campaign` (campaignId), `by_campaign_and_time` (campaignId, createdAt).
 

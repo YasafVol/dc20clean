@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ---
 
@@ -32,17 +32,17 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 
 ## 3. Ownership
 
-| Concern                             | Source of truth                                                                      |
-| ----------------------------------- | ------------------------------------------------------------------------------------ |
-| Known/current rules versions        | `src/lib/rulesdata/versioning/rulesVersion.ts`                                       |
-| Character compatibility gates       | `src/lib/rulesdata/versioning/compatibility.ts`                                      |
-| Rules upgrade mappings              | `src/lib/rulesdata/versioning/aliases.ts`                                            |
-| Explicit character upgrade flow     | `src/lib/rulesdata/versioning/characterUpgrade.ts`                                   |
-| Storage schema version              | `src/lib/types/schemaVersion.ts`                                                     |
-| Character storage shape             | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD`                  |
-| PDF routing                         | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
-| PDF field-version audits            | `scripts/pdf/auditPdfFields.mjs`, `scripts/pdf/pdfFieldAuditService.mjs`             |
-| Equipage source/version metadata    | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
+| Concern                          | Source of truth                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------ |
+| Known/current rules versions     | `src/lib/rulesdata/versioning/rulesVersion.ts`                                       |
+| Character compatibility gates    | `src/lib/rulesdata/versioning/compatibility.ts`                                      |
+| Rules upgrade mappings           | `src/lib/rulesdata/versioning/aliases.ts`                                            |
+| Explicit character upgrade flow  | `src/lib/rulesdata/versioning/characterUpgrade.ts`                                   |
+| Storage schema version           | `src/lib/types/schemaVersion.ts`                                                     |
+| Character storage shape          | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD`                  |
+| PDF routing                      | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
+| PDF field-version audits         | `scripts/pdf/auditPdfFields.mjs`, `scripts/pdf/pdfFieldAuditService.mjs`             |
+| Equipage source/version metadata | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
 
 ## 4. Rules Version Policy
 
@@ -97,6 +97,8 @@ If a legacy character already has a current-rules copy, the default action opens
 - Backward-compatible saved-data additions bump minor or patch according to `schemaVersion.ts` guidance.
 - Breaking saved-data changes require a major version and an explicit migration plan.
 - Automatic schema migrations may fill missing fields or normalize legacy structures, but must not reinterpret old rules choices.
+
+Campaign membership's optional `sharedCharacterDocIds` is an additive backend-table compatibility field, not a `SavedCharacter` shape change. Legacy app-ID links remain owner-scoped and readable; reconnect lazily records the exact character IDs. No character `schemaVersion` bump is required.
 
 ## 6. PDF Version Policy
 

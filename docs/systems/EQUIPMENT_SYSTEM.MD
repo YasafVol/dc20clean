@@ -95,6 +95,9 @@ fields and property IDs when the item is equipped from the character sheet inven
 
 Character inventory rows include an explicit `isEquipped` flag. Only equipped/wielded
 items contribute equipment effects; carried inventory does not affect calculations.
+The standard character-sheet inventory includes all 13 preset spell focuses as the
+`Spell Focus` item type. Their item selectors are alphabetical, and equipped presets
+resolve their canonical property effects through the same bridge as custom focuses.
 Rows linked to saved Equipage items keep `itemType: 'Custom'` for selector compatibility
 and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, or `spellFocus`)
 so the inventory can label them as Custom Weapon, Custom Armor, Custom Shield, or
@@ -137,6 +140,11 @@ Each style has a **Weapon Enhancement** costing 1 AP or 1 SP:
 | Staff    | Bludgeoning | Trip        | Target falls Prone                     |
 | Sword    | Slashing    | Accuracy    | Add d4 to Attack Check                 |
 | Whip     | Slashing    | Pull        | Pull target 1+ Spaces                  |
+
+`WEAPON_ENHANCEMENT_RULE` stores the shared Weapon Training usage rule once beside
+the style catalog. Character-sheet attack details resolve standard weapon names through
+`PRESET_WEAPONS`, then render each resolved style's enhancement instead of maintaining
+separate popup prose.
 
 ### Weapon Properties
 

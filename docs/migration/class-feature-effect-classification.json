@@ -48,9 +48,9 @@
 	"duplicateAlwaysOnEffectCount": 0,
 	"featuresWithDuplicateAlwaysOnEffects": [],
 	"byFeatureKind": { "core": 83, "subclass": 54 },
-	"byStatus": { "covered": 131, "partial": 4, "progression-derived": 2 },
+	"byStatus": { "covered": 132, "partial": 4, "progression-derived": 1 },
 	"effectTypes": {
-		"GRANT_COMBAT_TRAINING": 36,
+		"GRANT_COMBAT_TRAINING": 40,
 		"GRANT_ABILITY": 296,
 		"MODIFY_STAT": 27,
 		"SET_VALUE": 1,
@@ -187,8 +187,8 @@
 			"subclassFeatureCount": 5,
 			"selectionCount": 2,
 			"duplicateAlwaysOnEffectCount": 0,
-			"effectCount": 38,
-			"byStatus": { "progression-derived": 2, "covered": 11 }
+			"effectCount": 42,
+			"byStatus": { "covered": 12, "progression-derived": 1 }
 		},
 		{
 			"className": "Warlock",
@@ -6664,12 +6664,61 @@
 			"selections": [],
 			"duplicateAlwaysOnEffectCount": 0,
 			"duplicateAlwaysOnEffects": [],
-			"implementationStatus": "progression-derived",
+			"implementationStatus": "covered",
 			"implementationScore": 1,
-			"effectCount": 0,
-			"calculatedCount": 0,
+			"effectCount": 4,
+			"calculatedCount": 4,
 			"unsupportedCount": 0,
-			"effects": []
+			"effects": [
+				{
+					"scope": "feature",
+					"label": "Martial Path",
+					"type": "GRANT_COMBAT_TRAINING",
+					"target": "Weapons",
+					"value": true,
+					"condition": null,
+					"hasUserChoice": false,
+					"calculationStatus": "collected",
+					"calculationPath": "sheet-collector",
+					"confidence": 0.8
+				},
+				{
+					"scope": "feature",
+					"label": "Martial Path",
+					"type": "GRANT_COMBAT_TRAINING",
+					"target": "Spell_Focuses",
+					"value": true,
+					"condition": null,
+					"hasUserChoice": false,
+					"calculationStatus": "collected",
+					"calculationPath": "sheet-collector",
+					"confidence": 0.8
+				},
+				{
+					"scope": "feature",
+					"label": "Martial Path",
+					"type": "GRANT_COMBAT_TRAINING",
+					"target": "Light_Armor",
+					"value": true,
+					"condition": null,
+					"hasUserChoice": false,
+					"calculationStatus": "collected",
+					"calculationPath": "sheet-collector",
+					"confidence": 0.8
+				},
+				{
+					"scope": "feature",
+					"label": "Martial Path",
+					"type": "GRANT_COMBAT_TRAINING",
+					"target": "Light_Shields",
+					"value": true,
+					"condition": null,
+					"hasUserChoice": false,
+					"calculationStatus": "collected",
+					"calculationPath": "sheet-collector",
+					"confidence": 0.8
+				}
+			]
 		},
 		{
 			"className": "Spellblade",

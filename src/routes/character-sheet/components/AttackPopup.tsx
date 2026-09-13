@@ -1,23 +1,40 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import type { AttackData } from '../../../types';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
 import { getAttackPresentation, type AttackPresentation } from '../attackPresentation';
 import { isNaturalWeaponAttack } from '../naturalWeaponAttack';
+import { getVersatileDamage, getWeaponRange, parseDamage } from '../../../lib/utils/weaponUtils';
+import { getWeaponRulePresentation } from '../weaponRulePresentation';
 import {
-	getVersatileDamage,
-	getWeaponRange,
-	getWeaponFeatures,
-	parseDamage
-} from '../../../lib/utils/weaponUtils';
-import {
-	StyledFeaturePopupOverlay,
-	StyledFeaturePopupContent,
-	StyledFeaturePopupHeader,
-	StyledFeaturePopupTitle,
 	StyledFeaturePopupClose,
-	StyledFeaturePopupDescription,
-	StyledFeaturePopupSeparatedDetail
+	StyledFeaturePopupOverlay,
+	StyledFeaturePopupTitle
 } from '../styles/FeaturePopup';
+import {
+	StyledAttackPopupBody,
+	StyledAttackPopupContent,
+	StyledAttackPopupHeader,
+	StyledAttackPopupSubtitle,
+	StyledDamageSection,
+	StyledDamageTable,
+	StyledDisclosure,
+	StyledDisclosureBody,
+	StyledDisclosureChevron,
+	StyledDisclosureChip,
+	StyledDisclosureSummary,
+	StyledFactLabel,
+	StyledFactValue,
+	StyledFeatureChip,
+	StyledFeatureChips,
+	StyledNestedDisclosure,
+	StyledPresentationNote,
+	StyledRule,
+	StyledRuleSource,
+	StyledSectionLabel,
+	StyledWeaponFact,
+	StyledWeaponFacts
+} from '../styles/AttackPopup.styles';
 
 const formatDamageAmount = (damage: string): string => damage.match(/\d+/g)?.join(' / ') ?? '-';
 
@@ -30,20 +47,58 @@ interface AttackPopupProps {
 	onClose: () => void;
 }
 
+const DamageTable: React.FC<{ presentation: AttackPresentation }> = ({ presentation }) => (
+	<StyledDamageSection aria-labelledby="attack-damage-title">
+		<StyledSectionLabel id="attack-damage-title">Damage calculations</StyledSectionLabel>
+		<StyledDamageTable>
+			<thead>
+				<tr>
+					<th scope="col">Hit</th>
+					<th scope="col">Heavy Hit (+5)</th>
+					<th scope="col">Brutal Hit (+10)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{formatDamageAmount(presentation.baseDamage)}</td>
+					<td>{formatDamageAmount(presentation.heavyDamage)}</td>
+					<td>{formatDamageAmount(presentation.brutalDamage)}</td>
+				</tr>
+			</tbody>
+		</StyledDamageTable>
+	</StyledDamageSection>
+);
+
 const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) => {
 	if (!selectedAttack) return null;
-	const presentation =
-		selectedAttack.presentation ??
-		getAttackPresentation({ attack: selectedAttack.attack, weapon: selectedAttack.weapon });
-	const isDerivedNaturalWeapon = isNaturalWeaponAttack(selectedAttack.attack);
+
+	const { attack, weapon } = selectedAttack;
+	const presentation = selectedAttack.presentation ?? getAttackPresentation({ attack, weapon });
+	const isDerivedNaturalWeapon = isNaturalWeaponAttack(attack);
+	const weaponRules = weapon ? getWeaponRulePresentation(weapon) : null;
+	const range = weapon ? getWeaponRange(weapon) : null;
+	const versatileDamage = weapon ? getVersatileDamage(weapon) : null;
+	const title = weapon?.name || attack.name || 'Unknown Weapon';
 
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>
-			<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-				<StyledFeaturePopupHeader>
-					<StyledFeaturePopupTitle>
-						{selectedAttack.weapon?.name || selectedAttack.attack.name || 'Unknown Weapon'}
-					</StyledFeaturePopupTitle>
+			<StyledAttackPopupContent
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="attack-popup-title"
+				onClick={(event) => event.stopPropagation()}
+			>
+				<StyledAttackPopupHeader>
+					<div>
+						<StyledFeaturePopupTitle id="attack-popup-title">{title}</StyledFeaturePopupTitle>
+						<StyledAttackPopupSubtitle>
+							{weapon
+								? 'Weapon details and attack rules'
+								: isDerivedNaturalWeapon
+									? 'Derived Attack'
+									: 'Custom Attack'}
+						</StyledAttackPopupSubtitle>
+					</div>
 					<StyledFeaturePopupClose
 						type="button"
 						aria-label="Close attack details"
@@ -51,97 +106,148 @@ const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) =>
 					>
 						×
 					</StyledFeaturePopupClose>
-				</StyledFeaturePopupHeader>
-				<StyledFeaturePopupDescription>
-					{selectedAttack.weapon ? (
-						<>
-							<strong>Weapon Type:</strong> {selectedAttack.weapon.type}
-							<br />
-							<strong>Handedness:</strong> {selectedAttack.weapon.handedness}
-							<br />
-							<strong>Style:</strong>{' '}
-							{Array.isArray(selectedAttack.weapon.style)
-								? selectedAttack.weapon.style.join('/')
-								: selectedAttack.weapon.style}
-							<br />
-							<strong>Damage:</strong> {selectedAttack.weapon.damage}
-							<br />
-							{getVersatileDamage(selectedAttack.weapon) && (
-								<>
-									<strong>Versatile Damage:</strong>{' '}
-									{getVersatileDamage(selectedAttack.weapon)?.twoHanded}
-									<br />
-								</>
-							)}
-							<strong>Damage Type:</strong> {parseDamage(selectedAttack.weapon.damage).typeDisplay}
-							<br />
-							{getWeaponRange(selectedAttack.weapon) && (
-								<>
-									<strong>Range:</strong> {getWeaponRange(selectedAttack.weapon)?.short}/
-									{getWeaponRange(selectedAttack.weapon)?.long}
-									<br />
-								</>
-							)}
-							{selectedAttack.weapon.properties.includes('Ammo') && (
-								<>
-									<strong>Ammunition:</strong> Required
-									<br />
-								</>
-							)}
-							{selectedAttack.weapon.properties.includes('Reload') && (
-								<>
-									<strong>Reload:</strong> Required
-									<br />
-								</>
-							)}
-							<br />
-							<strong>Damage Calculations:</strong>
-							<br />• <strong>Hit:</strong> {formatDamageAmount(presentation.baseDamage)}
-							<br />• <strong>Heavy Hit (+5):</strong>{' '}
-							{formatDamageAmount(presentation.heavyDamage)}
-							<br />• <strong>Brutal Hit (+10):</strong>{' '}
-							{formatDamageAmount(presentation.brutalDamage)}
-							<br />
-							<br />
-							{selectedAttack.weapon.properties.length > 0 && (
-								<>
-									<strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}
-									<br />
-								</>
-							)}
-							{getWeaponFeatures(selectedAttack.weapon).length > 0 && (
-								<>
-									<strong>Features:</strong> {getWeaponFeatures(selectedAttack.weapon).join(', ')}
-								</>
-							)}
-						</>
-					) : (
-						<>
-							<strong>{isDerivedNaturalWeapon ? 'Derived Attack' : 'Custom Attack'}</strong>
-							<br />
-							{!isDerivedNaturalWeapon && selectedAttack.attack.attackBonus !== 0 && (
-								<>
-									<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
-									<br />
-								</>
-							)}
-							<strong>Hit:</strong> {formatDamageAmount(presentation.baseDamage)}
-							<br />
-							<strong>Heavy Hit:</strong> {formatDamageAmount(presentation.heavyDamage)}
-							<br />
-							<strong>Brutal Hit:</strong> {formatDamageAmount(presentation.brutalDamage)}
-							<StyledFeaturePopupSeparatedDetail data-testid="attack-damage-type">
-								<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
-							</StyledFeaturePopupSeparatedDetail>
-							{selectedAttack.attack.heavyHitEffect && (
-								<>
-									<strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}
-								</>
-							)}
-						</>
+				</StyledAttackPopupHeader>
+
+				<StyledAttackPopupBody>
+					<StyledWeaponFacts>
+						{weapon && (
+							<>
+								<StyledWeaponFact>
+									<StyledFactLabel>Weapon type</StyledFactLabel>
+									<StyledFactValue>{weapon.type}</StyledFactValue>
+								</StyledWeaponFact>
+								<StyledWeaponFact>
+									<StyledFactLabel>Hands</StyledFactLabel>
+									<StyledFactValue>{weapon.handedness}</StyledFactValue>
+								</StyledWeaponFact>
+								<StyledWeaponFact>
+									<StyledFactLabel>Base damage</StyledFactLabel>
+									<StyledFactValue>{formatDamageAmount(weapon.damage)}</StyledFactValue>
+								</StyledWeaponFact>
+							</>
+						)}
+						<StyledWeaponFact>
+							<StyledFactLabel>Damage type</StyledFactLabel>
+							<StyledFactValue data-testid="attack-damage-type">
+								{weapon ? parseDamage(weapon.damage).typeDisplay : presentation.damageType}
+							</StyledFactValue>
+						</StyledWeaponFact>
+						{range && (
+							<StyledWeaponFact>
+								<StyledFactLabel>Range</StyledFactLabel>
+								<StyledFactValue>
+									{range.short}/{range.long}
+								</StyledFactValue>
+							</StyledWeaponFact>
+						)}
+						{versatileDamage && (
+							<StyledWeaponFact>
+								<StyledFactLabel>Two-handed hit</StyledFactLabel>
+								<StyledFactValue>{formatDamageAmount(versatileDamage.twoHanded)}</StyledFactValue>
+							</StyledWeaponFact>
+						)}
+					</StyledWeaponFacts>
+
+					<DamageTable presentation={presentation} />
+					{presentation.note && (
+						<StyledPresentationNote>{presentation.note}</StyledPresentationNote>
 					)}
-				</StyledFeaturePopupDescription>
-			</StyledFeaturePopupContent>
+
+					{weaponRules && weaponRules.properties.length > 0 && (
+						<StyledDisclosure open>
+							<StyledDisclosureSummary data-testid="attack-properties-summary">
+								<span>Properties &amp; features</span>
+								<StyledDisclosureChip data-testid="attack-properties-chip">
+									{weaponRules.properties.length}{' '}
+									{weaponRules.properties.length === 1 ? 'property' : 'properties'}
+								</StyledDisclosureChip>
+								<StyledDisclosureChevron>
+									<ChevronDown size={16} />
+								</StyledDisclosureChevron>
+							</StyledDisclosureSummary>
+							<StyledDisclosureBody>
+								{weaponRules.features.length > 0 && (
+									<>
+										<StyledSectionLabel>Features</StyledSectionLabel>
+										<StyledFeatureChips>
+											{weaponRules.features.map((feature) => (
+												<StyledFeatureChip key={feature}>{feature}</StyledFeatureChip>
+											))}
+										</StyledFeatureChips>
+									</>
+								)}
+								{weaponRules.properties.map((property) => (
+									<StyledRule key={property.label}>
+										<strong>{property.label}.</strong>{' '}
+										{property.definition?.description ??
+											'No current rules description is available for this legacy property.'}
+									</StyledRule>
+								))}
+								<StyledRuleSource>Rules: weapon property definitions</StyledRuleSource>
+							</StyledDisclosureBody>
+						</StyledDisclosure>
+					)}
+
+					{weaponRules?.styles.map((style) => {
+						const condition = style.condition?.definition;
+						const conditionName = condition?.name.replace(/ X$/, '');
+						return (
+							<StyledDisclosure key={style.definition.id} open>
+								<StyledDisclosureSummary data-testid="attack-style-summary">
+									<span>
+										{style.definition.name} style · {style.definition.enhancement.name} enhancement
+									</span>
+									<StyledDisclosureChip data-testid="attack-style-chip">
+										{style.definition.enhancement.costToUse}
+									</StyledDisclosureChip>
+									<StyledDisclosureChevron>
+										<ChevronDown size={16} />
+									</StyledDisclosureChevron>
+								</StyledDisclosureSummary>
+								<StyledDisclosureBody>
+									<p>{weaponRules.weaponEnhancementRule}</p>
+									<StyledRule>
+										<strong>{style.definition.enhancement.name}.</strong>{' '}
+										{style.definition.enhancement.description} {style.definition.enhancement.effect}
+									</StyledRule>
+
+									{condition && (
+										<StyledNestedDisclosure>
+											<StyledDisclosureSummary>
+												<span>
+													{conditionName} condition{style.recoveryAction ? ' & recovery' : ''}
+												</span>
+												<StyledDisclosureChevron>
+													<ChevronDown size={16} />
+												</StyledDisclosureChevron>
+											</StyledDisclosureSummary>
+											<StyledDisclosureBody>
+												<p>
+													<strong>{condition.name}.</strong> {condition.description}
+												</p>
+												{style.recoveryAction && (
+													<StyledRule>
+														<strong>{style.recoveryAction.name} (Action).</strong> Spend{' '}
+														{style.recoveryAction.cost}. {style.recoveryAction.description} Success:{' '}
+														{style.recoveryAction.success}{' '}
+														{style.recoveryAction.successEachFive &&
+															`Success (each 5): ${style.recoveryAction.successEachFive}`}
+													</StyledRule>
+												)}
+												<StyledRuleSource>
+													Rules: condition catalog
+													{style.recoveryAction ? ' and Medicine action' : ''}
+												</StyledRuleSource>
+											</StyledDisclosureBody>
+										</StyledNestedDisclosure>
+									)}
+									<StyledRuleSource>Rules: {style.definition.name} weapon style</StyledRuleSource>
+								</StyledDisclosureBody>
+							</StyledDisclosure>
+						);
+					})}
+				</StyledAttackPopupBody>
+			</StyledAttackPopupContent>
 		</StyledFeaturePopupOverlay>
 	);
 };

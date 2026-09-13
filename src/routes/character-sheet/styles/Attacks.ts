@@ -64,13 +64,13 @@ const attackGrid = css`
 		minmax(220px, 1fr)
 		repeat(3, minmax(72px, 88px))
 		minmax(110px, 140px)
-		72px;
+		80px;
 	column-gap: ${theme.spacing[3]};
 	align-items: center;
 	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 
 	@media (max-width: 768px) {
-		grid-template-columns: minmax(150px, 1fr) 48px minmax(52px, 72px) 72px;
+		grid-template-columns: minmax(150px, 1fr) 48px minmax(52px, 72px) 80px;
 		column-gap: ${theme.spacing[1]};
 		font-size: 0.7rem;
 
@@ -242,10 +242,10 @@ export const StyledDamageCell = styled.div<{
 `;
 
 export const StyledInfoButton = styled.button<MobileStyledProps>`
+	grid-column: 2;
 	background: transparent;
 	color: ${theme.colors.accent.primary};
-	border: 1px solid ${theme.colors.accent.primary};
-	border-radius: 50%;
+	border: 0;
 	width: 24px;
 	height: 24px;
 	padding: 0;
@@ -257,8 +257,9 @@ export const StyledInfoButton = styled.button<MobileStyledProps>`
 
 	&:hover,
 	&:focus-visible {
-		background: ${theme.colors.accent.primaryAlpha20};
-		outline: none;
+		color: ${theme.colors.text.primary};
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
 	}
 `;
 
@@ -271,9 +272,13 @@ export const StyledDamageTypeCell = styled.div<MobileStyledProps>`
 `;
 
 export const StyledAttackActions = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: 52px 24px;
 	align-items: center;
-	justify-content: flex-end;
 	gap: ${theme.spacing[1]};
-	min-width: 0;
+	width: 80px;
+
+	& > button {
+		justify-self: end;
+	}
 `;

@@ -1,6 +1,8 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AttackData } from '../../../types';
+import { weapons } from '../../../lib/rulesdata/inventoryItems';
+import { getAttackPresentation } from '../attackPresentation';
 import AttackPopup from './AttackPopup';
 
 afterEach(cleanup);
@@ -20,7 +22,7 @@ describe('AttackPopup', () => {
 			critDamage: '1 B/P/S'
 		} as AttackData & { critRange: string; critDamage: string };
 
-		const { container } = render(
+		render(
 			<AttackPopup
 				selectedAttack={{
 					attack: legacyAttack,
@@ -39,22 +41,63 @@ describe('AttackPopup', () => {
 			/>
 		);
 
-		expect(screen.queryByText('Crit Range:')).not.toBeInTheDocument();
-		expect(screen.queryByText('Crit Damage:')).not.toBeInTheDocument();
-		expect(screen.getByText('Hit:')).toBeInTheDocument();
-		expect(screen.getByText('Heavy Hit:')).toBeInTheDocument();
-		expect(screen.getByText('Brutal Hit:')).toBeInTheDocument();
-		expect(container).toHaveTextContent('Hit: 1');
-		expect(container).toHaveTextContent('Heavy Hit: 2');
-		expect(container).toHaveTextContent('Brutal Hit: 4');
-		expect(container).not.toHaveTextContent('Hit: 1 B/P/S');
-		expect(screen.queryByText('Attack Bonus:')).not.toBeInTheDocument();
-		expect(getComputedStyle(screen.getByTestId('attack-damage-type')).marginTop).toBe('12px');
+		expect(screen.queryByText(/Crit Range/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(/Crit Damage/i)).not.toBeInTheDocument();
+		expect(screen.getByRole('columnheader', { name: 'Hit' })).toBeInTheDocument();
+		expect(screen.getByRole('columnheader', { name: 'Heavy Hit (+5)' })).toBeInTheDocument();
+		expect(screen.getByRole('columnheader', { name: 'Brutal Hit (+10)' })).toBeInTheDocument();
+		expect(screen.getAllByRole('cell').map((cell) => cell.textContent)).toEqual(['1', '2', '4']);
+		expect(screen.queryByText('Hit: 1 B/P/S')).not.toBeInTheDocument();
+		expect(screen.queryByText(/Attack Bonus/i)).not.toBeInTheDocument();
 
 		const closeButton = screen.getByRole('button', { name: 'Close attack details' });
 		expect(getComputedStyle(closeButton).backgroundColor).toBe('rgba(0, 0, 0, 0)');
 		expect(getComputedStyle(closeButton).position).toBe('absolute');
-		expect(['8px', '12px']).toContain(getComputedStyle(closeButton).top);
-		expect(['8px', '12px']).toContain(getComputedStyle(closeButton).right);
+	});
+
+	it('shows Hand Axe rules with aligned disclosure chips and nested recovery details', () => {
+		const weapon = weapons.find((candidate) => candidate.name === 'Hand Axe');
+		expect(weapon).toBeDefined();
+		if (!weapon) return;
+
+		const attack: AttackData = {
+			id: 'hand-axe',
+			weaponName: weapon.name,
+			name: weapon.name,
+			attackBonus: 0,
+			damage: weapon.damage,
+			damageType: 'slashing',
+			brutalDamage: '',
+			heavyHitEffect: ''
+		};
+
+		render(
+			<AttackPopup
+				selectedAttack={{
+					attack,
+					weapon,
+					presentation: getAttackPresentation({ attack, weapon })
+				}}
+				onClose={vi.fn()}
+			/>
+		);
+
+		expect(screen.getByText('Easy to hide')).toBeInTheDocument();
+		expect(screen.getByText('Can be thrown')).toBeInTheDocument();
+		expect(
+			screen.getByText(/Drawing the Weapon doesn't provoke Opportunity Attacks/)
+		).toBeInTheDocument();
+		expect(screen.getByText(/Axe style · Bleed enhancement/)).toBeInTheDocument();
+		expect(screen.getByText(/The target makes a Repeated Physical Save/)).toBeInTheDocument();
+		expect(screen.getByText(/Bleeding condition & recovery/)).toBeInTheDocument();
+
+		const propertySummary = screen.getByTestId('attack-properties-summary');
+		const styleSummary = screen.getByTestId('attack-style-summary');
+		expect(getComputedStyle(propertySummary).gridTemplateColumns).toBe(
+			getComputedStyle(styleSummary).gridTemplateColumns
+		);
+		expect(getComputedStyle(screen.getByTestId('attack-properties-chip')).width).toBe(
+			getComputedStyle(screen.getByTestId('attack-style-chip')).width
+		);
 	});
 });

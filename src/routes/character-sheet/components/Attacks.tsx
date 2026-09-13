@@ -24,6 +24,7 @@ import {
 } from '../../../lib/utils/weaponUtils';
 import { getNaturalWeaponAttack, isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import { getAncestryAttackTraits } from '../ancestryAttackTraits';
+import { sortByName } from '../catalogSorting';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -86,6 +87,8 @@ const formatDamageAmount = (damage: string): string => {
 const formatDamageType = (damage: string): string =>
 	parseDamage(damage).type.split('/').join(' / ');
 
+const sortedWeapons = sortByName(weapons);
+
 export interface AttacksProps {
 	onAttackClick: (
 		attack: AttackData,
@@ -104,7 +107,7 @@ const Attacks: React.FC<AttacksProps> = ({
 	explicitEditMode = false
 }) => {
 	const { t } = useTranslation();
-	const { addAttack, removeAttack, updateAttack, state } = useCharacterSheet();
+	const { addAttack, removeAttack, updateAttack, state, readOnly } = useCharacterSheet();
 	const attacks = useCharacterAttacks();
 	const inventory = useCharacterInventory();
 	const calculation = useCharacterCalculatedData();
@@ -120,7 +123,7 @@ const Attacks: React.FC<AttacksProps> = ({
 				.filter((item) => item.itemType === 'Weapon' && item.itemName)
 				.map((item) => item.itemName)
 		);
-		return weapons.filter((w) => inventoryWeaponNames.has(w.name));
+		return sortedWeapons.filter((w) => inventoryWeaponNames.has(w.name));
 	}, [inventory?.items]);
 
 	if (!state.character) {
@@ -133,7 +136,7 @@ const Attacks: React.FC<AttacksProps> = ({
 	const characterData = state.character;
 	const naturalWeaponAttack = getNaturalWeaponAttack(characterData.selectedTraitIds);
 	const displayedAttacks = naturalWeaponAttack ? [naturalWeaponAttack, ...attacks] : attacks;
-	const visibleWeapons = showAllWeapons ? weapons : inventoryWeapons;
+	const visibleWeapons = showAllWeapons ? sortedWeapons : inventoryWeapons;
 	const showNoInventoryWeaponsHint = !showAllWeapons && inventoryWeapons.length === 0;
 	const addWeaponSlot = () => {
 		const newAttack: AttackData = {
@@ -244,13 +247,15 @@ const Attacks: React.FC<AttacksProps> = ({
 						/>
 						{t('characterSheet.attacksShowAllWeapons')}
 					</FilterToggleRow>
-					<StyledAddWeaponButton
-						$isMobile={effectiveIsMobile}
-						onClick={addWeaponSlot}
-						data-testid="add-weapon"
-					>
-						+ {t('characterSheet.attacksAddWeapon')}
-					</StyledAddWeaponButton>
+					{!readOnly && (
+						<StyledAddWeaponButton
+							$isMobile={effectiveIsMobile}
+							onClick={addWeaponSlot}
+							data-testid="add-weapon"
+						>
+							+ {t('characterSheet.attacksAddWeapon')}
+						</StyledAddWeaponButton>
+					)}
 				</AttacksToolbar>
 			</StyledAttacksHeader>
 			{showNoInventoryWeaponsHint && attacks.length > 0 && (
@@ -317,7 +322,9 @@ const Attacks: React.FC<AttacksProps> = ({
 							brutalDamageBonus: traitPresentation.brutalDamageBonus
 						});
 						const isEditing =
-							!isDerivedNaturalWeapon && (!explicitEditMode || editingAttackIds.has(attack.id));
+							!readOnly &&
+							!isDerivedNaturalWeapon &&
+							(!explicitEditMode || editingAttackIds.has(attack.id));
 						const displayName = isDerivedNaturalWeapon
 							? t('characterSheet.attacksNaturalWeapon')
 							: attack.weaponName || t('characterSheet.attacksSelectWeapon');
@@ -430,11 +437,29 @@ const Attacks: React.FC<AttacksProps> = ({
 
 								{/* Damage Calculation Info */}
 								<StyledAttackActions>
+									{!readOnly &&
+										(explicitEditMode
+											? !isDerivedNaturalWeapon && (
+													<RowEditControls
+														isEditing={isEditing}
+														onToggle={() => toggleAttackEditing(attack.id)}
+														onDelete={() => removeWeaponSlot(persistedAttackIndex)}
+														itemLabel="weapon"
+														isMobile={effectiveIsMobile}
+													/>
+												)
+											: !isDerivedNaturalWeapon && (
+													<DeleteButton
+														onClick={() => removeWeaponSlot(persistedAttackIndex)}
+														title={t('characterSheet.attacksRemoveWeapon')}
+														$isMobile={effectiveIsMobile}
+													/>
+												))}
 									{presentation.isSupportedAttack && (!explicitEditMode || !isEditing) && (
 										<StyledInfoButton
 											type="button"
 											$isMobile={effectiveIsMobile}
-										onClick={() => onAttackClick(attack, weapon, presentation)}
+											onClick={() => onAttackClick(attack, weapon, presentation)}
 											data-testid="info-btn"
 											aria-label={t('characterSheet.attacksViewDetails', {
 												weapon: displayName
@@ -443,23 +468,6 @@ const Attacks: React.FC<AttacksProps> = ({
 											<Info size={14} aria-hidden="true" />
 										</StyledInfoButton>
 									)}
-									{explicitEditMode
-										? !isDerivedNaturalWeapon && (
-												<RowEditControls
-													isEditing={isEditing}
-													onToggle={() => toggleAttackEditing(attack.id)}
-													onDelete={() => removeWeaponSlot(persistedAttackIndex)}
-													itemLabel="weapon"
-													isMobile={effectiveIsMobile}
-												/>
-											)
-										: !isDerivedNaturalWeapon && (
-												<DeleteButton
-													onClick={() => removeWeaponSlot(persistedAttackIndex)}
-													title={t('characterSheet.attacksRemoveWeapon')}
-													$isMobile={effectiveIsMobile}
-												/>
-											)}
 								</StyledAttackActions>
 							</StyledAttackRow>
 						);

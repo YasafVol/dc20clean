@@ -304,10 +304,10 @@ describe('Spell System - Spells Known Slots', () => {
 		).toBeDefined();
 	});
 
-	it('treats legacy cantrip progression as normal spell slots', () => {
+	it('creates only Spell slots from the normalized progression total', () => {
 		const slots = generateSpellsKnownSlots(
 			createBaseBuild({ classId: 'wizard' }) as any,
-			{ totalSpellsKnown: 1, totalCantripsKnown: 2 },
+			{ totalSpellsKnown: 3 },
 			[]
 		);
 

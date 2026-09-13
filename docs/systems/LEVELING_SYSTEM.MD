@@ -6,7 +6,7 @@
 > Authoritative source: The class progression tables in `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/leveling-v0105-review.json`, `src/lib/rulesdata/classes-data/classProgressionResolver.ts`, and `src/lib/rulesdata/progression/`.
 > Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ---
 
@@ -139,14 +139,13 @@ Path points grant immediate bonuses to character resources based on allocation:
 | 3 | +1 | +1 |
 | 4 | — | +1 |
 
-**Spellcaster Path Progression (DC20 v0.10 p.161):**
-Legacy cantrip grants are normalized into ordinary spell slots.
-| Path Level | Mana Points | Legacy Spell Grants | Spells Learned |
-|------------|-------------|---------------------|----------------|
-| 1 | +3 | +1 | +1 |
-| 2 | +2 | +1 | — |
-| 3 | +2 | +1 | +1 |
-| 4 | +2 | — | +1 |
+**Spellcaster Path Progression (DC20 v0.10.5 p.161):**
+| Path Level | Mana Points | Spells Learned |
+|------------|-------------|----------------|
+| 1 | +3 | +1 |
+| 2 | +3 | +1 |
+| 3 | +3 | +1 |
+| 4 | +3 | +1 |
 
 **Cross-Path Special Rules (DC20 v0.10 p.161):**
 

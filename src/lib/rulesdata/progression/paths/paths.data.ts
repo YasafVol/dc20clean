@@ -28,11 +28,11 @@ export const CHARACTER_PATHS: CharacterPath[] = [
 		name: 'Spellcaster Path',
 		description: 'Focuses on increasing magical resources and known spells.',
 		progression: [
-			// DC20 v0.10 p.161: Level 1 grants +3 MP (not +2)
-			{ pathLevel: 1, benefits: { manaPoints: 3, cantripsLearned: 1, spellsLearned: 1 } },
-			{ pathLevel: 2, benefits: { manaPoints: 2, cantripsLearned: 1 } },
-			{ pathLevel: 3, benefits: { manaPoints: 2, cantripsLearned: 1, spellsLearned: 1 } },
-			{ pathLevel: 4, benefits: { manaPoints: 2, spellsLearned: 1 } }
+			// DC20 v0.10.5 p.161: every selection grants +3 MP and 1 Spell.
+			{ pathLevel: 1, benefits: { manaPoints: 3, spellsLearned: 1 } },
+			{ pathLevel: 2, benefits: { manaPoints: 3, spellsLearned: 1 } },
+			{ pathLevel: 3, benefits: { manaPoints: 3, spellsLearned: 1 } },
+			{ pathLevel: 4, benefits: { manaPoints: 3, spellsLearned: 1 } }
 		],
 		specialRules: [
 			// DC20 v0.10 p.161: "A Class that starts without a Spell List gains a Spell List of their choice

@@ -81,34 +81,21 @@ describe('Character Paths Data Integrity', () => {
 			const level3 = spellcasterPath!.progression.find((p) => p.pathLevel === 3);
 			const level4 = spellcasterPath!.progression.find((p) => p.pathLevel === 4);
 
-			expect(level2?.benefits.manaPoints).toBe(2);
-			expect(level3?.benefits.manaPoints).toBe(2);
-			expect(level4?.benefits.manaPoints).toBe(2);
+			expect(level2?.benefits.manaPoints).toBe(3);
+			expect(level3?.benefits.manaPoints).toBe(3);
+			expect(level4?.benefits.manaPoints).toBe(3);
 		});
 
-		it('should grant total of 9 MP across all 4 levels', () => {
+		it('should grant total of 12 MP across all 4 levels', () => {
 			expect(spellcasterPath).toBeDefined();
 			const totalMP = spellcasterPath!.progression.reduce(
 				(sum, level) => sum + (level.benefits.manaPoints || 0),
 				0
 			);
-			expect(totalMP).toBe(9); // 3 + 2 + 2 + 2
+			expect(totalMP).toBe(12);
 		});
 
-		it('should grant cantrips at levels 1, 2, 3', () => {
-			expect(spellcasterPath).toBeDefined();
-			const level1 = spellcasterPath!.progression.find((p) => p.pathLevel === 1);
-			const level2 = spellcasterPath!.progression.find((p) => p.pathLevel === 2);
-			const level3 = spellcasterPath!.progression.find((p) => p.pathLevel === 3);
-			const level4 = spellcasterPath!.progression.find((p) => p.pathLevel === 4);
-
-			expect(level1?.benefits.cantripsLearned).toBe(1);
-			expect(level2?.benefits.cantripsLearned).toBe(1);
-			expect(level3?.benefits.cantripsLearned).toBe(1);
-			expect(level4?.benefits.cantripsLearned).toBeUndefined();
-		});
-
-		it('should grant spells at levels 1, 3, 4', () => {
+		it('should grant one Spell at every level', () => {
 			expect(spellcasterPath).toBeDefined();
 			const level1 = spellcasterPath!.progression.find((p) => p.pathLevel === 1);
 			const level2 = spellcasterPath!.progression.find((p) => p.pathLevel === 2);
@@ -116,7 +103,7 @@ describe('Character Paths Data Integrity', () => {
 			const level4 = spellcasterPath!.progression.find((p) => p.pathLevel === 4);
 
 			expect(level1?.benefits.spellsLearned).toBe(1);
-			expect(level2?.benefits.spellsLearned).toBeUndefined();
+			expect(level2?.benefits.spellsLearned).toBe(1);
 			expect(level3?.benefits.spellsLearned).toBe(1);
 			expect(level4?.benefits.spellsLearned).toBe(1);
 		});

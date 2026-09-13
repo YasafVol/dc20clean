@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/services/enhancedCharacterCalculator.ts` and `src/lib/services/calculatorModules/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Background](./BACKGROUND_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ---
 
@@ -112,8 +112,7 @@ This modular structure improves maintainability and makes the calculation pipeli
 ### Progression Gains (from Class + Path)
 
 - **Maneuvers Known** = `sum(progressionGains.totalManeuversKnown) + sum(pathBonuses.maneuvers)`
-- **Legacy Cantrip Grants** = `sum(progressionGains.totalCantripsKnown) + sum(pathBonuses.cantrips)`, normalized into ordinary spell-known slots
-- **Spells Known** = `sum(progressionGains.totalSpellsKnown) + sum(pathBonuses.spells)`
+- **Spells Known** = `sum(progressionGains.totalSpellsKnown) + sum(pathBonuses.spells)`; legacy imported class-table cantrip fields are normalized into this total at the loader/resolver boundary
 - **Talents** = `sum(progressionGains.totalTalents)`
 - **Path Points** = `sum(progressionGains.totalPathPoints)`
 - **Ancestry Points** = `5 + sum(progressionGains.totalAncestryPoints) + sum(effects.ancestryPoints)`
@@ -152,10 +151,8 @@ Level 5 Expert Features are resolved from the class feature data using the exist
 
 **Spellcaster Path:**
 
-- Level 1: +3 MP, +1 legacy cantrip grant normalized to a spell slot, +1 spell
-- Level 2: +2 MP, +1 legacy cantrip grant normalized to a spell slot
-- Level 3: +2 MP, +1 legacy cantrip grant normalized to a spell slot, +1 spell
-- Level 4: +2 MP, +1 spell
+- Every selection: +3 MP and +1 spell
+- Four selections total: +12 MP and +4 spells
 
   ***
 
@@ -315,7 +312,6 @@ classId + level → progressionGains
 ├── totalTalents
 ├── totalPathPoints
 ├── totalManeuversKnown
-├── totalCantripsKnown
 └── totalSpellsKnown
 ```
 

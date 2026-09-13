@@ -20,7 +20,6 @@ export function calculateTotalPathBenefits(progressionState: PathProgressionStat
 		staminaPoints: 0,
 		maneuversLearned: 0,
 		manaPoints: 0,
-		cantripsLearned: 0,
 		spellsLearned: 0
 	};
 
@@ -44,7 +43,6 @@ export function calculateTotalPathBenefits(progressionState: PathProgressionStat
 			totalBenefits.staminaPoints += tier.benefits.staminaPoints ?? 0;
 			totalBenefits.maneuversLearned += tier.benefits.maneuversLearned ?? 0;
 			totalBenefits.manaPoints += tier.benefits.manaPoints ?? 0;
-			totalBenefits.cantripsLearned += tier.benefits.cantripsLearned ?? 0;
 			totalBenefits.spellsLearned += tier.benefits.spellsLearned ?? 0;
 		}
 	}

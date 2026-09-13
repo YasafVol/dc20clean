@@ -16,10 +16,7 @@ function formatPathDescription(pathId: string, ranks: number): string {
 				staminaPoints: result.staminaPoints + (rank.benefits.staminaPoints || 0),
 				manaPoints: result.manaPoints + (rank.benefits.manaPoints || 0),
 				maneuversLearned: result.maneuversLearned + (rank.benefits.maneuversLearned || 0),
-				spellsLearned:
-					result.spellsLearned +
-					(rank.benefits.spellsLearned || 0) +
-					(rank.benefits.cantripsLearned || 0)
+				spellsLearned: result.spellsLearned + (rank.benefits.spellsLearned || 0)
 			}),
 			{ staminaPoints: 0, manaPoints: 0, maneuversLearned: 0, spellsLearned: 0 }
 		);

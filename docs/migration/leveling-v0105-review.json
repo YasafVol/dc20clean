@@ -130,16 +130,10 @@
 				"id": "spellcaster_path",
 				"name": "Spellcaster Path",
 				"progression": [
-					{
-						"pathLevel": 1,
-						"benefits": { "manaPoints": 3, "cantripsLearned": 1, "spellsLearned": 1 }
-					},
-					{ "pathLevel": 2, "benefits": { "manaPoints": 2, "cantripsLearned": 1 } },
-					{
-						"pathLevel": 3,
-						"benefits": { "manaPoints": 2, "cantripsLearned": 1, "spellsLearned": 1 }
-					},
-					{ "pathLevel": 4, "benefits": { "manaPoints": 2, "spellsLearned": 1 } }
+					{ "pathLevel": 1, "benefits": { "manaPoints": 3, "spellsLearned": 1 } },
+					{ "pathLevel": 2, "benefits": { "manaPoints": 3, "spellsLearned": 1 } },
+					{ "pathLevel": 3, "benefits": { "manaPoints": 3, "spellsLearned": 1 } },
+					{ "pathLevel": 4, "benefits": { "manaPoints": 3, "spellsLearned": 1 } }
 				],
 				"specialRules": [
 					"Classes Lacking a Spell List: When you first invest in this path, you gain a Spell List of your choice from any Class."

@@ -109,6 +109,12 @@ For a lifecycle that spans UI presentations, backend records, permissions, and s
 4. Add focused component or Playwright coverage for routing and presentation-specific wiring.
 5. Do not count a `.feature` file alone as regression protection.
 
+### 3.2 Rules Acceptance Features
+
+1. Use a readable Gherkin scenario when several progression sources combine into one expected character result.
+2. Back the scenario with a focused rules-data or calculator test using the same named choices and exact totals.
+3. `e2e/features/wizard-level-5-progression.feature` maps to `src/lib/services/dc20v0105ProgressionResources.test.ts`.
+
 ---
 
 ## 4. Current E2E Inventory

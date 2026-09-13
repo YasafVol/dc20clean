@@ -4,17 +4,21 @@
 > Owns: Character-sheet state and presentation, in-play resource controls, sheet actions, auto-save coordination, responsive layouts, and read-only rendering.
 > Does not own: Character-creation rules, derived-stat formulas, persistence implementations, campaign authorization, or PDF field mapping.
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
-> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
+> Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
 > Last Updated: 2026-09-13
 
 ## Recent UX additions
 
+Alternative-only composition and interaction detail is maintained in
+`ALTERNATIVE_CHARACTER_SHEET.MD`; this document remains authoritative for shared sheet
+state, behavior, and ownership.
+
 - **Responsive contract**: The live menu and primary sheet use two shared viewport thresholds from `src/styles/responsive.ts`: tablet begins at 768px and desktop begins at 1200px. Compact layouts are the base below 768px; tablet layouts occupy 768–1199px; desktop layouts begin at 1200px. Component internals use fluid grids, wrapping, intrinsic minimums, and container queries instead of additional viewport breakpoints. The primary sheet keeps a stable 280px attribute column above the compact threshold. Spell and Maneuver rows switch between labelled cards and full table rows according to the tab container's available width, so crossing 1200px does not force a cramped table.
 - **Alternative sheet route**: `/character2/:id` renders the incremental alternative sheet under the same `CharacterSheetProvider`; `/character2/` resolves the most recently modified saved character. Every saved-character card on `/load-character` offers separate `View Sheet` and `Alternative Sheet` actions, with the current sheet remaining the default. The alternative sheet currently contains the identity/action header, horizontal HP/Mana/Stamina/Rest/Grit strip, an attribute-mastery section, a full-width combat strip, and a tabbed action/detail panel below them. The panel reuses the existing Attacks, Spells, Inventory, Maneuvers, Features, Conditions, and Notes content; its tab bar remains horizontally scrollable on narrow screens and switches content without entry animation. The active tab supplies the section label, so the alternative sheet suppresses each reused panel's duplicate top-level title while retaining controls, category headings, and active counts. The mastery section groups every Skill under its governing Attribute, assigns each selected Trade to its highest valid Attribute total, keeps Awareness under Prime, and sends Attribute Saves, Skills, and Trades to the shared automatic Dice Roller with active-condition modifiers. The combat strip gives Attack primary-action hierarchy, groups Save DC/Initiative/Move/Jump as tactical metrics, and presents PD/AD as paired Hit, Heavy Hit, and Brutal Hit threshold ladders beside a shared PDR/EDR/MDR status column. Read-only PDR/EDR/MDR indicators are sourced from categorical resistance grants. Attack and Initiative send to the same Dice Roller. It reuses `StatCard`, the existing reducer mutations, Long Rest behavior, stored-value PDF export, JSON export, and Rulebook article links. Mana and Stamina are each omitted when their maximum is zero. Alternative-sheet `StatCard` instances skip mount fade and initial bar-fill transitions while retaining value-change and control feedback. This route adds no schema or persistence path.
 - **Alternative section disclosure**: Resources; Attributes, Skills & Trades; Combat; and Actions & Details each have a visible section heading and an independent disclosure control. All four sections start expanded at every viewport size. Collapsing hides the mounted content immediately without a slide animation, so local tab and row-edit state survives reopening.
 - **Alternative sheet color roles**: Structural surfaces and passive values stay neutral; crystal blue identifies roll actions and interaction states; each Attribute color is limited to its title, top border, and filled mastery dots; both defenses use the purple defense family; resource colors retain their established meanings; green is reserved for active positive states such as damage reduction.
-- **Alternative tab interaction**: Subtle dividers separate the uppercase tabs; the active tab uses a crystal-tinted surface, inset outline, and thicker top accent. Editable rows in Attacks, Spells, Inventory, Maneuvers, and Notes share one explicit lifecycle: Add creates a row in edit mode, a trailing pencil enters edit mode, check finishes, and delete is available only while editing. Features and Conditions retain their existing view/control behavior. These changes are scoped to the alternative sheet where shared components also appear on the current sheet.
+- **Alternative tab interaction**: Subtle dividers separate the uppercase tabs; the active tab uses a crystal-tinted surface, inset outline, and thicker top accent. Existing editable rows in Attacks, Spells, Inventory, Maneuvers, and Notes use a trailing pencil to enter edit mode, check to finish, and delete only while editing. New standard weapon attacks are the exception: Add Weapon opens the alternative picker and creates a populated row only after confirmation. Features and Conditions retain their existing view/control behavior.
 - **Hero strip restructured to fluid columns**: `HeroSection` uses a container-driven layout:
   - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
   - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
@@ -36,7 +40,8 @@
 - **Utility tab removed from navigation**: movement and currency are integrated into the hero strip.
 
 - **Header actions**: Added `Long Rest` (full reset of HP/MP/SP/Rest Points + clears temp HP and Exhaustion via reducer methods) and `Rulebook` (opens `RulebookPanel`, a slide-in side panel embedding the DC20 core rulebook PDF in the browser's native viewer for built-in search).
-- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. Inventory and catalog weapon choices are sorted alphabetically. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
+- **Attacks**: Primary-sheet weapon dropdowns default to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. Inventory and catalog weapon choices are sorted alphabetically. Selecting the default "Select Weapon..." option clears the row. Saved weapons no longer in inventory remain visible with a "(not in inventory)" label.
+- **Alternative weapon picker**: Add Weapon opens a responsive list/detail modal instead of creating a blank row. Inventory / Full list replaces the table-level checkbox, selection previews the shared rules-rich weapon card, and confirmation inserts a complete attack. See `ALTERNATIVE_CHARACTER_SHEET.MD` for the phase boundary and responsive contract.
 - **Attack table hierarchy**: Header and rows share one grid and identical horizontal padding. Rows present numeric Hit, Heavy, and Brutal values, show physical damage type once as `B`, `P`, `S`, or a slash-separated combination, and consolidate details plus editing into a fixed Actions column. The detail control occupies the final action slot so it stays aligned across rows. Derived Beastborn Natural Weapon rows use `Natural Weapon` with `Unarmed Strike · Derived` secondary text and a subdued read-only surface. The catalog checkbox is grouped with Add Weapon and labelled `Include catalog weapons`. The alternative sheet removes the redundant inner Attacks border, while all layouts use row separators and keyboard-accessible detail buttons.
 - **Attack rows are damage-focused**: the sheet-wide Attack/Spell check is calculated in the hero combat stats and exported from `finalAttackSpellCheck`; weapon rows do not calculate or display a separate weapon attack bonus.
 - **Attack detail terminology**: Attack details use the same computed Hit, Heavy Hit, and Brutal Hit presentation as the table, including applicable ancestry and active-condition modifiers. Tier rows show numeric damage only and separate the damage type into its own spaced detail row. Derived Natural Weapon details omit the irrelevant stored attack bonus. Legacy `critRange` and `critDamage` values are ignored and are no longer created or represented by the runtime `AttackData` model.
@@ -237,14 +242,15 @@ See `docs/systems/CONDITIONS_SYSTEM.MD` for the source audit, catalog contract, 
 
 ### Popups/Modals
 
-| Component                           | Description             |
-| ----------------------------------- | ----------------------- |
-| `components/FeaturePopup.tsx`       | Feature details         |
-| `components/SpellPopup.tsx`         | Spell details           |
-| `components/AttackPopup.tsx`        | Attack/weapon details   |
-| `components/WeaponPopup.tsx`        | Weapon details          |
-| `components/InventoryPopup.tsx`     | Inventory item details  |
-| `components/DefenseChangeModal.tsx` | Defense manual override |
+| Component                           | Description                 |
+| ----------------------------------- | --------------------------- |
+| `components/FeaturePopup.tsx`       | Feature details             |
+| `components/SpellPopup.tsx`         | Spell details               |
+| `components/AttackPopup.tsx`        | Attack/weapon details       |
+| `components/WeaponPickerModal.tsx`  | Alternative add-weapon flow |
+| `components/WeaponPopup.tsx`        | Weapon details              |
+| `components/InventoryPopup.tsx`     | Inventory item details      |
+| `components/DefenseChangeModal.tsx` | Defense manual override     |
 
 ### UI Utilities
 
@@ -329,6 +335,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - `e2e/10-maneuvers.e2e.spec.ts` ? martial operations
 - `e2e/11-currency.e2e.spec.ts` ? currency inputs
 - `e2e/12-exhaustion-info.e2e.spec.ts` ? exhaustion and info buttons
+- `e2e/20-alternative-weapon-picker.e2e.spec.ts` — alternative add-weapon modal and responsive reflow
 
 ---
 
@@ -392,6 +399,7 @@ See `docs/systems/CAMPAIGN_SYSTEM.MD` for the full campaign architecture.
 
 ## 9. Related Docs
 
+- `docs/systems/ALTERNATIVE_CHARACTER_SHEET.MD` — alternative-only presentation contract
 - `docs/systems/CALCULATION_SYSTEM.MD` — how stats are computed
 - `docs/systems/SPELLS_SYSTEM.MD` — spell data and assignment
 - `docs/systems/MARTIALS_SYSTEM.MD` — maneuver data

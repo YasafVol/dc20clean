@@ -15,16 +15,12 @@ import type { AttackPresentation } from '../attackPresentation';
 import { logger } from '../../../lib/utils/logger';
 import DeleteButton from './shared/DeleteButton';
 import RowEditControls from './shared/RowEditControls';
-import {
-	parseDamage,
-	getDamageType,
-	calculateDamage,
-	getVersatileDamage,
-	createEmptyAttackData
-} from '../../../lib/utils/weaponUtils';
+import { parseDamage, createEmptyAttackData } from '../../../lib/utils/weaponUtils';
 import { getNaturalWeaponAttack, isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import { getAncestryAttackTraits } from '../ancestryAttackTraits';
 import { sortByName } from '../catalogSorting';
+import { createAttackDataFromWeapon } from '../weaponAttackData';
+import WeaponPickerModal from './WeaponPickerModal';
 import {
 	StyledAttacksSection,
 	StyledAttacksHeader,
@@ -98,13 +94,15 @@ export interface AttacksProps {
 	isMobile?: boolean;
 	showTitle?: boolean;
 	explicitEditMode?: boolean;
+	useWeaponPicker?: boolean;
 }
 
 const Attacks: React.FC<AttacksProps> = ({
 	onAttackClick,
 	isMobile,
 	showTitle = true,
-	explicitEditMode = false
+	explicitEditMode = false,
+	useWeaponPicker = false
 }) => {
 	const { t } = useTranslation();
 	const { addAttack, removeAttack, updateAttack, state, readOnly } = useCharacterSheet();
@@ -113,6 +111,7 @@ const Attacks: React.FC<AttacksProps> = ({
 	const calculation = useCharacterCalculatedData();
 	const [showAllWeapons, setShowAllWeapons] = useState(false);
 	const [editingAttackIds, setEditingAttackIds] = useState<Set<string>>(new Set());
+	const [isWeaponPickerOpen, setIsWeaponPickerOpen] = useState(false);
 
 	// Build the list of weapons currently in the character's inventory by matching
 	// inventory item names against the global weapons catalog. This becomes the
@@ -136,9 +135,18 @@ const Attacks: React.FC<AttacksProps> = ({
 	const characterData = state.character;
 	const naturalWeaponAttack = getNaturalWeaponAttack(characterData.selectedTraitIds);
 	const displayedAttacks = naturalWeaponAttack ? [naturalWeaponAttack, ...attacks] : attacks;
-	const visibleWeapons = showAllWeapons ? sortedWeapons : inventoryWeapons;
+	const visibleWeapons = useWeaponPicker
+		? sortedWeapons
+		: showAllWeapons
+			? sortedWeapons
+			: inventoryWeapons;
 	const showNoInventoryWeaponsHint = !showAllWeapons && inventoryWeapons.length === 0;
 	const addWeaponSlot = () => {
+		if (useWeaponPicker) {
+			setIsWeaponPickerOpen(true);
+			return;
+		}
+
 		const newAttack: AttackData = {
 			id: `attack_${Date.now()}`,
 			weaponName: '',
@@ -153,6 +161,11 @@ const Attacks: React.FC<AttacksProps> = ({
 		if (explicitEditMode) {
 			setEditingAttackIds((current) => new Set(current).add(newAttack.id));
 		}
+	};
+
+	const addSelectedWeapon = (weapon: Weapon) => {
+		addAttack(createAttackDataFromWeapon(weapon, `attack_${Date.now()}`));
+		setIsWeaponPickerOpen(false);
 	};
 
 	const removeWeaponSlot = (attackIndex: number) => {
@@ -199,35 +212,9 @@ const Attacks: React.FC<AttacksProps> = ({
 		}
 		logger.debug('ui', 'Found weapon', { weaponName: weapon.name });
 
-		const newAttackData = calculateAttackData(weapon);
+		const newAttackData = createAttackDataFromWeapon(weapon);
 		const updatedAttack = { ...newAttackData, id: attackToUpdate.id };
 		updateAttack(attackToUpdate.id, updatedAttack);
-	};
-
-	const calculateAttackData = (weapon: Weapon): AttackData => {
-		if (!weapon || !characterData) {
-			return createEmptyAttackData(weapon?.name);
-		}
-
-		const damageType = getDamageType(weapon.damage);
-		const versatileInfo = getVersatileDamage(weapon);
-		const damageString = versatileInfo
-			? `${versatileInfo.oneHanded} (${versatileInfo.twoHanded} two-handed)`
-			: weapon.damage;
-
-		const brutalDamage = calculateDamage(weapon, 'brutal');
-		const heavyHitEffect = weapon.properties.includes('Impact') ? '+1 damage on Heavy Hit' : '';
-
-		return {
-			id: '',
-			weaponName: weapon.name,
-			name: weapon.name,
-			attackBonus: 0,
-			damage: damageString,
-			damageType,
-			brutalDamage,
-			heavyHitEffect
-		};
 	};
 
 	return (
@@ -239,14 +226,16 @@ const Attacks: React.FC<AttacksProps> = ({
 					</StyledAttacksTitle>
 				)}
 				<AttacksToolbar>
-					<FilterToggleRow>
-						<input
-							type="checkbox"
-							checked={showAllWeapons}
-							onChange={(e) => setShowAllWeapons(e.target.checked)}
-						/>
-						{t('characterSheet.attacksShowAllWeapons')}
-					</FilterToggleRow>
+					{!useWeaponPicker && (
+						<FilterToggleRow>
+							<input
+								type="checkbox"
+								checked={showAllWeapons}
+								onChange={(e) => setShowAllWeapons(e.target.checked)}
+							/>
+							{t('characterSheet.attacksShowAllWeapons')}
+						</FilterToggleRow>
+					)}
 					{!readOnly && (
 						<StyledAddWeaponButton
 							$isMobile={effectiveIsMobile}
@@ -344,7 +333,9 @@ const Attacks: React.FC<AttacksProps> = ({
 									<StyledWeaponSelect
 										$isMobile={effectiveIsMobile}
 										value={attack.weaponName}
-										onChange={(e: any) => handleWeaponSelect(persistedAttackIndex, e.target.value)}
+										onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+											handleWeaponSelect(persistedAttackIndex, event.target.value)
+										}
 										data-testid="weapon-name"
 									>
 										<option value="">{t('characterSheet.attacksSelectWeapon')}</option>
@@ -474,6 +465,14 @@ const Attacks: React.FC<AttacksProps> = ({
 					})
 				)}
 			</StyledAttacksContainer>
+			{useWeaponPicker && isWeaponPickerOpen && (
+				<WeaponPickerModal
+					inventoryWeapons={inventoryWeapons}
+					catalogWeapons={sortedWeapons}
+					onAdd={addSelectedWeapon}
+					onClose={() => setIsWeaponPickerOpen(false)}
+				/>
+			)}
 		</StyledAttacksSection>
 	);
 };

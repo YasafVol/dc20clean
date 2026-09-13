@@ -26,15 +26,16 @@ export const StyledAttackPopupHeader = styled(StyledFeaturePopupHeader)`
 	}
 `;
 
-export const StyledAttackPopupBody = styled.div`
-	max-height: calc(80vh - 90px);
-	overflow-y: auto;
-	padding: 0 ${theme.spacing[6]} ${theme.spacing[6]};
+export const StyledAttackPopupBody = styled.div<{ $contained?: boolean }>`
+	max-height: ${({ $contained }) => ($contained ? 'none' : 'calc(80vh - 90px)')};
+	overflow-y: ${({ $contained }) => ($contained ? 'visible' : 'auto')};
+	padding: ${({ $contained }) => ($contained ? '0' : `0 ${theme.spacing[6]} ${theme.spacing[6]}`)};
 	color: ${theme.colors.text.primary};
 
 	${media.mobile} {
-		max-height: calc(100vh - 120px);
-		padding: 0 ${theme.spacing[4]} ${theme.spacing[4]};
+		max-height: ${({ $contained }) => ($contained ? 'none' : 'calc(100vh - 120px)')};
+		padding: ${({ $contained }) =>
+			$contained ? '0' : `0 ${theme.spacing[4]} ${theme.spacing[4]}`};
 	}
 `;
 

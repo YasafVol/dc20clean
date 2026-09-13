@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ## Documentation Authority
 
@@ -50,7 +50,8 @@
    1. Read `LEVELING_SYSTEM.MD`, `CLASS_SYSTEM.MD`, and `CHARACTER_CREATION_FLOW.MD`.
 10. Character sheet:
     1. Read `CHARACTER_SHEET.MD`.
-    2. Read `CALCULATION_SYSTEM.MD` when displaying or mutating calculated values.
+    2. Read `ALTERNATIVE_CHARACTER_SHEET.MD` when changing `/character2` composition or alternative-only interactions.
+    3. Read `CALCULATION_SYSTEM.MD` when displaying or mutating calculated values.
 11. Equipment builder:
     1. Read `EQUIPMENT_SYSTEM.MD`.
     2. Read `EFFECT_SYSTEM.MD` when equipment effects change.

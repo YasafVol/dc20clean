@@ -7,7 +7,10 @@ const mockSheet = vi.hoisted(() => ({
 	attacks: [] as AttackData[],
 	inventoryItems: [] as InventoryItemData[],
 	selectedTraitIds: [] as string[],
-	readOnly: false
+	readOnly: false,
+	addAttack: vi.fn(),
+	removeAttack: vi.fn(),
+	updateAttack: vi.fn()
 }));
 
 vi.mock('react-i18next', () => ({
@@ -15,7 +18,20 @@ vi.mock('react-i18next', () => ({
 		t: (key: string, options?: { weapon?: string }) => {
 			const translations: Record<string, string> = {
 				'characterSheet.attacksNaturalWeapon': 'Natural Weapon',
-				'characterSheet.attacksNaturalWeaponMeta': 'Unarmed Strike · Derived'
+				'characterSheet.attacksNaturalWeaponMeta': 'Unarmed Strike · Derived',
+				'characterSheet.attacksAddWeapon': 'Add Weapon',
+				'characterSheet.weaponPickerTitle': 'Add weapon',
+				'characterSheet.weaponPickerClose': 'Close weapon picker',
+				'characterSheet.weaponPickerInventoryWeapons': 'Inventory weapons',
+				'characterSheet.weaponPickerCatalogWeapons': 'Full weapon list',
+				'characterSheet.weaponPickerListLabel': 'Available weapons',
+				'characterSheet.weaponPickerEmptyInventory': 'No standard weapons are in your inventory.',
+				'characterSheet.weaponPickerSelectPrompt': 'Select a weapon.',
+				'characterSheet.weaponPickerSource': 'Weapon source',
+				'characterSheet.weaponPickerInventory': 'Inventory',
+				'characterSheet.weaponPickerFullList': 'Full list',
+				'characterSheet.weaponPickerCancel': 'Cancel',
+				'characterSheet.weaponPickerAdd': 'Add weapon'
 			};
 			if (key === 'characterSheet.attacksViewDetails') {
 				return `View details for ${options?.weapon}`;
@@ -30,9 +46,9 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 	useCharacterInventory: () => ({ items: mockSheet.inventoryItems }),
 	useCharacterCalculatedData: () => ({ conditionalModifiers: [] }),
 	useCharacterSheet: () => ({
-		addAttack: vi.fn(),
-		removeAttack: vi.fn(),
-		updateAttack: vi.fn(),
+		addAttack: mockSheet.addAttack,
+		removeAttack: mockSheet.removeAttack,
+		updateAttack: mockSheet.updateAttack,
 		state: {
 			character: {
 				selectedTraitIds: mockSheet.selectedTraitIds,
@@ -50,6 +66,9 @@ beforeEach(() => {
 	mockSheet.inventoryItems.length = 0;
 	mockSheet.selectedTraitIds.length = 0;
 	mockSheet.readOnly = false;
+	mockSheet.addAttack.mockReset();
+	mockSheet.removeAttack.mockReset();
+	mockSheet.updateAttack.mockReset();
 });
 
 describe('Attacks', () => {
@@ -121,6 +140,58 @@ describe('Attacks', () => {
 
 		expect(optionValues).toEqual(
 			[...optionValues].sort((left, right) =>
+				left.localeCompare(right, undefined, { sensitivity: 'base' })
+			)
+		);
+	});
+
+	it('adds a populated weapon from the alternative-sheet picker without a blank row', () => {
+		mockSheet.inventoryItems.push({
+			id: 'inventory-hand-axe',
+			itemType: 'Weapon',
+			itemName: 'Hand Axe',
+			count: 1
+		});
+
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+
+		expect(screen.queryByLabelText('characterSheet.attacksShowAllWeapons')).not.toBeInTheDocument();
+		fireEvent.click(screen.getByTestId('add-weapon'));
+
+		const picker = screen.getByTestId('weapon-picker');
+		expect(within(picker).getByRole('option', { name: /Hand Axe/ })).toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
+		expect(within(picker).getByText('Damage calculations')).toBeInTheDocument();
+		fireEvent.click(within(picker).getByTestId('weapon-picker-confirm'));
+
+		expect(mockSheet.addAttack).toHaveBeenCalledTimes(1);
+		expect(mockSheet.addAttack).toHaveBeenCalledWith(
+			expect.objectContaining({
+				id: expect.stringMatching(/^attack_/),
+				weaponName: 'Hand Axe',
+				name: 'Hand Axe',
+				damage: '1 S',
+				damageType: 'slashing'
+			})
+		);
+		expect(screen.queryByTestId('weapon-picker')).not.toBeInTheDocument();
+	});
+
+	it('switches the picker to the alphabetized full catalog', () => {
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+		fireEvent.click(screen.getByTestId('add-weapon'));
+
+		const picker = screen.getByTestId('weapon-picker');
+		expect(within(picker).getByText('No standard weapons are in your inventory.')).toBeVisible();
+		fireEvent.click(within(picker).getByRole('button', { name: 'Full list' }));
+
+		const optionNames = within(picker)
+			.getAllByRole('option')
+			.map((option) => option.textContent?.split(' · ')[0] ?? '');
+		expect(optionNames).toEqual(
+			[...optionNames].sort((left, right) =>
 				left.localeCompare(right, undefined, { sensitivity: 'base' })
 			)
 		);

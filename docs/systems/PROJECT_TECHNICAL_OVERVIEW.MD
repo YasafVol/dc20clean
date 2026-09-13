@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-07-25
+> Last Updated: 2026-09-13
 
 ## Tech Stack
 
@@ -121,6 +121,7 @@ src/
 ├── routes/                        # Application routes
 │   ├── character-creation/        # Multi-step character creation wizard
 │   ├── character-sheet/           # Character sheet (desktop + mobile)
+│   │   ├── alternative/            #   Alternative presentation-only composition
 │   │   ├── components/            #   Section components (50+)
 │   │   ├── components/mobile/     #   Mobile-specific sections
 │   │   ├── components/shared/     #   Shared UI utilities

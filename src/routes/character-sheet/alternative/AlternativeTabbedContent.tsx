@@ -126,6 +126,7 @@ export default function AlternativeTabbedContent() {
 							<Attacks
 								showTitle={false}
 								explicitEditMode
+								useWeaponPicker
 								onAttackClick={(attack, weapon, presentation) =>
 									setSelectedAttack({ attack, weapon, presentation })
 								}

@@ -185,6 +185,11 @@ property IDs into the character sheet's display shape and synthesizes ranged `Ra
 facts. Compatibility-only `Special`, `Chained`, and `Capture` type values remain readable
 for old saved data, but Bolas and Net are not selectable current weapons.
 
+The alternative character sheet's add-weapon picker consumes this same expanded catalog.
+Its Inventory source filters the catalog by standard weapon names in character inventory;
+Full list exposes the entire alphabetical catalog. Custom Equipage weapons remain outside
+that picker until attacks persist a stable `customEquipmentId` rather than name alone.
+
 ### Preset Weapons (45 stat blocks / 48 names)
 
 Organized by category:

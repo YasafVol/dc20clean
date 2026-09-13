@@ -30,20 +30,39 @@ export const StyledFeatureCategory = styled.div<MobileStyledProps>`
 	margin-bottom: ${theme.spacing[4]};
 `;
 
-export const StyledFeatureCategoryTitle = styled.div<MobileStyledProps>`
+export const StyledFeatureCategoryTitle = styled.button<MobileStyledProps>`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: ${theme.spacing[2]};
+	width: 100%;
 	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.semibold};
 	color: ${theme.colors.accent.primary};
+	background: transparent;
+	border: 0;
 	margin-bottom: ${theme.spacing[2]};
 	padding-bottom: ${theme.spacing[2]};
 	border-bottom: 1px solid ${theme.colors.border.default};
 	font-family: 'Urbanist', sans-serif;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.crystal.primaryLight};
+		outline: none;
+	}
 `;
 
 export const StyledFeatureGrid = styled.div<MobileStyledProps>`
 	display: flex;
 	flex-direction: column;
 	gap: ${theme.spacing[2]};
+
+	&[hidden] {
+		display: none;
+	}
 `;
 
 export const StyledFeatureItem = styled.button<MobileStyledProps>`

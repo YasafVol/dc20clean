@@ -10,7 +10,7 @@ import Attacks from '../components/Attacks';
 import ComplexFeatureHost from '../components/ComplexFeatureHost';
 import EffectsRulesNotes from '../components/EffectsRulesNotes';
 import FeaturePopup from '../components/FeaturePopup';
-import Features from '../components/Features';
+import Features, { type FeatureCategoryId } from '../components/Features';
 import Inventory from '../components/Inventory';
 import InventoryPopup from '../components/InventoryPopup';
 import Maneuvers from '../components/Maneuvers';
@@ -42,6 +42,9 @@ export default function AlternativeTabbedContent() {
 	const conditionStatuses = useCharacterConditions();
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
+	const [expandedFeatureCategories, setExpandedFeatureCategories] = useState<
+		Partial<Record<FeatureCategoryId, boolean>>
+	>({});
 	const [selectedAttack, setSelectedAttack] = useState<{
 		attack: AttackData;
 		weapon: Weapon | null;
@@ -75,6 +78,7 @@ export default function AlternativeTabbedContent() {
 		itemId: string,
 		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
 	) => {
+		if (readOnly) return;
 		const items = state.character?.characterState?.inventory?.items ?? [];
 		updateInventory(items.map((item) => (item.id === itemId ? { ...item, ...updates } : item)));
 		setSelectedInventoryItem((current) => {
@@ -155,7 +159,17 @@ export default function AlternativeTabbedContent() {
 						)}
 						{activeTab === 'features' && (
 							<>
-								<Features showTitle={false} onFeatureClick={setSelectedFeature} />
+								<Features
+									showTitle={false}
+									onFeatureClick={setSelectedFeature}
+									expandedCategories={expandedFeatureCategories}
+									onCategoryExpandedChange={(category, expanded) =>
+										setExpandedFeatureCategories((current) => ({
+											...current,
+											[category]: expanded
+										}))
+									}
+								/>
 								<EffectsRulesNotes />
 								<ComplexFeatureHost />
 							</>
@@ -167,6 +181,7 @@ export default function AlternativeTabbedContent() {
 									activeConditions={activeConditions}
 									onToggleCondition={toggleActiveCondition}
 									onSetConditionStacks={setActiveConditionStacks}
+									readOnly={readOnly}
 								/>
 								<ActiveConditionSummary activeConditions={activeConditions} />
 							</>
@@ -181,6 +196,7 @@ export default function AlternativeTabbedContent() {
 				selectedInventoryItem={selectedInventoryItem}
 				onClose={() => setSelectedInventoryItem(null)}
 				onUpdateCustomItem={updateCustomItem}
+				readOnly={readOnly}
 			/>
 			<FeaturePopup feature={selectedFeature} onClose={() => setSelectedFeature(null)} />
 		</>

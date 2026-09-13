@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { BrowserRouter, Routes, Route, useParams, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams, useSearchParams, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import { CharacterProvider } from './lib/stores/characterContext';
@@ -201,8 +201,10 @@ function AlternativeCharacterSheetRouteWrapper() {
 
 function CampaignCharacterViewWrapper() {
 	const { campaignId, characterId } = useParams();
+	const [searchParams] = useSearchParams();
+	const characterDocId = searchParams.get('record') ?? undefined;
 	return campaignId && characterId
-		? <CampaignCharacterView campaignId={campaignId} characterId={characterId} />
+		? <CampaignCharacterView campaignId={campaignId} characterId={characterId} characterDocId={characterDocId} />
 		: null;
 }
 

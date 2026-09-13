@@ -67,11 +67,20 @@ describe('CharacterSheetProvider read-only mode', () => {
 		}
 
 		render(
-			<CharacterSheetProvider characterId="char_1" campaignId="camp_1">
+			<CharacterSheetProvider
+				characterId="char_1"
+				campaignId="camp_1"
+				campaignCharacterDocId="record_1"
+			>
 				<Consumer />
 			</CharacterSheetProvider>
 		);
 
+		expect(convexReact.useQuery).toHaveBeenCalledWith('characters:getByIdForMember', {
+			campaignId: 'camp_1',
+			characterId: 'char_1',
+			characterDocId: 'record_1'
+		});
 		expect(ctx?.readOnly).toBe(true);
 
 		// saveNow should be a no-op in read-only mode

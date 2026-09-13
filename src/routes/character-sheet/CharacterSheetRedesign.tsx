@@ -376,6 +376,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		itemId: string,
 		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
 	) => {
+		if (readOnly) return;
+
 		const inventory = state.character?.characterState?.inventory?.items || [];
 		const updatedItems = inventory.map((item: InventoryItemData) =>
 			item.id === itemId ? { ...item, ...updates } : item
@@ -1039,7 +1041,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												/>
 											)}
 											{activeTab === 'spells' && (
-												<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+												<Spells
+													onSpellClick={() => {}}
+													onSpellCast={handleSpellCast}
+													readOnly={readOnly}
+												/>
 											)}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 											{activeTab === 'maneuvers' && (
@@ -1065,6 +1071,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														}
 														onToggleCondition={toggleActiveCondition}
 														onSetConditionStacks={setActiveConditionStacks}
+														readOnly={readOnly}
 													/>
 													<ActiveConditionSummary
 														activeConditions={
@@ -1117,7 +1124,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									/>
 								)}
 								{activeTab === 'spells' && (
-									<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+									<Spells
+										onSpellClick={() => {}}
+										onSpellCast={handleSpellCast}
+										readOnly={readOnly}
+									/>
 								)}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 								{activeTab === 'maneuvers' && (
@@ -1141,6 +1152,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 											activeConditions={state.character?.characterState?.activeConditions || []}
 											onToggleCondition={toggleActiveCondition}
 											onSetConditionStacks={setActiveConditionStacks}
+											readOnly={readOnly}
 										/>
 										<ActiveConditionSummary
 											activeConditions={state.character?.characterState?.activeConditions || []}
@@ -1172,6 +1184,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				selectedInventoryItem={selectedInventoryItem}
 				onClose={closeInventoryPopup}
 				onUpdateCustomItem={handleUpdateCustomItem}
+				readOnly={readOnly}
 			/>
 			<RulebookPanel open={rulebookOpen} onClose={() => setRulebookOpen(false)} />
 			<CalculationTooltip

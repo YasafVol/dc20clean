@@ -2,6 +2,12 @@ import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 import { getAuthUserId } from '@convex-dev/auth/server';
 import type { Id } from './_generated/dataModel';
+import {
+  findOwnedCharacterByAppId,
+  listConnectedCharacters,
+  materializeCharacterDocIds,
+  memberReferencesCharacter
+} from './campaignCharacterConnections';
 
 // ============================================================================
 // HELPERS
@@ -119,16 +125,12 @@ export const getRoster = query({
 
     const rows: any[] = [];
     for (const member of members) {
-      for (const charId of member.sharedCharacterIds) {
-        const charDoc = await ctx.db
-          .query('characters')
-          .withIndex('by_app_id', (q: any) => q.eq('id', charId))
-          .first();
-        if (!charDoc) continue;
+      for (const charDoc of await listConnectedCharacters(ctx, member)) {
         const currentHP = charDoc.characterState?.resources?.current?.currentHP ?? null;
         const maxHP = charDoc.finalHPMax ?? null;
         rows.push({
-          characterId: charId,
+          characterId: charDoc.id,
+          characterDocId: charDoc._id.toString(),
           characterName: charDoc.finalName,
           ownerUserId: member.userId.toString(),
           ownerDisplayName: member.displayName ?? null,
@@ -178,8 +180,11 @@ export const getCampaignsForCharacter = query({
       .filter((q: any) => q.eq(q.field('deletedAt'), undefined))
       .collect();
 
+    const character = await findOwnedCharacterByAppId(ctx, userId, args.characterId);
+    if (!character) return [];
+
     // Load each campaign doc to get the app-level id (used by all mutations)
-    const filtered = memberships.filter((m: any) => m.sharedCharacterIds.includes(args.characterId));
+    const filtered = memberships.filter((member: any) => memberReferencesCharacter(member, character));
     const results = [];
     for (const m of filtered) {
       const campaign = await ctx.db.get(m.campaignId);
@@ -247,6 +252,7 @@ export const createCampaign = mutation({
       role: 'dm',
       sharedCharacterIds: [],
       displayName,
+      sharedCharacterDocIds: [],
       joinedAt: now,
     });
 
@@ -286,7 +292,12 @@ export const joinByCode = mutation({
 
     if (existing) {
       // Restore soft-deleted membership
-      await ctx.db.patch(existing._id, { deletedAt: undefined, joinedAt: now });
+      await ctx.db.patch(existing._id, {
+        deletedAt: undefined,
+        joinedAt: now,
+        sharedCharacterIds: [],
+        sharedCharacterDocIds: [],
+      });
     } else {
       await ctx.db.insert('campaignMembers', {
         campaignId: campaign._id,
@@ -294,6 +305,7 @@ export const joinByCode = mutation({
         role: 'player',
         sharedCharacterIds: [],
         displayName,
+        sharedCharacterDocIds: [],
         joinedAt: now,
       });
     }
@@ -318,7 +330,11 @@ export const leaveCampaign = mutation({
     if (!campaign) throw new Error('Campaign not found');
     const { member } = await requireMembership(ctx, campaign._id);
     if (member.role === 'dm') throw new Error('DM cannot leave — delete the campaign instead');
-    await ctx.db.patch(member._id, { deletedAt: new Date().toISOString() });
+    await ctx.db.patch(member._id, {
+      deletedAt: new Date().toISOString(),
+      sharedCharacterIds: [],
+      sharedCharacterDocIds: [],
+    });
   },
 });
 
@@ -331,10 +347,7 @@ export const shareCharacter = mutation({
     const { userId, member } = await requireMembership(ctx, campaign._id);
 
     // Verify caller owns the character
-    const char = await ctx.db
-      .query('characters')
-      .withIndex('by_user_and_id', (q: any) => q.eq('userId', userId).eq('id', args.characterId))
-      .first();
+    const char = await findOwnedCharacterByAppId(ctx, userId, args.characterId);
     if (!char) throw new Error('Character not found or not owned by caller');
 
     // One-character-one-campaign: reject if character already shared elsewhere
@@ -346,17 +359,30 @@ export const shareCharacter = mutation({
 
     for (const m of allMemberships) {
       if (m._id === member._id) continue;
-      if ((m.sharedCharacterIds as string[]).includes(args.characterId)) {
+      if (memberReferencesCharacter(m, char)) {
         const otherCampaign = await ctx.db.get(m.campaignId);
         const name = otherCampaign ? (otherCampaign as any).name : 'another campaign';
         throw new Error(`Character is already shared in "${name}". Unshare it there first.`);
       }
     }
 
-    if (member.sharedCharacterIds.includes(args.characterId)) return;
+    const wasLegacyConnection =
+      member.sharedCharacterDocIds === undefined &&
+      member.sharedCharacterIds.includes(args.characterId);
+    const hasLegacyId = member.sharedCharacterIds.includes(args.characterId);
+    const characterDocIds = await materializeCharacterDocIds(ctx, member);
+    const hasDocumentId = characterDocIds.includes(char._id);
+    if (hasLegacyId && hasDocumentId && member.sharedCharacterDocIds !== undefined) return;
+
     await ctx.db.patch(member._id, {
-      sharedCharacterIds: [...member.sharedCharacterIds, args.characterId],
+      sharedCharacterIds: hasLegacyId
+        ? member.sharedCharacterIds
+        : [...member.sharedCharacterIds, args.characterId],
+      sharedCharacterDocIds: hasDocumentId ? characterDocIds : [...characterDocIds, char._id],
     });
+
+    // Backfilling a legacy connection must not create a duplicate lifecycle event.
+    if (wasLegacyConnection) return;
 
     await ctx.db.insert('campaignEvents', {
       campaignId: campaign._id,
@@ -375,9 +401,19 @@ export const unshareCharacter = mutation({
   handler: async (ctx, args) => {
     const campaign = await getCampaignByAppId(ctx, args.campaignId);
     if (!campaign) throw new Error('Campaign not found');
-    const { member } = await requireMembership(ctx, campaign._id);
+    const { userId, member } = await requireMembership(ctx, campaign._id);
+    const character = await findOwnedCharacterByAppId(ctx, userId, args.characterId);
+    const characterDocIds = await materializeCharacterDocIds(ctx, member);
+    const remainingCharacterDocIds: Id<'characters'>[] = [];
+    for (const characterDocId of characterDocIds) {
+      const linkedCharacter = await ctx.db.get(characterDocId);
+      if (linkedCharacter?.id !== args.characterId && characterDocId !== character?._id) {
+        remainingCharacterDocIds.push(characterDocId);
+      }
+    }
     await ctx.db.patch(member._id, {
       sharedCharacterIds: member.sharedCharacterIds.filter((id: string) => id !== args.characterId),
+      sharedCharacterDocIds: remainingCharacterDocIds,
     });
   },
 });
@@ -438,7 +474,11 @@ export const kickMember = mutation({
     const target = members.find((m: any) => m.userId.toString() === args.targetUserId);
     if (!target) throw new Error('Member not found');
     if (target.role === 'dm') throw new Error('Cannot kick the DM');
-    await ctx.db.patch(target._id, { deletedAt: new Date().toISOString() });
+    await ctx.db.patch(target._id, {
+      deletedAt: new Date().toISOString(),
+      sharedCharacterIds: [],
+      sharedCharacterDocIds: [],
+    });
   },
 });
 
@@ -514,7 +554,8 @@ export const postEvent = mutation({
 
     // Validate characterId belongs to caller's own shared characters only
     if (args.characterId !== undefined) {
-      if (!member.sharedCharacterIds.includes(args.characterId)) {
+      const character = await findOwnedCharacterByAppId(ctx, userId, args.characterId);
+      if (!character || !memberReferencesCharacter(member, character)) {
         throw new Error('Character not shared by caller');
       }
     }

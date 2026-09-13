@@ -24,6 +24,7 @@ interface ActiveConditionsTrackerProps {
 	onSetConditionStacks?: (conditionId: string, stacks: number) => void;
 	isMobile?: boolean;
 	showTitle?: boolean;
+	readOnly?: boolean;
 }
 
 const Container = styled.section<{ $isMobile?: boolean }>`
@@ -268,7 +269,8 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	onToggleCondition,
 	onSetConditionStacks,
 	isMobile = false,
-	showTitle = true
+	showTitle = true,
+	readOnly = false
 }) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
@@ -389,6 +391,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 										<Checkbox
 											type="checkbox"
 											checked={isActive}
+											disabled={readOnly}
 											onChange={() =>
 												condition.usesStacks
 													? setConditionStacks(condition.id, isActive ? 0 : 1)
@@ -409,19 +412,23 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 
 								{condition.usesStacks && isActive && (
 									<StackControls onClick={(e) => e.stopPropagation()}>
-										<StackButton
-											type="button"
-											onClick={() => setConditionStacks(condition.id, stackValue - 1)}
-										>
-											-
-										</StackButton>
+										{!readOnly && (
+											<StackButton
+												type="button"
+												onClick={() => setConditionStacks(condition.id, stackValue - 1)}
+											>
+												-
+											</StackButton>
+										)}
 										<StackValue>Stacks: {stackValue}</StackValue>
-										<StackButton
-											type="button"
-											onClick={() => setConditionStacks(condition.id, stackValue + 1)}
-										>
-											+
-										</StackButton>
+										{!readOnly && (
+											<StackButton
+												type="button"
+												onClick={() => setConditionStacks(condition.id, stackValue + 1)}
+											>
+												+
+											</StackButton>
+										)}
 									</StackControls>
 								)}
 

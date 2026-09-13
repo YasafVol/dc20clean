@@ -8,6 +8,7 @@ import React, {
 	useState
 } from 'react';
 import { useQuery } from 'convex/react';
+import type { Id } from '../../../../convex/_generated/dataModel';
 import { api } from '../../../../convex/_generated/api';
 import {
 	useCharacterSheetReducer,
@@ -368,6 +369,7 @@ interface CharacterSheetProviderProps {
 	children: React.ReactNode;
 	characterId: string;
 	campaignId?: string;
+	campaignCharacterDocId?: string;
 }
 
 interface CampaignEventHandlers {
@@ -387,7 +389,13 @@ const NO_CAMPAIGN_EVENT_HANDLERS: CampaignEventHandlers = {
 function CampaignCharacterSheetProvider(props: CharacterSheetProviderProps) {
 	const campaignCharacter = useQuery(
 		api.characters.getByIdForMember,
-		props.campaignId ? { campaignId: props.campaignId, characterId: props.characterId } : 'skip'
+		props.campaignId
+			? {
+					campaignId: props.campaignId,
+					characterId: props.characterId,
+					characterDocId: props.campaignCharacterDocId as Id<'characters'> | undefined
+				}
+			: 'skip'
 	);
 	return (
 		<CharacterSheetProviderCore

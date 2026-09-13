@@ -76,7 +76,7 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 	explicitEditMode = false
 }) => {
 	const { t } = useTranslation();
-	const { updateNotes, state } = useCharacterSheet();
+	const { updateNotes, state, readOnly } = useCharacterSheet();
 
 	const rawNotes = state.character?.characterState?.notes?.playerNotes || '';
 	const notes = useMemo(() => parseNotes(rawNotes), [rawNotes]);
@@ -157,9 +157,11 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 						{t('characterSheet.notesTitle')}
 					</StyledPlayerNotesTitle>
 				)}
-				<StyledAddButton onClick={handleAddNote} type="button">
-					+ {t('characterSheet.notesNewNote')}
-				</StyledAddButton>
+				{!readOnly && (
+					<StyledAddButton onClick={handleAddNote} type="button">
+						+ {t('characterSheet.notesNewNote')}
+					</StyledAddButton>
+				)}
 			</div>
 
 			<StyledNotesContent>
@@ -168,9 +170,9 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 				) : (
 					<StyledNotesList>
 						{notes.map((note) => {
-							const isEditing = explicitEditMode
-								? editingNoteIds.has(note.id)
-								: editingTitleId === note.id;
+							const isEditing =
+								!readOnly &&
+								(explicitEditMode ? editingNoteIds.has(note.id) : editingTitleId === note.id);
 
 							return (
 								<StyledNoteItem key={note.id}>
@@ -212,9 +214,10 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 											<button
 												type="button"
 												onClick={() => {
-													if (!explicitEditMode) setEditingTitleId(note.id);
+													if (!readOnly && !explicitEditMode) setEditingTitleId(note.id);
 												}}
-												title={t('characterSheet.notesEditTitle')}
+												title={readOnly ? undefined : t('characterSheet.notesEditTitle')}
+												disabled={readOnly}
 												style={{
 													flex: 1,
 													textAlign: 'left',
@@ -224,30 +227,31 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 													padding: '0.25rem 0',
 													fontSize: '0.95rem',
 													fontWeight: 600,
-													cursor: explicitEditMode ? 'default' : 'text'
+													cursor: readOnly || explicitEditMode ? 'default' : 'text'
 												}}
 											>
 												{note.title || t('characterSheet.notesUntitled')}
 											</button>
 										)}
-										{explicitEditMode ? (
-											<RowEditControls
-												isEditing={isEditing}
-												onToggle={() => toggleNoteEditing(note.id)}
-												onDelete={() => handleDeleteNote(note.id)}
-												itemLabel="note"
-											/>
-										) : (
-											<StyledDeleteButton
-												onClick={() => handleDeleteNote(note.id)}
-												title={t('characterSheet.notesDelete')}
-												type="button"
-											>
-												×
-											</StyledDeleteButton>
-										)}
+										{!readOnly &&
+											(explicitEditMode ? (
+												<RowEditControls
+													isEditing={isEditing}
+													onToggle={() => toggleNoteEditing(note.id)}
+													onDelete={() => handleDeleteNote(note.id)}
+													itemLabel="note"
+												/>
+											) : (
+												<StyledDeleteButton
+													onClick={() => handleDeleteNote(note.id)}
+													title={t('characterSheet.notesDelete')}
+													type="button"
+												>
+													×
+												</StyledDeleteButton>
+											))}
 									</div>
-									{!explicitEditMode || isEditing ? (
+									{isEditing ? (
 										<StyledNoteInput
 											value={note.body}
 											onChange={(e) => handleUpdateBody(note.id, e.target.value)}
@@ -265,7 +269,7 @@ const PlayerNotes: React.FC<PlayerNotesProps> = ({
 				)}
 			</StyledNotesContent>
 
-			{notes.length > 0 && (
+			{!readOnly && notes.length > 0 && (
 				<StyledAddNoteSection>
 					<StyledAddButton onClick={handleAddNote} type="button">
 						+ {t('characterSheet.notesNewNote')}

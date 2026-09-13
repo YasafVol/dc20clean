@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-13
 
 ---
 
@@ -38,7 +38,7 @@ treated as `0.10`, while current saves are stamped `0.10.5`.
 
 ### Options/Data (`src/lib/rulesdata/equipment/options/`)
 
-- `weaponOptions.ts` — Weapon styles, enhancements, properties, 38 preset weapons
+- `weaponOptions.ts` — Weapon styles, enhancements, properties, and 45 preset stat blocks covering 48 named standard weapons
 - `armorOptions.ts` — Armor properties, 7 preset armors
 - `shieldOptions.ts` — Shield properties, rules, 5 preset shields
 - `spellFocusOptions.ts` — Spell focus properties, 13 preset spell focuses
@@ -170,15 +170,22 @@ Weapon property availability is represented with explicit applicability arrays
 equipment effect: equipped/wielded weapons with Guard add `MODIFY_STAT pd +1` to the
 calculator.
 
-### Preset Weapons (38)
+The standard inventory weapon list is derived from `PRESET_WEAPONS`; it is not maintained
+as a second rules table. Grouped stat blocks such as Sickle / Hand Axe / Throwing Star
+are expanded into individual selectable names. The adapter converts canonical style and
+property IDs into the character sheet's display shape and synthesizes ranged `Range`
+facts. Compatibility-only `Special`, `Chained`, and `Capture` type values remain readable
+for old saved data, but Bolas and Net are not selectable current weapons.
+
+### Preset Weapons (45 stat blocks / 48 names)
 
 Organized by category:
 
-- **One-Handed Melee** (12): Sickle, Brass Knuckles, Club, Light Hammer, etc.
-- **Versatile** (10): Battleaxe, Flail, Longsword, Spear, etc.
-- **Two-Handed Melee** (11): Scythe, Greataxe, Halberd, Greatsword, etc.
-- **One-Handed Ranged** (3): Sling, Hand Crossbow, Hand Stonebow
-- **Two-Handed Ranged** (10): Shortbow, Longbow, Light Crossbow, etc.
+- **One-Handed Melee**: 12 stat blocks / 14 names
+- **Versatile**: 10 stat blocks / 11 names
+- **Two-Handed Melee**: 11 stat blocks / 11 names
+- **One-Handed Ranged**: 3 stat blocks / 3 names
+- **Two-Handed Ranged**: 9 stat blocks / 9 names
 
 ---
 

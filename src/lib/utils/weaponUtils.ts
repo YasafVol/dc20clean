@@ -5,12 +5,13 @@ import { Weapon, WeaponProperty } from '../rulesdata/inventoryItems';
 
 export interface ParsedDamage {
 	amount: number;
-	type: 'S' | 'P' | 'B' | 'S/P' | 'B/P' | 'B/P/S';
+	type: 'S' | 'P' | 'B' | 'S/P' | 'B/S' | 'B/P' | 'B/P/S';
 	typeDisplay:
 		| 'slashing'
 		| 'piercing'
 		| 'bludgeoning'
 		| 'slashing/piercing'
+		| 'bludgeoning/slashing'
 		| 'bludgeoning/piercing'
 		| 'bludgeoning/piercing/slashing';
 }
@@ -41,6 +42,9 @@ export function parseDamage(damageStr: string): ParsedDamage {
 			break;
 		case 'S/P':
 			typeDisplay = 'slashing/piercing';
+			break;
+		case 'B/S':
+			typeDisplay = 'bludgeoning/slashing';
 			break;
 		case 'B/P':
 			typeDisplay = 'bludgeoning/piercing';

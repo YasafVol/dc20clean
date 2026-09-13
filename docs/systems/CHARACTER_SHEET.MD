@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
 > Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-12
+> Last Updated: 2026-09-13
 
 ## Recent UX additions
 
@@ -36,7 +36,7 @@
 - **Utility tab removed from navigation**: movement and currency are integrated into the hero strip.
 
 - **Header actions**: Added `Long Rest` (full reset of HP/MP/SP/Rest Points + clears temp HP and Exhaustion via reducer methods) and `Rulebook` (opens `RulebookPanel`, a slide-in side panel embedding the DC20 core rulebook PDF in the browser's native viewer for built-in search).
-- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
+- **Attacks**: Weapon dropdown now defaults to weapons present in the character's inventory, with an "Include catalog weapons" toggle to reveal the full catalog. The 48 named standard weapons are expanded from the equipment system's 45 authoritative preset stat blocks, preventing a second sheet-specific rules table. Selecting the default "Select Weapon..." option now clears the row instead of silently doing nothing. Saved weapons no longer in inventory remain visible in the dropdown with a "(not in inventory)" label.
 - **Attack table hierarchy**: Header and rows share one grid and identical horizontal padding. Rows present numeric Hit, Heavy, and Brutal values, show physical damage type once as `B`, `P`, `S`, or a slash-separated combination, and consolidate details plus editing into a fixed Actions column. Derived Beastborn Natural Weapon rows use `Natural Weapon` with `Unarmed Strike · Derived` secondary text and a subdued read-only surface. The catalog checkbox is grouped with Add Weapon and labelled `Include catalog weapons`. The alternative sheet removes the redundant inner Attacks border, while all layouts use row separators and keyboard-accessible detail buttons.
 - **Attack rows are damage-focused**: the sheet-wide Attack/Spell check is calculated in the hero combat stats and exported from `finalAttackSpellCheck`; weapon rows do not calculate or display a separate weapon attack bonus.
 - **Attack detail terminology**: Attack details use the same computed Hit, Heavy Hit, and Brutal Hit presentation as the table, including applicable ancestry and active-condition modifiers. Tier rows show numeric damage only and separate the damage type into its own spaced detail row. Derived Natural Weapon details omit the irrelevant stored attack bonus. Legacy `critRange` and `critDamage` values are ignored and are no longer created or represented by the runtime `AttackData` model.

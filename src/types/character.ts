@@ -286,7 +286,15 @@ export interface SpellData {
 
 export interface InventoryItemData {
 	id: string;
-	itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | 'Custom' | '';
+	itemType:
+		| 'Weapon'
+		| 'Armor'
+		| 'Shield'
+		| 'Adventuring Supply'
+		| 'Spell Focus'
+		| 'Potion'
+		| 'Custom'
+		| '';
 	itemName: string;
 	count: number;
 	cost?: string;

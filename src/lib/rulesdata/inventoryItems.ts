@@ -1,11 +1,13 @@
 // inventoryItems.ts
 
+import { PRESET_SPELL_FOCUSES } from './equipment/options/spellFocusOptions';
 import { PRESET_WEAPONS, getWeaponStyle } from './equipment/options/weaponOptions';
 import type {
 	WeaponStyle as CanonicalWeaponStyle,
 	PresetWeapon
 } from './equipment/schemas/weaponSchema';
 import type { PhysicalDamageType } from './equipment/schemas/baseEquipment';
+import type { SpellFocusHands } from './equipment/schemas/spellFocusSchema';
 
 //==============================================================================
 // SCHEMAS / TYPES
@@ -16,6 +18,7 @@ export enum ItemType {
 	Armor = 'Armor',
 	Shield = 'Shield',
 	AdventuringSupply = 'Adventuring Supply',
+	SpellFocus = 'Spell Focus',
 	Potion = 'Potion'
 }
 
@@ -63,11 +66,11 @@ export enum DamageType {
 export type WeaponProperty =
 	| 'Ammo'
 	| 'Concealable'
-	| 'Cumbersome'
-	| 'Deft'
 	| 'Guard'
 	| 'Heavy'
 	| 'Impact'
+	| 'Cumbersome'
+	| 'Deft'
 	| 'Long-Ranged'
 	| 'Multi-Faceted'
 	| 'Reach'
@@ -143,8 +146,21 @@ export interface HealingPotion {
 	price: number; // in gold pieces (g)
 }
 
+export interface SpellFocus {
+	itemType: ItemType.SpellFocus;
+	name: string;
+	hands: SpellFocusHands;
+	properties: string[];
+}
+
 // Union type for all inventory items
-export type InventoryItem = Weapon | Armor | Shield | AdventuringSupply | HealingPotion;
+export type InventoryItem =
+	| Weapon
+	| Armor
+	| Shield
+	| AdventuringSupply
+	| SpellFocus
+	| HealingPotion;
 
 //==============================================================================
 // INVENTORY DATA
@@ -429,5 +445,13 @@ export const allItems = [
 	...armors,
 	...shields,
 	...adventuringSupplies,
+	...PRESET_SPELL_FOCUSES.map(
+		(focus): SpellFocus => ({
+			itemType: ItemType.SpellFocus,
+			name: focus.name,
+			hands: focus.hands,
+			properties: [...focus.properties]
+		})
+	),
 	...healingPotions
 ];

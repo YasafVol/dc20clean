@@ -84,4 +84,27 @@ describe('equipmentEffects', () => {
 			])
 		);
 	});
+
+	it('applies preset spell focus effects when equipped from inventory', () => {
+		const effects = aggregateEquipmentEffects([
+			{
+				id: 'equipped-orb',
+				itemType: 'Spell Focus',
+				itemName: 'Orb',
+				isEquipped: true
+			}
+		]);
+
+		expect(effects).toContainEqual(
+			expect.objectContaining({
+				type: 'GRANT_ABILITY',
+				target: 'channeling_focus',
+				source: expect.objectContaining({
+					type: 'equipment',
+					id: 'equipped-orb',
+					name: 'Orb'
+				})
+			})
+		);
+	});
 });

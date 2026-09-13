@@ -33,6 +33,11 @@ describe('AlternativeCombatResourceSection', () => {
 				jumpDistance={3}
 				precisionDefense={12}
 				areaDefense={11}
+				combatMastery={2}
+				might={-1}
+				agility={3}
+				charisma={2}
+				intelligence={-1}
 				physicalDamageReduction={0}
 				resistances={[{ type: 'elemental', value: 'true' }]}
 				onRoll={onRoll}
@@ -51,5 +56,50 @@ describe('AlternativeCombatResourceSection', () => {
 
 		fireEvent.click(screen.getByRole('button', { name: 'Roll Initiative +4' }));
 		expect(onRoll).toHaveBeenLastCalledWith('Initiative', 4, 'physical-check');
+	});
+
+	it('shows calculator-backed PD and AD formulas when their abbreviations are hovered', () => {
+		render(
+			<AlternativeCombatResourceSection
+				attackBonus={5}
+				saveDC={15}
+				initiative={4}
+				moveSpeed={5}
+				jumpDistance={3}
+				precisionDefense={13}
+				areaDefense={12}
+				combatMastery={2}
+				might={-1}
+				agility={3}
+				charisma={3}
+				intelligence={0}
+				precisionDefenseBreakdown={{
+					statName: 'pd',
+					base: 13,
+					effects: [],
+					total: 13
+				}}
+				areaDefenseBreakdown={{
+					statName: 'ad',
+					base: 12,
+					effects: [],
+					total: 12
+				}}
+				physicalDamageReduction={0}
+				resistances={[]}
+				onRoll={vi.fn()}
+			/>
+		);
+
+		const pdChip = screen.getByLabelText('PD formula');
+		fireEvent.mouseEnter(pdChip.parentElement as HTMLElement);
+		expect(
+			screen.getByText('PD = 8 + Combat Mastery + Agility + Intelligence + Bonuses')
+		).toBeVisible();
+
+		fireEvent.mouseLeave(pdChip.parentElement as HTMLElement);
+		const adChip = screen.getByLabelText('AD formula');
+		fireEvent.mouseEnter(adChip.parentElement as HTMLElement);
+		expect(screen.getByText('AD = 8 + Combat Mastery + Might + Charisma + Bonuses')).toBeVisible();
 	});
 });

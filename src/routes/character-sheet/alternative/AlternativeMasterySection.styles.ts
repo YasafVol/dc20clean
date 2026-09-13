@@ -76,6 +76,78 @@ export const CardValue = styled.div`
 	font-variant-numeric: tabular-nums;
 `;
 
+export const CardLimitRow = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: ${theme.spacing[1]};
+	margin-top: ${theme.spacing[2]};
+`;
+
+export const CardLimitLabel = styled.span`
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+`;
+
+export const ManaInfoButton = styled.button`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: ${theme.colors.accent.primary};
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.text.primary};
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
+	}
+`;
+
+export const ManaInfoBody = styled.div`
+	display: grid;
+	gap: ${theme.spacing[4]};
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.base};
+	line-height: ${theme.typography.lineHeight.relaxed};
+
+	p,
+	ul {
+		margin: 0;
+	}
+
+	ul {
+		display: grid;
+		gap: ${theme.spacing[2]};
+		padding-left: ${theme.spacing[6]};
+	}
+`;
+
+export const ManaInfoHeading = styled.h3`
+	margin: 0;
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.base};
+	font-weight: ${theme.typography.fontWeight.bold};
+`;
+
+export const ManaInfoExample = styled.blockquote`
+	margin: 0;
+	padding: ${theme.spacing[4]};
+	background: ${theme.colors.bg.tertiary};
+	border-left: 3px solid ${theme.colors.accent.primary};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.secondary};
+	font-style: italic;
+`;
+
 export const AttributeCard = styled(MasteryCard)<{ $color: string }>`
 	--mastery-dot-color: ${({ $color }) => $color};
 

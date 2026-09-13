@@ -8,6 +8,16 @@ vi.mock('react-i18next', () => ({
 		t: (key: string) => {
 			const labels: Record<string, string> = {
 				'characterSheet.attrCombatMastery': 'Combat Mastery',
+				'characterSheet.attrManaSpendLimit': 'Mana Spend Limit',
+				'characterSheet.manaSpendLimitOpenInfo': 'Open Mana Spend Limit rules',
+				'characterSheet.manaSpendLimitCloseInfo': 'Close Mana Spend Limit rules',
+				'characterSheet.manaSpendLimitIntro': 'Mana Spend Limit introduction',
+				'characterSheet.manaSpendLimitRule': 'Mana Spend Limit rule',
+				'characterSheet.manaSpendLimitCalculation': 'Combat Mastery calculation',
+				'characterSheet.manaSpendLimitExampleHeading': 'Example from the rules',
+				'characterSheet.manaSpendLimitExample': 'Level 6 Sorcerer example',
+				'characterSheet.manaSpendLimitExceptionHeading': 'Exception: Sorcerer Meta Magic',
+				'characterSheet.manaSpendLimitException': 'Meta Magic exception',
 				'characterSheet.attrPrime': 'Prime',
 				'characterSheet.attrMight': 'MIGHT',
 				'characterSheet.attrAgility': 'AGILITY',
@@ -64,6 +74,8 @@ describe('AlternativeMasterySection', () => {
 		const sectionText = screen.getByLabelText('Attributes, skills, and trades').textContent ?? '';
 
 		expect(screen.getByText('Combat Mastery')).toBeTruthy();
+		expect(screen.getByText('Mana Spend Limit')).toBeTruthy();
+		expect(sectionText.indexOf('Mana Spend Limit')).toBeLessThan(sectionText.indexOf('+2'));
 		expect(screen.getByText('Prime')).toBeTruthy();
 		expect(sectionText.indexOf('Prime')).toBeLessThan(sectionText.indexOf('Combat Mastery'));
 		expect(screen.getByRole('button', { name: 'Roll Awareness +5' })).toBeTruthy();
@@ -75,5 +87,18 @@ describe('AlternativeMasterySection', () => {
 
 		fireEvent.click(screen.getByRole('button', { name: 'Roll Blacksmithing +5' }));
 		expect(onRoll).toHaveBeenLastCalledWith('Blacksmithing', 5, 'physical-check');
+	});
+
+	it('opens the Mana Spend Limit rules from the Combat Mastery card', () => {
+		render(<AlternativeMasterySection onRoll={vi.fn()} />);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Open Mana Spend Limit rules' }));
+
+		expect(screen.getByRole('dialog', { name: 'Mana Spend Limit' })).toBeTruthy();
+		expect(screen.getByText('Mana Spend Limit rule')).toBeTruthy();
+		expect(screen.getByText('Meta Magic exception')).toBeTruthy();
+
+		fireEvent.click(screen.getByRole('button', { name: 'Close Mana Spend Limit rules' }));
+		expect(screen.queryByRole('dialog')).toBeNull();
 	});
 });

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Resistance } from '../../../lib/services/calculatorModules/abilityCollection';
+import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
 import Tooltip from '../components/Tooltip';
 import { theme } from '../styles/theme';
 import type { RollActionType } from './AlternativeMasterySection';
@@ -14,6 +15,10 @@ import {
 	DefenseAbbreviation,
 	DefenseCard,
 	DefenseCards,
+	DefenseFormulaContent,
+	DefenseFormulaExpression,
+	DefenseFormulaRow,
+	DefenseFormulaRows,
 	DefensePanel,
 	DefenseThreshold,
 	DefenseThresholdLabel,
@@ -41,6 +46,13 @@ interface AlternativeCombatResourceSectionProps {
 	jumpDistance: number;
 	precisionDefense: number;
 	areaDefense: number;
+	combatMastery: number;
+	might: number;
+	agility: number;
+	charisma: number;
+	intelligence: number;
+	precisionDefenseBreakdown?: EnhancedStatBreakdown;
+	areaDefenseBreakdown?: EnhancedStatBreakdown;
 	physicalDamageReduction: number;
 	resistances: Array<Pick<Resistance, 'type' | 'value'>>;
 	onRoll: (label: string, bonus: number, actionType: RollActionType) => void;
@@ -60,6 +72,80 @@ const DAMAGE_REDUCTION_TOOLTIPS = {
 
 function formatSigned(value: number): string {
 	return `${value >= 0 ? '+' : ''}${value}`;
+}
+
+interface DefenseFormulaTerm {
+	label: string;
+	value: number;
+}
+
+function DefenseFormulaTooltip({
+	label,
+	abbreviation,
+	value,
+	terms,
+	breakdown
+}: {
+	label: string;
+	abbreviation: string;
+	value: number;
+	terms: DefenseFormulaTerm[];
+	breakdown?: EnhancedStatBreakdown;
+}) {
+	const activeEffects = breakdown?.effects.filter((effect) => effect.isActive) ?? [];
+	const calculatedTotal =
+		breakdown?.total ?? 8 + terms.reduce((total, term) => total + term.value, 0);
+	const hasOverride = calculatedTotal !== value;
+
+	return (
+		<DefenseFormulaContent>
+			<strong>{label}</strong>
+			<DefenseFormulaExpression>
+				{abbreviation} = 8 + {terms.map((term) => term.label).join(' + ')} + Bonuses
+			</DefenseFormulaExpression>
+			<DefenseFormulaRows>
+				<DefenseFormulaRow>
+					<span>Base</span>
+					<strong>8</strong>
+				</DefenseFormulaRow>
+				{terms.map((term) => (
+					<DefenseFormulaRow key={term.label}>
+						<span>{term.label}</span>
+						<strong>{formatSigned(term.value)}</strong>
+					</DefenseFormulaRow>
+				))}
+				{activeEffects.length === 0 ? (
+					<DefenseFormulaRow>
+						<span>Bonuses</span>
+						<strong>+0</strong>
+					</DefenseFormulaRow>
+				) : (
+					activeEffects.map((effect, index) => (
+						<DefenseFormulaRow key={`${effect.source.id}-${index}`}>
+							<span>{effect.source.name}</span>
+							<strong>{formatSigned(effect.value)}</strong>
+						</DefenseFormulaRow>
+					))
+				)}
+				{hasOverride && (
+					<>
+						<DefenseFormulaRow>
+							<span>Calculated</span>
+							<strong>{calculatedTotal}</strong>
+						</DefenseFormulaRow>
+						<DefenseFormulaRow>
+							<span>Displayed override</span>
+							<strong>{value}</strong>
+						</DefenseFormulaRow>
+					</>
+				)}
+				<DefenseFormulaRow $total>
+					<span>Total</span>
+					<strong>{value}</strong>
+				</DefenseFormulaRow>
+			</DefenseFormulaRows>
+		</DefenseFormulaContent>
+	);
 }
 
 export function getDamageReductionState(
@@ -103,18 +189,38 @@ function DefenseDisplay({
 	label,
 	abbreviation,
 	value,
-	color
+	color,
+	terms,
+	breakdown
 }: {
 	label: string;
 	abbreviation: string;
 	value: number;
 	color: string;
+	terms: DefenseFormulaTerm[];
+	breakdown?: EnhancedStatBreakdown;
 }) {
 	return (
 		<DefenseCard $color={color} aria-label={`${label} ${value}`}>
 			<DefenseTitle $color={color}>
 				{label}
-				<DefenseAbbreviation $color={color}>{abbreviation}</DefenseAbbreviation>
+				<Tooltip
+					content={
+						<DefenseFormulaTooltip
+							label={label}
+							abbreviation={abbreviation}
+							value={value}
+							terms={terms}
+							breakdown={breakdown}
+						/>
+					}
+					position="top"
+					maxWidth="360px"
+				>
+					<DefenseAbbreviation $color={color} aria-label={`${abbreviation} formula`}>
+						{abbreviation}
+					</DefenseAbbreviation>
+				</Tooltip>
 			</DefenseTitle>
 			<DefenseThresholds>
 				<DefenseThreshold $tone="hit">
@@ -142,6 +248,13 @@ export default function AlternativeCombatResourceSection({
 	jumpDistance,
 	precisionDefense,
 	areaDefense,
+	combatMastery,
+	might,
+	agility,
+	charisma,
+	intelligence,
+	precisionDefenseBreakdown,
+	areaDefenseBreakdown,
 	physicalDamageReduction,
 	resistances,
 	onRoll
@@ -198,12 +311,24 @@ export default function AlternativeCombatResourceSection({
 							abbreviation="PD"
 							value={precisionDefense}
 							color={theme.colors.accent.secondary}
+							terms={[
+								{ label: 'Combat Mastery', value: combatMastery },
+								{ label: 'Agility', value: agility },
+								{ label: 'Intelligence', value: intelligence }
+							]}
+							breakdown={precisionDefenseBreakdown}
 						/>
 						<DefenseDisplay
 							label="Area Defense"
 							abbreviation="AD"
 							value={areaDefense}
 							color={theme.colors.accent.secondary}
+							terms={[
+								{ label: 'Combat Mastery', value: combatMastery },
+								{ label: 'Might', value: might },
+								{ label: 'Charisma', value: charisma }
+							]}
+							breakdown={areaDefenseBreakdown}
 						/>
 					</DefenseCards>
 

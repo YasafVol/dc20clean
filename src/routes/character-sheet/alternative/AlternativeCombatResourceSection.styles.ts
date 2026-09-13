@@ -211,6 +211,36 @@ export const DefenseAbbreviation = styled.span<{ $color: string }>`
 	letter-spacing: 0.06em;
 `;
 
+export const DefenseFormulaContent = styled.div`
+	display: grid;
+	gap: ${theme.spacing[2]};
+	min-width: 260px;
+`;
+
+export const DefenseFormulaExpression = styled.div`
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	white-space: nowrap;
+`;
+
+export const DefenseFormulaRows = styled.div`
+	display: grid;
+	gap: ${theme.spacing[1]};
+`;
+
+export const DefenseFormulaRow = styled.div<{ $total?: boolean }>`
+	display: flex;
+	justify-content: space-between;
+	gap: ${theme.spacing[4]};
+	padding-top: ${({ $total }) => ($total ? theme.spacing[2] : '0')};
+	border-top: ${({ $total }) => ($total ? `1px solid ${theme.colors.border.default}` : 'none')};
+	color: ${({ $total }) => ($total ? theme.colors.text.primary : theme.colors.text.secondary)};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${({ $total }) =>
+		$total ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
+`;
+
 export const DefenseThresholds = styled.div`
 	display: grid;
 	gap: ${theme.spacing[2]};

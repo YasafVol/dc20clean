@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Info } from 'lucide-react';
 import { skillsData } from '../../../lib/rulesdata/skills';
 import { StyledDot, StyledProficiencyDots } from '../styles/Skills';
 import {
@@ -12,8 +14,14 @@ import {
 	AttributeName,
 	AttributeNumbers,
 	CardLabel,
+	CardLimitLabel,
+	CardLimitRow,
 	CardValue,
 	CombatMasteryCard,
+	ManaInfoBody,
+	ManaInfoButton,
+	ManaInfoExample,
+	ManaInfoHeading,
 	MasteryBonus,
 	MasteryName,
 	MasteryResult,
@@ -27,6 +35,13 @@ import {
 } from './AlternativeMasterySection.styles';
 import { theme } from '../styles/theme';
 import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
+import {
+	StyledFeaturePopupClose,
+	StyledFeaturePopupContent,
+	StyledFeaturePopupHeader,
+	StyledFeaturePopupOverlay,
+	StyledFeaturePopupTitle
+} from '../styles/FeaturePopup';
 
 export type RollActionType =
 	| 'attack'
@@ -92,6 +107,7 @@ function ActionRow({ item, onClick }: { item: MasteryItem; onClick: () => void }
 
 export default function AlternativeMasterySection({ onRoll }: AlternativeMasterySectionProps) {
 	const { t } = useTranslation();
+	const [showManaSpendInfo, setShowManaSpendInfo] = useState(false);
 	const { state } = useCharacterSheet();
 	const calculatedData = useCharacterCalculatedData();
 	const trades = useCharacterTrades();
@@ -190,6 +206,16 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 					</PrimeCard>
 					<CombatMasteryCard>
 						<CardLabel>{t('characterSheet.attrCombatMastery')}</CardLabel>
+						<CardLimitRow>
+							<CardLimitLabel>{t('characterSheet.attrManaSpendLimit')}</CardLimitLabel>
+							<ManaInfoButton
+								type="button"
+								onClick={() => setShowManaSpendInfo(true)}
+								aria-label={t('characterSheet.manaSpendLimitOpenInfo')}
+							>
+								<Info size={13} aria-hidden="true" />
+							</ManaInfoButton>
+						</CardLimitRow>
 						<CardValue>{formatSigned(combatMastery)}</CardValue>
 					</CombatMasteryCard>
 				</MasterySidebar>
@@ -244,6 +270,42 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 					</AttributeCard>
 				))}
 			</AlternativeSectionDisclosure>
+			{showManaSpendInfo && (
+				<StyledFeaturePopupOverlay onClick={() => setShowManaSpendInfo(false)}>
+					<StyledFeaturePopupContent
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="mana-spend-limit-title"
+						onClick={(event) => event.stopPropagation()}
+					>
+						<StyledFeaturePopupHeader>
+							<StyledFeaturePopupTitle id="mana-spend-limit-title">
+								{t('characterSheet.attrManaSpendLimit')}
+							</StyledFeaturePopupTitle>
+							<StyledFeaturePopupClose
+								type="button"
+								onClick={() => setShowManaSpendInfo(false)}
+								aria-label={t('characterSheet.manaSpendLimitCloseInfo')}
+							>
+								×
+							</StyledFeaturePopupClose>
+						</StyledFeaturePopupHeader>
+						<ManaInfoBody>
+							<p>{t('characterSheet.manaSpendLimitIntro')}</p>
+							<ul>
+								<li>{t('characterSheet.manaSpendLimitRule')}</li>
+								<li>{t('characterSheet.manaSpendLimitCalculation')}</li>
+							</ul>
+							<ManaInfoHeading>{t('characterSheet.manaSpendLimitExampleHeading')}</ManaInfoHeading>
+							<ManaInfoExample>{t('characterSheet.manaSpendLimitExample')}</ManaInfoExample>
+							<ManaInfoHeading>
+								{t('characterSheet.manaSpendLimitExceptionHeading')}
+							</ManaInfoHeading>
+							<p>{t('characterSheet.manaSpendLimitException')}</p>
+						</ManaInfoBody>
+					</StyledFeaturePopupContent>
+				</StyledFeaturePopupOverlay>
+			)}
 		</MasterySection>
 	);
 }

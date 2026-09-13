@@ -112,6 +112,12 @@ export default function AlternativeCharacterSheet() {
 	const jumpDistance = calculatedData?.stats?.finalJumpDistance ?? character.finalJumpDistance ?? 0;
 	const precisionDefense = calculatedData?.stats?.finalPD ?? character.finalPD ?? 0;
 	const areaDefense = calculatedData?.stats?.finalAD ?? character.finalAD ?? 0;
+	const combatMastery =
+		calculatedData?.stats?.finalCombatMastery ?? character.finalCombatMastery ?? 0;
+	const might = calculatedData?.stats?.finalMight ?? character.finalMight ?? 0;
+	const agility = calculatedData?.stats?.finalAgility ?? character.finalAgility ?? 0;
+	const charisma = calculatedData?.stats?.finalCharisma ?? character.finalCharisma ?? 0;
+	const intelligence = calculatedData?.stats?.finalIntelligence ?? character.finalIntelligence ?? 0;
 	const physicalDamageReduction = calculatedData?.stats?.finalPDR ?? character.finalPDR ?? 0;
 	const resistances = calculatedData?.resistances ?? character.resistances ?? [];
 
@@ -379,6 +385,13 @@ export default function AlternativeCharacterSheet() {
 					jumpDistance={jumpDistance}
 					precisionDefense={precisionDefense}
 					areaDefense={areaDefense}
+					combatMastery={combatMastery}
+					might={might}
+					agility={agility}
+					charisma={charisma}
+					intelligence={intelligence}
+					precisionDefenseBreakdown={calculatedData?.breakdowns?.pd}
+					areaDefenseBreakdown={calculatedData?.breakdowns?.ad}
 					physicalDamageReduction={physicalDamageReduction}
 					resistances={resistances}
 					onRoll={handleActionRoll}

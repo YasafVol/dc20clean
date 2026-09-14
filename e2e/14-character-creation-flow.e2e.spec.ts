@@ -107,7 +107,11 @@ test.describe('Character creation flow recipes', () => {
 		});
 	});
 
-	test('blocks jumping ahead from an incomplete step', async ({ page }) => {
+	test('blocks jumping ahead from an incomplete step', async ({ page }, testInfo) => {
+		test.skip(
+			testInfo.project.name === 'mobile',
+			'The mobile flow has no direct step-jump control.'
+		);
 		await runRecipe(page, [
 			{
 				name: 'Open character creation',
@@ -132,7 +136,7 @@ test.describe('Character creation flow recipes', () => {
 		]);
 	});
 
-	test('exposes all eight steps for a leveled hybrid character', async ({ page }) => {
+	test('exposes all eight steps for a leveled hybrid character', async ({ page }, testInfo) => {
 		await runRecipe(page, [
 			{
 				name: 'Open character creation',
@@ -165,7 +169,9 @@ test.describe('Character creation flow recipes', () => {
 					];
 
 					for (const stepId of expectedStepIds) {
-						await expect(page.getByTestId(`creation-step-${stepId}`)).toBeVisible();
+						const step = page.getByTestId(`creation-step-${stepId}`);
+						await expect(step).toBeAttached();
+						if (testInfo.project.name === 'desktop') await expect(step).toBeVisible();
 					}
 
 					await expect(page.getByTestId('creation-step-number-name')).toHaveText('8');
@@ -217,8 +223,13 @@ test.describe('Character creation flow recipes', () => {
 				await characterCard.getByRole('button', { name: 'Edit' }).click();
 				await page.waitForURL('**/character/**/edit');
 
-				await expect(page.getByTestId('creation-step-class')).toBeVisible();
-				await page.getByTestId('creation-step-attributes').click();
+				if (testInfo.project.name === 'mobile') {
+					await page.getByTestId('creation-next').click();
+					await page.getByTestId('creation-next').click();
+				} else {
+					await expect(page.getByTestId('creation-step-class')).toBeVisible();
+					await page.getByTestId('creation-step-attributes').click();
+				}
 				await expect(page.getByTestId('creation-step-attributes')).toHaveAttribute(
 					'aria-current',
 					'step'
@@ -228,7 +239,13 @@ test.describe('Character creation flow recipes', () => {
 				await page.getByTestId('agility-increase').click();
 				await expect(page.getByText('Spent: 13 | Remaining: 0')).toBeVisible();
 
-				await page.getByTestId('creation-step-name').click();
+				if (testInfo.project.name === 'mobile') {
+					await page.getByTestId('creation-next').click();
+					await page.getByTestId('creation-next').click();
+					await page.getByTestId('creation-next').click();
+				} else {
+					await page.getByTestId('creation-step-name').click();
+				}
 				await expect(page.getByTestId('creation-step-name')).toHaveAttribute(
 					'aria-current',
 					'step'
@@ -246,6 +263,8 @@ test.describe('Character creation flow recipes', () => {
 				expect(updatedCharacter?.lastModified).not.toBe(createdCharacter?.lastModified);
 
 				await expect(page.getByRole('heading', { name: HUMAN_BARBARIAN_NAME })).toBeVisible();
+				const characterTab = page.getByRole('button', { name: /Char/i }).first();
+				if (await characterTab.isVisible().catch(() => false)) await characterTab.click();
 				await expect(page.getByTestId('sheet-attribute-might-value')).toHaveText('+2');
 				await expect(page.getByTestId('sheet-attribute-agility-value')).toHaveText('+2');
 			},

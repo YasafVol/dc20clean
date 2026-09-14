@@ -186,7 +186,7 @@ test.describe('Hunter (Beastborn, Urban + Grassland) E2E', () => {
 		await expect(naturalWeaponAttack.getByTestId('weapon-brutal-damage')).toHaveText('3');
 		await expect(naturalWeaponAttack.getByTestId('weapon-damage-type')).toHaveText('B / P / S');
 
-		await page.getByRole('button', { name: /Features/i }).click();
+		await page.getByRole('button', { name: /Feat(?:ures)?/i }).click();
 		await expect(page.getByText('Natural Weapon', { exact: true }).first()).toBeVisible();
 		await expect(page.getByText('Full Flight', { exact: true }).first()).toBeVisible();
 		await expect(page.getByText('Small-Sized', { exact: true }).first()).toBeVisible();

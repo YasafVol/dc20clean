@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { importFixture, failIfMissing } from './helpers';
+import { importFixture, failIfMissing, openSheetTab } from './helpers';
 
 test('08 - items add and remove', async ({ page }) => {
 	await importFixture(page);
+	await openSheetTab(page, 'inventory');
+	await expect(page.getByTestId('add-item')).toBeVisible();
 	try {
 		await (await import('fs')).promises.mkdir('e2e/screenshots', { recursive: true });
 	} catch (e) {}

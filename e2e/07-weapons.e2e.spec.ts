@@ -12,6 +12,7 @@ test('07 - weapons add update remove', async ({ page }) => {
 		'add weapon button'
 	);
 	await addWeaponBtn.click();
+	await page.getByRole('checkbox', { name: 'Include catalog weapons' }).check();
 
 	// Select a weapon from the dropdown
 	const weaponSelect = await failIfMissing(
@@ -20,7 +21,7 @@ test('07 - weapons add update remove', async ({ page }) => {
 		'e2e/screenshots/07-02-weapon-select-missing.png',
 		'weapon select dropdown'
 	);
-	await weaponSelect.selectOption('Short Sword');
+	await weaponSelect.selectOption({ label: 'Short Sword (One-Handed)' });
 
 	// Wait for weapon to be populated
 	await expect(weaponSelect).toHaveValue('Short Sword');
@@ -31,7 +32,7 @@ test('07 - weapons add update remove', async ({ page }) => {
 	console.log('✅ Weapon added successfully');
 
 	// Remove weapon
-	const removeBtn = page.getByRole('button', { name: /remove weapon/i }).first();
+	const removeBtn = page.getByTitle('Remove weapon').first();
 	await expect(removeBtn).toBeVisible();
 	await removeBtn.click();
 

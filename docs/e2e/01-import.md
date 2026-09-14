@@ -7,7 +7,7 @@ Purpose
 Preconditions
 
 - App running at `/`.
-- `e2e/helpers.ts` provides `TEST_CHARACTER` (by default `e2e/test-character-gibble.json`).
+- `e2e/helpers.ts` provides `TEST_CHARACTER` (by default `e2e/test-character-current.json`, generated through the current 0.10.5 creation flow).
 
 Test steps
 
@@ -37,6 +37,7 @@ Optional / Notes
 
 - Screenshots are taken only if `E2E_SCREENSHOTS==='1'` to avoid noisy I/O.
 - Failure modes: import textarea not found, JSON invalid, import button missing — tests will throw if the textarea is absent.
+- The test keeps each Playwright project's configured viewport; mobile coverage must not be widened into the desktop layout.
 
 Recommendations
 

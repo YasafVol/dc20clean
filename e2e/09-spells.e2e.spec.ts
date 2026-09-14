@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { importFixture, failIfMissing } from './helpers';
+import { importFixture, failIfMissing, openSheetTab } from './helpers';
 
 test('09 - spells add filter delete', async ({ page }) => {
 	await importFixture(page);
+	await openSheetTab(page, 'spells');
+	await expect(page.getByTestId('add-spell')).toBeVisible();
 	try {
 		await (await import('fs')).promises.mkdir('e2e/screenshots', { recursive: true });
 	} catch (e) {}

@@ -61,6 +61,12 @@ npm run test:unit -- --run
 npm run test:e2e
 ```
 
+All general E2E commands use `e2e/test-character-current.json`, currently a
+canonical `dc20-0.10.5` character generated through the live creation flow.
+`E2E_FIXTURE` may override it only for a deliberate compatibility investigation;
+committed legacy-version coverage must construct or name its fixture inside the
+explicit upgrade or compatibility spec.
+
 Vitest uses `client` (browser), `server` (Node), and `convex` (Edge runtime) projects. Tests that stub `import.meta.env` or process-backed environment state must stay in the server project and be excluded from the browser project. Convex function tests use `convex-test` and authenticate with `t.withIdentity`.
 
 Agentic browser QA gates:
@@ -113,6 +119,9 @@ Legacy resource-only compatibility is covered by the versioning classifier tests
 `CharacterSheetProvider.compatibility.test.tsx`. Coverage must prove both sides of the
 boundary: the seven permitted live values persist without calculation, while attempted
 inventory, notes, attacks, and non-permitted resource-state changes remain unchanged.
+Shared Playwright fixtures for structural sheet editing must declare the current
+`rulesVersion` and be generated through the current character-creation flow. Legacy
+fixtures belong in explicit compatibility or upgrade scenarios and must not be relabeled.
 
 ### 3.2 Rules Acceptance Features
 
@@ -127,13 +136,13 @@ inventory, notes, attacks, and non-permitted resource-state changes remain uncha
 | Spec                                                  | Coverage                                                                                                                                                                                                                                               |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `e2e/01-import.e2e.spec.ts`                           | Imports a fixture and opens the character sheet                                                                                                                                                                                                        |
-| `e2e/02-resources.e2e.spec.ts`                        | Resource controls and notes                                                                                                                                                                                                                            |
+| `e2e/02-resources.e2e.spec.ts`                        | Resource controls                                                                                                                                                                                                                                      |
 | `e2e/07-weapons.e2e.spec.ts`                          | Weapon add/update/remove                                                                                                                                                                                                                               |
 | `e2e/08-items.e2e.spec.ts`                            | Item add/remove                                                                                                                                                                                                                                        |
 | `e2e/09-spells.e2e.spec.ts`                           | Spell add/filter/delete                                                                                                                                                                                                                                |
 | `e2e/10-maneuvers.e2e.spec.ts`                        | Maneuver add/delete when available                                                                                                                                                                                                                     |
 | `e2e/11-currency.e2e.spec.ts`                         | Currency input                                                                                                                                                                                                                                         |
-| `e2e/12-exhaustion-info.e2e.spec.ts`                  | Exhaustion and feature info buttons                                                                                                                                                                                                                    |
+| `e2e/12-exhaustion-info.e2e.spec.ts`                  | Exhaustion state and feature-detail popup in desktop and mobile layouts                                                                                                                                                                                |
 | `e2e/13-character-upgrade.e2e.spec.ts`                | Explicit old-rules upgrade flow                                                                                                                                                                                                                        |
 | `e2e/14-character-creation-flow.e2e.spec.ts`          | Recipe-style character creation coverage: forward-jump gate, leveled hybrid eight-step discovery, level-1 Human Barbarian creation through Background/Maneuvers to sheet, and create → sheet → load/edit → attribute reallocation → resave persistence |
 | `e2e/15-rulebook.e2e.spec.ts`                         | Rulebook TOC, article navigation, table rendering, search, and stable heading hashes                                                                                                                                                                   |

@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { importFixture } from './helpers';
+import { importFixture, openSheetTab } from './helpers';
 
 const pairedResources = ['Mana', 'Stamina', 'Rest', 'Grit'] as const;
 
 test('19 - paired primary-sheet resource values remain separated', async ({ page }) => {
 	await importFixture(page);
+	await openSheetTab(page, 'character');
 
 	for (const label of pairedResources) {
 		const decrease = page.getByRole('button', { name: `Decrease ${label}` });

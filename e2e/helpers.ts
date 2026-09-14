@@ -3,12 +3,39 @@ import { Page } from '@playwright/test';
 
 const fixtureFileName = process.env.E2E_FIXTURE
 	? (process.env.E2E_FIXTURE as string)
-	: './test-character-gibble.json';
+	: './test-character-current.json';
 const fixtureUrl = new URL(
 	fixtureFileName.startsWith('./') ? fixtureFileName : `./${fixtureFileName}`,
 	import.meta.url
 );
 export const TEST_CHARACTER = JSON.parse(fs.readFileSync(fixtureUrl, 'utf-8'));
+
+export async function openSheetTab(
+	page: Page,
+	tab: 'character' | 'attacks' | 'spells' | 'inventory' | 'features'
+) {
+	const desktopTab = page.getByTestId(`sheet-tab-${tab}`);
+	if (await desktopTab.isVisible().catch(() => false)) {
+		await desktopTab.click();
+		return;
+	}
+
+	if (tab === 'inventory') {
+		await page.getByRole('button', { name: /More/i }).click();
+		await page.getByRole('button', { name: /Inventory/i }).click();
+		return;
+	}
+
+	const mobileLabels = {
+		character: /Char/i,
+		attacks: /Attack/i,
+		spells: /Spell/i,
+		features: /Feat/i
+	};
+	const mobileTab = page.getByRole('button', { name: mobileLabels[tab] }).first();
+	if (tab === 'character' && !(await mobileTab.isVisible().catch(() => false))) return;
+	await mobileTab.click();
+}
 
 export async function failIfMissing(
 	page: Page,
@@ -36,12 +63,6 @@ export async function failIfMissing(
 }
 
 export async function importFixture(page: Page) {
-	// Force desktop viewport so desktop-only sections render during tests
-	try {
-		await page.setViewportSize({ width: 1280, height: 900 });
-	} catch (e) {
-		// some drivers may not support setViewportSize; ignore errors
-	}
 	await page.goto('/');
 	await page.getByRole('button', { name: /load character/i }).click();
 	await page.getByRole('button', { name: /import from json/i }).click();

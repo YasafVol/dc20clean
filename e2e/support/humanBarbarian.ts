@@ -102,5 +102,7 @@ export async function finishHumanBarbarianToSheet(page: Page) {
 	await page.waitForURL('**/character/**');
 	await expect(page.getByRole('heading', { name: HUMAN_BARBARIAN_NAME })).toBeVisible();
 	await expect(page.getByText('Level 1 Barbarian')).toBeVisible();
+	const characterTab = page.getByRole('button', { name: /Char/i }).first();
+	if (await characterTab.isVisible().catch(() => false)) await characterTab.click();
 	await expect(page.getByText('Attack/Spell')).toBeVisible();
 }

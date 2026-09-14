@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/classes-v0105-report.json`, `docs/migration/class-feature-effect-classification.json`, and `src/lib/rulesdata/classes-data/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ---
 
@@ -291,6 +291,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
 - **Slot-Based Spell System (M3.20)**: Classes define individual Spell slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles. Current progression grants Spells only; legacy imported cantrip fields are normalized at the compatibility boundary.
+- **Current Spell-Grant Contract**: Current class, subclass, and talent data author only `GRANT_SPELL` and use Spell terminology. Wild Speech grants Druidcraft through `GRANT_SPELL`; legacy effect tokens and class-path metadata remain accepted only at compatibility boundaries.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 **Recent Updates (2026-06-01)**:

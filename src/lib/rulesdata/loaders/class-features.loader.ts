@@ -104,6 +104,7 @@ export interface ClassDefinition {
 			description?: string;
 			betaNote?: string;
 		};
+		/** @deprecated Legacy import compatibility. Current class data has one Spells progression. */
 		cantrips?: {
 			knownIncreasesBy?: string;
 			description?: string;

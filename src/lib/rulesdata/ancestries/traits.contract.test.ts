@@ -24,4 +24,21 @@ describe('Trait subsystem contract', () => {
 			}
 		}
 	});
+
+	it('does not author legacy cantrip effects or terminology in current traits', () => {
+		const serializedTraits = JSON.stringify(traitsData);
+
+		expect(serializedTraits).not.toContain('GRANT_CANTRIP');
+		expect(serializedTraits).not.toMatch(/\bcantrips?\b/i);
+	});
+
+	it('models Fiendish Aura as an ordinary Sorcery Spell grant', () => {
+		const fiendishAura = traitsData.find((trait) => trait.id === 'fiendborn_fiendish_aura');
+
+		expect(fiendishAura?.effects).toContainEqual({
+			type: 'GRANT_SPELL',
+			target: 'Sorcery',
+			value: 1
+		});
+	});
 });

@@ -20,9 +20,6 @@ export const druidClass: ClassDefinition = {
 			description: 'Primal spells focused on nature and the elements',
 			type: 'primal'
 		},
-		cantrips: {
-			description: 'Cantrips Known column of the Druid Class Table'
-		},
 		spells: {
 			description: 'Spells Known column of the Druid Class Table'
 		},
@@ -155,10 +152,10 @@ export const druidClass: ClassDefinition = {
 			id: 'druid_wild_speech',
 			featureName: 'Wild Speech',
 			levelGained: 1,
-			description: 'You learn the Druidcraft Cantrip and can communicate with nature.',
+			description: 'You learn the Druidcraft Spell and can communicate with nature.',
 			isFlavor: true,
 			effects: [
-				{ type: 'GRANT_CANTRIP', target: 'druidcraft', value: 1 },
+				{ type: 'GRANT_SPELL', target: 'druidcraft', value: 1 },
 				{
 					type: 'GRANT_CHOICE',
 					target: 'wild_speech',

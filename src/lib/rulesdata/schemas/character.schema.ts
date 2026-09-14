@@ -134,6 +134,7 @@ export interface GrantSpellEffect {
 }
 
 export interface GrantCantripEffect {
+	/** @deprecated Legacy import compatibility. Current rules data must use GRANT_SPELL. */
 	type: 'GRANT_CANTRIP';
 	target: string;
 	value: number;
@@ -358,6 +359,7 @@ export interface ClassDefinition {
 	};
 	spellcasterPath?: {
 		spellList?: any;
+		/** @deprecated Legacy import compatibility. Current class data has one Spells progression. */
 		cantrips?: {
 			description?: string;
 		};
@@ -389,6 +391,7 @@ export interface ClassDefinition {
 		};
 		spellcastingAspect?: {
 			spellList?: any;
+			/** @deprecated Legacy import compatibility. Current class data has one Spells progression. */
 			cantrips?: {
 				description?: string;
 			};

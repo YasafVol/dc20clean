@@ -212,7 +212,6 @@ describe('Class Progression Resolver (UT-2)', () => {
 			const result = resolveClassProgression('wizard', 1);
 
 			expect(result.budgets.totalMP).toBeGreaterThan(0);
-			// Note: Cantrips are not tracked in progression data (only spells)
 			expect(result.budgets.totalSpellsKnown).toBeGreaterThan(0);
 
 			// Should have spellcasting path

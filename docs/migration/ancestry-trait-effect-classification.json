@@ -1,5 +1,5 @@
 {
-	"generated": "2026-06-19",
+	"generated": "2026-09-14",
 	"counts": {
 		"sheet": 56,
 		"mixed": 11,
@@ -1189,7 +1189,7 @@
 			"name": "Fiendish Aura",
 			"cost": 1,
 			"effects": [
-				"GRANT_CANTRIP:Sorcery:1",
+				"GRANT_SPELL:Sorcery:1",
 				"GRANT_ABILITY:sorcery_energy_type:Must match Fiendish Origin energy type."
 			],
 			"category": "mixed",

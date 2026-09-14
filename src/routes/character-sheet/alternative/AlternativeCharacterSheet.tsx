@@ -6,7 +6,7 @@ import { downloadCharacterPdf } from '../../../lib/pdf/exportPdf';
 import { getDiceModifierForAction } from '../../../lib/services/conditionEffectsAnalyzer';
 import { getDefaultStorage } from '../../../lib/storage';
 import { getRulebookArticle, getRulebookArticlePath } from '../../rulebook/rulebookData';
-import { HealthStatusIndicator } from '../components/DeathExhaustion';
+import DeathExhaustion, { HealthStatusIndicator } from '../components/DeathExhaustion';
 import DiceRoller, { type DiceRollerRef } from '../components/DiceRoller';
 import { StatCard } from '../components/new/StatCard';
 import {
@@ -29,6 +29,7 @@ import {
 	PageMessage,
 	ResourceCards,
 	ResourceCardSlot,
+	ResourceExhaustion,
 	ResourceSection,
 	SheetButton,
 	SheetContent,
@@ -55,6 +56,7 @@ export default function AlternativeCharacterSheet() {
 	const {
 		state,
 		readOnly,
+		canManageResources,
 		updateHP,
 		updateMP,
 		updateSP,
@@ -307,7 +309,7 @@ export default function AlternativeCharacterSheet() {
 									temp={tempHP}
 									color="health"
 									size="medium"
-									editable={!readOnly}
+									editable={canManageResources}
 									onChange={updateHP}
 									onTempChange={updateTempHP}
 									afterLabel={<HealthStatusIndicator isMobile={false} />}
@@ -323,7 +325,7 @@ export default function AlternativeCharacterSheet() {
 										max={maxMP}
 										color="mana"
 										size="medium"
-										editable={!readOnly}
+										editable={canManageResources}
 										onChange={updateMP}
 										reserveAfterLabelSpace
 										animateOnMount={false}
@@ -338,7 +340,7 @@ export default function AlternativeCharacterSheet() {
 										max={maxSP}
 										color="stamina"
 										size="medium"
-										editable={!readOnly}
+										editable={canManageResources}
 										onChange={updateSP}
 										reserveAfterLabelSpace
 										animateOnMount={false}
@@ -352,7 +354,7 @@ export default function AlternativeCharacterSheet() {
 									max={maxRest}
 									color="grit"
 									size="medium"
-									editable={!readOnly}
+									editable={canManageResources}
 									onChange={updateRestPoints}
 									reserveAfterLabelSpace
 									animateOnMount={false}
@@ -365,13 +367,16 @@ export default function AlternativeCharacterSheet() {
 									max={maxGrit}
 									color="grit"
 									size="medium"
-									editable={!readOnly}
+									editable={canManageResources}
 									onChange={updateGritPoints}
 									reserveAfterLabelSpace
 									animateOnMount={false}
 								/>
 							</ResourceCardSlot>
 						</ResourceCards>
+						<ResourceExhaustion>
+							<DeathExhaustion isMobile={false} />
+						</ResourceExhaustion>
 					</AlternativeSectionDisclosure>
 				</ResourceSection>
 

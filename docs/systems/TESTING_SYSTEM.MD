@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ---
 
@@ -108,6 +108,11 @@ For a lifecycle that spans UI presentations, backend records, permissions, and s
 3. Keep scenario names aligned between the feature and executable tests.
 4. Add focused component or Playwright coverage for routing and presentation-specific wiring.
 5. Do not count a `.feature` file alone as regression protection.
+
+Legacy resource-only compatibility is covered by the versioning classifier tests and
+`CharacterSheetProvider.compatibility.test.tsx`. Coverage must prove both sides of the
+boundary: the seven permitted live values persist without calculation, while attempted
+inventory, notes, attacks, and non-permitted resource-state changes remain unchanged.
 
 ### 3.2 Rules Acceptance Features
 

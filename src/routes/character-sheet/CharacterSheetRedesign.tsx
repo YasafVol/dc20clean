@@ -289,6 +289,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const {
 		state,
 		readOnly,
+		canManageResources,
 		updateHP,
 		updateMP,
 		updateSP,
@@ -809,7 +810,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						fontSize: '0.875rem'
 					}}
 				>
-					Read-only — viewing {state.character?.finalName ?? 'character'}&apos;s sheet
+					{canManageResources
+						? 'Legacy character — only resources and exhaustion can be changed'
+						: `Read-only — viewing ${state.character?.finalName ?? 'character'}'s sheet`}
 				</div>
 			)}
 			<Header
@@ -948,6 +951,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								saveDC={saveDC}
 								initiative={initiative}
 								activeConditions={state.character?.characterState?.activeConditions || []}
+								resourceEditable={canManageResources}
 								hasHealthOverride={hasHealthOverride}
 								hasResourcesOverride={hasResourcesOverride}
 								hasRecoveryOverride={hasRecoveryOverride}
@@ -981,7 +985,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								onAreaADMouseLeave={handleMouseLeave}
 								onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
 								onPrecisionDRMouseLeave={handleMouseLeave}
-								showRageToggle={hasRageFeature}
+								showRageToggle={hasRageFeature && !readOnly}
 								isRaging={isRaging}
 								onRageToggle={setRageActive}
 							/>

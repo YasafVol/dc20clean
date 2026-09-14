@@ -18,13 +18,16 @@ import {
 import { getDefaultStorage } from '../../../lib/storage';
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import type { CharacterState, SavedCharacter } from '../../../lib/types/dataContracts';
 import { logger } from '../../../lib/utils/logger';
 import {
 	calculateCharacterWithBreakdowns,
 	convertToEnhancedBuildData
 } from '../../../lib/services/enhancedCharacterCalculator';
-import { assessCharacterCompatibility } from '../../../lib/rulesdata/versioning/compatibility';
+import {
+	assessCharacterCompatibility,
+	mergeLegacyResourceState
+} from '../../../lib/rulesdata/versioning/compatibility';
 import { ancestriesData } from '../../../lib/rulesdata/ancestries/ancestries';
 import { traitsData } from '../../../lib/rulesdata/ancestries/traits';
 import { tradesData } from '../../../lib/rulesdata/trades';
@@ -361,6 +364,8 @@ interface CharacterSheetContextType {
 	retryFailedSave: () => void;
 	// Read-only mode (campaign member viewing another's sheet)
 	readOnly: boolean;
+	// Resource counters remain writable for compatible owners and upgrade-required legacy owners.
+	canManageResources: boolean;
 }
 
 const CharacterSheetContext = createContext<CharacterSheetContextType | undefined>(undefined);
@@ -436,10 +441,12 @@ function CharacterSheetProviderCore({
 	campaignCharacterLoading,
 	campaignEventsEnabled
 }: CharacterSheetProviderCoreProps) {
-	const readOnly = !!campaignId;
+	const campaignReadOnly = !!campaignId;
 	const {
 		state,
 		dispatch,
+		canEditCharacter,
+		canManageResources,
 		updateHP,
 		updateSP,
 		updateMP,
@@ -471,7 +478,8 @@ function CharacterSheetProviderCore({
 		updateDefenseOverrides,
 		setRageActive,
 		setWildFormActive
-	} = useCharacterSheetReducer(readOnly);
+	} = useCharacterSheetReducer(campaignReadOnly);
+	const readOnly = !canEditCharacter;
 
 	const storage = useMemo(() => getDefaultStorage(), []);
 	const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -479,6 +487,7 @@ function CharacterSheetProviderCore({
 	const [savedMaxHP, setSavedMaxHP] = useState<number | null>(null);
 	const [savedIsDead, setSavedIsDead] = useState<boolean>(false);
 	const lastSavedHash = useRef<string>('');
+	const persistedCharacterStateRef = useRef<CharacterState | null>(null);
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Save function that runs enhanced calculator and persists to storage
@@ -494,8 +503,8 @@ function CharacterSheetProviderCore({
 			}
 
 			logger.debug('storage', 'Setting save status', { status: 'saving' });
+			const compatibility = assessCharacterCompatibility(character);
 			try {
-				const compatibility = assessCharacterCompatibility(character);
 				if (compatibility.autoSaveMode === 'none') {
 					logger.warn('storage', 'Auto-save skipped for locked character', {
 						characterId: character.id,
@@ -506,8 +515,13 @@ function CharacterSheetProviderCore({
 					return;
 				}
 
-				if (compatibility.autoSaveMode === 'characterState') {
-					await storage.saveCharacterState(character.id, character.characterState);
+				if (compatibility.autoSaveMode === 'resources') {
+					const resourceState = mergeLegacyResourceState(
+						persistedCharacterStateRef.current ?? character.characterState,
+						character.characterState
+					);
+					await storage.saveCharacterState(character.id, resourceState);
+					persistedCharacterStateRef.current = resourceState;
 					lastSavedHash.current = currentHash;
 					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
 					setSavedMaxHP(character.finalHPMax ?? null);
@@ -566,6 +580,7 @@ function CharacterSheetProviderCore({
 
 				// Save the entire character (includes spells, maneuvers, etc.)
 				await storage.saveCharacter(updatedCharacter);
+				persistedCharacterStateRef.current = updatedCharacter.characterState;
 				lastSavedHash.current = currentHash;
 				setSavedHP(updatedCharacter.characterState?.resources?.current?.currentHP ?? null);
 				setSavedMaxHP(updatedCharacter.finalHPMax ?? null);
@@ -582,17 +597,16 @@ function CharacterSheetProviderCore({
 			} catch (error) {
 				console.log('[GIMLI] Save FAILED! Setting status to ERROR', error);
 				setSaveStatus('error');
-				logger.warn(
-					'calculation',
-					'Calculator error during save, proceeding with last known values',
-					{
-						characterId: character.id,
-						error: error instanceof Error ? error.message : String(error)
-					}
-				);
-				// Save anyway with existing character data
+				logger.warn('storage', 'Character save failed', {
+					characterId: character.id,
+					error: error instanceof Error ? error.message : String(error)
+				});
+				if (compatibility.autoSaveMode !== 'full') return;
+
+				// A current-rules calculator failure may still preserve its existing full record.
 				try {
 					await storage.saveCharacter(character);
+					persistedCharacterStateRef.current = character.characterState;
 
 					lastSavedHash.current = currentHash;
 					setSavedHP(character.characterState?.resources?.current?.currentHP ?? null);
@@ -618,9 +632,9 @@ function CharacterSheetProviderCore({
 	// Debounced save function
 	const debouncedSave = useDebounce(saveCharacterData, 2000);
 
-	// Effect to auto-save when state changes (skip when readOnly)
+	// Campaign viewers never save; owners save according to compatibility mode.
 	useEffect(() => {
-		if (readOnly || !state.character) return () => debouncedSave.cancel();
+		if (campaignReadOnly || !state.character) return () => debouncedSave.cancel();
 		logger.debug('storage', 'Character state changed', {
 			exists: !!state.character,
 			id: state.character?.id,
@@ -630,7 +644,7 @@ function CharacterSheetProviderCore({
 		debouncedSave(state.character);
 		// Clean up on unmount
 		return () => debouncedSave.cancel();
-	}, [state.character, debouncedSave, readOnly]);
+	}, [state.character, debouncedSave, campaignReadOnly]);
 
 	// Cleanup save status timeout on unmount
 	useEffect(() => {
@@ -655,6 +669,7 @@ function CharacterSheetProviderCore({
 					characterData = await storage.getCharacterById(characterId);
 				}
 				if (characterData) {
+					persistedCharacterStateRef.current = characterData.characterState;
 					dispatch({ type: 'LOAD_SUCCESS', character: characterData });
 				} else {
 					dispatch({ type: 'LOAD_ERROR', error: 'Character not found' });
@@ -673,21 +688,21 @@ function CharacterSheetProviderCore({
 		loadCharacter();
 	}, [characterId, campaignId, campaignCharacter, campaignCharacterLoading, dispatch, storage]);
 
-	// Manual save function exposed through context (no-op when readOnly)
+	// Manual save is available to owners, including legacy resource-only owners.
 	const saveNow = useCallback(async () => {
-		if (readOnly) return;
+		if (campaignReadOnly) return;
 		if (state.character) {
 			// Cancel any pending debounced save
 			debouncedSave.cancel();
 			await saveCharacterData(state.character);
 		}
-	}, [readOnly, state.character, saveCharacterData, debouncedSave]);
+	}, [campaignReadOnly, state.character, saveCharacterData, debouncedSave]);
 
 	// Retry failed save function
 	const retryFailedSave = useCallback(() => {
-		if (readOnly || !state.character) return;
+		if (campaignReadOnly || !state.character) return;
 		saveCharacterData(state.character);
-	}, [readOnly, state.character, saveCharacterData]);
+	}, [campaignReadOnly, state.character, saveCharacterData]);
 
 	const campaignEventHandlers = useRef<CampaignEventHandlers>(NO_CAMPAIGN_EVENT_HANDLERS);
 	const handleDiceRoll = useCallback<CharacterSheetContextType['handleDiceRoll']>(
@@ -748,12 +763,13 @@ function CharacterSheetProviderCore({
 		saveNow,
 		saveStatus,
 		retryFailedSave,
-		readOnly
+		readOnly,
+		canManageResources
 	};
 
 	return (
 		<CharacterSheetContext.Provider value={contextValue}>
-			{campaignEventsEnabled && !readOnly ? (
+			{campaignEventsEnabled && !campaignReadOnly ? (
 				<CampaignEventsInner
 					character={state.character}
 					savedHP={savedHP}

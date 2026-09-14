@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ---
 
@@ -196,6 +196,13 @@ savedCharacters_backup → Backup copy (for migration safety)
 | `getCharacterById()`      | `storageUtils.ts` | Load single character        |
 | `saveCharacter()`         | `storageUtils.ts` | Save/update single character |
 | `saveCharacterState()`    | `storageUtils.ts` | Update only game state       |
+
+For an `upgrade-required` character, the sheet passes a resource-filtered state to
+`saveCharacterState()`. Only `currentHP`, `tempHP`, `currentMP`, `currentSP`,
+`currentRestPoints`, `currentGritPoints`, and `exhaustionLevel` come from the live
+sheet. Every other `characterState` field is restored from the last loaded or saved
+snapshot before persistence. A resource-save failure never falls back to a full
+character save.
 
 Character creation, edit completion, and level-up replacement are single-record
 saves. Creation calls `saveCharacter(completedCharacter)` for the new record.
@@ -443,11 +450,11 @@ character.rulesVersion ?? 'dc20-0.10';
 
 Compatibility states are computed at runtime:
 
-| State              | Load | Sheet render | Edit / level up | Auto-save                              | PDF export                      |
-| ------------------ | ---- | ------------ | --------------- | -------------------------------------- | ------------------------------- |
-| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation | Yes                             |
-| `upgrade-required` | Yes  | Yes          | Blocked         | Disabled                               | Best-effort stored-value export |
-| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                               | Best-effort stored-value export |
+| State              | Load | Sheet render | Edit / level up | Auto-save                                       | PDF export                      |
+| ------------------ | ---- | ------------ | --------------- | ----------------------------------------------- | ------------------------------- |
+| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation          | Yes                             |
+| `upgrade-required` | Yes  | Yes          | Resources only  | Seven current resource fields; no recalculation | Best-effort stored-value export |
+| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                                        | Best-effort stored-value export |
 
 #### Explicit v0.10 to Current-Version Copy
 
@@ -467,7 +474,7 @@ and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
 6. Mark the new copy `rulesUpgradeStatus: "needs-review"` for any risky result: removed
    choices, reworked choices, unresolved validation, or failed recalculation.
 
-Migration never mutates the old instance. The legacy source remains view/export/delete only. The new copy preserves stored game state,
+Migration never mutates the old instance's build or sheet content. The legacy source remains view/export/delete plus live-resource management only. The new copy preserves stored game state,
 notes, inventory, and resources where possible; derived values are interpreted and recalculated
 by the normal v0.10.5 sheet/editor pipeline after migration.
 

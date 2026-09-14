@@ -121,9 +121,9 @@ describe('legacy v0.10 character runtime acceptance', () => {
 		expect(compatibility.canRenderSheet).toBe(true);
 		expect(compatibility.canEdit).toBe(false);
 		expect(compatibility.canLevelUp).toBe(false);
-		expect(compatibility.canAutoSave).toBe(false);
-		expect(compatibility.autoSaveMode).toBe('none');
-		expect(getCharacterAutoSaveMode(legacyCharacter)).toBe('none');
+		expect(compatibility.canAutoSave).toBe(true);
+		expect(compatibility.autoSaveMode).toBe('resources');
+		expect(getCharacterAutoSaveMode(legacyCharacter)).toBe('resources');
 		expect(compatibility.canExportPdf).toBe(true);
 		expect(compatibility.pdfVersion).toBe('0.10');
 		expect(compatibility.aliasDecisions).toEqual(

@@ -40,6 +40,7 @@ interface HeroSectionProps {
 
 	// Active conditions
 	activeConditions?: string[];
+	resourceEditable?: boolean;
 
 	// Box-level override tracking
 	hasHealthOverride?: boolean;
@@ -336,6 +337,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 	saveDC,
 	initiative,
 	activeConditions = [],
+	resourceEditable = true,
 	hasHealthOverride = false,
 	hasResourcesOverride = false,
 	hasRecoveryOverride = false,
@@ -417,7 +419,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					color="health"
 					size="large"
 					showProgressBar
-					editable
+					editable={resourceEditable}
 					onChange={onHPChange}
 					onTempChange={onTempHPChange}
 					onMouseEnter={onHPMouseEnter}
@@ -447,7 +449,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.2 }}
 				>
-					{hasResourcesOverride && onResourcesReset && (
+					{resourceEditable && hasResourcesOverride && onResourcesReset && (
 						<BoxActions>
 							<BoxResetButton
 								onClick={onResourcesReset}
@@ -467,7 +469,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							size="medium"
 							compactValueLayout
 							showProgressBar
-							editable
+							editable={resourceEditable}
 							onChange={onManaChange}
 							onMouseEnter={onManaMouseEnter}
 							onMouseLeave={onManaMouseLeave}
@@ -480,7 +482,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							size="medium"
 							compactValueLayout
 							showProgressBar
-							editable
+							editable={resourceEditable}
 							onChange={onStaminaChange}
 							onMouseEnter={onStaminaMouseEnter}
 							onMouseLeave={onStaminaMouseLeave}
@@ -493,7 +495,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.3 }}
 				>
-					{hasRecoveryOverride && onRecoveryReset && (
+					{resourceEditable && hasRecoveryOverride && onRecoveryReset && (
 						<BoxActions>
 							<BoxResetButton
 								onClick={onRecoveryReset}
@@ -513,7 +515,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							size="medium"
 							compactValueLayout
 							showProgressBar
-							editable
+							editable={resourceEditable}
 							onChange={onRestChange}
 							onMouseEnter={onRestMouseEnter}
 							onMouseLeave={onRestMouseLeave}
@@ -526,7 +528,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 							size="medium"
 							compactValueLayout
 							showProgressBar
-							editable
+							editable={resourceEditable}
 							onChange={onGritChange}
 							onMouseEnter={onGritMouseEnter}
 							onMouseLeave={onGritMouseLeave}

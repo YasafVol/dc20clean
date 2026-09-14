@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
 > Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ## Recent UX additions
 
@@ -93,11 +93,11 @@ The character sheet uses a **context provider pattern** with a reducer for state
 
 Compatibility states from the rules-version fence affect sheet persistence:
 
-| State              | Sheet behavior                                                                                                  |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `editable`         | Normal render and full auto-save with recalculated values                                                       |
-| `upgrade-required` | Render/export allowed from stored values; auto-save is disabled until an explicit current-rules copy is created |
-| `view-only`        | Render allowed where possible; auto-save is disabled                                                            |
+| State              | Sheet behavior                                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `editable`         | Normal render and full auto-save with recalculated values                                                                                   |
+| `upgrade-required` | Stored-value render/export; only HP, Temp HP, MP, SP, Rest, Grit, and Exhaustion controls remain active and auto-save without recalculation |
+| `view-only`        | Render allowed where possible; auto-save is disabled                                                                                        |
 
 For `upgrade-required` and `view-only` characters, the sheet suppresses fresh calculator output for display/export helpers that would reinterpret the character under the current rules data. PDF export always uses stored `SavedCharacter` values for every rules version; it does not recalculate during export.
 
@@ -324,7 +324,7 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 - Feature info buttons open details from class/trait definitions
 - Spells/maneuvers add/remove persist and remain in sync after refresh
 - Auto-save triggers on state changes
-- Old characters with a different `rulesVersion` do not auto-save or receive a recalculation save unless the user creates and opens a current-version copy
+- Old characters with a different `rulesVersion` auto-save only HP, Temp HP, MP, SP, Rest, Grit, and Exhaustion. They never recalculate or persist attacks, spells, maneuvers, inventory, currency, notes, conditions, toggles, defenses, action points, or death state.
 
 ---
 
@@ -366,13 +366,13 @@ const campaignCharacter = useQuery(
 
 ### 8.3 No save effects
 
-- The auto-save `useEffect` short-circuits: `if (readOnly || !state.character) return`.
+- The auto-save `useEffect` short-circuits when a campaign view is active.
 - `saveNow` is a no-op: `if (readOnly) return`.
 - `retryFailedSave` is guarded: `if (readOnly || !state.character) return`.
 
 ### 8.4 Reducer no-op guards
 
-`useCharacterSheetReducer` receives `readOnly`. All state-mutating callbacks (HP changes, condition toggles, inventory edits, etc.) guard with `if (readOnly) return`, so the sheet renders the live data without allowing writes.
+`useCharacterSheetReducer` distinguishes full editing from resource management. Campaign views allow neither. Upgrade-required owners allow only the seven live resource callbacks. All structural callbacks remain no-ops.
 
 The Attacks, Inventory, Spells, Maneuvers, Conditions, and Notes panels suppress mutation controls in read-only mode. Inventory detail popups render custom fields as values instead of inputs; filtering, detail expansion, and presentation navigation remain available.
 

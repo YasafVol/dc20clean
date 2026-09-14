@@ -238,6 +238,11 @@ export const ResourceCardSlot = styled.div`
 	}
 `;
 
+export const ResourceExhaustion = styled.div`
+	width: min(100%, 420px);
+	margin-top: ${theme.spacing[3]};
+`;
+
 export const PageMessage = styled.div<{ $error?: boolean }>`
 	width: min(100%, 680px);
 	margin: 20vh auto 0;

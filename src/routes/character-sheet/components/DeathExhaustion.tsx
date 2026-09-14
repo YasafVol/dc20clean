@@ -57,7 +57,7 @@ export const HealthStatusIndicator: React.FC<DeathExhaustionProps> = ({ isMobile
 
 const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const { t } = useTranslation();
-	const { state, updateExhaustion } = useCharacterSheet();
+	const { state, updateExhaustion, canManageResources } = useCharacterSheet();
 	const resources = useCharacterResources();
 
 	if (!state.character || !resources) {
@@ -70,6 +70,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 	const currentValues = resources.current;
 
 	const onExhaustionChange = (level: number) => {
+		if (!canManageResources) return;
 		updateExhaustion(level);
 	};
 
@@ -95,6 +96,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 							key={level}
 							$filled={level <= currentValues.exhaustionLevel}
 							$isMobile={effectiveIsMobile}
+							$disabled={!canManageResources}
 							onClick={() => {
 								// Toggle: clicking same level clears it, clicking different level sets it
 								if (currentValues.exhaustionLevel === level) {
@@ -104,6 +106,7 @@ const DeathExhaustion: React.FC<DeathExhaustionProps> = ({ isMobile }) => {
 								}
 							}}
 							data-testid={`exhaustion-${level}`}
+							aria-disabled={!canManageResources}
 						>
 							{level}
 							<StyledExhaustionTooltip>{description}</StyledExhaustionTooltip>

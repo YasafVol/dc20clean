@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ---
 
@@ -53,9 +53,9 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 - A character whose `rulesVersion` is not current must not be silently recalculated under current rules.
 - Compatibility is classified as:
   - `editable`: full render, edit, recalculation, auto-save.
-  - `upgrade-required`: render/export allowed from stored values only; no edit, level-up, recalculation rewrite, or auto-save.
+  - `upgrade-required`: render/export allowed from stored values; build and sheet-content edits, level-up, and recalculation rewrites are blocked. Owners may change only existing HP, Temp HP, MP, SP, Rest, Grit, and Exhaustion values, which auto-save without recalculation.
   - `view-only`: best-effort render, no auto-save, no edit/level-up.
-- Explicit upgrade must create a new current-rules draft and leave the original legacy character locked and unchanged.
+- Explicit upgrade must create a new current-rules draft and leave the original legacy character's build and sheet content locked. Its permitted live resource values remain independently mutable.
 - Pure aliases, reworks, deprecated IDs, and ambiguous IDs must be represented in `RULES_ALIASES`. Despite the legacy constant name, this is the cross-system upgrade mapping catalog, not only a spell-alias table.
 
 ### 4.1 Character Rules Migration
@@ -64,10 +64,10 @@ Rules migration is a create-new-version flow, not an in-place edit.
 
 Required behavior:
 
-1. Load the legacy character as read-only.
+1. Load the legacy character with resource-only controls; all build and sheet-content controls remain read-only.
 2. Build a migration plan from the upgrade mapping catalog before writing data.
 3. Create a new current-rules draft record with a new ID and `rulesUpgradeSourceId` pointing at the locked source.
-4. Preserve the source character unchanged unless the user explicitly deletes it.
+4. Preserve the source character's build and sheet content unchanged unless the user explicitly deletes it; live resource counters may continue to change.
 5. Apply automatic aliases and approved reworks in the draft.
 6. Recalculate all current-rules derived values that the calculator can determine from the migrated draft.
    - The draft must be stamped with `CURRENT_SCHEMA_VERSION`.

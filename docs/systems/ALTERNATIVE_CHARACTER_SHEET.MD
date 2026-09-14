@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-14
 
 ## 1. Boundary
 
@@ -41,7 +41,8 @@ This companion specification keeps alternative-only UI detail out of
 3. The Actions & Details tab row may scroll horizontally on narrow screens; the page
    itself must not overflow horizontally.
 4. Resource cards fill the row equally and align their progress bars.
-5. Attack and inventory tables reflow inside narrow tab containers instead of relying
+5. Exhaustion is managed as a compact resource row below the card grid.
+6. Attack and inventory tables reflow inside narrow tab containers instead of relying
    on viewport width alone.
 
 ## 4. Alternative Attack Add Flow
@@ -76,6 +77,8 @@ ambiguous or reload-broken records.
 5. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
    pencil / confirm / delete lifecycle. The weapon picker changes only creation of new
    standard weapon attacks.
+6. Upgrade-required legacy characters expose only the existing resource counters and
+   Exhaustion. All Actions & Details mutation controls remain hidden.
 
 ## 6. Verification
 

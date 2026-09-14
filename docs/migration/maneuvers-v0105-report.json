@@ -21,7 +21,7 @@
 				},
 				{ "id": "bowling-ball", "name": "Bowling Ball", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2500, "endLine": 2518 }
+			"provenance": { "startLine": 2538, "endLine": 2556 }
 		},
 		{
 			"id": "savage-strike",
@@ -46,7 +46,7 @@
 				},
 				{ "id": "weakened", "name": "Weakened", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2519, "endLine": 2535 }
+			"provenance": { "startLine": 2557, "endLine": 2573 }
 		},
 		{
 			"id": "sunder-strike",
@@ -67,7 +67,7 @@
 				{ "id": "break-dr", "name": "Break DR", "costString": "1 SP", "sp": 1 },
 				{ "id": "break-resistance", "name": "Break Resistance", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2536, "endLine": 2552 }
+			"provenance": { "startLine": 2574, "endLine": 2590 }
 		},
 		{
 			"id": "swift-strike",
@@ -88,7 +88,7 @@
 					"repeatable": true
 				}
 			],
-			"provenance": { "startLine": 2553, "endLine": 2568 }
+			"provenance": { "startLine": 2591, "endLine": 2607 }
 		},
 		{
 			"id": "meteor-strike",
@@ -123,7 +123,7 @@
 					"requires": ["impact-crater"]
 				}
 			],
-			"provenance": { "startLine": 2569, "endLine": 2591 }
+			"provenance": { "startLine": 2608, "endLine": 2630 }
 		},
 		{
 			"id": "cleave",
@@ -156,7 +156,7 @@
 				},
 				{ "id": "sweep", "name": "Sweep", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2592, "endLine": 2612 }
+			"provenance": { "startLine": 2631, "endLine": 2651 }
 		},
 		{
 			"id": "whirlwind",
@@ -189,7 +189,7 @@
 					"repeatable": true
 				}
 			],
-			"provenance": { "startLine": 2613, "endLine": 2631 }
+			"provenance": { "startLine": 2652, "endLine": 2670 }
 		},
 		{
 			"id": "pathcarver",
@@ -222,7 +222,7 @@
 					"repeatable": true
 				}
 			],
-			"provenance": { "startLine": 2632, "endLine": 2653 }
+			"provenance": { "startLine": 2671, "endLine": 2693 }
 		},
 		{
 			"id": "piercing-shot",
@@ -249,7 +249,7 @@
 				},
 				{ "id": "penetrating-shot", "name": "Penetrating Shot", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2654, "endLine": 2674 }
+			"provenance": { "startLine": 2694, "endLine": 2714 }
 		},
 		{
 			"id": "scattershot",
@@ -277,7 +277,7 @@
 				},
 				{ "id": "stagger", "name": "Stagger", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2675, "endLine": 2692 }
+			"provenance": { "startLine": 2715, "endLine": 2732 }
 		},
 		{
 			"id": "volley",
@@ -305,7 +305,7 @@
 				{ "id": "rain-of-fire", "name": "Rain of Fire", "costString": "1 SP", "sp": 1 },
 				{ "id": "suppressive-fire", "name": "Suppressive Fire", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2693, "endLine": 2716 }
+			"provenance": { "startLine": 2733, "endLine": 2757 }
 		},
 		{
 			"id": "parry",
@@ -320,7 +320,7 @@
 				{ "id": "alert", "name": "Alert", "costString": "1 SP", "sp": 1 },
 				{ "id": "disarm", "name": "Disarm", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2723, "endLine": 2739 }
+			"provenance": { "startLine": 2764, "endLine": 2780 }
 		},
 		{
 			"id": "brace",
@@ -341,7 +341,7 @@
 				},
 				{ "id": "grapple", "name": "Grapple", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2740, "endLine": 2756 }
+			"provenance": { "startLine": 2781, "endLine": 2797 }
 		},
 		{
 			"id": "side-step",
@@ -357,7 +357,7 @@
 				{ "id": "disengage", "name": "Disengage", "costString": "1 SP", "sp": 1 },
 				{ "id": "slip-away", "name": "Slip Away", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2757, "endLine": 2775 }
+			"provenance": { "startLine": 2798, "endLine": 2816 }
 		},
 		{
 			"id": "protect",
@@ -380,7 +380,7 @@
 				{ "id": "heroic-protect", "name": "Heroic Protect", "costString": "2 SP", "sp": 2 },
 				{ "id": "resistance", "name": "Resistance", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2776, "endLine": 2797 }
+			"provenance": { "startLine": 2817, "endLine": 2839 }
 		},
 		{
 			"id": "endure",
@@ -396,7 +396,7 @@
 				{ "id": "steadfast", "name": "Steadfast", "costString": "1 SP", "sp": 1 },
 				{ "id": "repel", "name": "Repel", "costString": "X SP", "variable": true }
 			],
-			"provenance": { "startLine": 2798, "endLine": 2816 }
+			"provenance": { "startLine": 2840, "endLine": 2858 }
 		},
 		{
 			"id": "resolve",
@@ -417,7 +417,7 @@
 				{ "id": "physical-resolve", "name": "Physical Resolve", "costString": "1 SP", "sp": 1 },
 				{ "id": "mental-resolve", "name": "Mental Resolve", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2817, "endLine": 2833 }
+			"provenance": { "startLine": 2859, "endLine": 2875 }
 		},
 		{
 			"id": "swap",
@@ -432,7 +432,7 @@
 				{ "id": "seamless-swap", "name": "Seamless Swap", "costString": "1 SP", "sp": 1 },
 				{ "id": "hostile-swap", "name": "Hostile Swap", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2834, "endLine": 2853 }
+			"provenance": { "startLine": 2876, "endLine": 2896 }
 		},
 		{
 			"id": "slam",
@@ -453,7 +453,7 @@
 				},
 				{ "id": "wall-rake", "name": "Wall Rake", "costString": "X SP", "variable": true }
 			],
-			"provenance": { "startLine": 2858, "endLine": 2874 }
+			"provenance": { "startLine": 2901, "endLine": 2917 }
 		},
 		{
 			"id": "restrain",
@@ -467,7 +467,7 @@
 				{ "id": "prone", "name": "Prone", "costString": "1 SP", "sp": 1 },
 				{ "id": "chokehold", "name": "Chokehold", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2875, "endLine": 2893 }
+			"provenance": { "startLine": 2918, "endLine": 2936 }
 		},
 		{
 			"id": "body-block",
@@ -483,7 +483,7 @@
 				{ "id": "partial-block", "name": "Partial Block", "costString": "1 SP", "sp": 1 },
 				{ "id": "full-block", "name": "Full Block", "costString": "2 SP", "sp": 2 }
 			],
-			"provenance": { "startLine": 2894, "endLine": 2914 }
+			"provenance": { "startLine": 2937, "endLine": 2957 }
 		},
 		{
 			"id": "throw-creature",
@@ -503,7 +503,7 @@
 				{ "id": "skyward", "name": "Skyward", "costString": "2 SP", "sp": 2 },
 				{ "id": "prone", "name": "Prone", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2915, "endLine": 2932 }
+			"provenance": { "startLine": 2958, "endLine": 2976 }
 		},
 		{
 			"id": "recover",
@@ -530,7 +530,7 @@
 					"alternativeCosts": [{ "sp": 1 }]
 				}
 			],
-			"provenance": { "startLine": 2937, "endLine": 2951 }
+			"provenance": { "startLine": 2981, "endLine": 2995 }
 		},
 		{
 			"id": "heroic-pass-through",
@@ -544,7 +544,7 @@
 				{ "id": "brush-past", "name": "Brush Past", "costString": "1 SP", "sp": 1 },
 				{ "id": "lets-go", "name": "Let's Go", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2952, "endLine": 2963 }
+			"provenance": { "startLine": 2996, "endLine": 3007 }
 		},
 		{
 			"id": "line-run",
@@ -564,7 +564,7 @@
 				},
 				{ "id": "brush-past", "name": "Brush Past", "costString": "1 SP", "sp": 1 }
 			],
-			"provenance": { "startLine": 2964, "endLine": 2980 }
+			"provenance": { "startLine": 3008, "endLine": 3024 }
 		},
 		{
 			"id": "reposition",
@@ -586,7 +586,7 @@
 					"repeatable": true
 				}
 			],
-			"provenance": { "startLine": 2981, "endLine": 3000 }
+			"provenance": { "startLine": 3025, "endLine": 3045 }
 		},
 		{
 			"id": "heroic-taunt",
@@ -608,7 +608,7 @@
 				{ "id": "legendary-taunt", "name": "Legendary Taunt", "costString": "1 SP", "sp": 1 },
 				{ "id": "mass-taunt", "name": "Mass Taunt", "costString": "1 AP + 1 SP", "ap": 1, "sp": 1 }
 			],
-			"provenance": { "startLine": 3001, "endLine": 3019 }
+			"provenance": { "startLine": 3046, "endLine": 3064 }
 		},
 		{
 			"id": "heroic-intimidate",
@@ -636,7 +636,7 @@
 					"sp": 1
 				}
 			],
-			"provenance": { "startLine": 3020, "endLine": 3038 }
+			"provenance": { "startLine": 3065, "endLine": 3083 }
 		},
 		{
 			"id": "heroic-shove",
@@ -656,7 +656,7 @@
 				{ "id": "stand-up", "name": "Stand Up", "costString": "1 SP", "sp": 1 },
 				{ "id": "mass-shove", "name": "Mass Shove", "costString": "1 AP + 1 SP", "ap": 1, "sp": 1 }
 			],
-			"provenance": { "startLine": 3039, "endLine": 3055 }
+			"provenance": { "startLine": 3084, "endLine": 3100 }
 		},
 		{
 			"id": "heroic-extend-jump",
@@ -683,7 +683,7 @@
 					"repeatable": true
 				}
 			],
-			"provenance": { "startLine": 3056, "endLine": 3075 }
+			"provenance": { "startLine": 3101, "endLine": 3121 }
 		}
 	]
 }

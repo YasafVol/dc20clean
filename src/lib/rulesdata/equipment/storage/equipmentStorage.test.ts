@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EQUIPMENT_RULES_VERSION } from '../schemas/baseEquipment';
 import {
 	exportEquipmentToJson,
+	duplicateCustomEquipment,
 	getAllCustomWeapons,
 	importEquipmentFromJson,
 	saveCustomWeapon
@@ -84,5 +85,41 @@ describe('custom equipment storage compatibility', () => {
 
 		// eslint-disable-next-line no-restricted-syntax
 		expect(JSON.parse(exportEquipmentToJson()).rulesVersion).toBe(EQUIPMENT_RULES_VERSION);
+	});
+
+	it('duplicates an item without changing the source', () => {
+		const weapon = {
+			id: 'source-sword',
+			name: 'Source Sword',
+			category: 'weapon',
+			weaponType: 'melee',
+			style: 'sword',
+			damageType: 'slashing',
+			baseDamage: 1,
+			finalDamage: 2,
+			range: '1',
+			properties: ['heavy'],
+			pointsSpent: 2,
+			maxPoints: 2,
+			isPreset: true,
+			presetOrigin: 'greatsword',
+			createdAt: '2026-06-13T00:00:00.000Z',
+			updatedAt: '2026-06-13T00:00:00.000Z'
+		} as Parameters<typeof saveCustomWeapon>[0];
+		saveCustomWeapon(weapon);
+
+		const duplicate = duplicateCustomEquipment('weapon', weapon.id);
+		const saved = getAllCustomWeapons();
+
+		expect(saved).toHaveLength(2);
+		expect(saved[0]).toMatchObject({ id: weapon.id, name: weapon.name, isPreset: true });
+		expect(duplicate).toMatchObject({
+			name: 'Source Sword Copy',
+			isPreset: false,
+			properties: ['heavy'],
+			finalDamage: 2,
+			presetOrigin: 'greatsword'
+		});
+		expect(duplicate?.id).not.toBe(weapon.id);
 	});
 });

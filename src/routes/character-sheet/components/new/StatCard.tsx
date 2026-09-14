@@ -9,6 +9,7 @@ interface StatCardProps {
 	label: string;
 	current: number;
 	max?: number;
+	min?: number;
 	temp?: number;
 	color?: 'health' | 'mana' | 'stamina' | 'grit';
 	size?: StatSize;
@@ -18,10 +19,19 @@ interface StatCardProps {
 	onTempChange?: (value: number) => void;
 	onMouseEnter?: (e: React.MouseEvent) => void;
 	onMouseLeave?: () => void;
+	afterLabel?: React.ReactNode;
+	reserveAfterLabelSpace?: boolean;
+	afterProgressBar?: React.ReactNode;
+	animateOnMount?: boolean;
+	compactValueLayout?: boolean;
 	className?: string;
 }
 
-const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
+const Container = styled(motion.div)<{
+	$size: StatSize;
+	$color: string;
+	$compactValueLayout: boolean;
+}>`
 	background: ${theme.colors.bg.secondary};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${(props) => {
@@ -29,7 +39,7 @@ const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
 			case 'small':
 				return theme.spacing[3];
 			case 'medium':
-				return theme.spacing[4];
+				return props.$compactValueLayout ? theme.spacing[3] : theme.spacing[4];
 			case 'large':
 				return theme.spacing[6];
 		}
@@ -47,7 +57,7 @@ const Container = styled(motion.div)<{ $size: StatSize; $color: string }>`
 	}
 `;
 
-const Label = styled.div<{ $size: StatSize }>`
+const Label = styled.div<{ $size: StatSize; $hasDetailSpace: boolean }>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
 		switch (props.$size) {
@@ -62,26 +72,57 @@ const Label = styled.div<{ $size: StatSize }>`
 	font-weight: ${theme.typography.fontWeight.medium};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	min-height: 2.5rem;
+	min-height: ${({ $hasDetailSpace }) => ($hasDetailSpace ? '1.25rem' : '2.5rem')};
 	text-align: center;
 `;
 
-const ValueContainer = styled.div`
+const AfterLabelSlot = styled.div`
 	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	min-height: 1.5rem;
+	margin-bottom: ${theme.spacing[2]};
+
+	& > * {
+		margin-top: 0;
+	}
+`;
+
+const ValueContainer = styled.div<{ $compactValueLayout: boolean }>`
+	display: ${({ $compactValueLayout }) => ($compactValueLayout ? 'grid' : 'flex')};
+	grid-template-columns: ${({ $compactValueLayout }) =>
+		$compactValueLayout ? '24px minmax(0, 1fr) 24px' : 'none'};
 	align-items: center;
 	justify-content: center;
-	gap: ${theme.spacing[2]};
+	gap: ${({ $compactValueLayout }) => ($compactValueLayout ? theme.spacing[1] : theme.spacing[2])};
 	min-height: 2.5rem;
 `;
 
-const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
+const ValuePair = styled.span<{ $compactValueLayout: boolean }>`
+	display: grid;
+	grid-template-columns: ${({ $compactValueLayout }) =>
+		$compactValueLayout
+			? 'minmax(0, 1fr) auto minmax(0, 1fr)'
+			: 'minmax(3ch, 1fr) auto minmax(3ch, 1fr)'};
+	align-items: baseline;
+	column-gap: ${({ $compactValueLayout }) => ($compactValueLayout ? '2px' : theme.spacing[1])};
+	min-width: 0;
+`;
+
+const CurrentValue = styled(motion.span)<{
+	$size: StatSize;
+	$color: string;
+	$compactValueLayout: boolean;
+}>`
 	color: ${theme.colors.text.primary};
 	font-size: ${(props) => {
 		switch (props.$size) {
 			case 'small':
 				return theme.typography.fontSize.xl;
 			case 'medium':
-				return theme.typography.fontSize['2xl'];
+				return props.$compactValueLayout
+					? theme.typography.fontSize.xl
+					: theme.typography.fontSize['2xl'];
 			case 'large':
 				return theme.typography.fontSize['3xl'];
 		}
@@ -89,11 +130,33 @@ const CurrentValue = styled(motion.span)<{ $size: StatSize; $color: string }>`
 	font-weight: ${theme.typography.fontWeight.bold};
 	line-height: ${theme.typography.lineHeight.tight};
 	color: ${(props) => props.$color};
+	display: inline-block;
+	min-width: ${({ $compactValueLayout }) => ($compactValueLayout ? '0' : '3ch')};
+	padding-inline: 0.1ch;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
 `;
 
-const MaxValue = styled.span<{ $size: StatSize }>`
+const MaxValue = styled.span<{
+	$size: StatSize;
+	$value?: boolean;
+	$compactValueLayout: boolean;
+}>`
 	color: ${theme.colors.text.secondary};
 	font-size: ${(props) => {
+		if (props.$value) {
+			switch (props.$size) {
+				case 'small':
+					return theme.typography.fontSize.xl;
+				case 'medium':
+					return props.$compactValueLayout
+						? theme.typography.fontSize.xl
+						: theme.typography.fontSize['2xl'];
+				case 'large':
+					return theme.typography.fontSize['3xl'];
+			}
+		}
+
 		switch (props.$size) {
 			case 'small':
 				return theme.typography.fontSize.base;
@@ -103,7 +166,11 @@ const MaxValue = styled.span<{ $size: StatSize }>`
 				return theme.typography.fontSize.xl;
 		}
 	}};
-	font-weight: ${theme.typography.fontWeight.medium};
+	font-weight: ${(props) =>
+		props.$value ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
+	min-width: ${(props) => (props.$value && !props.$compactValueLayout ? '3ch' : '0')};
+	text-align: ${(props) => (props.$value ? 'left' : 'center')};
+	font-variant-numeric: tabular-nums;
 `;
 
 const ProgressBarContainer = styled.div`
@@ -111,21 +178,74 @@ const ProgressBarContainer = styled.div`
 	height: 6px;
 	background: ${theme.colors.bg.primary};
 	border-radius: ${theme.borderRadius.full};
-	overflow: hidden;
 	margin-top: ${theme.spacing[2]};
-	display: flex;
+	position: relative;
+	overflow: hidden;
 `;
 
 const ProgressBar = styled(motion.div)<{ $color: string }>`
+	position: absolute;
+	top: 0;
 	height: 100%;
 	background: ${(props) => props.$color};
 	/* No CSS transition for width — Framer Motion owns the width animation below.
 	   Having both stacks ease-in-out + ease-out and produces a slow-then-fast jump. */
 `;
 
+const ZeroMarker = styled.div`
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: ${theme.colors.text.secondary};
+	opacity: 0.65;
+	z-index: 1;
+`;
+
 // Gold/amber colour used to indicate HP that has been pushed beyond the normal
 // max via temp HP. Sits next to the normal resource colour inside the bar.
 const TEMP_HP_COLOR = theme.colors.accent.warning;
+const NEGATIVE_HP_COLOR = '#ef4444';
+const NEGATIVE_HP_ZONE_PERCENT = 25;
+const POSITIVE_HP_ZONE_PERCENT = 100 - NEGATIVE_HP_ZONE_PERCENT;
+
+interface FillPercentages {
+	normal: number;
+	temp: number;
+	negative: number;
+	zero: number;
+}
+
+export function calculateFillPercentages(
+	current: number,
+	max: number,
+	min = 0,
+	temp = 0
+): FillPercentages {
+	const hasNegativeRange = min < 0;
+	const zero = hasNegativeRange ? NEGATIVE_HP_ZONE_PERCENT : 0;
+	const positiveZone = hasNegativeRange ? POSITIVE_HP_ZONE_PERCENT : 100;
+	const positiveCapacity = Math.max(0, max) + Math.max(0, temp);
+	const negativeCapacity = Math.abs(Math.min(0, min));
+
+	if (positiveCapacity <= 0 && negativeCapacity <= 0) {
+		return { normal: 0, temp: 0, negative: 0, zero };
+	}
+
+	return {
+		normal:
+			positiveCapacity > 0
+				? (Math.max(0, Math.min(current, max)) / positiveCapacity) * positiveZone
+				: 0,
+		temp: positiveCapacity > 0 ? (Math.max(0, temp) / positiveCapacity) * positiveZone : 0,
+		negative:
+			negativeCapacity > 0
+				? (Math.min(negativeCapacity, Math.abs(Math.min(0, current))) / negativeCapacity) *
+					NEGATIVE_HP_ZONE_PERCENT
+				: 0,
+		zero
+	};
+}
 
 // Secondary control row used only for Temp HP. Main resource controls flank
 // the value directly in ValueContainer.
@@ -146,14 +266,14 @@ const InlineControlGroup = styled.div`
 
 // Framed mini-stat so Temp HP remains distinct from the main HP value.
 const TempInlineGroup = styled(InlineControlGroup)`
-	background: ${theme.colors.bg.primary};
-	border: 1px solid ${theme.colors.border.default};
-	border-radius: ${theme.borderRadius.md};
-	padding: ${theme.spacing[1]} ${theme.spacing[2]};
+	& button {
+		color: ${TEMP_HP_COLOR};
+		box-shadow: inset 0 0 0 1px ${TEMP_HP_COLOR};
+	}
 `;
 
 const InlineControlLabel = styled.span`
-	color: ${theme.colors.text.secondary};
+	color: ${TEMP_HP_COLOR};
 	font-size: ${theme.typography.fontSize.xs};
 	font-weight: ${theme.typography.fontWeight.semibold};
 	text-transform: uppercase;
@@ -161,13 +281,13 @@ const InlineControlLabel = styled.span`
 	white-space: nowrap;
 `;
 
-const ControlButton = styled(motion.button)`
+const ControlButton = styled(motion.button)<{ $compactValueLayout?: boolean }>`
 	background: ${theme.colors.bg.tertiary};
 	color: ${theme.colors.text.primary};
 	border: none;
 	border-radius: ${theme.borderRadius.md};
-	width: 28px;
-	height: 28px;
+	width: ${({ $compactValueLayout }) => ($compactValueLayout ? '24px' : '28px')};
+	height: ${({ $compactValueLayout }) => ($compactValueLayout ? '24px' : '28px')};
 	cursor: pointer;
 	font-size: ${theme.typography.fontSize.base};
 	font-weight: ${theme.typography.fontWeight.bold};
@@ -191,6 +311,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 	label,
 	current,
 	max,
+	min = 0,
 	temp,
 	color = 'health',
 	size = 'large',
@@ -200,56 +321,44 @@ export const StatCard: React.FC<StatCardProps> = ({
 	onTempChange,
 	onMouseEnter,
 	onMouseLeave,
+	afterLabel,
+	reserveAfterLabelSpace = false,
+	afterProgressBar,
+	animateOnMount = true,
+	compactValueLayout = false,
 	className
 }) => {
 	const colorValue = theme.colors.resource[color];
+	const useCompactValueLayout = compactValueLayout && editable && onChange !== undefined;
 
-	// New temp HP model:
-	//   - max is displayed as-is (temp does NOT raise the displayed max)
-	//   - current can exceed max when temp HP is granted (the "overflow" portion
-	//     is rendered with TEMP_HP_COLOR so the player can see it visually)
-	//   - The healing ceiling (cap for main "+") stays at max + temp so the
-	//     player can still heal up to their full potential including granted temp.
+	// Temp HP is a separate pool. It does not raise current HP or maximum HP,
+	// and incoming damage consumes it before reducing current HP.
 	const tempAmount = temp ?? 0;
-	const healingCap = max !== undefined ? max + tempAmount : undefined;
-	const totalCapacity = healingCap; // alias for clarity in bar math
-	const isOverMax = max !== undefined && current > max;
 
-	// Two-segment bar:
-	//   - normalFillPercent: the red/resource-coloured portion (current up to max)
-	//   - tempFillPercent:   the gold portion (current above max, if any)
-	// Both percentages are computed against totalCapacity so the two segments
-	// together fit inside one 100%-wide bar.
-	const normalFillPercent =
-		totalCapacity && totalCapacity > 0 && max !== undefined
-			? Math.min(100, (Math.min(current, max) / totalCapacity) * 100)
-			: 0;
-	const tempFillPercent =
-		totalCapacity && totalCapacity > 0 && max !== undefined && current > max
-			? Math.min(100, ((current - max) / totalCapacity) * 100)
-			: 0;
+	// HP uses a fixed 25% negative zone and 75% positive zone. Normal and Temp HP
+	// share the positive zone so their distinct segments always fit in the bar.
+	const fillPercentages =
+		max !== undefined
+			? calculateFillPercentages(current, max, min, tempAmount)
+			: { normal: 0, temp: 0, negative: 0, zero: 0 };
+	const normalFillPercent = fillPercentages.normal;
+	const tempFillPercent = fillPercentages.temp;
+	const negativeFillPercent = fillPercentages.negative;
+	const zeroPositionPercent = fillPercentages.zero;
 
 	const handleIncrement = () => {
-		if (onChange && healingCap !== undefined && current < healingCap) {
+		if (onChange && max !== undefined && current < max) {
 			onChange(current + 1);
-		} else if (onChange && healingCap === undefined) {
+		} else if (onChange && max === undefined) {
 			onChange(current + 1);
 		}
 	};
 
 	const handleDecrement = () => {
-		if (onChange && current > 0) {
+		if (onTempChange && tempAmount > 0) {
+			onTempChange(tempAmount - 1);
+		} else if (onChange && current > min) {
 			onChange(current - 1);
-			// Damage hits Temp HP first (standard D&D rule). If a temp buffer
-			// exists, this damage point consumes 1 from the buffer. Once temp
-			// reaches 0, further damage starts eating real HP. Because we
-			// decrement current AND temp by the same amount, the "real HP"
-			// portion of the bar (red) stays at its current width while only
-			// the gold/temp segment shrinks — which is exactly the behaviour
-			// the user expects.
-			if (onTempChange && tempAmount > 0) {
-				onTempChange(Math.max(0, tempAmount - 1));
-			}
 		}
 	};
 
@@ -257,44 +366,28 @@ export const StatCard: React.FC<StatCardProps> = ({
 		<Container
 			$size={size}
 			$color={colorValue}
+			$compactValueLayout={useCompactValueLayout}
 			className={className}
-			initial={{ opacity: 0, y: 20 }}
+			initial={animateOnMount ? { opacity: 0, y: 20 } : false}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			<Label $size={size}>{label}</Label>
+			<Label $size={size} $hasDetailSpace={reserveAfterLabelSpace || afterLabel !== undefined}>
+				{label}
+			</Label>
+			{(reserveAfterLabelSpace || afterLabel !== undefined) && (
+				<AfterLabelSlot>{afterLabel}</AfterLabelSlot>
+			)}
 
-			<ValueContainer>
+			<ValueContainer
+				$compactValueLayout={useCompactValueLayout}
+				data-value-layout={useCompactValueLayout ? 'compact' : 'standard'}
+			>
 				{editable && onChange && (
 					<ControlButton
-						onClick={handleIncrement}
-						whileHover={{ scale: 1.1 }}
-						whileTap={{ scale: 0.95 }}
-						aria-label={`Increase ${label}`}
-					>
-						+
-					</ControlButton>
-				)}
-				<CurrentValue
-					$size={size}
-					$color={isOverMax ? TEMP_HP_COLOR : colorValue}
-					key={current}
-					initial={{ scale: 1.2 }}
-					animate={{ scale: 1 }}
-					transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-				>
-					{current}
-				</CurrentValue>
-				{max !== undefined && (
-					<>
-						<MaxValue $size={size}>/</MaxValue>
-						<MaxValue $size={size}>{max}</MaxValue>
-					</>
-				)}
-				{editable && onChange && (
-					<ControlButton
+						$compactValueLayout={useCompactValueLayout}
 						onClick={handleDecrement}
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.95 }}
@@ -303,23 +396,79 @@ export const StatCard: React.FC<StatCardProps> = ({
 						−
 					</ControlButton>
 				)}
+				<ValuePair $compactValueLayout={useCompactValueLayout}>
+					<CurrentValue
+						$size={size}
+						$color={current < 0 ? NEGATIVE_HP_COLOR : colorValue}
+						$compactValueLayout={useCompactValueLayout}
+						key={current}
+						initial={{ scale: 1.2 }}
+						animate={{ scale: 1 }}
+						transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+					>
+						{current}
+					</CurrentValue>
+					{max !== undefined && (
+						<>
+							<MaxValue $size={size} $compactValueLayout={useCompactValueLayout}>
+								/
+							</MaxValue>
+							<MaxValue $size={size} $value $compactValueLayout={useCompactValueLayout}>
+								{max}
+							</MaxValue>
+						</>
+					)}
+				</ValuePair>
+				{editable && onChange && (
+					<ControlButton
+						$compactValueLayout={useCompactValueLayout}
+						onClick={handleIncrement}
+						whileHover={{ scale: 1.1 }}
+						whileTap={{ scale: 0.95 }}
+						aria-label={`Increase ${label}`}
+					>
+						+
+					</ControlButton>
+				)}
 			</ValueContainer>
 
 			{showProgressBar && max !== undefined && (
-				<ProgressBarContainer>
-					{/* Normal HP segment (0 to max) — uses the resource colour. */}
-					<ProgressBar
-						$color={colorValue}
-						initial={{ width: 0 }}
-						animate={{ width: `${normalFillPercent}%` }}
-						transition={{ duration: 0.25, ease: 'easeOut' }}
-					/>
-					{/* Temp HP overflow segment (max to max+temp) — gold, only when
-					    the player is currently above max. */}
+				<ProgressBarContainer data-testid="resource-progress-bar">
+					{min < 0 && (
+						<>
+							{negativeFillPercent > 0 && (
+								<ProgressBar
+									data-testid="negative-hp-fill"
+									$color={NEGATIVE_HP_COLOR}
+									style={{ right: `${100 - zeroPositionPercent}%` }}
+									initial={animateOnMount ? { width: 0 } : false}
+									animate={{ width: `${negativeFillPercent}%` }}
+									transition={{ duration: 0.25, ease: 'easeOut' }}
+								/>
+							)}
+							<ZeroMarker
+								data-testid="zero-hp-marker"
+								aria-label="Zero HP"
+								style={{ left: `${zeroPositionPercent}%` }}
+							/>
+						</>
+					)}
+					{/* Normal HP starts at the zero marker and fills the larger positive zone. */}
+					{normalFillPercent > 0 && (
+						<ProgressBar
+							$color={colorValue}
+							style={{ left: `${zeroPositionPercent}%` }}
+							initial={animateOnMount ? { width: 0 } : false}
+							animate={{ width: `${normalFillPercent}%` }}
+							transition={{ duration: 0.25, ease: 'easeOut' }}
+						/>
+					)}
+					{/* Temp HP is always a separate gold segment. */}
 					{tempFillPercent > 0 && (
 						<ProgressBar
 							$color={TEMP_HP_COLOR}
-							initial={{ width: 0 }}
+							style={{ left: `${zeroPositionPercent + normalFillPercent}%` }}
+							initial={animateOnMount ? { width: 0 } : false}
 							animate={{ width: `${tempFillPercent}%` }}
 							transition={{ duration: 0.25, ease: 'easeOut' }}
 						/>
@@ -332,25 +481,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 					<TempInlineGroup>
 						<ControlButton
 							onClick={() => {
-								onTempChange(temp + 1);
-								if (onChange) {
-									onChange(current + 1);
-								}
-							}}
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.95 }}
-							aria-label="Increase Temp HP"
-						>
-							+
-						</ControlButton>
-						<InlineControlLabel>Temp HP {temp}</InlineControlLabel>
-						<ControlButton
-							onClick={() => {
-								const newTemp = Math.max(0, temp - 1);
-								onTempChange(newTemp);
-								if (onChange && max !== undefined && current > max) {
-									onChange(Math.max(0, current - 1));
-								}
+								onTempChange(Math.max(0, temp - 1));
 							}}
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.95 }}
@@ -358,9 +489,22 @@ export const StatCard: React.FC<StatCardProps> = ({
 						>
 							−
 						</ControlButton>
+						<InlineControlLabel>Temp HP {temp}</InlineControlLabel>
+						<ControlButton
+							onClick={() => {
+								onTempChange(temp + 1);
+							}}
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+							aria-label="Increase Temp HP"
+						>
+							+
+						</ControlButton>
 					</TempInlineGroup>
 				</ControlsRow>
 			)}
+
+			{afterProgressBar}
 		</Container>
 	);
 };

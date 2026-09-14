@@ -23,7 +23,6 @@ export interface PathBenefits {
 	staminaPoints?: number;
 	maneuversLearned?: number;
 	manaPoints?: number;
-	cantripsLearned?: number;
 	spellsLearned?: number;
 }
 

@@ -29,7 +29,6 @@ export interface ProgressionGains {
 	totalTradePoints: number;
 	totalAttributePoints: number;
 	totalManeuversKnown: number;
-	totalCantripsKnown: number;
 	totalSpellsKnown: number;
 	totalTalents: number;
 	totalPathPoints: number;
@@ -52,14 +51,12 @@ export function aggregatePathBenefits(
 	totalSP: number;
 	totalMP: number;
 	totalManeuversKnown: number;
-	totalCantripsKnown: number;
 	totalSpellsKnown: number;
 	crossPathGrants: CrossPathGrants;
 } {
 	let totalSP = 0;
 	let totalMP = 0;
 	let totalManeuversKnown = 0;
-	let totalCantripsKnown = 0;
 	let totalSpellsKnown = 0;
 
 	const crossPathGrants: CrossPathGrants = {
@@ -73,7 +70,6 @@ export function aggregatePathBenefits(
 			totalSP,
 			totalMP,
 			totalManeuversKnown,
-			totalCantripsKnown,
 			totalSpellsKnown,
 			crossPathGrants
 		};
@@ -111,7 +107,6 @@ export function aggregatePathBenefits(
 				const levelData = spellcasterPath.progression.find((p) => p.pathLevel === level);
 				if (levelData?.benefits) {
 					totalMP += levelData.benefits.manaPoints || 0;
-					totalCantripsKnown += levelData.benefits.cantripsLearned || 0;
 					totalSpellsKnown += levelData.benefits.spellsLearned || 0;
 				}
 			}
@@ -132,7 +127,6 @@ export function aggregatePathBenefits(
 		totalSP,
 		totalMP,
 		totalManeuversKnown,
-		totalCantripsKnown,
 		totalSpellsKnown,
 		crossPathGrants
 	};
@@ -217,7 +211,6 @@ export function aggregateProgressionGains(
 	let totalTradePoints = 0;
 	let totalAttributePoints = 0;
 	let totalManeuversKnown = 0;
-	let totalCantripsKnown = 0;
 	let totalSpellsKnown = 0;
 	let totalTalents = 0;
 	let totalPathPoints = 0;
@@ -240,7 +233,6 @@ export function aggregateProgressionGains(
 			totalAncestryPoints,
 			unlockedFeatureIds,
 			pendingSubclassChoices,
-			totalCantripsKnown: 0,
 			crossPathGrants: {
 				grantsSpellcasterStaminaRegen: false,
 				requiresSpellListChoice: false,
@@ -314,7 +306,6 @@ export function aggregateProgressionGains(
 	totalSP += pathBonuses.totalSP;
 	totalMP += pathBonuses.totalMP;
 	totalManeuversKnown += pathBonuses.totalManeuversKnown;
-	totalCantripsKnown += pathBonuses.totalCantripsKnown;
 	totalSpellsKnown += pathBonuses.totalSpellsKnown;
 
 	console.log('✅ PATH BONUSES APPLIED:', {
@@ -361,7 +352,6 @@ export function aggregateProgressionGains(
 		totalTradePoints,
 		totalAttributePoints,
 		totalManeuversKnown,
-		totalCantripsKnown,
 		totalSpellsKnown,
 		totalTalents,
 		totalPathPoints,

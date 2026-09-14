@@ -18,6 +18,8 @@ import type {
 	CustomSpellFocus,
 	SpellFocusHands
 } from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
+import { filterEquipmentPresets } from '../presetSearch';
+import PresetSearchInput from './PresetSearchInput';
 import {
 	BuilderContainer,
 	SectionTitle,
@@ -42,14 +44,20 @@ import {
 
 interface SpellFocusBuilderProps {
 	onBack: () => void;
+	initialEquipment?: CustomSpellFocus;
 }
 
-const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
+const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack, initialEquipment }) => {
 	const [step, setStep] = useState(1);
-	const [hands, setHands] = useState<SpellFocusHands | null>(null);
-	const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-	const [name, setName] = useState('');
-	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [hands, setHands] = useState<SpellFocusHands | null>(initialEquipment?.hands ?? null);
+	const [selectedProperties, setSelectedProperties] = useState<string[]>(
+		initialEquipment?.properties.filter((property) => property !== 'two-handed-focus') ?? []
+	);
+	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(
+		initialEquipment?.presetOrigin ?? null
+	);
+	const [presetQuery, setPresetQuery] = useState('');
 
 	const maxPoints = useMemo(() => getMaxPointsForSpellFocus(hands === 'two-handed'), [hands]);
 
@@ -63,6 +71,16 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 	const availableProperties = useMemo(() => {
 		return getSelectableSpellFocusProperties();
 	}, []);
+
+	const filteredPresets = useMemo(
+		() =>
+			filterEquipmentPresets(PRESET_SPELL_FOCUSES, presetQuery, (preset) => [
+				preset.name,
+				preset.hands,
+				...preset.properties
+			]),
+		[presetQuery]
+	);
 
 	const validation = useMemo(() => {
 		if (!hands) return { isValid: false, errors: [], warnings: [] };
@@ -97,8 +115,9 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 		const props =
 			hands === 'two-handed' ? [...selectedProperties, 'two-handed-focus'] : selectedProperties;
 
+		const now = new Date().toISOString();
 		const focus: CustomSpellFocus = {
-			id: `custom-focus-${Date.now()}`,
+			id: initialEquipment?.id ?? `custom-focus-${Date.now()}`,
 			category: 'spellFocus',
 			name: name || 'Custom Spell Focus',
 			hands: hands!,
@@ -117,8 +136,8 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 			hasReactive: props.includes('reactive'),
 			isPreset: !!selectedPreset,
 			presetOrigin: selectedPreset || undefined,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			createdAt: initialEquipment?.createdAt ?? now,
+			updatedAt: now
 		};
 
 		return withEquipmentEffects(focus);
@@ -182,8 +201,13 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 
 					<div className="mb-6">
 						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
+						<PresetSearchInput
+							value={presetQuery}
+							onChange={setPresetQuery}
+							resultCount={filteredPresets.length}
+						/>
 						<OptionGrid>
-							{PRESET_SPELL_FOCUSES.map((preset) => (
+							{filteredPresets.map((preset) => (
 								<OptionCard
 									key={preset.id}
 									$selected={selectedPreset === preset.id}
@@ -208,6 +232,9 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack }) => {
 								</OptionCard>
 							))}
 						</OptionGrid>
+						{filteredPresets.length === 0 && (
+							<p className="py-4 text-center text-sm text-gray-500">No focus presets match.</p>
+						)}
 					</div>
 
 					<ActionButtons>

@@ -1,8 +1,14 @@
-### Character Creation Flow System Spec
+# DC20Clean – Character Creation Flow System
 
-> Last Updated: 2026-07-11
+> Purpose: Canonical reference for the multi-stage character-creation, edit, level-up, completion, and explicit rules-upgrade flows.
+> Owns: Wizard stage order, navigation gates, cross-stage state transitions, completion actions, and flow-level coordination between stages.
+> Does not own: Subsystem rule definitions, derived-stat formulas, storage-adapter implementations, PDF transformation, or character-sheet behavior.
+> Authoritative source: `src/routes/character-creation/`, `src/lib/stores/characterContext.tsx`, and `src/lib/services/characterCompletion.ts`.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Status: Active
+> Last Updated: 2026-07-25
 
-#### Purpose
+#### Purpose Details
 
 - Establish a canonical reference for the multi-stage character creation wizard so future specs (e.g., Level-Up) reuse the same structure and terminology
 - Capture inputs, outputs, and validation rules per stage based on the React components in `src/routes/character-creation`
@@ -11,6 +17,7 @@
 #### Stage Contract
 
 - Ordering is data-driven and uses stable step IDs: 1) Class & Features → 2) Leveling (conditional when level > 1) → 3) Ancestry → 4) Attributes → 5) Background → 6) Spells (conditional) → 7) Maneuvers (conditional) → 8) Character Name. A leveled hybrid can therefore have eight visible steps.
+- Responsive presentation uses the shared 768px and 1200px thresholds from `src/styles/responsive.ts`. Below 1200px, the compact/tablet header reserves vertical space for the fixed auth controls so Previous/Next and load-screen Import actions do not overlap them. The compact class list uses one column below 768px, two columns from 768–1199px, and three columns from 1200px.
 - State lives in `characterContext.tsx`; each stage must read/write through the reducer actions (`SET_CLASS`, `SET_TRAITS`, `UPDATE_SKILLS`, etc.)
 - Step navigation is gated. Users can move backward, but cannot jump forward through the stepper until prior steps are complete.
 - Class changes clear downstream class/level-dependent selections. Level changes clear level-dependent selections such as talents, path points, multiclass choice, cross-path spell list, spells, and maneuvers.

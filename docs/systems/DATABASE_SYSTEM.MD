@@ -1,8 +1,12 @@
 # DC20Clean – Database & Storage System
 
 > Purpose: Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.
+> Owns: Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.
+> Does not own: Game-rule interpretation, derived-stat calculation, feature workflows, or presentation behavior.
+> Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
+> Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-09-14
 
 ---
 
@@ -17,12 +21,12 @@ The DC20 Character Creator uses a **hybrid storage model**:
 
 ### 1.1 Data Domains
 
-| Domain               | Tables                                              | Status                         |
-| -------------------- | --------------------------------------------------- | ------------------------------ |
-| Characters           | `characters`                                        | Active (Convex + localStorage) |
-| DM Tools: Monsters   | `monsters`, `customFeatures`                        | Active (Convex)                |
-| DM Tools: Encounters | `encounters`                                        | Active (Convex)                |
-| Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents`    | Active (Convex only)           |
+| Domain               | Tables                                           | Status                         |
+| -------------------- | ------------------------------------------------ | ------------------------------ |
+| Characters           | `characters`                                     | Active (Convex + localStorage) |
+| DM Tools: Monsters   | `monsters`, `customFeatures`                     | Active (Convex)                |
+| DM Tools: Encounters | `encounters`                                     | Active (Convex)                |
+| Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents` | Active (Convex only)           |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
 
@@ -95,6 +99,8 @@ interface CharacterState {
 ```
 
 `activeConditions` stores universal condition IDs. Stacking conditions use concrete IDs such as `slowed-2` or `exhaustion-4` in the same string array and normalize back to their catalog IDs at runtime. `characterState.ui.activeConditions` stores older toggle-style UI condition state for compatibility. `defenseOverrides` stores manual precision/area defense overrides from the redesigned sheet.
+
+Attack objects no longer create or type the obsolete `critRange` and `critDamage` keys. The permissive attack storage boundary continues to accept older saved objects containing those keys; current character-sheet code ignores them, so this retirement does not require an in-place migration or schema-version bump.
 
 ---
 
@@ -190,6 +196,13 @@ savedCharacters_backup → Backup copy (for migration safety)
 | `getCharacterById()`      | `storageUtils.ts` | Load single character        |
 | `saveCharacter()`         | `storageUtils.ts` | Save/update single character |
 | `saveCharacterState()`    | `storageUtils.ts` | Update only game state       |
+
+For an `upgrade-required` character, the sheet passes a resource-filtered state to
+`saveCharacterState()`. Only `currentHP`, `tempHP`, `currentMP`, `currentSP`,
+`currentRestPoints`, `currentGritPoints`, and `exhaustionLevel` come from the live
+sheet. Every other `characterState` field is restored from the last loaded or saved
+snapshot before persistence. A resource-save failure never falls back to a full
+character save.
 
 Character creation, edit completion, and level-up replacement are single-record
 saves. Creation calls `saveCharacter(completedCharacter)` for the new record.
@@ -437,11 +450,11 @@ character.rulesVersion ?? 'dc20-0.10';
 
 Compatibility states are computed at runtime:
 
-| State              | Load | Sheet render | Edit / level up | Auto-save                              | PDF export                      |
-| ------------------ | ---- | ------------ | --------------- | -------------------------------------- | ------------------------------- |
-| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation | Yes                             |
-| `upgrade-required` | Yes  | Yes          | Blocked         | Disabled                               | Best-effort stored-value export |
-| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                               | Best-effort stored-value export |
+| State              | Load | Sheet render | Edit / level up | Auto-save                                       | PDF export                      |
+| ------------------ | ---- | ------------ | --------------- | ----------------------------------------------- | ------------------------------- |
+| `editable`         | Yes  | Yes          | Yes             | Full character save with recalculation          | Yes                             |
+| `upgrade-required` | Yes  | Yes          | Resources only  | Seven current resource fields; no recalculation | Best-effort stored-value export |
+| `view-only`        | Yes  | Best effort  | Blocked         | Disabled                                        | Best-effort stored-value export |
 
 #### Explicit v0.10 to Current-Version Copy
 
@@ -461,7 +474,7 @@ and applied by `src/lib/rulesdata/versioning/characterUpgrade.ts`:
 6. Mark the new copy `rulesUpgradeStatus: "needs-review"` for any risky result: removed
    choices, reworked choices, unresolved validation, or failed recalculation.
 
-Migration never mutates the old instance. The legacy source remains view/export/delete only. The new copy preserves stored game state,
+Migration never mutates the old instance's build or sheet content. The legacy source remains view/export/delete plus live-resource management only. The new copy preserves stored game state,
 notes, inventory, and resources where possible; derived values are interpreted and recalculated
 by the normal v0.10.5 sheet/editor pipeline after migration.
 
@@ -570,44 +583,47 @@ See `docs/systems/CAMPAIGN_SYSTEM.MD` for full schema details, permission model,
 
 ### 9.1 `campaigns`
 
-| Field          | Type              | Notes                                        |
-| -------------- | ----------------- | -------------------------------------------- |
-| `userId`       | `Id<'users'>`     | Creator / DM                                 |
-| `id`           | `string`          | App-generated id, e.g. `camp_<uuid>`         |
-| `code`         | `string`          | 6-char alphanumeric join code                |
-| `name`         | `string`          |                                              |
-| `description`  | `string?`         |                                              |
-| `createdAt`    | `string`          | ISO timestamp                                |
-| `lastModified` | `string`          | ISO timestamp                                |
-| `deletedAt`    | `string?`         | Soft-delete                                  |
+| Field          | Type          | Notes                                |
+| -------------- | ------------- | ------------------------------------ |
+| `userId`       | `Id<'users'>` | Creator / DM                         |
+| `id`           | `string`      | App-generated id, e.g. `camp_<uuid>` |
+| `code`         | `string`      | 6-char alphanumeric join code        |
+| `name`         | `string`      |                                      |
+| `description`  | `string?`     |                                      |
+| `createdAt`    | `string`      | ISO timestamp                        |
+| `lastModified` | `string`      | ISO timestamp                        |
+| `deletedAt`    | `string?`     | Soft-delete                          |
 
 Indexes: `by_user` (userId), `by_app_id` (id — note: `by_id` is Convex-reserved), `by_code` (code).
 
 ### 9.2 `campaignMembers`
 
-| Field                 | Type              | Notes                                        |
-| --------------------- | ----------------- | -------------------------------------------- |
-| `campaignId`          | `Id<'campaigns'>` |                                              |
-| `userId`              | `Id<'users'>`     |                                              |
-| `role`                | `'dm' \| 'co_dm' \| 'player'` |                                |
-| `sharedCharacterIds`  | `string[]`        | App-level character ids shared by this member |
-| `displayName`         | `string?`         | Captured at join time                        |
-| `joinedAt`            | `string`          | ISO timestamp                                |
-| `deletedAt`           | `string?`         | Soft-delete                                  |
+| Field                   | Type                          | Notes                                                     |
+| ----------------------- | ----------------------------- | --------------------------------------------------------- |
+| `campaignId`            | `Id<'campaigns'>`             |                                                           |
+| `userId`                | `Id<'users'>`                 |                                                           |
+| `role`                  | `'dm' \| 'co_dm' \| 'player'` |                                                           |
+| `sharedCharacterIds`    | `string[]`                    | Compatibility copy of app-level character IDs             |
+| `sharedCharacterDocIds` | `Id<'characters'>[]?`         | Authoritative connected records; optional for legacy rows |
+| `displayName`           | `string?`                     | Captured at join time                                     |
+| `joinedAt`              | `string`                      | ISO timestamp                                             |
+| `deletedAt`             | `string?`                     | Soft-delete                                               |
 
 Indexes: `by_campaign` (campaignId), `by_user` (userId), `by_campaign_and_user` (campaignId, userId).
 
+When `sharedCharacterDocIds` exists, campaign reads treat it as authoritative. Rows without it resolve `sharedCharacterIds` only within the member owner's characters and are lazily upgraded on reconnect. The optional field is an additive Convex table migration; it does not change the saved-character schema.
+
 ### 9.3 `campaignEvents`
 
-| Field          | Type              | Notes                                        |
-| -------------- | ----------------- | -------------------------------------------- |
-| `campaignId`   | `Id<'campaigns'>` |                                              |
-| `type`         | `string`          | e.g. `well_bloodied`, `member_joined`        |
-| `actorUserId`  | `Id<'users'>`     |                                              |
-| `characterId`  | `string?`         | App-level character id                       |
-| `payload`      | `any`             | Event-specific data                          |
-| `createdAt`    | `string`          | ISO timestamp                                |
-| `deletedAt`    | `string?`         | Soft-delete                                  |
+| Field         | Type              | Notes                                 |
+| ------------- | ----------------- | ------------------------------------- |
+| `campaignId`  | `Id<'campaigns'>` |                                       |
+| `type`        | `string`          | e.g. `well_bloodied`, `member_joined` |
+| `actorUserId` | `Id<'users'>`     |                                       |
+| `characterId` | `string?`         | App-level character id                |
+| `payload`     | `any`             | Event-specific data                   |
+| `createdAt`   | `string`          | ISO timestamp                         |
+| `deletedAt`   | `string?`         | Soft-delete                           |
 
 Indexes: `by_campaign` (campaignId), `by_campaign_and_time` (campaignId, createdAt).
 

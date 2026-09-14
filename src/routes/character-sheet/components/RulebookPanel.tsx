@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { AnimatePresence, motion } from 'framer-motion';
-import { theme } from '../styles/theme';
+import { media, theme } from '../styles/theme';
 // Vite bundles this PDF and gives us a hashed URL we can load into an iframe.
 // The browser's built-in PDF viewer provides search, navigation and zoom for
 // free, so we don't need to ship pdfjs-dist for this MVP.
@@ -28,7 +28,7 @@ const Panel = styled(motion.aside)`
 	display: flex;
 	flex-direction: column;
 
-	@media (max-width: 640px) {
+	${media.mobile} {
 		width: 100vw;
 		border-left: none;
 	}

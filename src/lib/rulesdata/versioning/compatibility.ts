@@ -1,4 +1,5 @@
 import type { PdfVersion } from '../../pdf/fillPdf';
+import type { CharacterState } from '../../types/dataContracts';
 import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../../types/schemaVersion';
 import { resolveRulesAlias, type AliasDomain, type RulesAliasEntry } from './aliases';
 import {
@@ -14,7 +15,42 @@ export { CURRENT_RULES_VERSION, RULES_VERSION_010, RULES_VERSION_010_5 };
 export type { RulesVersion };
 
 export type CompatibilityState = 'editable' | 'upgrade-required' | 'view-only';
-export type AutoSaveMode = 'full' | 'characterState' | 'none';
+export type AutoSaveMode = 'full' | 'resources' | 'none';
+
+const LEGACY_RESOURCE_KEYS = [
+	'currentHP',
+	'currentSP',
+	'currentMP',
+	'currentGritPoints',
+	'currentRestPoints',
+	'tempHP',
+	'exhaustionLevel'
+] as const;
+
+/**
+ * Applies the live resource values that legacy sheets may change while preserving
+ * every other persisted character-state field from the last stored snapshot.
+ */
+export function mergeLegacyResourceState(
+	persistedState: CharacterState,
+	nextState: CharacterState
+): CharacterState {
+	const persistedCurrent = persistedState.resources.current;
+	const nextCurrent = nextState.resources.current;
+	const current = { ...persistedCurrent };
+
+	for (const key of LEGACY_RESOURCE_KEYS) {
+		current[key] = nextCurrent[key];
+	}
+
+	return {
+		...persistedState,
+		resources: {
+			...persistedState.resources,
+			current
+		}
+	};
+}
 
 export interface CharacterCompatibilityResult {
 	state: CompatibilityState;
@@ -217,7 +253,7 @@ export function assessCharacterCompatibility(
 			canEdit: false,
 			canLevelUp: false,
 			canAutoSave: true,
-			autoSaveMode: 'characterState', // HP/resources save; full rebuild blocked until upgrade
+			autoSaveMode: 'resources',
 			canExportPdf: true,
 			pdfVersion,
 			reasons,

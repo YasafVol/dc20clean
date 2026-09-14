@@ -18,6 +18,7 @@ export interface CampaignMember {
   userId: string;
   role: CampaignRole;
   sharedCharacterIds: string[];
+  sharedCharacterDocIds?: string[];
   displayName?: string;
   joinedAt: string;
   deletedAt?: string;
@@ -35,6 +36,7 @@ export interface CampaignEvent {
 
 export interface RosterEntry {
   characterId: string;
+  characterDocId: string;
   characterName: string;
   ownerUserId: string;
   ownerDisplayName: string | null;

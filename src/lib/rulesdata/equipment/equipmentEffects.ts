@@ -10,6 +10,7 @@ import {
 	type Armor,
 	type InventoryItem,
 	type Shield,
+	type SpellFocus,
 	type Weapon
 } from '../inventoryItems';
 import { getAllCustomEquipment } from './storage/equipmentStorage';
@@ -211,6 +212,12 @@ function effectsForStandardItem(item: InventoryItem): Effect[] {
 						]
 					: [])
 			];
+		}
+		case 'Spell Focus': {
+			const focus = item as SpellFocus;
+			return propertyEffects(focus.properties, getSpellFocusProperty, {
+				includeFallbackAbilities: true
+			});
 		}
 		default:
 			return [];

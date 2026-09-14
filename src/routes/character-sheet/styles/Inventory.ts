@@ -12,6 +12,11 @@ export const StyledInventorySection = styled.div<MobileStyledProps>`
 	background: ${theme.colors.bg.secondary};
 	margin-bottom: ${theme.spacing[4]};
 	color: ${theme.colors.text.primary};
+	min-width: 0;
+
+	@container sheet-tabs (max-width: 56rem) {
+		padding: ${theme.spacing[3]};
+	}
 `;
 
 export const StyledInventoryTitle = styled.div<MobileStyledProps>`
@@ -47,16 +52,29 @@ export const StyledAddItemButton = styled.button<MobileStyledProps>`
 export const StyledInventoryContainer = styled.div<MobileStyledProps>`
 	font-size: ${theme.typography.fontSize.sm};
 	color: ${theme.colors.text.primary};
+	min-width: 0;
 `;
 
-export const StyledInventoryHeaderRow = styled.div`
+export const StyledInventoryHeaderRow = styled.div<{
+	$explicitEditMode?: boolean;
+	$readOnly?: boolean;
+}>`
 	display: grid;
-	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
+	grid-template-columns: ${({ $explicitEditMode, $readOnly }) =>
+		$readOnly
+			? '48px 100px 2fr 60px 30px 70px'
+			: $explicitEditMode
+				? '48px 100px 2fr 60px 30px 70px 56px'
+				: '30px 48px 100px 2fr 60px 30px 70px'};
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	border-bottom: 1px solid ${theme.colors.border.default};
 	padding-bottom: ${theme.spacing[1]};
 	align-items: center;
+
+	@container sheet-tabs (max-width: 56rem) {
+		display: none;
+	}
 `;
 
 export const StyledInventoryHeaderColumn = styled.span.withConfig({
@@ -66,12 +84,94 @@ export const StyledInventoryHeaderColumn = styled.span.withConfig({
 	text-align: ${(props) => props.align || 'left'};
 `;
 
-export const StyledInventoryRow = styled.div`
+export const StyledInventoryRow = styled.div<{
+	$explicitEditMode?: boolean;
+	$readOnly?: boolean;
+}>`
 	display: grid;
-	grid-template-columns: 30px 48px 100px 2fr 60px 30px 70px;
+	grid-template-columns: ${({ $explicitEditMode, $readOnly }) =>
+		$readOnly
+			? '48px 100px 2fr 60px 30px 70px'
+			: $explicitEditMode
+				? '48px 100px 2fr 60px 30px 70px 56px'
+				: '30px 48px 100px 2fr 60px 30px 70px'};
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[2]};
 	align-items: center;
+
+	@container sheet-tabs (max-width: 56rem) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-areas: ${({ $readOnly }) =>
+			$readOnly
+				? "'type type' 'item item' 'equipped count' 'cost info'"
+				: "'type type' 'item item' 'equipped count' 'cost info' 'actions actions'"};
+		gap: ${theme.spacing[3]};
+		padding: ${theme.spacing[3]};
+		border: 1px solid ${theme.colors.border.default};
+		border-radius: ${theme.borderRadius.md};
+		background: ${theme.colors.bg.primary};
+	}
+`;
+
+type InventoryFieldArea = 'actions' | 'equipped' | 'type' | 'item' | 'count' | 'info' | 'cost';
+
+export const StyledInventoryField = styled.div<{ $area: InventoryFieldArea }>`
+	display: flex;
+	align-items: center;
+	justify-content: ${({ $area }) =>
+		$area === 'type' || $area === 'item' ? 'stretch' : $area === 'actions' ? 'flex-end' : 'center'};
+	min-width: 0;
+
+	& > * {
+		min-width: 0;
+	}
+
+	${({ $area }) =>
+		($area === 'type' || $area === 'item') &&
+		`
+			& > * {
+				width: 100%;
+			}
+		`}
+
+	@container sheet-tabs (max-width: 56rem) {
+		grid-area: ${({ $area }) => $area};
+		gap: ${theme.spacing[2]};
+		justify-content: space-between;
+
+		&[data-label]::before {
+			content: attr(data-label);
+			color: ${theme.colors.text.muted};
+			font-size: ${theme.typography.fontSize.xs};
+			font-weight: ${theme.typography.fontWeight.semibold};
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+		}
+
+		${({ $area }) =>
+			($area === 'type' || $area === 'item') &&
+			`
+				align-items: stretch;
+				flex-direction: column;
+			`}
+
+		${({ $area }) =>
+			$area === 'actions' &&
+			`
+				justify-content: flex-end;
+				padding-top: ${theme.spacing[1]};
+				border-top: 1px solid ${theme.colors.border.subtle};
+			`}
+	}
+`;
+
+export const StyledInventoryValue = styled.div<{ $centered?: boolean }>`
+	min-width: 0;
+	overflow: hidden;
+	color: ${theme.colors.text.primary};
+	text-align: ${({ $centered }) => ($centered ? 'center' : 'left')};
+	text-overflow: ellipsis;
+	white-space: nowrap;
 `;
 
 export const StyledRemoveItemButton = styled.button`
@@ -98,6 +198,9 @@ export const StyledRemoveItemButton = styled.button`
 `;
 
 export const StyledInventorySelect = styled.select<MobileStyledProps>`
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	padding: ${theme.spacing[1]};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.sm};
@@ -119,6 +222,9 @@ export const StyledInventorySelect = styled.select<MobileStyledProps>`
 `;
 
 export const StyledInventoryInput = styled.input<MobileStyledProps>`
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	padding: ${theme.spacing[1]};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.sm};

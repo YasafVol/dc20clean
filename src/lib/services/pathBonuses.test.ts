@@ -151,7 +151,6 @@ describe('Path Point Bonuses (M3.9)', () => {
 		console.log('Mixed path - MP:', result.stats.finalMPMax);
 		console.log('Mixed path - Maneuvers:', result.levelBudgets.totalManeuversKnown);
 		console.log('Mixed path - Techniques:', result.levelBudgets.totalTechniquesKnown);
-		console.log('Mixed path - Cantrips:', result.levelBudgets.totalCantripsKnown);
 		console.log('Mixed path - Spells:', result.levelBudgets.totalSpellsKnown);
 
 		// Should have martial path L1 bonuses: +1 SP, +1 maneuver, +1 technique

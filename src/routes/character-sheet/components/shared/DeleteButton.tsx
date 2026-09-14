@@ -22,12 +22,12 @@ const StyledDeleteButton = styled.button<{ $isMobile?: boolean }>`
 	align-items: center;
 	justify-content: center;
 	padding: 0;
-	transition: all ${theme.transitions.fast};
+	transition: var(--delete-button-transition, all ${theme.transitions.fast});
 
 	&:hover {
 		background-color: ${theme.colors.accent.danger};
 		color: ${theme.colors.text.inverse};
-		transform: scale(1.1);
+		transform: var(--delete-button-hover-transform, scale(1.1));
 	}
 
 	@media (max-width: 768px) {

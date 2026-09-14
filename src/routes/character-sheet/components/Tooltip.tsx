@@ -33,6 +33,7 @@ const TooltipContent = styled.div<{
 	width: max-content;
 	min-width: 150px;
 
+	display: ${(props) => (props.$visible ? 'block' : 'none')};
 	opacity: ${(props) => (props.$visible ? 1 : 0)};
 	visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
 	transition:

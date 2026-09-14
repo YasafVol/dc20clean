@@ -1,8 +1,12 @@
 # DC20Clean – Internal Versioning System
 
 > Purpose: Canonical policy for schema, rules, PDF, and system-source versioning.
+> Owns: Version-lane definitions, rules-version normalization, compatibility classification, upgrade routing, schema-version policy, PDF-version routing policy, and source-version metadata requirements.
+> Does not own: Subsystem rules content, storage implementation details, PDF field mapping, or feature-specific migration UI.
+> Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
+> Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-09-14
 
 ---
 
@@ -28,17 +32,17 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 
 ## 3. Ownership
 
-| Concern                             | Source of truth                                                                      |
-| ----------------------------------- | ------------------------------------------------------------------------------------ |
-| Known/current rules versions        | `src/lib/rulesdata/versioning/rulesVersion.ts`                                       |
-| Character compatibility gates       | `src/lib/rulesdata/versioning/compatibility.ts`                                      |
-| Rules upgrade mappings              | `src/lib/rulesdata/versioning/aliases.ts`                                            |
-| Explicit character upgrade flow     | `src/lib/rulesdata/versioning/characterUpgrade.ts`                                   |
-| Storage schema version              | `src/lib/types/schemaVersion.ts`                                                     |
-| Character storage shape             | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD`                  |
-| PDF routing                         | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
-| PDF field-version audits            | `scripts/pdf/auditPdfFields.mjs`, `scripts/pdf/pdfFieldAuditService.mjs`             |
-| Equipage source/version metadata    | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
+| Concern                          | Source of truth                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------ |
+| Known/current rules versions     | `src/lib/rulesdata/versioning/rulesVersion.ts`                                       |
+| Character compatibility gates    | `src/lib/rulesdata/versioning/compatibility.ts`                                      |
+| Rules upgrade mappings           | `src/lib/rulesdata/versioning/aliases.ts`                                            |
+| Explicit character upgrade flow  | `src/lib/rulesdata/versioning/characterUpgrade.ts`                                   |
+| Storage schema version           | `src/lib/types/schemaVersion.ts`                                                     |
+| Character storage shape          | `src/lib/types/dataContracts.ts`, `docs/systems/DATABASE_SYSTEM.MD`                  |
+| PDF routing                      | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
+| PDF field-version audits         | `scripts/pdf/auditPdfFields.mjs`, `scripts/pdf/pdfFieldAuditService.mjs`             |
+| Equipage source/version metadata | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
 
 ## 4. Rules Version Policy
 
@@ -49,9 +53,9 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 - A character whose `rulesVersion` is not current must not be silently recalculated under current rules.
 - Compatibility is classified as:
   - `editable`: full render, edit, recalculation, auto-save.
-  - `upgrade-required`: render/export allowed from stored values only; no edit, level-up, recalculation rewrite, or auto-save.
+  - `upgrade-required`: render/export allowed from stored values; build and sheet-content edits, level-up, and recalculation rewrites are blocked. Owners may change only existing HP, Temp HP, MP, SP, Rest, Grit, and Exhaustion values, which auto-save without recalculation.
   - `view-only`: best-effort render, no auto-save, no edit/level-up.
-- Explicit upgrade must create a new current-rules draft and leave the original legacy character locked and unchanged.
+- Explicit upgrade must create a new current-rules draft and leave the original legacy character's build and sheet content locked. Its permitted live resource values remain independently mutable.
 - Pure aliases, reworks, deprecated IDs, and ambiguous IDs must be represented in `RULES_ALIASES`. Despite the legacy constant name, this is the cross-system upgrade mapping catalog, not only a spell-alias table.
 
 ### 4.1 Character Rules Migration
@@ -60,10 +64,10 @@ Rules migration is a create-new-version flow, not an in-place edit.
 
 Required behavior:
 
-1. Load the legacy character as read-only.
+1. Load the legacy character with resource-only controls; all build and sheet-content controls remain read-only.
 2. Build a migration plan from the upgrade mapping catalog before writing data.
 3. Create a new current-rules draft record with a new ID and `rulesUpgradeSourceId` pointing at the locked source.
-4. Preserve the source character unchanged unless the user explicitly deletes it.
+4. Preserve the source character's build and sheet content unchanged unless the user explicitly deletes it; live resource counters may continue to change.
 5. Apply automatic aliases and approved reworks in the draft.
 6. Recalculate all current-rules derived values that the calculator can determine from the migrated draft.
    - The draft must be stamped with `CURRENT_SCHEMA_VERSION`.
@@ -93,6 +97,8 @@ If a legacy character already has a current-rules copy, the default action opens
 - Backward-compatible saved-data additions bump minor or patch according to `schemaVersion.ts` guidance.
 - Breaking saved-data changes require a major version and an explicit migration plan.
 - Automatic schema migrations may fill missing fields or normalize legacy structures, but must not reinterpret old rules choices.
+
+Campaign membership's optional `sharedCharacterDocIds` is an additive backend-table compatibility field, not a `SavedCharacter` shape change. Legacy app-ID links remain owner-scoped and readable; reconnect lazily records the exact character IDs. No character `schemaVersion` bump is required.
 
 ## 6. PDF Version Policy
 

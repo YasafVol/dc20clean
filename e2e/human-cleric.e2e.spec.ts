@@ -28,12 +28,12 @@ test.describe('Human Cleric E2E', () => {
 		}
 
 		// Select traits to spend all 7 points
-		await page.getByLabel(/Attribute Increase/i).check();
-		await page.getByLabel(/Skill Expertise/i).check();
-		await page.getByLabel(/Human Resolve/i).check();
-		await page.getByLabel(/Undying/i).check();
-		await page.getByLabel(/Trade Expertise/i).check();
-		await page.getByLabel(/Unbreakable/i).check();
+		await page.getByTestId('trait-card-human_attribute_increase').click();
+		await page.getByTestId('trait-card-human_skill_expertise').click();
+		await page.getByTestId('trait-card-human_resolve').click();
+		await page.getByTestId('trait-card-human_undying').click();
+		await page.getByTestId('trait-card-human_trade_expertise').click();
+		await page.getByTestId('trait-card-human_unbreakable').click();
 
 		await expect(page.getByText(/REMAINING: 0\/7/i)).toBeVisible();
 		await page.getByRole('button', { name: 'Next →' }).click();
@@ -65,7 +65,7 @@ test.describe('Human Cleric E2E', () => {
 
 		async function setSkillLevel(skillName: string, level: number) {
 			const skillRow = page.getByTestId(`skill-item-${skillName.toLowerCase()}`);
-			await skillRow.getByRole('button', { name: `${level}`, exact: true }).click();
+			await skillRow.getByRole('button', { name: new RegExp(`^${level}\\b`) }).click();
 		}
 
 		// The "Skill Expertise" trait adds +1 skill point and increases the mastery cap.
@@ -76,8 +76,9 @@ test.describe('Human Cleric E2E', () => {
 		// Convert 1 skill → 2 trade, leaving 8 skill points to spend (as shown in the screenshot).
 		await page.getByRole('button', { name: /Convert 1 Skill.*2 Trade/i }).click();
 
-		// Spend the remaining points: set these four skills to 1 (total spend: 2+2+(4×1) = 8).
-		const skillsToLevel = ['Acrobatics', 'Trickery', 'Stealth', 'Animal'];
+		// Spend the remaining points. Athletics 2 costs 3, Intimidation 2 uses the
+		// feature mastery grant for 2, and three Novice skills cost 1 each.
+		const skillsToLevel = ['Acrobatics', 'Trickery', 'Stealth'];
 		for (const skill of skillsToLevel) {
 			await setSkillLevel(skill, 1);
 		}
@@ -94,8 +95,8 @@ test.describe('Human Cleric E2E', () => {
 			await tradeRow.getByRole('button', { name: `${level}`, exact: true }).click();
 		}
 
-		// Spend 4 available trade points (after converting 1 trade → 2 language): four trades to 1
-		const tradeSelections = ['Blacksmithing', 'Calligraphy', 'Gaming', 'Herbalism'];
+		// Spend 5 available trade points after the two conversions.
+		const tradeSelections = ['Blacksmithing', 'Illustration', 'Gaming', 'Herbalism', 'Alchemy'];
 		for (const trade of tradeSelections) {
 			await setTradeLevel(trade, 1);
 		}
@@ -123,38 +124,17 @@ test.describe('Human Cleric E2E', () => {
 			timeout: 5000
 		});
 
-		// Helper function to select a spell by clicking its LEARN button
-		async function selectSpell(spellName: string) {
-			console.log(`Selecting spell: ${spellName}`);
-			const spellCard = page.locator('.card, [class*="card"]', {
-				has: page.getByRole('heading', { name: spellName, exact: true })
-			});
-			await spellCard.getByRole('button', { name: 'LEARN' }).click();
-			await page.waitForTimeout(300);
+		for (const spellId of ['bless', 'heal', 'sanctuary', 'light']) {
+			await page.getByTestId(`spell-${spellId}-learn`).click();
 		}
-
-		// Select 5 spells to fill all slots
-		await selectSpell('Guidance');
-		await selectSpell('Shield');
-		await selectSpell('Bless');
-		await selectSpell('Heal');
-		await selectSpell('Shield of Faith');
-
-		// Verify all spell slots are filled (check for "All choices complete" or "0 cantrip/spell slots")
-		await expect(
-			page.getByText(/All choices complete|0 cantrip slots.*0 spell slots/i)
-		).toBeVisible({
-			timeout: 5000
-		});
+		await expect(page.getByText(/Spells: 4 \/ 4/)).toBeVisible();
 		await page.getByRole('button', { name: 'Next →' }).click();
 
 		// Step 6: Names
 		await page.getByLabel(/Character Name/i).fill('testy');
 		await page.getByLabel(/Player Name/i).fill('e2e automation');
-		await page.getByText(/Complete|Finish/i).click();
-
-		// After completion, app navigates to Load Character
-		await page.waitForURL('**/load-character');
+		await page.getByTestId('creation-next').click();
+		await page.waitForURL('**/character/**');
 
 		// Verify saved character from localStorage
 		const saved = await page.evaluate(() => {
@@ -190,14 +170,14 @@ test.describe('Human Cleric E2E', () => {
 			intimidation: 2,
 			acrobatics: 1,
 			trickery: 1,
-			stealth: 1,
-			animal: 1
+			stealth: 1
 		});
 		expect(saved.tradesData).toMatchObject({
 			blacksmithing: 1,
-			calligraphy: 1,
+			illustration: 1,
 			gaming: 1,
-			herbalism: 1
+			herbalism: 1,
+			alchemy: 1
 		});
 		expect(saved.languagesData).toMatchObject({
 			common: { fluency: 'fluent' },
@@ -205,11 +185,11 @@ test.describe('Human Cleric E2E', () => {
 			draconic: { fluency: 'limited' },
 			dwarvish: { fluency: 'limited' }
 		});
+		expect(saved.spells.map((spell: { spellName: string }) => spell.spellName)).toEqual(
+			expect.arrayContaining(['Bless', 'Heal', 'Sanctuary', 'Light'])
+		);
 
-		// Open character sheet and verify stats are rendered
-		const charCard = page.locator('div', { hasText: 'testy' }).first();
-		await charCard.getByRole('button', { name: 'View Sheet' }).click();
-		await page.waitForURL('**/character/**');
+		await expect(page.getByRole('heading', { name: 'testy' })).toBeVisible();
 
 		// Movement stats visible on sheet - be tolerant to mobile layout variations
 		// Prefer an explicit data-testid if available, otherwise accept the numeric move value as evidence
@@ -269,7 +249,10 @@ test.describe('Human Cleric E2E', () => {
 		}
 		if (!jumpVisible) console.log('Jump distance not found on sheet - continuing');
 
-		// Expect move speed base (no modifiers) to be visible as a standalone value (desktop movement)
+		const characterTab = page.getByRole('button', { name: /Char/i }).first();
+		if (await characterTab.isVisible().catch(() => false)) await characterTab.click();
+
+		// Expect move speed base (no modifiers) to be visible as a standalone value.
 		await expect(page.getByText(/\b5\b/).first()).toBeVisible();
 	});
 });

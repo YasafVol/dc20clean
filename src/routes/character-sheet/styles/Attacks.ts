@@ -1,15 +1,15 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from './theme';
 
 interface MobileStyledProps {
 	$isMobile?: boolean;
 }
 
-export const StyledAttacksSection = styled.div<MobileStyledProps>`
-	border: 1px solid ${theme.colors.border.default};
-	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[4]};
-	background: ${theme.colors.bg.secondary};
+export const StyledAttacksSection = styled.div<MobileStyledProps & { $embedded?: boolean }>`
+	border: ${({ $embedded }) => ($embedded ? 'none' : `1px solid ${theme.colors.border.default}`)};
+	border-radius: ${({ $embedded }) => ($embedded ? 0 : theme.borderRadius.lg)};
+	padding: ${({ $embedded }) => ($embedded ? `${theme.spacing[2]} 0 0` : theme.spacing[4])};
+	background: ${({ $embedded }) => ($embedded ? 'transparent' : theme.colors.bg.secondary)};
 `;
 
 export const StyledAttacksHeader = styled.div<MobileStyledProps>`
@@ -58,26 +58,33 @@ export const StyledAttacksContainer = styled.div<MobileStyledProps>`
 	}
 `;
 
-export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
+const attackGrid = css`
 	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr;
-	gap: ${theme.spacing[3]};
-	margin-bottom: ${theme.spacing[3]};
-	border-bottom: 1px solid ${theme.colors.border.default};
-	padding-bottom: ${theme.spacing[2]};
+	grid-template-columns:
+		minmax(220px, 1fr)
+		repeat(3, minmax(72px, 88px))
+		minmax(110px, 140px)
+		80px;
+	column-gap: ${theme.spacing[3]};
 	align-items: center;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 
 	@media (max-width: 768px) {
-		grid-template-columns: 25px 1fr 45px 40px;
-		gap: 0.2rem;
+		grid-template-columns: minmax(150px, 1fr) 48px minmax(52px, 72px) 80px;
+		column-gap: ${theme.spacing[1]};
 		font-size: 0.7rem;
 
-		& > *:nth-child(4),
-		& > *:nth-child(5),
-		& > *:nth-child(7) {
+		& > *:nth-child(3),
+		& > *:nth-child(4) {
 			display: none;
 		}
 	}
+`;
+
+export const StyledAttacksHeaderRow = styled.div<MobileStyledProps>`
+	${attackGrid}
+	margin-bottom: ${theme.spacing[3]};
+	border-bottom: 1px solid ${theme.colors.border.default};
 `;
 
 export const StyledHeaderColumn = styled.span<{ $align?: string; $isMobile?: boolean }>`
@@ -91,11 +98,6 @@ export const StyledHeaderColumn = styled.span<{ $align?: string; $isMobile?: boo
 
 	@media (max-width: 768px) {
 		font-size: 0.7rem;
-		&:nth-child(4),
-		&:nth-child(5),
-		&:nth-child(7) {
-			display: none;
-		}
 	}
 `;
 
@@ -106,30 +108,19 @@ export const StyledEmptyState = styled.div<MobileStyledProps>`
 	color: ${theme.colors.text.muted};
 `;
 
-export const StyledAttackRow = styled.div<MobileStyledProps>`
-	display: grid;
-	grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.7fr 0.8fr;
-	gap: ${theme.spacing[3]};
-	margin-bottom: ${theme.spacing[3]};
-	align-items: center;
-	padding: ${theme.spacing[2]};
-	border-radius: ${theme.borderRadius.md};
-	transition: all ${theme.transitions.fast};
+export const StyledAttackRow = styled.div<MobileStyledProps & { $derived?: boolean }>`
+	${attackGrid}
+	min-height: 44px;
+	border-bottom: 1px solid ${theme.colors.border.subtle};
+	background: ${({ $derived }) => ($derived ? theme.colors.bg.primary : 'transparent')};
+	transition: background-color ${theme.transitions.fast};
 
 	&:hover {
 		background: ${theme.colors.bg.tertiary};
 	}
 
-	@media (max-width: 768px) {
-		grid-template-columns: 25px 1fr 45px 40px;
-		gap: 0.2rem;
-		font-size: 0.7rem;
-
-		& > *:nth-child(4),
-		& > *:nth-child(5),
-		& > *:nth-child(7) {
-			display: none;
-		}
+	&:last-child {
+		border-bottom: none;
 	}
 `;
 
@@ -180,52 +171,114 @@ export const StyledWeaponSelect = styled.select<MobileStyledProps>`
 	}
 `;
 
-export const StyledDamageCell = styled.div<{ color?: string; $isMobile?: boolean }>`
-	text-align: center;
-	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${(props) => props.color || theme.colors.accent.warning};
-	cursor: pointer;
-	transition: all ${theme.transitions.fast};
+export const StyledWeaponName = styled.div`
+	min-width: 0;
+	overflow: hidden;
+	color: ${theme.colors.text.primary};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	text-overflow: ellipsis;
+	white-space: nowrap;
+`;
 
-	&:hover {
-		color: ${theme.colors.accent.primary};
-		transform: scale(1.05);
+export const StyledWeaponMeta = styled.div`
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.normal};
+	line-height: ${theme.typography.lineHeight.tight};
+`;
+
+export const StyledAttackIdentity = styled.div`
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledAttackProperties = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: ${theme.spacing[1]};
+`;
+
+export const StyledAttackProperty = styled.span`
+	width: fit-content;
+	padding: 1px ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.sm};
+	color: ${theme.colors.accent.primary};
+	background: ${theme.colors.bg.tertiary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	line-height: ${theme.typography.lineHeight.tight};
+`;
+
+export const StyledAttackTraitNotes = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	color: ${theme.colors.text.muted};
+	font-size: ${theme.typography.fontSize.xs};
+	line-height: ${theme.typography.lineHeight.tight};
+
+	strong {
+		color: ${theme.colors.text.secondary};
+		font-weight: ${theme.typography.fontWeight.semibold};
 	}
 `;
 
-export const StyledInfoIcon = styled.span<MobileStyledProps>`
+export const StyledDamageCell = styled.div<{
+	$tone?: 'hit' | 'heavy' | 'brutal';
+	$isMobile?: boolean;
+}>`
+	text-align: center;
+	font-weight: ${theme.typography.fontWeight.semibold};
+	color: ${({ $tone }) =>
+		$tone === 'heavy'
+			? theme.colors.accent.warning
+			: $tone === 'brutal'
+				? theme.colors.accent.danger
+				: theme.colors.text.primary};
+	font-variant-numeric: tabular-nums;
+`;
+
+export const StyledInfoButton = styled.button<MobileStyledProps>`
+	grid-column: 2;
 	background: transparent;
 	color: ${theme.colors.accent.primary};
-	border: 1px solid ${theme.colors.accent.primary};
-	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	border: 0;
+	width: 24px;
+	height: 24px;
+	padding: 0;
 	cursor: pointer;
-	font-style: italic;
-	font-size: ${theme.typography.fontSize.xs};
-	font-weight: ${theme.typography.fontWeight.bold};
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	transition: all ${theme.transitions.fast};
 
-	&:hover {
-		background: ${theme.colors.accent.primary};
-		color: ${theme.colors.text.inverse};
-		transform: scale(1.1);
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.text.primary};
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
 	}
 `;
 
 export const StyledDamageTypeCell = styled.div<MobileStyledProps>`
 	text-align: center;
-	font-size: ${theme.typography.fontSize.lg};
-	font-weight: ${theme.typography.fontWeight.bold};
-	cursor: pointer;
-	color: ${theme.colors.text.primary};
-	transition: all ${theme.transitions.fast};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.medium};
+	color: ${theme.colors.text.secondary};
+	white-space: nowrap;
+`;
 
-	&:hover {
-		color: ${theme.colors.accent.primary};
+export const StyledAttackActions = styled.div`
+	display: grid;
+	grid-template-columns: 52px 24px;
+	align-items: center;
+	gap: ${theme.spacing[1]};
+	width: 80px;
+
+	& > button {
+		justify-self: end;
 	}
 `;

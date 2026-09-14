@@ -8,11 +8,13 @@ import {
 	StyledNotesList,
 	StyledNoteItem,
 	StyledNoteInput,
+	StyledNoteText,
 	StyledAddButton,
 	StyledDeleteButton,
 	StyledEmptyNotesMessage,
 	StyledAddNoteSection
 } from '../styles/PlayerNotes.styles';
+import RowEditControls from './shared/RowEditControls';
 
 // Multi-note data model. Stored inside the existing `notes.playerNotes` string
 // field as a JSON-encoded array so we don't need to migrate the reducer/schema.
@@ -64,9 +66,17 @@ function serializeNotes(notes: Note[]): string {
 	return NOTES_JSON_MARKER + JSON.stringify(notes);
 }
 
-const PlayerNotes: React.FC = () => {
+interface PlayerNotesProps {
+	showTitle?: boolean;
+	explicitEditMode?: boolean;
+}
+
+const PlayerNotes: React.FC<PlayerNotesProps> = ({
+	showTitle = true,
+	explicitEditMode = false
+}) => {
 	const { t } = useTranslation();
-	const { updateNotes, state } = useCharacterSheet();
+	const { updateNotes, state, readOnly } = useCharacterSheet();
 
 	const rawNotes = state.character?.characterState?.notes?.playerNotes || '';
 	const notes = useMemo(() => parseNotes(rawNotes), [rawNotes]);
@@ -74,6 +84,7 @@ const PlayerNotes: React.FC = () => {
 	// Local edit state for title — body edits flow directly to storage so they're
 	// auto-saved like every other field on the sheet.
 	const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
+	const [editingNoteIds, setEditingNoteIds] = useState<Set<string>>(new Set());
 
 	if (!state.character) {
 		return (
@@ -95,7 +106,11 @@ const PlayerNotes: React.FC = () => {
 			createdAt: new Date().toISOString()
 		};
 		persist([...notes, newNote]);
-		setEditingTitleId(newNote.id);
+		if (explicitEditMode) {
+			setEditingNoteIds((current) => new Set(current).add(newNote.id));
+		} else {
+			setEditingTitleId(newNote.id);
+		}
 	};
 
 	const handleUpdateBody = (id: string, body: string) => {
@@ -110,6 +125,20 @@ const PlayerNotes: React.FC = () => {
 		const confirmed = window.confirm(t('characterSheet.notesDeleteConfirm'));
 		if (!confirmed) return;
 		persist(notes.filter((n) => n.id !== id));
+		setEditingNoteIds((current) => {
+			const next = new Set(current);
+			next.delete(id);
+			return next;
+		});
+	};
+
+	const toggleNoteEditing = (id: string) => {
+		setEditingNoteIds((current) => {
+			const next = new Set(current);
+			if (next.has(id)) next.delete(id);
+			else next.add(id);
+			return next;
+		});
 	};
 
 	return (
@@ -123,12 +152,16 @@ const PlayerNotes: React.FC = () => {
 					gap: '1rem'
 				}}
 			>
-				<StyledPlayerNotesTitle style={{ margin: 0, textAlign: 'left', flex: 1 }}>
-					{t('characterSheet.notesTitle')}
-				</StyledPlayerNotesTitle>
-				<StyledAddButton onClick={handleAddNote} type="button">
-					+ {t('characterSheet.notesNewNote')}
-				</StyledAddButton>
+				{showTitle && (
+					<StyledPlayerNotesTitle style={{ margin: 0, textAlign: 'left', flex: 1 }}>
+						{t('characterSheet.notesTitle')}
+					</StyledPlayerNotesTitle>
+				)}
+				{!readOnly && (
+					<StyledAddButton onClick={handleAddNote} type="button">
+						+ {t('characterSheet.notesNewNote')}
+					</StyledAddButton>
+				)}
 			</div>
 
 			<StyledNotesContent>
@@ -136,80 +169,107 @@ const PlayerNotes: React.FC = () => {
 					<StyledEmptyNotesMessage>{t('characterSheet.notesEmpty')}</StyledEmptyNotesMessage>
 				) : (
 					<StyledNotesList>
-						{notes.map((note) => (
-							<StyledNoteItem key={note.id}>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-										gap: '0.5rem',
-										marginBottom: '0.5rem'
-									}}
-								>
-									{editingTitleId === note.id ? (
-										<input
-											type="text"
-											value={note.title}
-											onChange={(e) => handleUpdateTitle(note.id, e.target.value)}
-											onBlur={() => setEditingTitleId(null)}
-											onKeyDown={(e) => {
-												if (e.key === 'Enter' || e.key === 'Escape') {
-													(e.target as HTMLInputElement).blur();
-												}
-											}}
-											autoFocus
-											style={{
-												flex: 1,
-												background: 'transparent',
-												border: '1px solid #555',
-												borderRadius: '4px',
-												color: '#fff',
-												padding: '0.25rem 0.5rem',
-												fontSize: '0.95rem',
-												fontWeight: 600
-											}}
+						{notes.map((note) => {
+							const isEditing =
+								!readOnly &&
+								(explicitEditMode ? editingNoteIds.has(note.id) : editingTitleId === note.id);
+
+							return (
+								<StyledNoteItem key={note.id}>
+									<div
+										style={{
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+											gap: '0.5rem',
+											marginBottom: '0.5rem'
+										}}
+									>
+										{isEditing ? (
+											<input
+												type="text"
+												value={note.title}
+												onChange={(e) => handleUpdateTitle(note.id, e.target.value)}
+												onBlur={() => {
+													if (!explicitEditMode) setEditingTitleId(null);
+												}}
+												onKeyDown={(e) => {
+													if (!explicitEditMode && (e.key === 'Enter' || e.key === 'Escape')) {
+														(e.target as HTMLInputElement).blur();
+													}
+												}}
+												autoFocus
+												style={{
+													flex: 1,
+													background: 'transparent',
+													border: '1px solid #555',
+													borderRadius: '4px',
+													color: '#fff',
+													padding: '0.25rem 0.5rem',
+													fontSize: '0.95rem',
+													fontWeight: 600
+												}}
+											/>
+										) : (
+											<button
+												type="button"
+												onClick={() => {
+													if (!readOnly && !explicitEditMode) setEditingTitleId(note.id);
+												}}
+												title={readOnly ? undefined : t('characterSheet.notesEditTitle')}
+												disabled={readOnly}
+												style={{
+													flex: 1,
+													textAlign: 'left',
+													background: 'transparent',
+													border: 'none',
+													color: '#fff',
+													padding: '0.25rem 0',
+													fontSize: '0.95rem',
+													fontWeight: 600,
+													cursor: readOnly || explicitEditMode ? 'default' : 'text'
+												}}
+											>
+												{note.title || t('characterSheet.notesUntitled')}
+											</button>
+										)}
+										{!readOnly &&
+											(explicitEditMode ? (
+												<RowEditControls
+													isEditing={isEditing}
+													onToggle={() => toggleNoteEditing(note.id)}
+													onDelete={() => handleDeleteNote(note.id)}
+													itemLabel="note"
+												/>
+											) : (
+												<StyledDeleteButton
+													onClick={() => handleDeleteNote(note.id)}
+													title={t('characterSheet.notesDelete')}
+													type="button"
+												>
+													×
+												</StyledDeleteButton>
+											))}
+									</div>
+									{isEditing ? (
+										<StyledNoteInput
+											value={note.body}
+											onChange={(e) => handleUpdateBody(note.id, e.target.value)}
+											placeholder={t('characterSheet.notesPlaceholder')}
 										/>
 									) : (
-										<button
-											type="button"
-											onClick={() => setEditingTitleId(note.id)}
-											title={t('characterSheet.notesEditTitle')}
-											style={{
-												flex: 1,
-												textAlign: 'left',
-												background: 'transparent',
-												border: 'none',
-												color: '#fff',
-												padding: '0.25rem 0',
-												fontSize: '0.95rem',
-												fontWeight: 600,
-												cursor: 'text'
-											}}
-										>
-											{note.title || t('characterSheet.notesUntitled')}
-										</button>
+										<StyledNoteText>
+											{note.body || t('characterSheet.notesPlaceholder')}
+										</StyledNoteText>
 									)}
-									<StyledDeleteButton
-										onClick={() => handleDeleteNote(note.id)}
-										title={t('characterSheet.notesDelete')}
-										type="button"
-									>
-										×
-									</StyledDeleteButton>
-								</div>
-								<StyledNoteInput
-									value={note.body}
-									onChange={(e) => handleUpdateBody(note.id, e.target.value)}
-									placeholder={t('characterSheet.notesPlaceholder')}
-								/>
-							</StyledNoteItem>
-						))}
+								</StyledNoteItem>
+							);
+						})}
 					</StyledNotesList>
 				)}
 			</StyledNotesContent>
 
-			{notes.length > 0 && (
+			{!readOnly && notes.length > 0 && (
 				<StyledAddNoteSection>
 					<StyledAddButton onClick={handleAddNote} type="button">
 						+ {t('characterSheet.notesNewNote')}

@@ -9,6 +9,7 @@ import { api } from '../../../convex/_generated/api';
 import type { CampaignRole, CampaignEvent } from '../../lib/types/campaign';
 import { theme } from '../character-sheet/styles/theme';
 import { formatEvent, getEventAccent } from '../character-sheet/utils/campaignFeedFormat';
+import { buildCampaignCharacterViewPath } from './campaignRoutes';
 
 const ROLE_LABELS: Record<CampaignRole, string> = { dm: 'DM', co_dm: 'Co-DM', player: 'Player' };
 
@@ -370,7 +371,7 @@ export const CampaignDetail: React.FC = () => {
                         ? <Button variant="outline" disabled>...</Button>
                         : isOwner
                         ? <Button variant="outline" onClick={() => navigate(`/character/${entry.characterId}`)}>Open</Button>
-                        : <Button variant="outline" onClick={() => navigate(`/campaigns/${id}/character/${entry.characterId}`)}>View</Button>
+                        : <Button variant="outline" onClick={() => navigate(buildCampaignCharacterViewPath(id, entry.characterId, entry.characterDocId))}>View</Button>
                       }
                     </td>
                   </tr>

@@ -34,15 +34,15 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 		await page.getByTestId('ancestry-card-human').click();
 
 		// Select traits to spend points
-		await page.getByLabel(/Attribute Increase/i).check();
-		await page.getByLabel(/Skill Expertise/i).check();
-		await page.getByLabel(/Human Resolve/i).check();
-		await page.getByLabel(/Undying/i).check();
+		await page.getByTestId('trait-card-human_attribute_increase').click();
+		await page.getByTestId('trait-card-human_skill_expertise').click();
+		await page.getByTestId('trait-card-human_resolve').click();
+		await page.getByTestId('trait-card-human_undying').click();
 
 		// Find and select more traits to spend remaining points
-		const tradeExpertise = page.getByLabel(/Trade Expertise/i);
+		const tradeExpertise = page.getByTestId('trait-card-human_trade_expertise');
 		if (await tradeExpertise.isVisible()) {
-			await tradeExpertise.check();
+			await tradeExpertise.click();
 		}
 
 		// Verify we've spent all ancestry points
@@ -57,7 +57,7 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 		}
 
 		// Spellblade needs both Might/Agility and Intelligence
-		await incAttr('might', 3);
+		await incAttr('might', 4);
 		await incAttr('agility', 3);
 		await incAttr('intelligence', 3);
 		await incAttr('charisma', 3);
@@ -70,14 +70,21 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 
 		async function setSkillLevel(skillName: string, level: number) {
 			const skillRow = page.getByTestId(`skill-item-${skillName.toLowerCase()}`);
-			await skillRow.getByRole('button', { name: `${level}`, exact: true }).click();
+			await skillRow.getByRole('button', { name: new RegExp(`^${level}\\b`) }).click();
 		}
 
-		// Allocate skill points (base 5 + INT(1) = 6)
-		await setSkillLevel('Athletics', 2);
-		await setSkillLevel('Acrobatics', 2);
-		await setSkillLevel('Investigation', 1);
-		await setSkillLevel('Awareness', 1);
+		// Allocate skill points (base 5 + INT(1) = 6).
+		for (const skill of [
+			'Athletics',
+			'Acrobatics',
+			'Investigation',
+			'Awareness',
+			'Trickery',
+			'Stealth',
+			'Animal'
+		]) {
+			await setSkillLevel(skill, 1);
+		}
 
 		// Trades
 		await page.getByTestId('trades-tab').click();
@@ -107,22 +114,10 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 
 		if (isSpellsStep) {
 			console.log('Spells step detected - Spellblade has spellcasting');
-
-			// Select available spells
-			const spellLearnButtons = page.locator('.card, [class*="card"]').getByRole('button', {
-				name: 'LEARN'
-			});
-			const spellCount = await spellLearnButtons.count();
-
-			// Learn spells until slots are filled or no more buttons
-			let spellsLearned = 0;
-			while ((await spellLearnButtons.count()) > 0 && spellsLearned < 10) {
-				await spellLearnButtons.first().click();
-				await page.waitForTimeout(200);
-				spellsLearned++;
-			}
-
-			console.log(`Learned ${spellsLearned} spells`);
+			const spellLearnButtons = page.locator('[data-testid^="spell-"][data-testid$="-learn"]');
+			await spellLearnButtons.nth(0).click();
+			await spellLearnButtons.nth(0).click();
+			await expect(page.getByText(/Spells: 2 \/ 2/)).toBeVisible();
 			await page.getByRole('button', { name: 'Next →' }).click();
 		}
 
@@ -133,21 +128,13 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 		if (isManeuversStep) {
 			console.log('Maneuvers step detected - Spellblade has martial capabilities');
 
-			// Select available maneuvers
-			const maneuverLearnButtons = page
-				.locator('.card, [class*="card"]')
-				.getByRole('button', { name: 'LEARN' });
-
-			// Learn maneuvers until slots are filled
-			let maneuversLearned = 0;
-			while ((await maneuverLearnButtons.count()) > 0 && maneuversLearned < 10) {
-				await maneuverLearnButtons.first().click();
-				await page.waitForTimeout(200);
-				maneuversLearned++;
-			}
-
-			console.log(`Learned ${maneuversLearned} maneuvers`);
-			await page.getByRole('button', { name: 'Next →' }).click();
+			const maneuverLearnButtons = page.locator(
+				'[data-testid^="maneuver-"][data-testid$="-learn"]'
+			);
+			const nextButton = page.getByTestId('creation-next');
+			await maneuverLearnButtons.first().click();
+			await expect(page.getByText(/Maneuvers: 1 \/ 1/)).toBeVisible();
+			await nextButton.click();
 		}
 
 		// Verify we reached the final step by confirming either Spells or Maneuvers step was shown
@@ -157,10 +144,8 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 		// Step 7: Names
 		await page.getByLabel(/Character Name/i).fill('Hybrid Spellblade Test');
 		await page.getByLabel(/Player Name/i).fill('E2E Test');
-		await page.getByText(/Complete|Finish/i).click();
-
-		// Verify navigation to character list
-		await page.waitForURL('**/load-character');
+		await page.getByTestId('creation-next').click();
+		await page.waitForURL('**/character/**');
 
 		// Verify saved character data
 		const saved = await page.evaluate(() => {
@@ -171,13 +156,15 @@ test.describe('Spellblade Hybrid Class E2E (T5)', () => {
 		expect(saved).toBeTruthy();
 		expect(saved.classId).toBe('spellblade');
 		expect(saved.ancestry1Id).toBe('human');
+		expect(saved.spells).toHaveLength(2);
+		expect(saved.maneuvers).toHaveLength(1);
 
 		console.log('Spellblade E2E test completed successfully');
 		console.log('Character summary:', {
 			classId: saved.classId,
 			ancestry1Id: saved.ancestry1Id,
-			selectedSpells: saved.selectedSpells ? Object.keys(saved.selectedSpells).length : 0,
-			selectedManeuvers: saved.selectedManeuvers?.length ?? 0
+			spells: saved.spells.length,
+			maneuvers: saved.maneuvers.length
 		});
 	});
 });

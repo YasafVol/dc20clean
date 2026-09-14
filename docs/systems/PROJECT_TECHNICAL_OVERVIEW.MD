@@ -1,8 +1,12 @@
 # Project Technical Overview
 
 > Purpose: Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.
+> Owns: Repository-wide stack, runtime composition, project structure, development commands, CI status, code standards, and PR conventions.
+> Does not own: Detailed subsystem behavior, rules content, feature acceptance criteria, or subsystem-specific data contracts.
+> Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
+> Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-09-13
 
 ## Tech Stack
 
@@ -19,11 +23,12 @@
 
 ## UI Notes
 
+- `src/styles/responsive.ts` is the viewport-breakpoint authority. It defines only 768px and 1200px, producing compact, tablet, and desktop modes. Prefer intrinsic CSS (`minmax`, `auto-fit`, wrapping, `clamp`, and container queries) for component-level adaptation; do not add viewport thresholds for isolated components.
 - Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
 - Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
 - The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
-- Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The two groups stack below 900px, and their cards stack below 600px.
+- Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.
 - The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
 
 ## Local Setup
@@ -116,6 +121,7 @@ src/
 ├── routes/                        # Application routes
 │   ├── character-creation/        # Multi-step character creation wizard
 │   ├── character-sheet/           # Character sheet (desktop + mobile)
+│   │   ├── alternative/            #   Alternative presentation-only composition
 │   │   ├── components/            #   Section components (50+)
 │   │   ├── components/mobile/     #   Mobile-specific sections
 │   │   ├── components/shared/     #   Shared UI utilities

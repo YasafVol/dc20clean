@@ -288,7 +288,6 @@ export interface EnhancedCalculationResult {
 		totalTradePoints: number;
 		totalAttributePoints: number;
 		totalManeuversKnown: number;
-		totalCantripsKnown: number;
 		totalSpellsKnown: number;
 		unlockedFeatureIds: string[];
 		pendingSubclassChoices: number;
@@ -441,7 +440,6 @@ export interface EnhancedCharacterBuildData {
 		totalTradePoints: number;
 		totalAttributePoints: number;
 		totalManeuversKnown: number;
-		totalCantripsKnown: number;
 		totalSpellsKnown: number;
 		unlockedFeatureIds: string[];
 		pendingSubclassChoices: number; // Count of subclass features player needs to choose

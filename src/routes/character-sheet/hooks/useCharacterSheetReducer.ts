@@ -1,5 +1,6 @@
 import { useReducer, useCallback } from 'react';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
+import { assessCharacterCompatibility } from '../../../lib/rulesdata/versioning/compatibility';
 import type { AttackData } from '../../../types/character';
 
 // Sheet state - wraps the SavedCharacter
@@ -650,172 +651,254 @@ function characterSheetReducer(state: SheetState, action: SheetAction): SheetSta
 // Custom hook that exports the reducer
 export function useCharacterSheetReducer(readOnly = false) {
 	const [state, dispatch] = useReducer(characterSheetReducer, initialState);
+	const compatibility = state.character ? assessCharacterCompatibility(state.character) : null;
+	const canEditCharacter = !readOnly && compatibility?.autoSaveMode === 'full';
+	const canManageResources =
+		!readOnly &&
+		(compatibility?.autoSaveMode === 'full' || compatibility?.autoSaveMode === 'resources');
 
 	// Helper functions for common operations
-	const updateHP = useCallback((hp: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_CURRENT_HP', hp });
-	}, [readOnly]);
+	const updateHP = useCallback(
+		(hp: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_CURRENT_HP', hp });
+		},
+		[canManageResources]
+	);
 
-	const updateSP = useCallback((sp: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_CURRENT_SP', sp });
-	}, [readOnly]);
+	const updateSP = useCallback(
+		(sp: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_CURRENT_SP', sp });
+		},
+		[canManageResources]
+	);
 
-	const updateMP = useCallback((mp: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_CURRENT_MP', mp });
-	}, [readOnly]);
+	const updateMP = useCallback(
+		(mp: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_CURRENT_MP', mp });
+		},
+		[canManageResources]
+	);
 
-	const updateTempHP = useCallback((tempHP: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_TEMP_HP', tempHP });
-	}, [readOnly]);
+	const updateTempHP = useCallback(
+		(tempHP: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_TEMP_HP', tempHP });
+		},
+		[canManageResources]
+	);
 
-	const updateActionPoints = useCallback((ap: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_ACTION_POINTS_USED', ap });
-	}, [readOnly]);
+	const updateActionPoints = useCallback(
+		(ap: number) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_ACTION_POINTS_USED', ap });
+		},
+		[canEditCharacter]
+	);
 
-	const updateExhaustion = useCallback((level: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_EXHAUSTION', level });
-	}, [readOnly]);
+	const updateExhaustion = useCallback(
+		(level: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_EXHAUSTION', level });
+		},
+		[canManageResources]
+	);
 
-	const updateDeathStep = useCallback((steps: number, isDead?: boolean) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_DEATH_STEP', steps, isDead });
-	}, [readOnly]);
+	const updateDeathStep = useCallback(
+		(steps: number, isDead?: boolean) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_DEATH_STEP', steps, isDead });
+		},
+		[canEditCharacter]
+	);
 
-	const setManualDefense = useCallback((pd?: number, ad?: number, pdr?: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
-	}, [readOnly]);
+	const setManualDefense = useCallback(
+		(pd?: number, ad?: number, pdr?: number) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'SET_MANUAL_DEFENSE', pd, ad, pdr });
+		},
+		[canEditCharacter]
+	);
 
-	const setConditionToggle = useCallback((conditionId: string, active: boolean) => {
-		if (readOnly) return;
-		dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
-	}, [readOnly]);
+	const setConditionToggle = useCallback(
+		(conditionId: string, active: boolean) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'SET_CONDITION_TOGGLE', conditionId, active });
+		},
+		[canEditCharacter]
+	);
 
-	const addAttack = useCallback((attack: AttackData) => {
-		if (readOnly) return;
-		dispatch({ type: 'ADD_ATTACK', attack });
-	}, [readOnly]);
+	const addAttack = useCallback(
+		(attack: AttackData) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'ADD_ATTACK', attack });
+		},
+		[canEditCharacter]
+	);
 
-	const removeAttack = useCallback((attackId: string) => {
-		if (readOnly) return;
-		dispatch({ type: 'REMOVE_ATTACK', attackId });
-	}, [readOnly]);
+	const removeAttack = useCallback(
+		(attackId: string) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'REMOVE_ATTACK', attackId });
+		},
+		[canEditCharacter]
+	);
 
-	const updateAttack = useCallback((attackId: string, attack: AttackData) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
-	}, [readOnly]);
+	const updateAttack = useCallback(
+		(attackId: string, attack: AttackData) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_ATTACK', attackId, attack });
+		},
+		[canEditCharacter]
+	);
 
 	const resetAttacks = useCallback(() => {
-		if (readOnly) return;
+		if (!canEditCharacter) return;
 		dispatch({ type: 'RESET_ATTACKS' });
-	}, [readOnly]);
+	}, [canEditCharacter]);
 
-	const addSpell = useCallback((spell: any) => {
-		if (readOnly) return;
-		dispatch({ type: 'ADD_SPELL', spell });
-	}, [readOnly]);
+	const addSpell = useCallback(
+		(spell: any) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'ADD_SPELL', spell });
+		},
+		[canEditCharacter]
+	);
 
-	const removeSpell = useCallback((spellId: string) => {
-		if (readOnly) return;
-		dispatch({ type: 'REMOVE_SPELL', spellId });
-	}, [readOnly]);
+	const removeSpell = useCallback(
+		(spellId: string) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'REMOVE_SPELL', spellId });
+		},
+		[canEditCharacter]
+	);
 
-	const updateSpell = useCallback((spellId: string, field: string, value: any) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_SPELL', spellId, field, value });
-	}, [readOnly]);
+	const updateSpell = useCallback(
+		(spellId: string, field: string, value: any) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_SPELL', spellId, field, value });
+		},
+		[canEditCharacter]
+	);
 
 	const resetSpells = useCallback(() => {
-		if (readOnly) return;
+		if (!canEditCharacter) return;
 		dispatch({ type: 'RESET_SPELLS' });
-	}, [readOnly]);
+	}, [canEditCharacter]);
 
-	const addManeuver = useCallback((maneuver: any) => {
-		if (readOnly) return;
-		dispatch({ type: 'ADD_MANEUVER', maneuver });
-	}, [readOnly]);
+	const addManeuver = useCallback(
+		(maneuver: any) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'ADD_MANEUVER', maneuver });
+		},
+		[canEditCharacter]
+	);
 
-	const removeManeuver = useCallback((maneuverId: string) => {
-		if (readOnly) return;
-		dispatch({ type: 'REMOVE_MANEUVER', maneuverId });
-	}, [readOnly]);
+	const removeManeuver = useCallback(
+		(maneuverId: string) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'REMOVE_MANEUVER', maneuverId });
+		},
+		[canEditCharacter]
+	);
 
 	const resetManeuvers = useCallback(() => {
-		if (readOnly) return;
+		if (!canEditCharacter) return;
 		dispatch({ type: 'RESET_MANEUVERS' });
-	}, [readOnly]);
+	}, [canEditCharacter]);
 
-	const updateInventory = useCallback((items: any[]) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_INVENTORY', items });
-	}, [readOnly]);
+	const updateInventory = useCallback(
+		(items: any[]) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_INVENTORY', items });
+		},
+		[canEditCharacter]
+	);
 
 	const resetInventory = useCallback(() => {
-		if (readOnly) return;
+		if (!canEditCharacter) return;
 		dispatch({ type: 'RESET_INVENTORY' });
-	}, [readOnly]);
+	}, [canEditCharacter]);
 
 	const updateCurrency = useCallback(
 		(goldPieces?: number, silverPieces?: number, copperPieces?: number) => {
-			if (readOnly) return;
+			if (!canEditCharacter) return;
 			dispatch({ type: 'UPDATE_CURRENCY', goldPieces, silverPieces, copperPieces });
 		},
-		[readOnly]
+		[canEditCharacter]
 	);
 
-	const updateNotes = useCallback((notes: string) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_NOTES', notes });
-	}, [readOnly]);
+	const updateNotes = useCallback(
+		(notes: string) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'UPDATE_NOTES', notes });
+		},
+		[canEditCharacter]
+	);
 
-	const updateGritPoints = useCallback((grit: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
-	}, [readOnly]);
+	const updateGritPoints = useCallback(
+		(grit: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_CURRENT_GRIT_POINTS', grit });
+		},
+		[canManageResources]
+	);
 
-	const updateRestPoints = useCallback((rest: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
-	}, [readOnly]);
+	const updateRestPoints = useCallback(
+		(rest: number) => {
+			if (!canManageResources) return;
+			dispatch({ type: 'UPDATE_CURRENT_REST_POINTS', rest });
+		},
+		[canManageResources]
+	);
 
-	const toggleActiveCondition = useCallback((conditionId: string) => {
-		if (readOnly) return;
-		dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
-	}, [readOnly]);
+	const toggleActiveCondition = useCallback(
+		(conditionId: string) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'TOGGLE_ACTIVE_CONDITION', conditionId });
+		},
+		[canEditCharacter]
+	);
 
-	const setActiveConditionStacks = useCallback((conditionId: string, stacks: number) => {
-		if (readOnly) return;
-		dispatch({ type: 'SET_ACTIVE_CONDITION_STACKS', conditionId, stacks });
-	}, [readOnly]);
+	const setActiveConditionStacks = useCallback(
+		(conditionId: string, stacks: number) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'SET_ACTIVE_CONDITION_STACKS', conditionId, stacks });
+		},
+		[canEditCharacter]
+	);
 
 	const updateDefenseOverrides = useCallback(
 		(overrides: { precisionAD?: number; areaAD?: number; precisionDR?: number }) => {
-			if (readOnly) return;
+			if (!canEditCharacter) return;
 			dispatch({ type: 'UPDATE_DEFENSE_OVERRIDES', overrides });
 		},
-		[readOnly]
+		[canEditCharacter]
 	);
 
-	const setRageActive = useCallback((isRaging: boolean) => {
-		if (readOnly) return;
-		dispatch({ type: 'SET_RAGE_ACTIVE', isRaging });
-	}, [readOnly]);
+	const setRageActive = useCallback(
+		(isRaging: boolean) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'SET_RAGE_ACTIVE', isRaging });
+		},
+		[canEditCharacter]
+	);
 
-	const setWildFormActive = useCallback((isWildFormed: boolean) => {
-		if (readOnly) return;
-		dispatch({ type: 'SET_WILD_FORM_ACTIVE', isWildFormed });
-	}, [readOnly]);
+	const setWildFormActive = useCallback(
+		(isWildFormed: boolean) => {
+			if (!canEditCharacter) return;
+			dispatch({ type: 'SET_WILD_FORM_ACTIVE', isWildFormed });
+		},
+		[canEditCharacter]
+	);
 
 	return {
 		state,
 		dispatch,
+		canEditCharacter,
+		canManageResources,
 		// Helper functions
 		updateHP,
 		updateSP,

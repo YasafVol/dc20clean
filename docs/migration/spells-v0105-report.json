@@ -2,6 +2,7 @@
 	"source": "docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md",
 	"spellCount": 160,
 	"enhancementCount": 709,
+	"resolutionCount": 28,
 	"schools": {
 		"Astromancy": 15,
 		"Conjuration": 29,
@@ -28,9 +29,15 @@
 		{
 			"id": "arcane-bolt",
 			"name": "Arcane Bolt",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Bludgeoning", "Piercing", "Slashing"],
+			"tags": [
+				"Bludgeoning",
+				"Piercing",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -40,16 +47,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4212,
-				"endLine": 4237
+				"startLine": 4268,
+				"endLine": 4293
 			}
 		},
 		{
 			"id": "arcane-wave",
 			"name": "Arcane Wave",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Bludgeoning", "Deafened", "Motion", "Piercing", "Slashing"],
+			"tags": [
+				"Bludgeoning",
+				"Deafened",
+				"Motion",
+				"Piercing",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -59,16 +74,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4238,
-				"endLine": 4263
+				"startLine": 4294,
+				"endLine": 4319
 			}
 		},
 		{
 			"id": "banish",
 			"name": "Banish",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Astromancy",
-			"tags": ["Incapacitated", "Planes", "Psychic", "Teleportation"],
+			"tags": [
+				"Incapacitated",
+				"Planes",
+				"Psychic",
+				"Teleportation"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -79,16 +102,24 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 4264,
-				"endLine": 4289
+				"startLine": 4320,
+				"endLine": 4345
 			}
 		},
 		{
 			"id": "blessing-of-air",
 			"name": "Blessing of Air",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Astromancy",
-			"tags": ["Air", "Embolden", "Gravity", "Motion"],
+			"tags": [
+				"Air",
+				"Embolden",
+				"Gravity",
+				"Motion"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -99,16 +130,21 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4290,
-				"endLine": 4323
+				"startLine": 4346,
+				"endLine": 4379
 			}
 		},
 		{
 			"id": "blessing-of-zephyr",
 			"name": "Blessing of Zephyr",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Astromancy",
-			"tags": ["Embolden", "Motion"],
+			"tags": [
+				"Embolden",
+				"Motion"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -119,16 +155,23 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4324,
-				"endLine": 4353
+				"startLine": 4380,
+				"endLine": 4409
 			}
 		},
 		{
 			"id": "gravity-shift",
 			"name": "Gravity Shift",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Dazed", "Gravity", "Hindered", "Motion"],
+			"tags": [
+				"Dazed",
+				"Gravity",
+				"Hindered",
+				"Motion"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 4
@@ -139,16 +182,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4354,
-				"endLine": 4389
+				"startLine": 4410,
+				"endLine": 4445
 			}
 		},
 		{
 			"id": "gravity-well",
 			"name": "Gravity Well",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Gravity", "Motion", "Restrained"],
+			"tags": [
+				"Gravity",
+				"Motion",
+				"Restrained"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -159,16 +208,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4390,
-				"endLine": 4419
+				"startLine": 4446,
+				"endLine": 4475
 			}
 		},
 		{
 			"id": "haste",
 			"name": "Haste",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Embolden", "Motion", "Time"],
+			"tags": [
+				"Embolden",
+				"Motion",
+				"Time"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -179,16 +234,25 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 4420,
-				"endLine": 4449
+				"startLine": 4476,
+				"endLine": 4505
 			}
 		},
 		{
 			"id": "increase-gravity",
 			"name": "Increase Gravity",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Bludgeoning", "Gravity", "Immobilized", "Hindered", "Prone", "Slowed"],
+			"tags": [
+				"Bludgeoning",
+				"Gravity",
+				"Immobilized",
+				"Hindered",
+				"Prone",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 2
@@ -199,16 +263,26 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4450,
-				"endLine": 4482
+				"startLine": 4506,
+				"endLine": 4538
 			}
 		},
 		{
 			"id": "slow-time",
 			"name": "Slow Time",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Dazed", "Enfeeble", "Hindered", "Impaired", "Slowed", "Paralyzed", "Time"],
+			"tags": [
+				"Dazed",
+				"Enfeeble",
+				"Hindered",
+				"Impaired",
+				"Slowed",
+				"Paralyzed",
+				"Time"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -218,16 +292,22 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 4483,
-				"endLine": 4514
+				"startLine": 4539,
+				"endLine": 4570
 			}
 		},
 		{
 			"id": "telekinesis",
 			"name": "Telekinesis",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Immobilized", "Motion", "Restrained"],
+			"tags": [
+				"Immobilized",
+				"Motion",
+				"Restrained"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -238,16 +318,22 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 4515,
-				"endLine": 4551
+				"startLine": 4571,
+				"endLine": 4607
 			}
 		},
 		{
 			"id": "teleport",
 			"name": "Teleport",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Teleportation", "Motion", "Slowed"],
+			"tags": [
+				"Teleportation",
+				"Motion",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -258,16 +344,21 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4552,
-				"endLine": 4579
+				"startLine": 4608,
+				"endLine": 4635
 			}
 		},
 		{
 			"id": "time-stop",
 			"name": "Time Stop",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Time", "Paralyzed"],
+			"tags": [
+				"Time",
+				"Paralyzed"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -278,16 +369,20 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 4580,
-				"endLine": 4603
+				"startLine": 4636,
+				"endLine": 4659
 			}
 		},
 		{
 			"id": "translocation",
 			"name": "Translocation",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Teleportation"],
+			"tags": [
+				"Teleportation"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -298,16 +393,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 4604,
-				"endLine": 4635
+				"startLine": 4660,
+				"endLine": 4691
 			}
 		},
 		{
 			"id": "reduce-inertia",
 			"name": "Reduce Inertia",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Astromancy",
-			"tags": ["Embolden", "Gravity", "Motion", "Ward"],
+			"tags": [
+				"Embolden",
+				"Gravity",
+				"Motion",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -318,16 +420,21 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4636,
-				"endLine": 4670
+				"startLine": 4692,
+				"endLine": 4727
 			}
 		},
 		{
 			"id": "arcane-barrier",
 			"name": "Arcane Barrier",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Embolden", "Ward"],
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -337,16 +444,24 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4671,
-				"endLine": 4698
+				"startLine": 4728,
+				"endLine": 4755
 			}
 		},
 		{
 			"id": "arcane-weapon",
 			"name": "Arcane Weapon",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Enfeeble", "Bludgeoning", "Piercing", "Slashing", "Weapon"],
+			"tags": [
+				"Enfeeble",
+				"Bludgeoning",
+				"Piercing",
+				"Slashing",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -357,16 +472,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4699,
-				"endLine": 4731
+				"startLine": 4756,
+				"endLine": 4789
 			}
 		},
 		{
 			"id": "bind",
 			"name": "Bind",
-			"sources": ["Arcane", "Divine", "Primal"],
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Bludgeoning", "Immobilized", "Restrained"],
+			"tags": [
+				"Bludgeoning",
+				"Immobilized",
+				"Restrained"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -377,16 +500,20 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 4732,
-				"endLine": 4755
+				"startLine": 4790,
+				"endLine": 4813
 			}
 		},
 		{
 			"id": "chaos-bomb",
 			"name": "Chaos Bomb",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Chaos"],
+			"tags": [
+				"Chaos"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -397,16 +524,23 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4756,
-				"endLine": 4807
+				"startLine": 4814,
+				"endLine": 4866
 			}
 		},
 		{
 			"id": "call-familiar",
 			"name": "Call Familiar",
-			"sources": ["Arcane", "Divine", "Primal"],
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Sense", "Summoning"],
+			"tags": [
+				"Sense",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -417,16 +551,22 @@
 			"isCantrip": false,
 			"enhancementCount": 1,
 			"provenance": {
-				"startLine": 4808,
-				"endLine": 4902
+				"startLine": 4867,
+				"endLine": 4962
 			}
 		},
 		{
 			"id": "disguise-self",
 			"name": "Disguise Self",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Communication", "Illusion"],
+			"tags": [
+				"Communication",
+				"Illusion"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -437,16 +577,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 4903,
-				"endLine": 4931
+				"startLine": 4963,
+				"endLine": 4992
 			}
 		},
 		{
 			"id": "entangle",
 			"name": "Entangle",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Immobilized", "Plants", "Piercing", "Restrained"],
+			"tags": [
+				"Immobilized",
+				"Plants",
+				"Piercing",
+				"Restrained"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -457,16 +604,26 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4932,
-				"endLine": 4963
+				"startLine": 4993,
+				"endLine": 5024
 			}
 		},
 		{
 			"id": "elemental-weapon",
 			"name": "Elemental Weapon",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Cold", "Corrosion", "Enfeeble", "Fire", "Lightning", "Poison", "Weapon"],
+			"tags": [
+				"Cold",
+				"Corrosion",
+				"Enfeeble",
+				"Fire",
+				"Lightning",
+				"Poison",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -477,16 +634,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 4964,
-				"endLine": 4998
+				"startLine": 5025,
+				"endLine": 5060
 			}
 		},
 		{
 			"id": "forcefield",
 			"name": "Forcefield",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Antimagic", "Sound", "Summoning"],
+			"tags": [
+				"Antimagic",
+				"Sound",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -497,16 +660,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 4999,
-				"endLine": 5033
+				"startLine": 5061,
+				"endLine": 5095
 			}
 		},
 		{
 			"id": "illusory-duplicate",
 			"name": "Illusory Duplicate",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Communication", "Illusion", "Teleportation", "Sense"],
+			"tags": [
+				"Communication",
+				"Illusion",
+				"Teleportation",
+				"Sense"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -517,16 +687,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 5034,
-				"endLine": 5070
+				"startLine": 5096,
+				"endLine": 5133
 			}
 		},
 		{
 			"id": "illusory-image",
 			"name": "Illusory Image",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Illusion", "Scent", "Sound", "Trap"],
+			"tags": [
+				"Illusion",
+				"Scent",
+				"Sound",
+				"Trap"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -536,16 +714,22 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 5071,
-				"endLine": 5104
+				"startLine": 5134,
+				"endLine": 5167
 			}
 		},
 		{
 			"id": "illusory-writing",
 			"name": "Illusory Writing",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Communication", "Illusion", "Trap"],
+			"tags": [
+				"Communication",
+				"Illusion",
+				"Trap"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -555,16 +739,21 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 5105,
-				"endLine": 5137
+				"startLine": 5168,
+				"endLine": 5201
 			}
 		},
 		{
 			"id": "mage-armor",
 			"name": "Mage Armor",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Embolden", "Ward"],
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -575,16 +764,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5138,
-				"endLine": 5163
+				"startLine": 5202,
+				"endLine": 5227
 			}
 		},
 		{
 			"id": "mystical-weapon",
 			"name": "Mystical Weapon",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Conjuration",
-			"tags": ["Enfeeble", "Psychic", "Radiant", "Umbral", "Weapon"],
+			"tags": [
+				"Enfeeble",
+				"Psychic",
+				"Radiant",
+				"Umbral",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -595,16 +792,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 5164,
-				"endLine": 5195
+				"startLine": 5228,
+				"endLine": 5259
 			}
 		},
 		{
 			"id": "natures-tether",
 			"name": "Nature's Tether",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Bleeding", "Motion", "Plant", "Restrained", "Tethered"],
+			"tags": [
+				"Bleeding",
+				"Motion",
+				"Plant",
+				"Restrained",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -614,16 +819,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 5196,
-				"endLine": 5231
+				"startLine": 5260,
+				"endLine": 5296
 			}
 		},
 		{
 			"id": "oil-slick",
 			"name": "Oil Slick",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Burning", "Trap"],
+			"tags": [
+				"Burning",
+				"Trap"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -634,16 +845,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5232,
-				"endLine": 5261
+				"startLine": 5297,
+				"endLine": 5326
 			}
 		},
 		{
 			"id": "tendrils-from-beyond",
 			"name": "Tendrils from Beyond",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Aberration", "Bludgeoning", "Madness", "Psychic"],
+			"tags": [
+				"Aberration",
+				"Bludgeoning",
+				"Madness",
+				"Psychic"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -654,16 +872,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 5262,
-				"endLine": 5298
+				"startLine": 5327,
+				"endLine": 5364
 			}
 		},
 		{
 			"id": "unholy-aura",
 			"name": "Unholy Aura",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Conjuration",
-			"tags": ["Death", "Doomed", "Shadow", "Tethered"],
+			"tags": [
+				"Death",
+				"Doomed",
+				"Shadow",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -674,16 +899,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5299,
-				"endLine": 5337
+				"startLine": 5365,
+				"endLine": 5404
 			}
 		},
 		{
 			"id": "summon-aberration",
 			"name": "Summon Aberration",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Aberration", "Cold", "Psychic", "Summoning"],
+			"tags": [
+				"Aberration",
+				"Cold",
+				"Psychic",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -694,16 +926,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5338,
-				"endLine": 5405
+				"startLine": 5405,
+				"endLine": 5473
 			}
 		},
 		{
 			"id": "summon-beast",
 			"name": "Summon Beast",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Beast", "Bludgeoning", "Piercing", "Slashing", "Summoning"],
+			"tags": [
+				"Beast",
+				"Bludgeoning",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -714,16 +954,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5406,
-				"endLine": 5479
+				"startLine": 5474,
+				"endLine": 5548
 			}
 		},
 		{
 			"id": "summon-celestial",
 			"name": "Summon Celestial",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Conjuration",
-			"tags": ["Celestial", "Fire", "Radiant", "Summoning"],
+			"tags": [
+				"Celestial",
+				"Fire",
+				"Radiant",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -734,16 +981,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5480,
-				"endLine": 5547
+				"startLine": 5549,
+				"endLine": 5617
 			}
 		},
 		{
 			"id": "summon-construct",
 			"name": "Summon Construct",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Bludgeoning", "Construct", "Piercing", "Slashing", "Summoning"],
+			"tags": [
+				"Bludgeoning",
+				"Construct",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -754,16 +1009,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5548,
-				"endLine": 5615
+				"startLine": 5618,
+				"endLine": 5686
 			}
 		},
 		{
 			"id": "summon-dragon",
 			"name": "Summon Dragon",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Dragon", "Piercing", "Slashing", "Summoning"],
+			"tags": [
+				"Dragon",
+				"Piercing",
+				"Slashing",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -774,14 +1036,16 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5616,
-				"endLine": 5690
+				"startLine": 5687,
+				"endLine": 5762
 			}
 		},
 		{
 			"id": "summon-elemental",
 			"name": "Summon Elemental",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
 			"tags": [
 				"Bludgeoning",
@@ -804,16 +1068,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5691,
-				"endLine": 5768
+				"startLine": 5763,
+				"endLine": 5841
 			}
 		},
 		{
 			"id": "summon-fey",
 			"name": "Summon Fey",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Fey", "Psychic", "Slashing", "Summoning"],
+			"tags": [
+				"Fey",
+				"Psychic",
+				"Slashing",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -824,16 +1095,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5769,
-				"endLine": 5838
+				"startLine": 5842,
+				"endLine": 5912
 			}
 		},
 		{
 			"id": "summon-fiend",
 			"name": "Summon Fiend",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Conjuration",
-			"tags": ["Corrosion", "Fiend", "Fire", "Poison", "Summoning"],
+			"tags": [
+				"Corrosion",
+				"Fiend",
+				"Fire",
+				"Poison",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -844,16 +1123,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5839,
-				"endLine": 5910
+				"startLine": 5913,
+				"endLine": 5985
 			}
 		},
 		{
 			"id": "summon-ooze",
 			"name": "Summon Ooze",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Conjuration",
-			"tags": ["Corrosion", "Ooze", "Summoning"],
+			"tags": [
+				"Corrosion",
+				"Ooze",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -864,16 +1149,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5911,
-				"endLine": 5974
+				"startLine": 5986,
+				"endLine": 6050
 			}
 		},
 		{
 			"id": "summon-plant",
 			"name": "Summon Plant",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Conjuration",
-			"tags": ["Bludgeoning", "Plants", "Piercing", "Poison", "Summoning"],
+			"tags": [
+				"Bludgeoning",
+				"Plants",
+				"Piercing",
+				"Poison",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -884,16 +1177,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 5975,
-				"endLine": 6042
+				"startLine": 6051,
+				"endLine": 6119
 			}
 		},
 		{
 			"id": "summon-undead",
 			"name": "Summon Undead",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Conjuration",
-			"tags": ["Bludgeoning", "Umbral", "Undead", "Summoning"],
+			"tags": [
+				"Bludgeoning",
+				"Umbral",
+				"Undead",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -904,16 +1204,20 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6043,
-				"endLine": 6158
+				"startLine": 6120,
+				"endLine": 6237
 			}
 		},
 		{
 			"id": "bless",
 			"name": "Bless",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Divination",
-			"tags": ["Embolden"],
+			"tags": [
+				"Embolden"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -924,16 +1228,26 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6159,
-				"endLine": 6189
+				"startLine": 6238,
+				"endLine": 6268
 			}
 		},
 		{
 			"id": "danger-sense",
 			"name": "Danger Sense",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Divination",
-			"tags": ["Embolden", "Emotions", "Knowledge", "Sense", "Surprised", "Ward"],
+			"tags": [
+				"Embolden",
+				"Emotions",
+				"Knowledge",
+				"Sense",
+				"Surprised",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -944,16 +1258,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6190,
-				"endLine": 6218
+				"startLine": 6269,
+				"endLine": 6298
 			}
 		},
 		{
 			"id": "detect-magic",
 			"name": "Detect Magic",
-			"sources": ["Arcane", "Divine", "Primal"],
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
 			"school": "Divination",
-			"tags": ["Antimagic", "Knowledge", "Sense"],
+			"tags": [
+				"Antimagic",
+				"Knowledge",
+				"Sense"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -964,16 +1286,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6219,
-				"endLine": 6248
+				"startLine": 6299,
+				"endLine": 6328
 			}
 		},
 		{
 			"id": "empowered-sight",
 			"name": "Empowered Sight",
-			"sources": ["Arcane", "Primal", "Divine"],
+			"sources": [
+				"Arcane",
+				"Primal",
+				"Divine"
+			],
 			"school": "Divination",
-			"tags": ["Embolden", "Sense"],
+			"tags": [
+				"Embolden",
+				"Sense"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -984,16 +1313,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6249,
-				"endLine": 6276
+				"startLine": 6329,
+				"endLine": 6356
 			}
 		},
 		{
 			"id": "foresight",
 			"name": "Foresight",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Divination",
-			"tags": ["Time", "Embolden"],
+			"tags": [
+				"Time",
+				"Embolden"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1004,16 +1339,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6277,
-				"endLine": 6303
+				"startLine": 6357,
+				"endLine": 6384
 			}
 		},
 		{
 			"id": "locate-target",
 			"name": "Locate Target",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Divination",
-			"tags": ["Knowledge", "Planes", "Sense"],
+			"tags": [
+				"Knowledge",
+				"Planes",
+				"Sense"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1024,16 +1366,22 @@
 			"isCantrip": false,
 			"enhancementCount": 2,
 			"provenance": {
-				"startLine": 6304,
-				"endLine": 6333
+				"startLine": 6385,
+				"endLine": 6414
 			}
 		},
 		{
 			"id": "scrying",
 			"name": "Scrying",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Divination",
-			"tags": ["Knowledge", "Sense", "Communication"],
+			"tags": [
+				"Knowledge",
+				"Sense",
+				"Communication"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1044,16 +1392,21 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6334,
-				"endLine": 6370
+				"startLine": 6415,
+				"endLine": 6452
 			}
 		},
 		{
 			"id": "absorb-elements",
 			"name": "Absorb Elements",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Embolden", "Ward"],
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1064,16 +1417,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6371,
-				"endLine": 6400
+				"startLine": 6453,
+				"endLine": 6482
 			}
 		},
 		{
 			"id": "acid-stream",
 			"name": "Acid Stream",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Corrosion", "Enfeeble", "Hindered"],
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1083,16 +1443,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6401,
-				"endLine": 6432
+				"startLine": 6483,
+				"endLine": 6514
 			}
 		},
 		{
 			"id": "air-slash",
 			"name": "Air Slash",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Bleeding", "Slashing"],
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1102,16 +1468,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6433,
-				"endLine": 6463
+				"startLine": 6515,
+				"endLine": 6546
 			}
 		},
 		{
 			"id": "blight-bomb",
 			"name": "Blight Bomb",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Ailment", "Impaired", "Poison"],
+			"tags": [
+				"Ailment",
+				"Impaired",
+				"Poison"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1121,16 +1494,22 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 6464,
-				"endLine": 6497
+				"startLine": 6547,
+				"endLine": 6580
 			}
 		},
 		{
 			"id": "cloud-cover",
 			"name": "Cloud Cover",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Shadow", "Slashing"],
+			"tags": [
+				"Cold",
+				"Shadow",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1141,16 +1520,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6498,
-				"endLine": 6526
+				"startLine": 6581,
+				"endLine": 6610
 			}
 		},
 		{
 			"id": "cold-wave",
 			"name": "Cold Wave",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Slowed", "Trap"],
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Trap"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1160,16 +1546,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6527,
-				"endLine": 6558
+				"startLine": 6611,
+				"endLine": 6642
 			}
 		},
 		{
 			"id": "cone-of-cold",
 			"name": "Cone of Cold",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Slowed", "Stunned"],
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Stunned"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1179,16 +1572,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6559,
-				"endLine": 6590
+				"startLine": 6643,
+				"endLine": 6674
 			}
 		},
 		{
 			"id": "corrosive-bolt",
 			"name": "Corrosive Bolt",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Corrosion", "Enfeeble", "Hindered"],
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1198,16 +1598,22 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6591,
-				"endLine": 6621
+				"startLine": 6675,
+				"endLine": 6706
 			}
 		},
 		{
 			"id": "corrosive-cascade",
 			"name": "Corrosive Cascade",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Corrosion", "Enfeeble"],
+			"tags": [
+				"Corrosion",
+				"Enfeeble"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1217,16 +1623,23 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 6622,
-				"endLine": 6659
+				"startLine": 6707,
+				"endLine": 6744
 			}
 		},
 		{
 			"id": "corrosive-wave",
 			"name": "Corrosive Wave",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Corrosion", "Enfeeble", "Exposed"],
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Exposed"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1236,16 +1649,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6660,
-				"endLine": 6689
+				"startLine": 6745,
+				"endLine": 6774
 			}
 		},
 		{
 			"id": "elemental-shield",
 			"name": "Elemental Shield",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Embolden", "Ward"],
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1256,16 +1675,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6690,
-				"endLine": 6720
+				"startLine": 6775,
+				"endLine": 6806
 			}
 		},
 		{
 			"id": "eruption",
 			"name": "Eruption",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Bludgeoning", "Earth", "Motion"],
+			"tags": [
+				"Bludgeoning",
+				"Earth",
+				"Motion"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1275,16 +1700,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6721,
-				"endLine": 6754
+				"startLine": 6807,
+				"endLine": 6840
 			}
 		},
 		{
 			"id": "fireball",
 			"name": "Fireball",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire", "Shadow"],
+			"tags": [
+				"Burning",
+				"Fire",
+				"Shadow"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1294,16 +1726,22 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 6755,
-				"endLine": 6793
+				"startLine": 6841,
+				"endLine": 6880
 			}
 		},
 		{
 			"id": "fire-blast",
 			"name": "Fire Blast",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire"],
+			"tags": [
+				"Burning",
+				"Fire"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1313,16 +1751,22 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 6794,
-				"endLine": 6823
+				"startLine": 6881,
+				"endLine": 6910
 			}
 		},
 		{
 			"id": "fire-bolt",
 			"name": "Fire Bolt",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire"],
+			"tags": [
+				"Burning",
+				"Fire"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1332,16 +1776,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6824,
-				"endLine": 6855
+				"startLine": 6911,
+				"endLine": 6942
 			}
 		},
 		{
 			"id": "fire-torrent",
 			"name": "Fire Torrent",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire", "Motion"],
+			"tags": [
+				"Burning",
+				"Fire",
+				"Motion"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1351,16 +1802,25 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6856,
-				"endLine": 6886
+				"startLine": 6943,
+				"endLine": 6974
 			}
 		},
 		{
 			"id": "freeze",
 			"name": "Freeze",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Enfeeble", "Immobilized", "Slowed", "Stunned"],
+			"tags": [
+				"Cold",
+				"Enfeeble",
+				"Immobilized",
+				"Slowed",
+				"Stunned"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1370,16 +1830,22 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 6887,
-				"endLine": 6916
+				"startLine": 6975,
+				"endLine": 7004
 			}
 		},
 		{
 			"id": "frost-bolt",
 			"name": "Frost Bolt",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Slowed"],
+			"tags": [
+				"Cold",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1389,16 +1855,22 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6917,
-				"endLine": 6946
+				"startLine": 7005,
+				"endLine": 7034
 			}
 		},
 		{
 			"id": "frost-storm",
 			"name": "Frost Storm",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Cold", "Slowed"],
+			"tags": [
+				"Cold",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1408,16 +1880,21 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 6947,
-				"endLine": 6979
+				"startLine": 7035,
+				"endLine": 7068
 			}
 		},
 		{
 			"id": "gust",
 			"name": "Gust",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Motion"],
+			"tags": [
+				"Air",
+				"Motion"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1427,16 +1904,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 6980,
-				"endLine": 7012
+				"startLine": 7069,
+				"endLine": 7101
 			}
 		},
 		{
 			"id": "hydro-lance",
 			"name": "Hydro Lance",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Bleeding", "Motion", "Piercing", "Water"],
+			"tags": [
+				"Bleeding",
+				"Motion",
+				"Piercing",
+				"Water"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1446,16 +1930,26 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7013,
-				"endLine": 7040
+				"startLine": 7102,
+				"endLine": 7129
 			}
 		},
 		{
 			"id": "inflict-poison",
 			"name": "Inflict Poison",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Ailment", "Dazed", "Frightened", "Impaired", "Slowed", "Stunned"],
+			"tags": [
+				"Ailment",
+				"Dazed",
+				"Frightened",
+				"Impaired",
+				"Slowed",
+				"Stunned"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1466,16 +1960,21 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7041,
-				"endLine": 7069
+				"startLine": 7130,
+				"endLine": 7159
 			}
 		},
 		{
 			"id": "lightning-blast",
 			"name": "Lightning Blast",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Lightning"],
+			"tags": [
+				"Lightning"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1485,16 +1984,22 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7070,
-				"endLine": 7101
+				"startLine": 7160,
+				"endLine": 7191
 			}
 		},
 		{
 			"id": "lightning-bolt",
 			"name": "Lightning Bolt",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Lightning", "Stunned"],
+			"tags": [
+				"Lightning",
+				"Stunned"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1504,16 +2009,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7102,
-				"endLine": 7132
+				"startLine": 7192,
+				"endLine": 7223
 			}
 		},
 		{
 			"id": "lightning-storm",
 			"name": "Lightning Storm",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Deafened", "Lightning", "Sound"],
+			"tags": [
+				"Deafened",
+				"Lightning",
+				"Sound"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1523,16 +2035,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7133,
-				"endLine": 7166
+				"startLine": 7224,
+				"endLine": 7257
 			}
 		},
 		{
 			"id": "lightning-torrent",
 			"name": "Lightning Torrent",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Dazed", "Lightning"],
+			"tags": [
+				"Dazed",
+				"Lightning"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1542,16 +2060,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7167,
-				"endLine": 7197
+				"startLine": 7258,
+				"endLine": 7289
 			}
 		},
 		{
 			"id": "lightning-rod",
 			"name": "Lightning Rod",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Lightning", "Tethered"],
+			"tags": [
+				"Lightning",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1561,16 +2085,23 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 7198,
-				"endLine": 7223
+				"startLine": 7290,
+				"endLine": 7315
 			}
 		},
 		{
 			"id": "living-bomb",
 			"name": "Living Bomb",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire", "Trap"],
+			"tags": [
+				"Burning",
+				"Fire",
+				"Trap"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1581,16 +2112,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7224,
-				"endLine": 7256
+				"startLine": 7316,
+				"endLine": 7349
 			}
 		},
 		{
 			"id": "maelstrom",
 			"name": "Maelstrom",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Motion", "Slowed", "Water"],
+			"tags": [
+				"Motion",
+				"Slowed",
+				"Water"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1601,16 +2138,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7257,
-				"endLine": 7284
+				"startLine": 7350,
+				"endLine": 7377
 			}
 		},
 		{
 			"id": "mold-earth",
 			"name": "Mold Earth",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Earth", "Motion"],
+			"tags": [
+				"Earth",
+				"Motion"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1620,16 +2163,24 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 7285,
-				"endLine": 7321
+				"startLine": 7378,
+				"endLine": 7415
 			}
 		},
 		{
 			"id": "poison-bolt",
 			"name": "Poison Bolt",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Ailment", "Hindered", "Impaired", "Poison"],
+			"tags": [
+				"Ailment",
+				"Hindered",
+				"Impaired",
+				"Poison"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1639,16 +2190,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7322,
-				"endLine": 7353
+				"startLine": 7416,
+				"endLine": 7447
 			}
 		},
 		{
 			"id": "spike-bolt",
 			"name": "Spike Bolt",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Earth", "Impaired", "Piercing", "Plants"],
+			"tags": [
+				"Earth",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1658,16 +2216,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7354,
-				"endLine": 7384
+				"startLine": 7448,
+				"endLine": 7479
 			}
 		},
 		{
 			"id": "spike-cluster",
 			"name": "Spike Cluster",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Earth", "Immobilized", "Impaired", "Piercing", "Plants"],
+			"tags": [
+				"Earth",
+				"Immobilized",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1677,16 +2243,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7385,
-				"endLine": 7418
+				"startLine": 7480,
+				"endLine": 7513
 			}
 		},
 		{
 			"id": "spike-surge",
 			"name": "Spike Surge",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Earth", "Impaired", "Piercing", "Plants"],
+			"tags": [
+				"Earth",
+				"Impaired",
+				"Piercing",
+				"Plants"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1696,16 +2269,25 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7419,
-				"endLine": 7450
+				"startLine": 7514,
+				"endLine": 7545
 			}
 		},
 		{
 			"id": "tornado",
 			"name": "Tornado",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Blinded", "Chaos", "Lightning", "Motion", "Slowed"],
+			"tags": [
+				"Air",
+				"Blinded",
+				"Chaos",
+				"Lightning",
+				"Motion",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1716,16 +2298,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 7451,
-				"endLine": 7485
+				"startLine": 7546,
+				"endLine": 7581
 			}
 		},
 		{
 			"id": "toxic-burst",
 			"name": "Toxic Burst",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Ailment", "Enfeeble", "Poison"],
+			"tags": [
+				"Ailment",
+				"Enfeeble",
+				"Poison"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1735,16 +2324,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7486,
-				"endLine": 7515
+				"startLine": 7582,
+				"endLine": 7611
 			}
 		},
 		{
 			"id": "wall-of-fire",
 			"name": "Wall of Fire",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Burning", "Fire", "Shadow"],
+			"tags": [
+				"Burning",
+				"Fire",
+				"Shadow"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1755,16 +2351,22 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 7516,
-				"endLine": 7552
+				"startLine": 7612,
+				"endLine": 7649
 			}
 		},
 		{
 			"id": "wall-of-earth",
 			"name": "Wall of Earth",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Earth", "Motion", "Summoning"],
+			"tags": [
+				"Earth",
+				"Motion",
+				"Summoning"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1775,16 +2377,21 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7553,
-				"endLine": 7586
+				"startLine": 7650,
+				"endLine": 7683
 			}
 		},
 		{
 			"id": "wall-of-water",
 			"name": "Wall of Water",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Motion", "Water"],
+			"tags": [
+				"Motion",
+				"Water"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -1795,16 +2402,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7587,
-				"endLine": 7626
+				"startLine": 7684,
+				"endLine": 7724
 			}
 		},
 		{
 			"id": "water-bolt",
 			"name": "Water Bolt",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Bludgeoning", "Motion", "Water"],
+			"tags": [
+				"Bludgeoning",
+				"Motion",
+				"Water"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1814,16 +2427,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7627,
-				"endLine": 7656
+				"startLine": 7725,
+				"endLine": 7754
 			}
 		},
 		{
 			"id": "wind-blade",
 			"name": "Wind Blade",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Bleeding", "Motion", "Slashing"],
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Motion",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1833,16 +2453,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7657,
-				"endLine": 7688
+				"startLine": 7755,
+				"endLine": 7786
 			}
 		},
 		{
 			"id": "wind-burst",
 			"name": "Wind Burst",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Bleeding", "Motion", "Slashing"],
+			"tags": [
+				"Air",
+				"Bleeding",
+				"Motion",
+				"Slashing"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1852,16 +2479,22 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7689,
-				"endLine": 7723
+				"startLine": 7787,
+				"endLine": 7822
 			}
 		},
 		{
 			"id": "wind-tunnel",
 			"name": "Wind Tunnel",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Elemental",
-			"tags": ["Air", "Motion", "Slowed"],
+			"tags": [
+				"Air",
+				"Motion",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -1871,16 +2504,24 @@
 			"isCantrip": true,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 7724,
-				"endLine": 7764
+				"startLine": 7823,
+				"endLine": 7864
 			}
 		},
 		{
 			"id": "charm",
 			"name": "Charm",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Charmed", "Communication", "Emotions", "Thoughts"],
+			"tags": [
+				"Charmed",
+				"Communication",
+				"Emotions",
+				"Thoughts"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1890,16 +2531,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7765,
-				"endLine": 7792
+				"startLine": 7865,
+				"endLine": 7892
 			}
 		},
 		{
 			"id": "command",
 			"name": "Command",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Communication", "Emotion", "Motion", "Thoughts"],
+			"tags": [
+				"Communication",
+				"Emotion",
+				"Motion",
+				"Thoughts"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1910,16 +2559,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7793,
-				"endLine": 7827
+				"startLine": 7893,
+				"endLine": 7928
 			}
 		},
 		{
 			"id": "confusion",
 			"name": "Confusion",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Enchantment",
-			"tags": ["Chaos", "Emotions", "Madness", "Thoughts"],
+			"tags": [
+				"Chaos",
+				"Emotions",
+				"Madness",
+				"Thoughts"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -1930,16 +2587,25 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 7828,
-				"endLine": 7858
+				"startLine": 7929,
+				"endLine": 7959
 			}
 		},
 		{
 			"id": "fear",
 			"name": "Fear",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Emotions", "Frightened", "Motion", "Psychic", "Terrified"],
+			"tags": [
+				"Emotions",
+				"Frightened",
+				"Motion",
+				"Psychic",
+				"Terrified"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1950,16 +2616,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7859,
-				"endLine": 7886
+				"startLine": 7960,
+				"endLine": 7987
 			}
 		},
 		{
 			"id": "hex",
 			"name": "Hex",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Curse", "Enfeeble"],
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -1970,16 +2642,22 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 7887,
-				"endLine": 7915
+				"startLine": 7988,
+				"endLine": 8017
 			}
 		},
 		{
 			"id": "message",
 			"name": "Message",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Communication", "Thoughts"],
+			"tags": [
+				"Communication",
+				"Thoughts"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -1989,16 +2667,23 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 7916,
-				"endLine": 7939
+				"startLine": 8018,
+				"endLine": 8041
 			}
 		},
 		{
 			"id": "mind-blast",
 			"name": "Mind Blast",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Dazed", "Psychic", "Sense"],
+			"tags": [
+				"Dazed",
+				"Psychic",
+				"Sense"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2008,16 +2693,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 7940,
-				"endLine": 7969
+				"startLine": 8042,
+				"endLine": 8071
 			}
 		},
 		{
 			"id": "mockery",
 			"name": "Mockery",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Enchantment",
-			"tags": ["Blinded", "Deafened", "Emotions", "Taunted"],
+			"tags": [
+				"Blinded",
+				"Deafened",
+				"Emotions",
+				"Taunted"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2027,16 +2719,23 @@
 			"isCantrip": true,
 			"enhancementCount": 2,
 			"provenance": {
-				"startLine": 7970,
-				"endLine": 7993
+				"startLine": 8072,
+				"endLine": 8095
 			}
 		},
 		{
 			"id": "planar-protection",
 			"name": "Planar Protection",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Cleansing", "Embolden", "Thoughts", "Ward"],
+			"tags": [
+				"Cleansing",
+				"Embolden",
+				"Thoughts",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2047,16 +2746,24 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 7994,
-				"endLine": 8026
+				"startLine": 8096,
+				"endLine": 8129
 			}
 		},
 		{
 			"id": "psi-bolt",
 			"name": "Psi Bolt",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Dazed", "Intimidated", "Psychic", "Thoughts"],
+			"tags": [
+				"Dazed",
+				"Intimidated",
+				"Psychic",
+				"Thoughts"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2066,16 +2773,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8027,
-				"endLine": 8058
+				"startLine": 8130,
+				"endLine": 8161
 			}
 		},
 		{
 			"id": "psychic-wave",
 			"name": "Psychic Wave",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Enfeeble", "Motion", "Psychic"],
+			"tags": [
+				"Enfeeble",
+				"Motion",
+				"Psychic"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2085,16 +2799,24 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8059,
-				"endLine": 8092
+				"startLine": 8162,
+				"endLine": 8195
 			}
 		},
 		{
 			"id": "shatter-reality",
 			"name": "Shatter Reality",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Enchantment",
-			"tags": ["Chaos", "Dazed", "Madness", "Psychic"],
+			"tags": [
+				"Chaos",
+				"Dazed",
+				"Madness",
+				"Psychic"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2104,16 +2826,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8093,
-				"endLine": 8134
+				"startLine": 8196,
+				"endLine": 8238
 			}
 		},
 		{
 			"id": "slumber",
 			"name": "Slumber",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Enchantment",
-			"tags": ["Emotions", "Enfeeble", "Incapacitated", "Unconscious"],
+			"tags": [
+				"Emotions",
+				"Enfeeble",
+				"Incapacitated",
+				"Unconscious"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -2124,16 +2853,21 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8135,
-				"endLine": 8167
+				"startLine": 8239,
+				"endLine": 8272
 			}
 		},
 		{
 			"id": "cleanse",
 			"name": "Cleanse",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Cleansing"],
+			"tags": [
+				"Cleansing"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2143,16 +2877,24 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8168,
-				"endLine": 8197
+				"startLine": 8273,
+				"endLine": 8302
 			}
 		},
 		{
 			"id": "close-wounds",
 			"name": "Close Wounds",
-			"sources": ["Arcane", "Divine", "Primal"],
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Cleansing", "Healing", "Time"],
+			"tags": [
+				"Cleansing",
+				"Healing",
+				"Time"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2162,16 +2904,23 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 8198,
-				"endLine": 8219
+				"startLine": 8303,
+				"endLine": 8324
 			}
 		},
 		{
 			"id": "death-ward",
 			"name": "Death Ward",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Cleansing", "Death", "Embolden", "Ward"],
+			"tags": [
+				"Cleansing",
+				"Death",
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2182,16 +2931,21 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8220,
-				"endLine": 8248
+				"startLine": 8325,
+				"endLine": 8354
 			}
 		},
 		{
 			"id": "divine-protection",
 			"name": "Divine Protection",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Death", "Ward"],
+			"tags": [
+				"Death",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2201,16 +2955,20 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 8249,
-				"endLine": 8278
+				"startLine": 8355,
+				"endLine": 8384
 			}
 		},
 		{
 			"id": "heal",
 			"name": "Heal",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Healing"],
+			"tags": [
+				"Healing"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2221,16 +2979,21 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 8279,
-				"endLine": 8302
+				"startLine": 8385,
+				"endLine": 8408
 			}
 		},
 		{
 			"id": "healing-wave",
 			"name": "Healing Wave",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Healing", "Cleansing"],
+			"tags": [
+				"Healing",
+				"Cleansing"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2241,16 +3004,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8303,
-				"endLine": 8329
+				"startLine": 8409,
+				"endLine": 8436
 			}
 		},
 		{
 			"id": "illuminate",
 			"name": "Illuminate",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Blinded", "Exposed", "Light", "Sense"],
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Sense"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2260,16 +3031,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8330,
-				"endLine": 8355
+				"startLine": 8437,
+				"endLine": 8462
 			}
 		},
 		{
 			"id": "life-transfer",
 			"name": "Life Transfer",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Blood", "Cleansing", "Healing"],
+			"tags": [
+				"Blood",
+				"Cleansing",
+				"Healing"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2279,16 +3057,23 @@
 			"isCantrip": true,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 8356,
-				"endLine": 8377
+				"startLine": 8463,
+				"endLine": 8484
 			}
 		},
 		{
 			"id": "light",
 			"name": "Light",
-			"sources": ["Arcane", "Divine", "Primal"],
+			"sources": [
+				"Arcane",
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Blinded", "Light"],
+			"tags": [
+				"Blinded",
+				"Light"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2298,16 +3083,23 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8378,
-				"endLine": 8408
+				"startLine": 8485,
+				"endLine": 8516
 			}
 		},
 		{
 			"id": "luminous-burst",
 			"name": "Luminous Burst",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Exposed", "Light", "Radiant", "Tethered"],
+			"tags": [
+				"Exposed",
+				"Light",
+				"Radiant",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2317,16 +3109,21 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8409,
-				"endLine": 8442
+				"startLine": 8517,
+				"endLine": 8550
 			}
 		},
 		{
 			"id": "mass-heal",
 			"name": "Mass Heal",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Healing", "Ward"],
+			"tags": [
+				"Healing",
+				"Ward"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2337,16 +3134,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8443,
-				"endLine": 8470
+				"startLine": 8551,
+				"endLine": 8578
 			}
 		},
 		{
 			"id": "radiant-bolt",
 			"name": "Radiant Bolt",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Blinded", "Exposed", "Light", "Radiant"],
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Radiant"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2356,16 +3160,21 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8471,
-				"endLine": 8503
+				"startLine": 8579,
+				"endLine": 8612
 			}
 		},
 		{
 			"id": "regenerate",
 			"name": "Regenerate",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Cleansing", "Healing"],
+			"tags": [
+				"Cleansing",
+				"Healing"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2376,16 +3185,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8504,
-				"endLine": 8529
+				"startLine": 8613,
+				"endLine": 8638
 			}
 		},
 		{
 			"id": "revivify",
 			"name": "Revivify",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Cleansing", "Resurrection", "Spirit"],
+			"tags": [
+				"Cleansing",
+				"Resurrection",
+				"Spirit"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -2396,16 +3212,24 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 8530,
-				"endLine": 8553
+				"startLine": 8639,
+				"endLine": 8662
 			}
 		},
 		{
 			"id": "solar-beam",
 			"name": "Solar Beam",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Blinded", "Burning", "Light", "Radiant"],
+			"tags": [
+				"Blinded",
+				"Burning",
+				"Light",
+				"Radiant"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2415,16 +3239,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8554,
-				"endLine": 8586
+				"startLine": 8663,
+				"endLine": 8696
 			}
 		},
 		{
 			"id": "spirit-link",
 			"name": "Spirit Link",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Invocation",
-			"tags": ["Blood", "Communication", "Curse", "Spirit", "Ward"],
+			"tags": [
+				"Blood",
+				"Communication",
+				"Curse",
+				"Spirit",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2435,16 +3267,24 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 8587,
-				"endLine": 8622
+				"startLine": 8697,
+				"endLine": 8732
 			}
 		},
 		{
 			"id": "sunburst",
 			"name": "Sunburst",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Invocation",
-			"tags": ["Blinded", "Exposed", "Light", "Radiant"],
+			"tags": [
+				"Blinded",
+				"Exposed",
+				"Light",
+				"Radiant"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2454,16 +3294,20 @@
 			"isCantrip": true,
 			"enhancementCount": 7,
 			"provenance": {
-				"startLine": 8623,
-				"endLine": 8664
+				"startLine": 8733,
+				"endLine": 8776
 			}
 		},
 		{
 			"id": "arcane-shield",
 			"name": "Arcane Shield",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Nullification",
-			"tags": ["Ward"],
+			"tags": [
+				"Ward"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2473,16 +3317,21 @@
 			"isCantrip": true,
 			"enhancementCount": 2,
 			"provenance": {
-				"startLine": 8665,
-				"endLine": 8690
+				"startLine": 8777,
+				"endLine": 8802
 			}
 		},
 		{
 			"id": "bane",
 			"name": "Bane",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Curse", "Enfeeble"],
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2493,16 +3342,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8691,
-				"endLine": 8721
+				"startLine": 8803,
+				"endLine": 8833
 			}
 		},
 		{
 			"id": "corpse-explosion",
 			"name": "Corpse Explosion",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Ailment", "Death", "Enfeeble", "Umbral"],
+			"tags": [
+				"Ailment",
+				"Death",
+				"Enfeeble",
+				"Umbral"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2512,16 +3369,22 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8722,
-				"endLine": 8751
+				"startLine": 8834,
+				"endLine": 8863
 			}
 		},
 		{
 			"id": "darkness",
 			"name": "Darkness",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Shadow", "Slowed"],
+			"tags": [
+				"Shadow",
+				"Slowed"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2532,16 +3395,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8752,
-				"endLine": 8783
+				"startLine": 8864,
+				"endLine": 8895
 			}
 		},
 		{
 			"id": "death",
 			"name": "Death",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Curse", "Death", "Doomed", "Exhaustion"],
+			"tags": [
+				"Curse",
+				"Death",
+				"Doomed",
+				"Exhaustion"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2552,16 +3423,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8784,
-				"endLine": 8813
+				"startLine": 8896,
+				"endLine": 8925
 			}
 		},
 		{
 			"id": "death-bolt",
 			"name": "Death Bolt",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Curse", "Doomed", "Umbral"],
+			"tags": [
+				"Curse",
+				"Doomed",
+				"Umbral"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2571,16 +3449,23 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8814,
-				"endLine": 8848
+				"startLine": 8926,
+				"endLine": 8961
 			}
 		},
 		{
 			"id": "disintegrating-beam",
 			"name": "Disintegrating Beam",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Nullification",
-			"tags": ["Death", "Enfeeble", "True", "Weakened"],
+			"tags": [
+				"Death",
+				"Enfeeble",
+				"True",
+				"Weakened"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 2
@@ -2591,16 +3476,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8849,
-				"endLine": 8879
+				"startLine": 8962,
+				"endLine": 8993
 			}
 		},
 		{
 			"id": "disintegrate",
 			"name": "Disintegrate",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Nullification",
-			"tags": ["Death", "Enfeeble", "True", "Weakened"],
+			"tags": [
+				"Death",
+				"Enfeeble",
+				"True",
+				"Weakened"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 2
@@ -2611,16 +3503,21 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8880,
-				"endLine": 8909
+				"startLine": 8994,
+				"endLine": 9023
 			}
 		},
 		{
 			"id": "dispel-magic",
 			"name": "Dispel Magic",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Nullification",
-			"tags": ["Antimagic", "Cleansing"],
+			"tags": [
+				"Antimagic",
+				"Cleansing"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": "X",
@@ -2633,16 +3530,22 @@
 			"isCantrip": false,
 			"enhancementCount": 1,
 			"provenance": {
-				"startLine": 8910,
-				"endLine": 8935
+				"startLine": 9024,
+				"endLine": 9049
 			}
 		},
 		{
 			"id": "enfeeble",
 			"name": "Enfeeble",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Nullification",
-			"tags": ["Curse", "Enfeeble"],
+			"tags": [
+				"Curse",
+				"Enfeeble"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2653,16 +3556,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8936,
-				"endLine": 8961
+				"startLine": 9050,
+				"endLine": 9075
 			}
 		},
 		{
 			"id": "muffle",
 			"name": "Muffle",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Communication", "Deafened", "Disoriented", "Sound"],
+			"tags": [
+				"Communication",
+				"Deafened",
+				"Disoriented",
+				"Sound"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2673,16 +3584,22 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 8962,
-				"endLine": 8989
+				"startLine": 9076,
+				"endLine": 9103
 			}
 		},
 		{
 			"id": "sanctuary",
 			"name": "Sanctuary",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Embolden", "Spirit", "Ward"],
+			"tags": [
+				"Embolden",
+				"Spirit",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2693,16 +3610,25 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 8990,
-				"endLine": 9020
+				"startLine": 9104,
+				"endLine": 9135
 			}
 		},
 		{
 			"id": "sphere-of-death",
 			"name": "Sphere of Death",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Death", "Doomed", "Exhaustion", "Shadow", "Umbral"],
+			"tags": [
+				"Death",
+				"Doomed",
+				"Exhaustion",
+				"Shadow",
+				"Umbral"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2712,16 +3638,24 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9021,
-				"endLine": 9056
+				"startLine": 9136,
+				"endLine": 9171
 			}
 		},
 		{
 			"id": "umbral-burst",
 			"name": "Umbral Burst",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Death", "Doomed", "Shadow", "Umbral"],
+			"tags": [
+				"Death",
+				"Doomed",
+				"Shadow",
+				"Umbral"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2731,16 +3665,24 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9057,
-				"endLine": 9088
+				"startLine": 9172,
+				"endLine": 9203
 			}
 		},
 		{
 			"id": "umbral-wave",
 			"name": "Umbral Wave",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Doomed", "Shadow", "Umbral", "Undead"],
+			"tags": [
+				"Doomed",
+				"Shadow",
+				"Umbral",
+				"Undead"
+			],
 			"cost": {
 				"ap": 2
 			},
@@ -2750,16 +3692,25 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9089,
-				"endLine": 9121
+				"startLine": 9204,
+				"endLine": 9237
 			}
 		},
 		{
 			"id": "vampiric-touch",
 			"name": "Vampiric Touch",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Blood", "Doomed", "Healing", "Slowed", "Umbral"],
+			"tags": [
+				"Blood",
+				"Doomed",
+				"Healing",
+				"Slowed",
+				"Umbral"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2769,16 +3720,21 @@
 			"isCantrip": true,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9122,
-				"endLine": 9147
+				"startLine": 9238,
+				"endLine": 9263
 			}
 		},
 		{
 			"id": "wild-guard",
 			"name": "Wild Guard",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Nullification",
-			"tags": ["Motion", "Ward"],
+			"tags": [
+				"Motion",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -2788,16 +3744,22 @@
 			"isCantrip": true,
 			"enhancementCount": 2,
 			"provenance": {
-				"startLine": 9148,
-				"endLine": 9173
+				"startLine": 9264,
+				"endLine": 9289
 			}
 		},
 		{
 			"id": "zone-of-peace",
 			"name": "Zone of Peace",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Nullification",
-			"tags": ["Emotions", "Tethered", "Ward"],
+			"tags": [
+				"Emotions",
+				"Tethered",
+				"Ward"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2808,16 +3770,25 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9174,
-				"endLine": 9206
+				"startLine": 9290,
+				"endLine": 9323
 			}
 		},
 		{
 			"id": "acid-imbued",
 			"name": "Acid Imbued",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Corrosion", "Enfeeble", "Hindered", "Strike", "Weapon"],
+			"tags": [
+				"Corrosion",
+				"Enfeeble",
+				"Hindered",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2828,16 +3799,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9207,
-				"endLine": 9236
+				"startLine": 9324,
+				"endLine": 9353
 			}
 		},
 		{
 			"id": "alter-size",
 			"name": "Alter Size",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Embolden", "Enfeeble", "Metamorphosis"],
+			"tags": [
+				"Embolden",
+				"Enfeeble",
+				"Metamorphosis"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2848,16 +3826,23 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 9237,
-				"endLine": 9277
+				"startLine": 9354,
+				"endLine": 9395
 			}
 		},
 		{
 			"id": "blessing-of-earth",
 			"name": "Blessing of Earth",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Earth", "Embolden", "Motion", "Sense"],
+			"tags": [
+				"Earth",
+				"Embolden",
+				"Motion",
+				"Sense"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2868,16 +3853,23 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9278,
-				"endLine": 9313
+				"startLine": 9396,
+				"endLine": 9431
 			}
 		},
 		{
 			"id": "blessing-of-water",
 			"name": "Blessing of Water",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Embolden", "Metamorphosis", "Motion", "Water"],
+			"tags": [
+				"Embolden",
+				"Metamorphosis",
+				"Motion",
+				"Water"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2888,16 +3880,20 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9314,
-				"endLine": 9344
+				"startLine": 9432,
+				"endLine": 9463
 			}
 		},
 		{
 			"id": "chaos-bolt",
 			"name": "Chaos Bolt",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Transmutation",
-			"tags": ["Chaos"],
+			"tags": [
+				"Chaos"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2908,16 +3904,21 @@
 			"isCantrip": false,
 			"enhancementCount": 3,
 			"provenance": {
-				"startLine": 9345,
-				"endLine": 9389
+				"startLine": 9464,
+				"endLine": 9508
 			}
 		},
 		{
 			"id": "chaos-torrent",
 			"name": "Chaos Torrent",
-			"sources": ["Arcane"],
+			"sources": [
+				"Arcane"
+			],
 			"school": "Transmutation",
-			"tags": ["Chaos", "Enfeeble"],
+			"tags": [
+				"Chaos",
+				"Enfeeble"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -2928,16 +3929,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9390,
-				"endLine": 9425
+				"startLine": 9509,
+				"endLine": 9545
 			}
 		},
 		{
 			"id": "cold-imbued",
 			"name": "Cold Imbued",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Cold", "Slowed", "Strike", "Weapon"],
+			"tags": [
+				"Cold",
+				"Slowed",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2948,16 +3957,21 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9426,
-				"endLine": 9455
+				"startLine": 9546,
+				"endLine": 9575
 			}
 		},
 		{
 			"id": "enhance-ability",
 			"name": "Enhance Ability",
-			"sources": ["Divine", "Primal"],
+			"sources": [
+				"Divine",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Embolden"],
+			"tags": [
+				"Embolden"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2968,16 +3982,24 @@
 			"isCantrip": false,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9456,
-				"endLine": 9484
+				"startLine": 9576,
+				"endLine": 9605
 			}
 		},
 		{
 			"id": "fire-imbued",
 			"name": "Fire Imbued",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Burning", "Fire", "Strike", "Weapon"],
+			"tags": [
+				"Burning",
+				"Fire",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -2988,16 +4010,23 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9485,
-				"endLine": 9514
+				"startLine": 9606,
+				"endLine": 9635
 			}
 		},
 		{
 			"id": "invisibility",
 			"name": "Invisibility",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Illusion", "Invisible", "Shadow"],
+			"tags": [
+				"Illusion",
+				"Invisible",
+				"Shadow"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3008,16 +4037,24 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9515,
-				"endLine": 9543
+				"startLine": 9636,
+				"endLine": 9665
 			}
 		},
 		{
 			"id": "lightning-imbued",
 			"name": "Lightning Imbued",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Lightning", "Strike", "Trap", "Weapon"],
+			"tags": [
+				"Lightning",
+				"Strike",
+				"Trap",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3028,16 +4065,25 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9544,
-				"endLine": 9573
+				"startLine": 9666,
+				"endLine": 9695
 			}
 		},
 		{
 			"id": "poison-imbued",
 			"name": "Poison Imbued",
-			"sources": ["Arcane", "Primal"],
+			"sources": [
+				"Arcane",
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Ailment", "Impaired", "Poison", "Strike", "Weapon"],
+			"tags": [
+				"Ailment",
+				"Impaired",
+				"Poison",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3048,16 +4094,21 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9574,
-				"endLine": 9605
+				"startLine": 9696,
+				"endLine": 9727
 			}
 		},
 		{
 			"id": "primal-hide",
 			"name": "Primal Hide",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Embolden", "Ward"],
+			"tags": [
+				"Embolden",
+				"Ward"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3068,16 +4119,25 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9606,
-				"endLine": 9632
+				"startLine": 9728,
+				"endLine": 9755
 			}
 		},
 		{
 			"id": "psychic-imbued",
 			"name": "Psychic Imbued",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Dazed", "Deafened", "Psychic", "Strike", "Weapon"],
+			"tags": [
+				"Dazed",
+				"Deafened",
+				"Psychic",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3088,16 +4148,24 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9633,
-				"endLine": 9662
+				"startLine": 9756,
+				"endLine": 9785
 			}
 		},
 		{
 			"id": "quicksand",
 			"name": "Quicksand",
-			"sources": ["Primal"],
+			"sources": [
+				"Primal"
+			],
 			"school": "Transmutation",
-			"tags": ["Earth", "Hindered", "Illusion", "Slowed", "Tethered"],
+			"tags": [
+				"Earth",
+				"Hindered",
+				"Illusion",
+				"Slowed",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 2,
 				"mp": 1
@@ -3108,16 +4176,23 @@
 			"isCantrip": false,
 			"enhancementCount": 4,
 			"provenance": {
-				"startLine": 9663,
-				"endLine": 9691
+				"startLine": 9786,
+				"endLine": 9815
 			}
 		},
 		{
 			"id": "radiant-imbued",
 			"name": "Radiant Imbued",
-			"sources": ["Divine"],
+			"sources": [
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Light", "Radiant", "Strike", "Weapon"],
+			"tags": [
+				"Light",
+				"Radiant",
+				"Strike",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3128,16 +4203,24 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9692,
-				"endLine": 9721
+				"startLine": 9816,
+				"endLine": 9845
 			}
 		},
 		{
 			"id": "shadowbind",
 			"name": "Shadowbind",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Doomed", "Immobilized", "Shadow", "Tethered"],
+			"tags": [
+				"Doomed",
+				"Immobilized",
+				"Shadow",
+				"Tethered"
+			],
 			"cost": {
 				"ap": 1
 			},
@@ -3147,16 +4230,26 @@
 			"isCantrip": true,
 			"enhancementCount": 5,
 			"provenance": {
-				"startLine": 9722,
-				"endLine": 9749
+				"startLine": 9846,
+				"endLine": 9873
 			}
 		},
 		{
 			"id": "umbral-imbued",
 			"name": "Umbral Imbued",
-			"sources": ["Arcane", "Divine"],
+			"sources": [
+				"Arcane",
+				"Divine"
+			],
 			"school": "Transmutation",
-			"tags": ["Blood", "Doomed", "Healing", "Strike", "Umbral", "Weapon"],
+			"tags": [
+				"Blood",
+				"Doomed",
+				"Healing",
+				"Strike",
+				"Umbral",
+				"Weapon"
+			],
 			"cost": {
 				"ap": 1,
 				"mp": 1
@@ -3167,8 +4260,8 @@
 			"isCantrip": false,
 			"enhancementCount": 6,
 			"provenance": {
-				"startLine": 9750,
-				"endLine": 9780
+				"startLine": 9874,
+				"endLine": 9905
 			}
 		}
 	]

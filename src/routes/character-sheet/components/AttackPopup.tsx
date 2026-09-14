@@ -1,26 +1,25 @@
 import React from 'react';
 import type { AttackData } from '../../../types';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
+import { getAttackPresentation, type AttackPresentation } from '../attackPresentation';
+import { isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import {
-	calculateDamage,
-	getVersatileDamage,
-	getWeaponRange,
-	getWeaponFeatures,
-	parseDamage
-} from '../../../lib/utils/weaponUtils';
-import {
-	StyledFeaturePopupOverlay,
-	StyledFeaturePopupContent,
-	StyledFeaturePopupHeader,
-	StyledFeaturePopupTitle,
 	StyledFeaturePopupClose,
-	StyledFeaturePopupDescription
+	StyledFeaturePopupOverlay,
+	StyledFeaturePopupTitle
 } from '../styles/FeaturePopup';
+import {
+	StyledAttackPopupContent,
+	StyledAttackPopupHeader,
+	StyledAttackPopupSubtitle
+} from '../styles/AttackPopup.styles';
+import WeaponAttackDetails from './WeaponAttackDetails';
 
 interface AttackPopupProps {
 	selectedAttack: {
 		attack: AttackData;
 		weapon: Weapon | null;
+		presentation?: AttackPresentation;
 	} | null;
 	onClose: () => void;
 }
@@ -28,115 +27,41 @@ interface AttackPopupProps {
 const AttackPopup: React.FC<AttackPopupProps> = ({ selectedAttack, onClose }) => {
 	if (!selectedAttack) return null;
 
+	const { attack, weapon } = selectedAttack;
+	const presentation = selectedAttack.presentation ?? getAttackPresentation({ attack, weapon });
+	const isDerivedNaturalWeapon = isNaturalWeaponAttack(attack);
+	const title = weapon?.name || attack.name || 'Unknown Weapon';
+
 	return (
 		<StyledFeaturePopupOverlay onClick={onClose}>
-			<StyledFeaturePopupContent onClick={(e) => e.stopPropagation()}>
-				<StyledFeaturePopupHeader>
-					<StyledFeaturePopupTitle>
-						{selectedAttack.weapon?.name || selectedAttack.attack.name || 'Unknown Weapon'}
-					</StyledFeaturePopupTitle>
-					<StyledFeaturePopupClose onClick={onClose}>×</StyledFeaturePopupClose>
-				</StyledFeaturePopupHeader>
-				<StyledFeaturePopupDescription>
-					{selectedAttack.weapon ? (
-						<>
-							<strong>Weapon Type:</strong> {selectedAttack.weapon.type}
-							<br />
-							<strong>Handedness:</strong> {selectedAttack.weapon.handedness}
-							<br />
-							<strong>Style:</strong>{' '}
-							{Array.isArray(selectedAttack.weapon.style)
-								? selectedAttack.weapon.style.join('/')
-								: selectedAttack.weapon.style}
-							<br />
-							<strong>Damage:</strong> {selectedAttack.weapon.damage}
-							<br />
-							{getVersatileDamage(selectedAttack.weapon) && (
-								<>
-									<strong>Versatile Damage:</strong>{' '}
-									{getVersatileDamage(selectedAttack.weapon)?.twoHanded}
-									<br />
-								</>
-							)}
-							<strong>Damage Type:</strong> {parseDamage(selectedAttack.weapon.damage).typeDisplay}
-							<br />
-							{getWeaponRange(selectedAttack.weapon) && (
-								<>
-									<strong>Range:</strong> {getWeaponRange(selectedAttack.weapon)?.short}/
-									{getWeaponRange(selectedAttack.weapon)?.long}
-									<br />
-								</>
-							)}
-							{selectedAttack.weapon.properties.includes('Ammo') && (
-								<>
-									<strong>Ammunition:</strong> Required
-									<br />
-								</>
-							)}
-							{selectedAttack.weapon.properties.includes('Reload') && (
-								<>
-									<strong>Reload:</strong> Required
-									<br />
-								</>
-							)}
-							<br />
-							<strong>Damage Calculations:</strong>
-							<br />• <strong>Hit:</strong> {calculateDamage(selectedAttack.weapon, 'normal')}
-							<br />• <strong>Heavy Hit (+5):</strong>{' '}
-							{calculateDamage(selectedAttack.weapon, 'heavy')}
-							<br />• <strong>Brutal Hit (+10):</strong>{' '}
-							{calculateDamage(selectedAttack.weapon, 'brutal')}
-							<br />
-							<br />
-							{selectedAttack.weapon.properties.length > 0 && (
-								<>
-									<strong>Properties:</strong> {selectedAttack.weapon.properties.join(', ')}
-									<br />
-								</>
-							)}
-							{getWeaponFeatures(selectedAttack.weapon).length > 0 && (
-								<>
-									<strong>Features:</strong> {getWeaponFeatures(selectedAttack.weapon).join(', ')}
-								</>
-							)}
-						</>
-					) : (
-						<>
-							<strong>Custom Attack</strong>
-							<br />
-							<strong>Attack Bonus:</strong> +{selectedAttack.attack.attackBonus}
-							<br />
-							<strong>Damage:</strong> {selectedAttack.attack.damage}
-							<br />
-							<strong>Damage Type:</strong> {selectedAttack.attack.damageType}
-							<br />
-							{selectedAttack.attack.critRange && (
-								<>
-									<strong>Crit Range:</strong> {selectedAttack.attack.critRange}
-									<br />
-								</>
-							)}
-							{selectedAttack.attack.critDamage && (
-								<>
-									<strong>Crit Damage:</strong> {selectedAttack.attack.critDamage}
-									<br />
-								</>
-							)}
-							{selectedAttack.attack.brutalDamage && (
-								<>
-									<strong>Brutal Damage:</strong> {selectedAttack.attack.brutalDamage}
-									<br />
-								</>
-							)}
-							{selectedAttack.attack.heavyHitEffect && (
-								<>
-									<strong>Heavy Hit Effect:</strong> {selectedAttack.attack.heavyHitEffect}
-								</>
-							)}
-						</>
-					)}
-				</StyledFeaturePopupDescription>
-			</StyledFeaturePopupContent>
+			<StyledAttackPopupContent
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="attack-popup-title"
+				onClick={(event) => event.stopPropagation()}
+			>
+				<StyledAttackPopupHeader>
+					<div>
+						<StyledFeaturePopupTitle id="attack-popup-title">{title}</StyledFeaturePopupTitle>
+						<StyledAttackPopupSubtitle>
+							{weapon
+								? 'Weapon details and attack rules'
+								: isDerivedNaturalWeapon
+									? 'Derived Attack'
+									: 'Custom Attack'}
+						</StyledAttackPopupSubtitle>
+					</div>
+					<StyledFeaturePopupClose
+						type="button"
+						aria-label="Close attack details"
+						onClick={onClose}
+					>
+						×
+					</StyledFeaturePopupClose>
+				</StyledAttackPopupHeader>
+
+				<WeaponAttackDetails attack={attack} weapon={weapon} presentation={presentation} />
+			</StyledAttackPopupContent>
 		</StyledFeaturePopupOverlay>
 	);
 };

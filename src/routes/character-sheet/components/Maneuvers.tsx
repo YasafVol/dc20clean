@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Pencil } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { ManeuverData } from '../../../types';
 import type { Maneuver } from '../../../lib/rulesdata/martials/maneuvers';
 import { maneuvers as allManeuvers } from '../../../lib/rulesdata/martials/maneuvers';
@@ -8,9 +8,15 @@ import {
 	formatManeuverCost,
 	formatManeuverEnhancementCost
 } from '../../../lib/rulesdata/martials/maneuverFormatting';
-import { useCharacterManeuvers, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterCalculatedData,
+	useCharacterManeuvers,
+	useCharacterSheet
+} from '../hooks/CharacterSheetProvider';
+import { calculateEnhancementStaminaSpend } from '../maneuverEnhancementSpend';
 import { logger } from '../../../lib/utils/logger';
-import DeleteButton from './shared/DeleteButton';
+import RowEditControls from './shared/RowEditControls';
+import { sortByName } from '../catalogSorting';
 import RichDescription from './RichDescription';
 import {
 	StyledManeuversSection,
@@ -42,23 +48,27 @@ import {
 } from '../styles/Maneuvers.styles';
 
 const expandedManeuverSessionState = new Map<string, Set<string>>();
+const sortedManeuvers = sortByName(allManeuvers);
 
 export interface ManeuversProps {
 	onManeuverClick: (maneuver: Maneuver) => void;
 	onManeuverUse?: (maneuver: ManeuverData) => void;
 	readOnly?: boolean;
 	isMobile?: boolean;
+	showTitle?: boolean;
 }
 
 const Maneuvers: React.FC<ManeuversProps> = ({
 	onManeuverClick: _onManeuverClick,
 	onManeuverUse,
 	readOnly = false,
-	isMobile
+	isMobile,
+	showTitle = true
 }) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
 	const maneuvers = useCharacterManeuvers();
+	const calculation = useCharacterCalculatedData();
 
 	if (!state.character) {
 		return <div>{t('characterSheet.maneuversLoading')}</div>;
@@ -75,6 +85,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		return new Set([...cached].filter((maneuverId) => currentManeuverIds.has(maneuverId)));
 	});
 	const [editingManeuverIds, setEditingManeuverIds] = useState<Set<string>>(new Set());
+	const [declaredEnhancements, setDeclaredEnhancements] = useState<
+		Record<string, Record<string, number>>
+	>({});
 
 	useEffect(() => {
 		expandedManeuverSessionState.set(expansionSessionKey, new Set(expandedManeuvers));
@@ -88,9 +101,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	// Filter maneuvers based on selected type
 	const filteredManeuvers = useMemo(() => {
 		if (typeFilter === 'all') {
-			return allManeuvers;
+			return sortedManeuvers;
 		}
-		return allManeuvers.filter((maneuver) => maneuver.type === typeFilter);
+		return sortedManeuvers.filter((maneuver) => maneuver.type === typeFilter);
 	}, [typeFilter]);
 
 	// Filter character's maneuvers based on selected type
@@ -205,7 +218,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	return (
 		<StyledManeuversSection $isMobile={effectiveIsMobile}>
 			<StyledManeuversHeader $isMobile={effectiveIsMobile}>
-				<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
+				{showTitle && (
+					<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
+				)}
 				<StyledManeuversControls $isMobile={effectiveIsMobile}>
 					{!readOnly && (
 						<>
@@ -298,6 +313,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 						const maneuverDetails = selectedManeuver ?? maneuver;
 						const maneuverEnhancements = maneuverDetails.enhancements ?? [];
 						const isEditing = editingManeuverIds.has(maneuver.id);
+						const enhancementCounts = declaredEnhancements[maneuver.id] ?? {};
+						const enhancementSpend = calculateEnhancementStaminaSpend(
+							maneuverEnhancements,
+							enhancementCounts
+						);
+						const staminaSpendLimit = calculation?.stats.staminaSpendLimit ?? 0;
+						const spendValid = enhancementSpend <= staminaSpendLimit;
 
 						return (
 							<React.Fragment key={maneuver.id}>
@@ -366,32 +388,31 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 									<StyledManeuverActions>
 										{!readOnly && onManeuverUse && (
 											<StyledManeuverActionButton
-												onClick={() => onManeuverUse(maneuver)}
-												title="Use maneuver"
+												onClick={() => {
+													onManeuverUse(maneuver);
+													setDeclaredEnhancements((current) => ({
+														...current,
+														[maneuver.id]: {}
+													}));
+												}}
+												disabled={!spendValid}
+												title={
+													spendValid
+														? `Use maneuver with ${enhancementSpend} SP declared`
+														: `Enhancements exceed SSL ${staminaSpendLimit}`
+												}
 											>
 												Use
 											</StyledManeuverActionButton>
 										)}
 										{!readOnly && (
-											<StyledManeuverActionButton
-												onClick={() => toggleManeuverEditing(maneuver.id)}
-												aria-label={
-													isEditing ? 'Finish Editing Maneuver Slot' : 'Edit Maneuver Slot'
-												}
-												title={isEditing ? 'Finish editing maneuver slot' : 'Edit maneuver slot'}
-												data-testid={`edit-maneuver-${maneuver.id}`}
-											>
-												{isEditing ? <Check size={14} /> : <Pencil size={14} />}
-											</StyledManeuverActionButton>
-										)}
-										{!readOnly && isEditing && (
-											<DeleteButton
-												onClick={(event) => {
-													event.stopPropagation();
-													removeManeuverSlot(originalIndex);
-												}}
-												title="Remove maneuver slot"
-												$isMobile={effectiveIsMobile}
+											<RowEditControls
+												isEditing={isEditing}
+												onToggle={() => toggleManeuverEditing(maneuver.id)}
+												onDelete={() => removeManeuverSlot(originalIndex)}
+												itemLabel="maneuver slot"
+												isMobile={effectiveIsMobile}
+												toggleTestId={`edit-maneuver-${maneuver.id}`}
 											/>
 										)}
 									</StyledManeuverActions>
@@ -404,6 +425,14 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 											<StyledManeuverDescriptionLabel $isMobile={effectiveIsMobile}>
 												{maneuverDetails.name}
 											</StyledManeuverDescriptionLabel>
+											{selectedManeuver && (
+												<Link
+													to={`/martial-manual?maneuver=${encodeURIComponent(selectedManeuver.id)}`}
+													className="text-sm font-semibold text-amber-400 hover:text-amber-300"
+												>
+													View full card
+												</Link>
+											)}
 										</StyledManeuverDescriptionHeader>
 										<StyledManeuverDescriptionText $isMobile={effectiveIsMobile}>
 											<strong>{t('characterSheet.maneuversDescription')}:</strong>
@@ -441,11 +470,42 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 															</StyledManeuverEnhancementCost>
 															<strong>{enhancement.name}</strong>
 															{enhancement.repeatable && <span>Repeatable</span>}
+															<button
+																type="button"
+																onClick={() =>
+																	setDeclaredEnhancements((current) => {
+																		const counts = current[maneuver.id] ?? {};
+																		const count = counts[enhancement.name] ?? 0;
+																		return {
+																			...current,
+																			[maneuver.id]: {
+																				...counts,
+																				[enhancement.name]: enhancement.repeatable
+																					? count + 1
+																					: Number(count === 0)
+																			}
+																		};
+																	})
+																}
+																className="ml-auto rounded border border-amber-500/40 px-2 py-1 text-xs"
+															>
+																Declare{' '}
+																{enhancementCounts[enhancement.name]
+																	? `×${enhancementCounts[enhancement.name]}`
+																	: ''}
+															</button>
 														</StyledManeuverEnhancementHeader>
 														<RichDescription text={enhancement.description} />
 													</StyledManeuverEnhancement>
 												))}
 											</StyledManeuverEnhancements>
+										)}
+										{maneuverEnhancements.length > 0 && (
+											<div
+												className={`mt-2 text-sm ${spendValid ? 'text-slate-300' : 'text-red-400'}`}
+											>
+												Declared enhancement SP: {enhancementSpend} / SSL {staminaSpendLimit}
+											</div>
 										)}
 									</StyledManeuverDescriptionContainer>
 								)}

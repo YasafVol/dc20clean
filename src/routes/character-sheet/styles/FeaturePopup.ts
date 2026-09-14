@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { theme } from './theme';
+import { media, theme } from './theme';
 
 export const StyledFeaturePopupOverlay = styled.div`
 	position: fixed;
@@ -15,6 +15,7 @@ export const StyledFeaturePopupOverlay = styled.div`
 `;
 
 export const StyledFeaturePopupContent = styled.div`
+	position: relative;
 	background: ${theme.colors.bg.elevated};
 	border: 2px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.xl};
@@ -26,8 +27,8 @@ export const StyledFeaturePopupContent = styled.div`
 	box-shadow: ${theme.shadows.xl};
 	box-sizing: border-box;
 
-	@media (max-width: 768px) {
-		width: calc(100vw - 10rem);
+	${media.mobile} {
+		width: calc(100vw - ${theme.spacing[8]});
 		margin: 5rem ${theme.spacing[4]} ${theme.spacing[4]} ${theme.spacing[4]};
 		padding: ${theme.spacing[6]};
 	}
@@ -37,14 +38,17 @@ export const StyledFeaturePopupHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: ${theme.spacing[4]};
 	margin-bottom: ${theme.spacing[6]};
 	border-bottom: 2px solid ${theme.colors.border.default};
 	padding-bottom: ${theme.spacing[4]};
+	padding-right: ${theme.spacing[10]};
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
+	${media.mobile} {
 		margin-bottom: ${theme.spacing[4]};
 		padding-bottom: ${theme.spacing[3]};
+		padding-right: ${theme.spacing[10]};
 		align-items: flex-start;
 		gap: ${theme.spacing[2]};
 	}
@@ -56,45 +60,53 @@ export const StyledFeaturePopupTitle = styled.h2`
 	font-size: ${theme.typography.fontSize['2xl']};
 	font-weight: ${theme.typography.fontWeight.bold};
 	flex: 1;
+	min-width: 0;
 	word-wrap: break-word;
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
-		font-size: ${theme.typography.fontSize.xl};
+	${media.mobile} {
+		font-size: clamp(${theme.typography.fontSize.lg}, 5vw, ${theme.typography.fontSize.xl});
 		line-height: ${theme.typography.lineHeight.tight};
 		margin-right: ${theme.spacing[2]};
-	}
-
-	@media (max-width: 480px) {
-		font-size: ${theme.typography.fontSize.lg};
 	}
 `;
 
 export const StyledFeaturePopupClose = styled.button`
-	background: ${theme.colors.accent.primary};
-	color: ${theme.colors.text.inverse};
+	position: absolute;
+	top: ${theme.spacing[3]};
+	right: ${theme.spacing[3]};
+	background: transparent;
+	color: ${theme.colors.text.secondary};
 	border: none;
-	border-radius: ${theme.borderRadius.full};
-	width: 30px;
-	height: 30px;
+	border-radius: ${theme.borderRadius.sm};
+	width: 32px;
+	height: 32px;
+	padding: 0;
 	cursor: pointer;
 	font-size: ${theme.typography.fontSize.xl};
+	line-height: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	transition: opacity ${theme.transitions.fast};
+	transition: color ${theme.transitions.fast};
 
 	&:hover {
-		opacity: 0.8;
+		color: ${theme.colors.accent.primary};
+	}
+
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 2px;
 	}
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
+	${media.mobile} {
+		top: ${theme.spacing[2]};
+		right: ${theme.spacing[2]};
 		width: 36px;
 		height: 36px;
 		font-size: ${theme.typography.fontSize['2xl']};
-		margin-top: 2px;
 	}
 `;
 
@@ -106,15 +118,14 @@ export const StyledFeaturePopupDescription = styled.div`
 	overflow-wrap: break-word;
 
 	/* Mobile responsive styling */
-	@media (max-width: 768px) {
-		font-size: ${theme.typography.fontSize.sm};
+	${media.mobile} {
+		font-size: clamp(${theme.typography.fontSize.xs}, 3.5vw, ${theme.typography.fontSize.sm});
 		line-height: ${theme.typography.lineHeight.normal};
 	}
+`;
 
-	@media (max-width: 480px) {
-		font-size: ${theme.typography.fontSize.xs};
-		line-height: ${theme.typography.lineHeight.tight};
-	}
+export const StyledFeaturePopupSeparatedDetail = styled.div`
+	margin-top: ${theme.spacing[3]};
 `;
 
 export const StyledFeaturePopupSourceInfo = styled.div`

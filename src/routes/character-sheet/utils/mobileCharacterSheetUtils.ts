@@ -54,8 +54,6 @@ export const createPendingAttack = () => ({
 	attackBonus: 0,
 	damage: '',
 	damageType: '',
-	critRange: '20',
-	critDamage: '',
 	brutalDamage: '',
 	heavyHitEffect: '',
 	isPending: true

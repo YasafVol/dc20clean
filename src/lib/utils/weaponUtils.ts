@@ -5,13 +5,15 @@ import { Weapon, WeaponProperty } from '../rulesdata/inventoryItems';
 
 export interface ParsedDamage {
 	amount: number;
-	type: 'S' | 'P' | 'B' | 'S/P' | 'B/P';
+	type: 'S' | 'P' | 'B' | 'S/P' | 'B/S' | 'B/P' | 'B/P/S';
 	typeDisplay:
 		| 'slashing'
 		| 'piercing'
 		| 'bludgeoning'
 		| 'slashing/piercing'
-		| 'bludgeoning/piercing';
+		| 'bludgeoning/slashing'
+		| 'bludgeoning/piercing'
+		| 'bludgeoning/piercing/slashing';
 }
 
 /**
@@ -41,8 +43,14 @@ export function parseDamage(damageStr: string): ParsedDamage {
 		case 'S/P':
 			typeDisplay = 'slashing/piercing';
 			break;
+		case 'B/S':
+			typeDisplay = 'bludgeoning/slashing';
+			break;
 		case 'B/P':
 			typeDisplay = 'bludgeoning/piercing';
+			break;
+		case 'B/P/S':
+			typeDisplay = 'bludgeoning/piercing/slashing';
 			break;
 		default:
 			typeDisplay = 'bludgeoning';
@@ -132,63 +140,6 @@ export function getVersatileDamage(
 }
 
 /**
- * Get weapon features based on properties
- */
-export function getWeaponFeatures(weapon: Weapon): string[] {
-	const features: string[] = [];
-
-	weapon.properties.forEach((prop) => {
-		switch (prop) {
-			case 'Impact':
-				features.push('+1 damage on Heavy Hit');
-				break;
-			case 'Guard':
-				features.push('Defensive bonus');
-				break;
-			case 'Reach':
-				features.push('Extended reach');
-				break;
-			case 'Versatile':
-				features.push('Can be used one or two-handed');
-				break;
-			case 'Heavy':
-				features.push('Heavy weapon');
-				break;
-			case 'Two-Handed':
-				features.push('Requires two hands');
-				break;
-			case 'Concealable':
-				features.push('Easy to hide');
-				break;
-			case 'Silent':
-				features.push('Silent attacks');
-				break;
-			case 'Unwieldy':
-				features.push('Difficult to use effectively');
-				break;
-			default:
-				if (prop.includes('Toss') || prop.includes('Thrown')) {
-					features.push('Can be thrown');
-				} else if (prop.includes('Range')) {
-					const range = getWeaponRange(weapon);
-					if (range) {
-						features.push(`Range: ${range.short}/${range.long}`);
-					}
-				} else if (prop.includes('Capture')) {
-					features.push('Can capture/entangle');
-				} else if (prop === 'Ammo') {
-					features.push('Requires ammunition');
-				} else if (prop === 'Reload') {
-					features.push('Must be reloaded');
-				}
-				break;
-		}
-	});
-
-	return features;
-}
-
-/**
  * Create empty attack data for fallback cases
  */
 export function createEmptyAttackData(weaponName?: string): any {
@@ -199,8 +150,6 @@ export function createEmptyAttackData(weaponName?: string): any {
 		attackBonus: 0,
 		damage: '0 B',
 		damageType: 'bludgeoning',
-		critRange: '20',
-		critDamage: '0 B',
 		brutalDamage: '0 B',
 		heavyHitEffect: ''
 	};

@@ -1,8 +1,12 @@
 # DC20Clean — Campaign System
 
 > Purpose: Multi-player campaign layer: campaign management, membership, character sharing, live event notifications, and read-only sheet viewing.
+> Owns: Campaign membership and permissions, join codes, character sharing, campaign events, campaign notifications, and campaign-scoped sheet access.
+> Does not own: General character persistence, ordinary character-sheet behavior, authentication infrastructure, or character calculation.
+> Authoritative source: `convex/campaigns.ts`, `convex/campaignCharacterConnections.ts`, campaign tables in `convex/schema.ts`, `src/lib/hooks/useCampaigns.ts`, and `src/routes/campaigns/`.
+> Related systems: [Database](./DATABASE_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-11
+> Last Updated: 2026-09-13
 
 ---
 
@@ -57,7 +61,8 @@ All three tables use **soft-delete**: every record has an optional `deletedAt` f
   campaignId: Id<'campaigns'>,
   userId: Id<'users'>,
   role: 'dm' | 'co_dm' | 'player',
-  sharedCharacterIds: string[],   // app-level character ids shared by this member
+  sharedCharacterIds: string[],                  // compatibility copy of app-level ids
+  sharedCharacterDocIds?: Id<'characters'>[],    // authoritative character-record links
   displayName?: string,           // captured at join time from user profile
   joinedAt: string,               // ISO timestamp
   deletedAt?: string,             // soft-delete timestamp
@@ -115,25 +120,25 @@ All helpers query `campaignMembers` via the `by_campaign_and_user` index.
 | -------------------------- | ---------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `listMyCampaigns`          | `{}`                                     | `CampaignWithRole[]`                    | All active campaigns where the caller is a member, with their role                        |
 | `getCampaign`              | `{ id: string }`                         | `CampaignDetail \| null`                | Full campaign detail + all active members + caller's role. Returns `null` if not a member |
-| `getRoster`                | `{ campaignId: string }`                 | `RosterEntry[]`                         | Flattened list of all shared characters across all members, with HP data                  |
+| `getRoster`                | `{ campaignId: string }`                 | `RosterEntry[]`                         | Shared character records across active members, including `characterDocId` and HP data    |
 | `listEvents`               | `{ campaignId: string, limit?: number }` | `CampaignEvent[]`                       | Most recent events (default 50), ordered newest-first                                     |
-| `getCampaignsForCharacter` | `{ characterId: string }`                | `Array<{ campaignDocId, memberDocId }>` | Which campaigns share a given character — used by the event producer                      |
+| `getCampaignsForCharacter` | `{ characterId: string }`                | `Array<{ campaignDocId, memberDocId }>` | Active campaigns connected to the caller-owned character record                           |
 
 ### 3.3 Mutations
 
 | Export             | Auth required | Description                                                                                                                                          |
 | ------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `createCampaign`   | Authenticated | Creates campaign + DM membership record. Generates a unique join code (up to 10 retries). Returns `{ id: string }`                                   |
-| `joinByCode`       | Authenticated | Finds campaign by code (case-insensitive), inserts or restores a `player` membership. Posts a `member_joined` event. Returns `{ id, alreadyMember }` |
-| `leaveCampaign`    | Member        | Soft-deletes the caller's membership. DM cannot leave (must delete campaign instead)                                                                 |
-| `shareCharacter`   | Member        | Verifies caller owns the character (`by_user_and_id` index), then appends to `sharedCharacterIds`. Posts a `character_shared` event                  |
-| `unshareCharacter` | Member        | Removes character from caller's `sharedCharacterIds`                                                                                                 |
+| `joinByCode`       | Authenticated | Finds campaign by code (case-insensitive), inserts or restores a `player` membership without restoring old character connections. Posts a `member_joined` event. Returns `{ id, alreadyMember }` |
+| `leaveCampaign`    | Member        | Clears character connections and soft-deletes the caller's membership. DM cannot leave (must delete campaign instead)                                |
+| `shareCharacter`   | Member        | Connects the owned character record, keeps the legacy app ID, and posts one idempotent `character_shared` event                                      |
+| `unshareCharacter` | Member        | Removes both record and legacy forms of the caller's character connection                                                                            |
 | `renameCampaign`   | Manager       | Updates `name`, `description`, `lastModified`                                                                                                        |
 | `regenerateCode`   | Manager       | Generates and persists a new unique join code. Returns `{ code }`                                                                                    |
-| `kickMember`       | Manager       | Soft-deletes a non-DM member's record                                                                                                                |
+| `kickMember`       | Manager       | Clears character connections and soft-deletes a non-DM member's record                                                                               |
 | `setMemberRole`    | DM only       | Promotes or demotes a member between `co_dm` and `player`. Cannot change the DM's role                                                               |
 | `deleteCampaign`   | DM only       | Cascade soft-deletes: campaign → all members → all events                                                                                            |
-| `postEvent`        | Member        | Inserts a `campaignEvents` record. Validates that any supplied `characterId` is in the caller's own `sharedCharacterIds`                             |
+| `postEvent`        | Member        | Inserts a `campaignEvents` record after validating the caller's exact connected character record                                                     |
 
 ### 3.4 `characters.getByIdForMember` (in `convex/characters.ts`)
 
@@ -143,9 +148,13 @@ A dedicated query that provides secure cross-user character access for campaign 
 
 1. **Auth check** — caller must be authenticated.
 2. **Membership check** — campaign exists and caller is an active member (via `by_campaign_and_user` index).
-3. **Sharing check** — the requested character appears in at least one active member's `sharedCharacterIds`.
+3. **Sharing check** — the requested record appears in an active member's `sharedCharacterDocIds` and belongs to that member.
 
-Returns the full character document or `null` if any guard fails. Uses `by_app_id` for both the campaign and character lookups.
+The campaign View URL carries both the app-level character ID and the Convex record ID. The query requires both to match. Legacy memberships without `sharedCharacterDocIds` fall back to an owner-scoped `by_user_and_id` lookup.
+
+`sharedCharacterDocIds` is authoritative once present. A deleted record or a replacement record that reuses the same app-level ID does not inherit the old connection. Calling `shareCharacter` on a legacy connection resolves all readable legacy IDs for that membership and writes the record references without duplicating the original lifecycle event.
+Leaving or being removed clears both connection fields. Rejoining never restores those links; the player must explicitly reconnect a character.
+
 
 ---
 
@@ -221,8 +230,9 @@ function generateCode(): string {
 | `src/routes/campaigns/CampaignList.tsx`                        | Campaign list page                                                                                                                                          |
 | `src/routes/campaigns/CampaignDetail.tsx`                      | Campaign detail: roster table, event feed, management controls, share picker                                                                                |
 | `src/routes/campaigns/JoinCampaign.tsx`                        | Join-by-code page                                                                                                                                           |
-| `src/routes/campaigns/CampaignCharacterView.tsx`               | Read-only sheet route                                                                                                                                       |
+| `src/routes/campaigns/CampaignCharacterView.tsx`               | Read-only sheet route and Primary/Alternative presentation switch                                                                                           |
 | `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`  | Sheet provider — read-only mode                                                                                                                             |
+| `convex/campaignCharacterConnections.ts`                       | Record-link resolution and owner-scoped legacy fallback                                                                                                     |
 | `src/routes/character-sheet/hooks/useCampaignEventProducer.ts` | HP-state event producer                                                                                                                                     |
 | `src/lib/hooks/useCampaignToasts.ts`                           | App-level toast watcher and `CampaignEventWatcher` component                                                                                                |
 
@@ -234,23 +244,22 @@ All frontend consumers of Convex campaign hooks are isolated in inner components
 
 ### 8.1 Trigger
 
-`CharacterSheetProvider` accepts an optional `campaignId?: string` prop. When present, `readOnly = true` is set for the entire session:
+`CharacterSheetProvider` accepts optional `campaignId` and `campaignCharacterDocId` props. `campaignId` enables read-only mode; the record ID identifies the exact roster entry.
 
 ```typescript
-export function CharacterSheetProvider({ children, characterId, campaignId }) {
-	const readOnly = !!campaignId;
-	// ...
-}
+<CharacterSheetProvider campaignId={campaignId} characterId={characterId} campaignCharacterDocId={characterDocId} />
 ```
+
+The campaign view offers Primary and Alternative presentations. Switching presentations changes only the rendered sheet component and the `sheet` URL parameter; both remain inside the same authorized read-only provider and retain the same exact character record.
 
 ### 8.2 Load path
 
-When `campaignId` is set, the character is loaded via `characters.getByIdForMember` (the three-layer guarded Convex query) rather than the local storage adapter:
+When `campaignId` is set, the character is loaded via `characters.getByIdForMember` rather than local storage. Current roster links supply both identifiers; legacy links can omit the record ID.
 
 ```typescript
 const campaignCharacter = useQuery(
 	api.characters.getByIdForMember,
-	campaignId ? { campaignId, characterId } : 'skip'
+	campaignId ? { campaignId, characterId, characterDocId } : 'skip'
 );
 ```
 
@@ -262,11 +271,11 @@ const campaignCharacter = useQuery(
 
 ### 8.4 Reducer no-op guards
 
-`useCharacterSheetReducer` receives `readOnly` as a parameter. All reducer callbacks that mutate state (HP changes, condition toggles, inventory edits, etc.) are guarded: `if (readOnly) return`. This ensures the sheet is fully interactive-looking but writes nothing.
+`useCharacterSheetReducer` receives `readOnly` as a parameter. All reducer callbacks that mutate state (HP changes, condition toggles, inventory edits, etc.) are guarded: `if (readOnly) return`. Mutation controls are also suppressed in both presentations; detail popups, filters, and sheet navigation remain available.
 
-### 8.5 Read-only banner
+### 8.5 Presentation-independent rendering
 
-`CharacterSheetRedesign.tsx` renders a banner above the sheet when `readOnly` is truthy:
+`CampaignCharacterView.tsx` renders either `CharacterSheetRedesign` or `AlternativeCharacterSheet` under the same provider. Its controls identify the page as a read-only campaign view. The primary sheet also retains its existing read-only banner:
 
 ```tsx
 {readOnly && (
@@ -339,7 +348,19 @@ useCampaignToasts (app-level)
 
 ---
 
-## 11. Known Limitations
+## 11. Lifecycle Acceptance Contract
+
+`e2e/features/character-campaign-lifecycle.feature` is the readable Gherkin contract. `convex/campaigns.test.ts` executes the same domain scenarios with authenticated, isolated Convex state.
+
+The contract covers:
+
+1. Connection from either sheet presentation and idempotent reconnect.
+2. Roster visibility, live character updates, event production, and event receipt.
+3. Exact-record read-only viewing through both sheet presentations and owner-only writes.
+4. Disconnect, cross-campaign movement, membership exit, no automatic reconnect, and campaign deletion.
+5. Legacy-link upgrade, duplicate app IDs, character deletion, and explicit replacement reconnect.
+
+## 12. Known Limitations
 
 | Issue                        | Notes                                                                                                                                                                                                                  |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -349,7 +370,7 @@ useCampaignToasts (app-level)
 
 ---
 
-## 12. Related Systems
+## 13. Related Systems
 
 - **Database System** — `docs/systems/DATABASE_SYSTEM.MD`
 - **Character Sheet** — `docs/systems/CHARACTER_SHEET.MD`

@@ -1,9 +1,12 @@
 # DC20 Encounter System (DM Tools)
 
 > Purpose: Encounter planner using DC20's budget system: party size x level formulas, difficulty scaling, monster slotting, and validation.
+> Owns: Encounter budgets, difficulty thresholds, party context, monster slotting, encounter validation, encounter persistence, and encounter import/export contracts.
+> Does not own: Monster construction rules, general authentication and storage infrastructure, or combat execution and initiative tracking.
+> Authoritative source: `src/lib/services/encounterBudgetCalculator.ts`, `src/lib/rulesdata/schemas/encounter.schema.ts`, `src/routes/dm/encounters/`, and `convex/encounters.ts`.
+> Related systems: [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-02-06
-> Related: [MONSTER_SYSTEM_SPEC.MD](./MONSTER_SYSTEM_SPEC.MD)
+> Last Updated: 2026-07-21
 
 ---
 

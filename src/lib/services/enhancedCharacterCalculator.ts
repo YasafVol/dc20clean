@@ -530,7 +530,6 @@ export function calculateCharacterWithBreakdowns(
 			// Include MODIFY_STAT bonuses and GRANT_MANEUVERS effects (C1, C3)
 			totalManeuversKnown:
 				progressionGains.totalManeuversKnown + maneuverBonus + grantedManeuversCount,
-			totalCantripsKnown: progressionGains.totalCantripsKnown,
 			// Include MODIFY_STAT bonuses for spells (C2)
 			totalSpellsKnown: progressionGains.totalSpellsKnown + spellBonus,
 			unlockedFeatureIds: progressionGains.unlockedFeatureIds,

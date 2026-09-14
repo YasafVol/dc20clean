@@ -200,7 +200,7 @@ import {
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { BookOpenText } from 'lucide-react';
+import { BookOpenText, KeyRound, Map } from 'lucide-react';
 import { useIsAuthenticated } from './auth';
 import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
@@ -303,13 +303,17 @@ function Menu() {
 								<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
 								<StyledDMGroupCards>
 									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
-										<StyledIcon $variant="dm">Map</StyledIcon>
+										<StyledIcon $variant="dm">
+											<Map aria-hidden="true" />
+										</StyledIcon>
 										<StyledTextContent>
 											<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
 										</StyledTextContent>
 									</StyledMenuCard>
 									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
-										<StyledIcon $variant="dm">Key</StyledIcon>
+										<StyledIcon $variant="dm">
+											<KeyRound aria-hidden="true" />
+										</StyledIcon>
 										<StyledTextContent>
 											<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
 										</StyledTextContent>

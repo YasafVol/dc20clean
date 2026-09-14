@@ -1,9 +1,12 @@
 # DC20 Monster System (DM Tools)
 
 > Purpose: Monster designer using DC20's point-buy framework: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing.
+> Owns: Monster statistics, roles, tiers, monster features and actions, monster validation, monster persistence contracts, and monster designer workflows.
+> Does not own: Encounter-budget rules, general storage/authentication infrastructure, player-character calculation, or combat execution.
+> Authoritative source: `src/lib/rulesdata/dm/monsterStatistics.ts`, `src/lib/rulesdata/dm/monsterRoles.ts`, `src/lib/services/monsterCalculator.ts`, `src/lib/rulesdata/schemas/monster.schema.ts`, `src/routes/dm/monsters/`, and `convex/monsters.ts`.
+> Related systems: [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-27
-> Related: [ENCOUNTER_SYSTEM_SPEC.MD](./ENCOUNTER_SYSTEM_SPEC.MD)
+> Last Updated: 2026-07-21
 
 ---
 

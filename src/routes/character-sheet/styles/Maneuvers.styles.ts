@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { theme } from './theme';
+import { media, theme } from './theme';
 
 interface MobileStyledProps {
 	$isMobile?: boolean;
@@ -11,6 +11,11 @@ export const StyledManeuversSection = styled.div<MobileStyledProps>`
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${theme.spacing[4]};
+	min-width: 0;
+
+	${media.mobile} {
+		padding: ${theme.spacing[3]};
+	}
 `;
 
 export const StyledManeuversHeader = styled.div<MobileStyledProps>`
@@ -20,6 +25,16 @@ export const StyledManeuversHeader = styled.div<MobileStyledProps>`
 	margin-bottom: ${theme.spacing[4]};
 	padding-bottom: ${theme.spacing[3]};
 	border-bottom: 1px solid ${theme.colors.border.default};
+
+	@container sheet-tabs (max-width: 56rem) {
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: ${theme.spacing[3]};
+	}
+
+	${media.mobile} {
+		flex-direction: column;
+	}
 `;
 
 export const StyledManeuversTitle = styled.h3<MobileStyledProps>`
@@ -35,6 +50,13 @@ export const StyledManeuversControls = styled.div<MobileStyledProps>`
 	display: flex;
 	gap: 0.5rem;
 	align-items: center;
+	min-width: 0;
+
+	@container sheet-tabs (max-width: 56rem) {
+		flex: 1 1 100%;
+		flex-wrap: wrap;
+		width: 100%;
+	}
 `;
 
 export const StyledAddManeuverButton = styled.button<MobileStyledProps>`
@@ -75,6 +97,10 @@ export const StyledManeuversHeaderRow = styled.div<MobileStyledProps>`
 	color: ${theme.colors.text.secondary};
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
+
+	@container sheet-tabs (max-width: 56rem) {
+		display: none;
+	}
 `;
 
 export const StyledManeuverHeaderColumn = styled.div<MobileStyledProps>`
@@ -105,10 +131,40 @@ export const StyledManeuverRow = styled.div<MobileStyledProps>`
 	min-height: 48px;
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
+	min-width: 0;
 
 	&:hover {
 		background: ${theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
+	}
+
+	@container sheet-tabs (max-width: 56rem) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: ${theme.spacing[3]};
+
+		& > :first-child,
+		& > :last-child {
+			grid-column: 1 / -1;
+		}
+
+		& > :nth-child(n + 2):nth-child(-n + 4)::before {
+			display: block;
+			margin-bottom: ${theme.spacing[1]};
+			color: ${theme.colors.text.muted};
+			font-size: ${theme.typography.fontSize.xs};
+			font-weight: ${theme.typography.fontWeight.semibold};
+			text-transform: uppercase;
+		}
+
+		& > :nth-child(2)::before {
+			content: 'Type';
+		}
+		& > :nth-child(3)::before {
+			content: 'Cost';
+		}
+		& > :nth-child(4)::before {
+			content: 'Timing';
+		}
 	}
 `;
 
@@ -117,6 +173,10 @@ export const StyledManeuverActions = styled.div`
 	align-items: center;
 	justify-content: flex-end;
 	gap: ${theme.spacing[1]};
+
+	@container sheet-tabs (max-width: 56rem) {
+		justify-content: flex-end;
+	}
 `;
 
 export const StyledManeuverActionButton = styled.button`
@@ -150,6 +210,15 @@ export const StyledManeuverCell = styled.div<MobileStyledProps>`
 	text-align: center;
 	word-wrap: break-word;
 	line-height: ${theme.typography.lineHeight.tight};
+	min-width: 0;
+	overflow-wrap: anywhere;
+
+	@container sheet-tabs (max-width: 56rem) {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		text-align: left;
+	}
 `;
 
 export const StyledManeuverNameCell = styled(StyledManeuverCell)<MobileStyledProps>`
@@ -190,6 +259,8 @@ export const StyledManeuverTypeFilter = styled.select<MobileStyledProps>`
 	background: ${theme.colors.bg.primary};
 	color: ${theme.colors.text.primary};
 	min-width: 120px;
+	max-width: 100%;
+	flex: 1 1 10rem;
 	transition: all ${theme.transitions.fast};
 
 	&:focus {
@@ -268,6 +339,8 @@ export const StyledManeuverDescriptionContainer = styled.div<MobileStyledProps>`
 	border-top: none;
 	border-radius: 0 0 ${theme.borderRadius.md} ${theme.borderRadius.md};
 	margin-bottom: ${theme.spacing[2]};
+	min-width: 0;
+	overflow-wrap: anywhere;
 `;
 
 export const StyledManeuverDescriptionHeader = styled.div<MobileStyledProps>`

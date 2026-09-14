@@ -14,6 +14,7 @@ import {
 	deleteCustomArmor,
 	deleteCustomShield,
 	deleteCustomSpellFocus,
+	duplicateCustomEquipment,
 	exportEquipmentToJson,
 	importEquipmentFromJson
 } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
@@ -33,7 +34,11 @@ import {
 
 type FilterType = 'all' | 'weapon' | 'armor' | 'shield' | 'spellFocus';
 
-const SavedEquipmentList: React.FC = () => {
+interface SavedEquipmentListProps {
+	onEdit: (equipment: CustomWeapon | CustomArmor | CustomShield | CustomSpellFocus) => void;
+}
+
+const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 	const [filter, setFilter] = useState<FilterType>('all');
 	const [weapons, setWeapons] = useState<CustomWeapon[]>([]);
 	const [armor, setArmor] = useState<CustomArmor[]>([]);
@@ -112,6 +117,10 @@ const SavedEquipmentList: React.FC = () => {
 	};
 
 	const totalCount = weapons.length + armor.length + shields.length + spellFocuses.length;
+	const handleDuplicate = (category: 'weapon' | 'armor' | 'shield' | 'spellFocus', id: string) => {
+		duplicateCustomEquipment(category, id);
+		loadData();
+	};
 
 	const renderWeaponCard = (weapon: CustomWeapon) => (
 		<SavedItemCard key={weapon.id}>
@@ -144,7 +153,13 @@ const SavedEquipmentList: React.FC = () => {
 					<span className="text-xs text-gray-500">+{weapon.properties.length - 4}</span>
 				)}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" size="sm" onClick={() => onEdit(weapon)}>
+					Edit
+				</Button>
+				<Button variant="outline" size="sm" onClick={() => handleDuplicate('weapon', weapon.id)}>
+					Duplicate
+				</Button>
 				<Button
 					variant="ghost"
 					size="sm"
@@ -177,7 +192,13 @@ const SavedEquipmentList: React.FC = () => {
 				{item.hasPdr && <Badge variant="secondary">PDR</Badge>}
 				{item.hasEdr && <Badge variant="secondary">EDR</Badge>}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+					Edit
+				</Button>
+				<Button variant="outline" size="sm" onClick={() => handleDuplicate('armor', item.id)}>
+					Duplicate
+				</Button>
 				<Button
 					variant="ghost"
 					size="sm"
@@ -217,7 +238,13 @@ const SavedEquipmentList: React.FC = () => {
 					</Badge>
 				))}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+					Edit
+				</Button>
+				<Button variant="outline" size="sm" onClick={() => handleDuplicate('shield', item.id)}>
+					Duplicate
+				</Button>
 				<Button
 					variant="ghost"
 					size="sm"
@@ -261,7 +288,13 @@ const SavedEquipmentList: React.FC = () => {
 					<Badge variant="secondary">Long Range +{item.longRangeBonus}</Badge>
 				)}
 			</div>
-			<div className="flex justify-end">
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+					Edit
+				</Button>
+				<Button variant="outline" size="sm" onClick={() => handleDuplicate('spellFocus', item.id)}>
+					Duplicate
+				</Button>
 				<Button
 					variant="ghost"
 					size="sm"

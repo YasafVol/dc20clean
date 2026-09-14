@@ -11,7 +11,11 @@ export const StyledExhaustionContainer = styled.div<MobileStyledProps>`
 	margin: 0;
 `;
 
-export const StyledExhaustionLevel = styled.div<{ $filled: boolean; $isMobile?: boolean }>`
+export const StyledExhaustionLevel = styled.div<{
+	$filled: boolean;
+	$isMobile?: boolean;
+	$disabled?: boolean;
+}>`
 	position: relative;
 	width: 22px;
 	height: 22px;
@@ -33,7 +37,8 @@ export const StyledExhaustionLevel = styled.div<{ $filled: boolean; $isMobile?: 
 	justify-content: center;
 	font-size: 14px;
 	font-weight: bold;
-	cursor: pointer;
+	cursor: ${(props) => (props.$disabled ? 'default' : 'pointer')};
+	opacity: ${(props) => (props.$disabled ? 0.55 : 1)};
 	border-radius: 3px;
 	transition: all 0.2s ease;
 	line-height: 1;
@@ -49,7 +54,7 @@ export const StyledExhaustionLevel = styled.div<{ $filled: boolean; $isMobile?: 
 			}
 			return props.$isMobile ? 'var(--mobile-bg-tertiary)' : 'var(--bg-secondary)';
 		}};
-		transform: scale(1.1);
+		transform: ${(props) => (props.$disabled ? 'none' : 'scale(1.1)')};
 	}
 `;
 
@@ -67,6 +72,7 @@ export const StyledExhaustionTooltip = styled.div`
 	z-index: 1000;
 	margin-bottom: 5px;
 	box-shadow: 0 2px 8px var(--black-30);
+	display: none;
 	opacity: 0;
 	visibility: hidden;
 	transition:
@@ -84,6 +90,7 @@ export const StyledExhaustionTooltip = styled.div`
 	}
 
 	${StyledExhaustionLevel}:hover & {
+		display: block;
 		opacity: 1;
 		visibility: visible;
 	}

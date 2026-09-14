@@ -1,8 +1,12 @@
 # DC20Clean – Class System
 
 > Purpose: Single reference for Classes, Features, Talents, and Level Progression.
+> Owns: Class and subclass definitions, class features, talents, class progression data, feature choices, and class-specific grants.
+> Does not own: Generic effect semantics, derived-stat formulas, spell or maneuver catalogs, or wizard stage orchestration.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/classes-v0105-report.json`, `docs/migration/class-feature-effect-classification.json`, and `src/lib/rulesdata/classes-data/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-09-13
 
 ---
 
@@ -286,7 +290,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 - Spell schools reorganized to 8 schools (Astromancy, Conjuration, Divination, Elemental, Enchantment, Invocation, Nullification, Transmutation)
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
-- **Slot-Based Spell System (M3.20)**: Classes now define individual spell slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles. Legacy cantrip grants are normalized into ordinary spell slots.
+- **Slot-Based Spell System (M3.20)**: Classes define individual Spell slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles. Current progression grants Spells only; legacy imported cantrip fields are normalized at the compatibility boundary.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 **Recent Updates (2026-06-01)**:

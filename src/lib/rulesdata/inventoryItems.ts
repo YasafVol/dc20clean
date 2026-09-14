@@ -1,5 +1,14 @@
 // inventoryItems.ts
 
+import { PRESET_SPELL_FOCUSES } from './equipment/options/spellFocusOptions';
+import { PRESET_WEAPONS, getWeaponStyle } from './equipment/options/weaponOptions';
+import type {
+	WeaponStyle as CanonicalWeaponStyle,
+	PresetWeapon
+} from './equipment/schemas/weaponSchema';
+import type { PhysicalDamageType } from './equipment/schemas/baseEquipment';
+import type { SpellFocusHands } from './equipment/schemas/spellFocusSchema';
+
 //==============================================================================
 // SCHEMAS / TYPES
 //==============================================================================
@@ -9,6 +18,7 @@ export enum ItemType {
 	Armor = 'Armor',
 	Shield = 'Shield',
 	AdventuringSupply = 'Adventuring Supply',
+	SpellFocus = 'Spell Focus',
 	Potion = 'Potion'
 }
 
@@ -35,6 +45,7 @@ export enum WeaponStyle {
 	Chained = 'Chained',
 	Bow = 'Bow',
 	Crossbow = 'Crossbow',
+	Sling = 'Sling',
 	AxePick = 'Axe/Pick',
 	HammerPick = 'Hammer/Pick',
 	SwordSpear = 'Sword/Spear',
@@ -47,6 +58,7 @@ export enum DamageType {
 	Piercing = 'P',
 	Bludgeoning = 'B',
 	SlashingOrPiercing = 'S/P',
+	BludgeoningOrSlashing = 'B/S',
 	BludgeoningOrPiercing = 'B/P'
 }
 
@@ -57,6 +69,8 @@ export type WeaponProperty =
 	| 'Guard'
 	| 'Heavy'
 	| 'Impact'
+	| 'Cumbersome'
+	| 'Deft'
 	| 'Long-Ranged'
 	| 'Multi-Faceted'
 	| 'Reach'
@@ -132,438 +146,116 @@ export interface HealingPotion {
 	price: number; // in gold pieces (g)
 }
 
+export interface SpellFocus {
+	itemType: ItemType.SpellFocus;
+	name: string;
+	hands: SpellFocusHands;
+	properties: string[];
+}
+
 // Union type for all inventory items
-export type InventoryItem = Weapon | Armor | Shield | AdventuringSupply | HealingPotion;
+export type InventoryItem =
+	| Weapon
+	| Armor
+	| Shield
+	| AdventuringSupply
+	| SpellFocus
+	| HealingPotion;
 
 //==============================================================================
 // INVENTORY DATA
 //==============================================================================
 
-export const weapons: Weapon[] = [
-	// Melee Weapons - One-Handed
-	{
-		itemType: ItemType.Weapon,
-		name: 'Sickle',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Hand Axe',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Throwing Star',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Brass Knuckles',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Fist,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 B',
-		properties: ['Concealable', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Club',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Hammer,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 B',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Light Hammer',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Hammer,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 B',
-		properties: ['Impact', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Dart',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Pick,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 P',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Mining Pick',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Pick,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 P',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Javelin',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Spear,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 P',
-		properties: ['Thrown (10/20)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Throwing Dagger',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Concealable', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Short Sword',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Guard', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Rapier',
-		type: WeaponType.Melee,
-		style: [WeaponStyle.Sword, WeaponStyle.Spear],
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S/P',
-		properties: ['Guard', 'Multi-Faceted']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Chain Whip',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Whip,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 S',
-		properties: ['Reach', 'Impact']
-	},
+const CANONICAL_STYLE_TO_DISPLAY: Record<CanonicalWeaponStyle, WeaponStyle> = {
+	axe: WeaponStyle.Axe,
+	fist: WeaponStyle.Fist,
+	hammer: WeaponStyle.Hammer,
+	pick: WeaponStyle.Pick,
+	spear: WeaponStyle.Spear,
+	staff: WeaponStyle.Staff,
+	sword: WeaponStyle.Sword,
+	whip: WeaponStyle.Whip,
+	bow: WeaponStyle.Bow,
+	crossbow: WeaponStyle.Crossbow,
+	sling: WeaponStyle.Sling
+};
 
-	// Melee Weapons - Versatile
-	{
-		itemType: ItemType.Weapon,
-		name: 'Battleaxe',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 S',
-		properties: ['Versatile', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Flail',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Chained,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 B',
-		properties: ['Versatile', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Morningstar',
-		type: WeaponType.Melee,
-		style: [WeaponStyle.Hammer, WeaponStyle.Pick],
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 B/P',
-		properties: ['Versatile', 'Multi-Faceted']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Warhammer',
-		type: WeaponType.Melee,
-		style: [WeaponStyle.Hammer, WeaponStyle.Pick],
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 B/P',
-		properties: ['Versatile', 'Multi-Faceted']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Pickaxe',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Pick,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 P',
-		properties: ['Versatile', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Spear',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Spear,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 P',
-		properties: ['Versatile', 'Toss (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Long Spear',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Spear,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 P',
-		properties: ['Versatile', 'Reach']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Quarterstaff',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Staff,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 B',
-		properties: ['Versatile', 'Guard']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Longsword',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 S',
-		properties: ['Versatile', 'Guard']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Bastard Sword',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 S',
-		properties: ['Versatile', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Bull Whip',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Whip,
-		handedness: WeaponHandedness.Versatile,
-		damage: '1 S',
-		properties: ['Versatile', 'Reach', 'Unwieldy', 'Impact']
-	},
+const CANONICAL_PROPERTY_TO_DISPLAY: Record<string, WeaponProperty> = {
+	ammo: 'Ammo',
+	concealable: 'Concealable',
+	cumbersome: 'Cumbersome',
+	deft: 'Deft',
+	guard: 'Guard',
+	heavy: 'Heavy',
+	'heavy-ranged': 'Heavy',
+	impact: 'Impact',
+	'long-ranged': 'Long-Ranged',
+	'multi-faceted': 'Multi-Faceted',
+	reach: 'Reach',
+	reload: 'Reload',
+	returning: 'Returning',
+	silent: 'Silent',
+	toss: 'Toss (5/10)',
+	thrown: 'Thrown (10/20)',
+	'two-handed': 'Two-Handed',
+	unwieldy: 'Unwieldy',
+	versatile: 'Versatile'
+};
 
-	// Melee Weapons - Two-Handed
-	{
-		itemType: ItemType.Weapon,
-		name: 'Scythe',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 S',
-		properties: ['Two-Handed', 'Heavy', 'Reach']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Greataxe',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Axe,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 S',
-		properties: ['Two-Handed', 'Heavy', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Halberd',
-		type: WeaponType.Melee,
-		style: [WeaponStyle.Axe, WeaponStyle.Pick],
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 S/P',
-		properties: ['Two-Handed', 'Multi-Faceted', 'Reach', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'War Flail',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Chained,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 B',
-		properties: ['Two-Handed', 'Heavy', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Meteor Hammer',
-		type: WeaponType.Melee,
-		style: [WeaponStyle.Chained, WeaponStyle.Hammer],
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 B',
-		properties: ['Two-Handed', 'Heavy', 'Multi-Faceted', 'Reach', 'Unwieldy']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Greatmaul',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Hammer,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 B',
-		properties: ['Two-Handed', 'Heavy', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Pike',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Spear,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 P',
-		properties: ['Two-Handed', 'Heavy', 'Reach', 'Impact', 'Unwieldy']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Longpole',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Staff,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 B',
-		properties: ['Two-Handed', 'Guard', 'Reach', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Glaive',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 S',
-		properties: ['Two-Handed', 'Heavy', 'Reach']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Greatsword',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Sword,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 S',
-		properties: ['Two-Handed', 'Heavy', 'Impact']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Great Whip',
-		type: WeaponType.Melee,
-		style: WeaponStyle.Whip,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 S',
-		properties: ['Two-Handed', 'Heavy', 'Reach', 'Impact', 'Unwieldy']
-	},
+const DAMAGE_TYPE_ABBREVIATION: Record<PhysicalDamageType, 'B' | 'P' | 'S'> = {
+	bludgeoning: 'B',
+	piercing: 'P',
+	slashing: 'S'
+};
 
-	// Ranged Weapons
-	{
-		itemType: ItemType.Weapon,
-		name: 'Sling',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Bow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 B',
-		properties: ['Ammo', 'Unwieldy', 'Impact', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Shortbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Bow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 P',
-		properties: ['Two-Handed', 'Ammo', 'Silent', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Longbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Bow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 P',
-		properties: ['Two-Handed', 'Ammo', 'Unwieldy', 'Impact', 'Long-Ranged']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Greatbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Bow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 P',
-		properties: ['Two-Handed', 'Ammo', 'Unwieldy', 'Heavy', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Blowgun (Needle)',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Crossbow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '1 P',
-		properties: ['Two-Handed', 'Ammo', 'Silent', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Hand Crossbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Crossbow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 P',
-		properties: ['Ammo', 'Reload', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Light Crossbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Crossbow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '2 P',
-		properties: ['Two-Handed', 'Ammo', 'Reload', 'Impact', 'Range (15/45)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Heavy Crossbow',
-		type: WeaponType.Ranged,
-		style: WeaponStyle.Crossbow,
-		handedness: WeaponHandedness.TwoHanded,
-		damage: '3 P',
-		properties: ['Two-Handed', 'Ammo', 'Unwieldy', 'Reload', 'Heavy', 'Range (15/45)']
-	},
+const HANDEDNESS_BY_CATEGORY: Record<PresetWeapon['category'], WeaponHandedness> = {
+	'one-handed': WeaponHandedness.OneHanded,
+	versatile: WeaponHandedness.Versatile,
+	'two-handed': WeaponHandedness.TwoHanded
+};
 
-	// Special Weapons
-	{
-		itemType: ItemType.Weapon,
-		name: 'Bolas',
-		type: WeaponType.Special,
-		style: WeaponStyle.Chained,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '0 B',
-		properties: ['Thrown (10/20)', 'Capture (10/20)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Net',
-		type: WeaponType.Special,
-		style: WeaponStyle.Chained,
-		handedness: WeaponHandedness.Versatile,
-		damage: '0 B',
-		properties: ['Toss (5/10)', 'Versatile', 'Capture (5/10)']
-	},
-	{
-		itemType: ItemType.Weapon,
-		name: 'Boomerang',
-		type: WeaponType.Special,
-		style: WeaponStyle.Hammer,
-		handedness: WeaponHandedness.OneHanded,
-		damage: '1 B',
-		properties: ['Toss (5/10)', 'Returning']
+const splitPresetWeaponNames = (name: string): string[] =>
+	name.split(/\s+\/\s+/).map((part) => part.trim());
+
+const getPresetDamage = (preset: PresetWeapon): string => {
+	const styleDamageTypes = preset.styles
+		.map((style) => getWeaponStyle(style)?.defaultDamageType)
+		.filter((damageType): damageType is PhysicalDamageType => Boolean(damageType));
+	const damageTypes = [...new Set([preset.damageType, ...styleDamageTypes])];
+
+	return `${preset.damage} ${damageTypes
+		.map((damageType) => DAMAGE_TYPE_ABBREVIATION[damageType])
+		.join('/')}`;
+};
+
+const getPresetProperties = (preset: PresetWeapon): WeaponProperty[] => {
+	const properties = preset.properties.map((propertyId) => {
+		const property = CANONICAL_PROPERTY_TO_DISPLAY[propertyId];
+		if (!property) throw new Error(`Unknown preset weapon property: ${propertyId}`);
+		return property;
+	});
+
+	if (preset.weaponType === 'ranged') {
+		properties.push(`Range (${preset.range})` as WeaponProperty);
 	}
-];
+
+	return properties;
+};
+
+export const weapons: Weapon[] = PRESET_WEAPONS.flatMap((preset) => {
+	const styles = preset.styles.map((style) => CANONICAL_STYLE_TO_DISPLAY[style]);
+	const displayStyle = styles.length === 1 ? styles[0] : styles;
+
+	return splitPresetWeaponNames(preset.name).map((name) => ({
+		itemType: ItemType.Weapon,
+		name,
+		type: preset.weaponType === 'melee' ? WeaponType.Melee : WeaponType.Ranged,
+		style: displayStyle,
+		handedness: HANDEDNESS_BY_CATEGORY[preset.category],
+		damage: getPresetDamage(preset),
+		properties: getPresetProperties(preset)
+	}));
+});
 
 export const armors: Armor[] = [
 	// Light Armor
@@ -753,5 +445,13 @@ export const allItems = [
 	...armors,
 	...shields,
 	...adventuringSupplies,
+	...PRESET_SPELL_FOCUSES.map(
+		(focus): SpellFocus => ({
+			itemType: ItemType.SpellFocus,
+			name: focus.name,
+			hands: focus.hands,
+			properties: [...focus.properties]
+		})
+	),
 	...healingPotions
 ];

@@ -112,6 +112,8 @@ export function getInventoryItemInfo(
 		} else {
 			// Freeform custom item — show basic label
 			info.push({ label: 'Type', value: 'Custom Item' });
+			if (inventoryData.description)
+				info.push({ label: 'Description', value: inventoryData.description });
 		}
 
 		// Always append count and cost for custom items
@@ -163,6 +165,15 @@ export function getInventoryItemInfo(
 			if ((item as any).properties?.length)
 				info.push({ label: 'Properties', value: (item as any).properties.join(', ') });
 			if ((item as any).price) info.push({ label: 'Price', value: (item as any).price });
+			break;
+		}
+		case 'Spell Focus': {
+			info.push({
+				label: 'Hands',
+				value: (item as any).hands === 'two-handed' ? 'Two-Handed' : 'One-Handed'
+			});
+			if ((item as any).properties?.length)
+				info.push({ label: 'Properties', value: (item as any).properties.join(', ') });
 			break;
 		}
 		case 'Potion': {

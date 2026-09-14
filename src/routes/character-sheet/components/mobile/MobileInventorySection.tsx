@@ -10,6 +10,7 @@ import {
 	MobileDeleteButton,
 	MobileSelect
 } from '../../styles/CharacterSheetMobile.styles';
+import { sortByName } from '../../catalogSorting';
 
 interface MobileInventorySectionProps {
 	inventory: any;
@@ -63,7 +64,7 @@ const MobileInventorySection: React.FC<MobileInventorySectionProps> = ({
 										data-testid="item-name"
 									>
 										<option value="">Select an item...</option>
-										{allItems.map((ruleItem) => (
+										{sortByName(allItems).map((ruleItem) => (
 											<option key={ruleItem.name} value={ruleItem.name}>
 												{ruleItem.name} ({ruleItem.itemType})
 											</option>

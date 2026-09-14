@@ -1,8 +1,12 @@
 # DC20Clean – Effect System
 
 > Purpose: Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.
+> Owns: The canonical effect contract, effect targets, stacking semantics, choice resolution rules, and generic effect-processing expectations.
+> Does not own: Feature-specific rules content, user-interface presentation, persistence, or the final derived-stat formulas that consume effects.
+> Authoritative source: `src/lib/rulesdata/schemas/character.schema.ts`, `src/lib/types/effectSystem.ts`, and the calculator effect-collection modules.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Classes](./CLASS_SYSTEM.MD), [Traits](./TRAITS_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-07-21
 
 ---
 
@@ -120,7 +124,9 @@ Maneuver counts remain progression-derived. Spellblade Spellcasting Path remains
 resource-derived from the hybrid progression, while its stamina regen remains
 class data.
 
-Current sheet TODO target: `MODIFY_STAT:martial_melee_damage` is recognized as an attack-row presentation effect, but not yet applied to persisted attack rows. It needs a sheet helper that knows whether the row is an Unarmed Strike or melee weapon before applying conditional bonuses such as Rage.
+`MODIFY_STAT:martial_melee_damage` is consumed by the sheet attack-presentation helper.
+It applies active conditional damage to catalog melee weapons and persisted Unarmed
+Strike rows without mutating stored attack strings.
 
 Champion Fighting Spirit's v0.10.5 Combat Readiness text is represented as a `GRANT_ABILITY` with target `combat_readiness_fortify`. The old `combat_readiness_brace` identity is a feature alias only; it must not be treated as a maneuver alias because `Brace` remains a current Defense maneuver.
 

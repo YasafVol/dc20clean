@@ -3,9 +3,11 @@ import {
 	CURRENT_RULES_VERSION,
 	assessCharacterCompatibility,
 	getCharacterAutoSaveMode,
-	getPdfVersionForRulesVersion
+	getPdfVersionForRulesVersion,
+	mergeLegacyResourceState
 } from './compatibility';
 import { resolveRulesAlias } from './aliases';
+import type { CharacterState } from '../../types/dataContracts';
 
 describe('rules version compatibility', () => {
 	it('treats characters without rulesVersion as legacy v0.10 and upgrade-required under the current v0.10.5 runtime', () => {
@@ -23,8 +25,8 @@ describe('rules version compatibility', () => {
 		expect(result.canRenderSheet).toBe(true);
 		expect(result.canEdit).toBe(false);
 		expect(result.canLevelUp).toBe(false);
-		expect(result.canAutoSave).toBe(false);
-		expect(result.autoSaveMode).toBe('none');
+		expect(result.canAutoSave).toBe(true);
+		expect(result.autoSaveMode).toBe('resources');
 		expect(result.pdfVersion).toBe('0.10');
 	});
 
@@ -62,8 +64,8 @@ describe('rules version compatibility', () => {
 		expect(result.canRenderSheet).toBe(true);
 		expect(result.canEdit).toBe(false);
 		expect(result.canLevelUp).toBe(false);
-		expect(result.canAutoSave).toBe(false);
-		expect(result.autoSaveMode).toBe('none');
+		expect(result.canAutoSave).toBe(true);
+		expect(result.autoSaveMode).toBe('resources');
 		expect(result.canExportPdf).toBe(true);
 		expect(result.pdfVersion).toBe('0.10');
 	});
@@ -277,13 +279,74 @@ describe('rules version compatibility', () => {
 		);
 	});
 
-	it('disables auto-save for upgrade-required characters', () => {
+	it('limits upgrade-required characters to resource auto-save', () => {
 		expect(
 			getCharacterAutoSaveMode({
 				id: 'old-rules',
 				rulesVersion: 'dc20-0.10',
 				schemaVersion: '2.2.0'
 			})
-		).toBe('none');
+		).toBe('resources');
+	});
+
+	it('merges only legacy resource counters into the stored character state', () => {
+		const persistedState = {
+			resources: {
+				current: {
+					currentHP: 10,
+					currentSP: 3,
+					currentMP: 4,
+					currentGritPoints: 2,
+					currentRestPoints: 6,
+					tempHP: 0,
+					actionPointsUsed: 1,
+					exhaustionLevel: 0,
+					deathSteps: 1,
+					isDead: false
+				}
+			},
+			ui: { manualDefenseOverrides: {} },
+			inventory: { items: [{ id: 'kept-item' }], currency: { gold: 1, silver: 0, copper: 0 } },
+			notes: { playerNotes: 'kept note' },
+			attacks: [{ id: 'kept-attack' }]
+		} satisfies CharacterState;
+		const nextState = {
+			...persistedState,
+			resources: {
+				...persistedState.resources,
+				current: {
+					...persistedState.resources.current,
+					currentHP: 7,
+					currentSP: 2,
+					currentMP: 3,
+					currentGritPoints: 1,
+					currentRestPoints: 5,
+					tempHP: 4,
+					actionPointsUsed: 9,
+					exhaustionLevel: 2,
+					deathSteps: 5,
+					isDead: true
+				}
+			},
+			inventory: { items: [], currency: { gold: 0, silver: 0, copper: 0 } },
+			notes: { playerNotes: 'discarded note' },
+			attacks: []
+		} satisfies CharacterState;
+
+		const result = mergeLegacyResourceState(persistedState, nextState);
+
+		expect(result.resources.current).toEqual({
+			...persistedState.resources.current,
+			currentHP: 7,
+			currentSP: 2,
+			currentMP: 3,
+			currentGritPoints: 1,
+			currentRestPoints: 5,
+			tempHP: 4,
+			exhaustionLevel: 2
+		});
+		expect(result.inventory).toEqual(persistedState.inventory);
+		expect(result.notes).toEqual(persistedState.notes);
+		expect(result.attacks).toEqual(persistedState.attacks);
 	});
 });

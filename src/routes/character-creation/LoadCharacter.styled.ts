@@ -1,11 +1,18 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { theme, media } from '../character-sheet/styles/theme';
+import { ButtonRow } from '../../components/styled/Container';
 
 /**
  * LoadCharacter Page-Specific Styled Components
  * Shared components (buttons, modals, containers) imported from src/components/styled
  */
+
+export const ImportButtonRow = styled(ButtonRow)`
+	${media.tabletDown} {
+		padding-top: 3.75rem;
+	}
+`;
 
 // Character grid layout
 export const CharacterGrid = styled.div`

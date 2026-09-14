@@ -1,0 +1,961 @@
+{
+	"id": "1789382349177",
+	"finalName": "Human Barb E2E",
+	"finalPlayerName": "Playwright",
+	"level": 1,
+	"classId": "barbarian",
+	"className": "Barbarian",
+	"ancestry1Id": "human",
+	"ancestry1Name": "Human",
+	"ancestry2Id": null,
+	"finalMight": 3,
+	"finalAgility": 1,
+	"finalCharisma": 0,
+	"finalIntelligence": 1,
+	"finalPrimeModifierValue": 3,
+	"finalPrimeModifierAttribute": "might",
+	"usePrimeCapRule": false,
+	"finalCombatMastery": 1,
+	"finalSaveMight": 4,
+	"finalSaveAgility": 2,
+	"finalSaveCharisma": 1,
+	"finalSaveIntelligence": 2,
+	"finalHPMax": 11,
+	"finalSPMax": 2,
+	"finalMPMax": 0,
+	"finalPD": 11,
+	"finalAD": 14,
+	"finalPDR": 0,
+	"finalSaveDC": 14,
+	"finalDeathThreshold": 5,
+	"finalMoveSpeed": 6,
+	"finalJumpDistance": 3,
+	"finalRestPoints": 11,
+	"finalGritPoints": 2,
+	"finalInitiativeBonus": 2,
+	"movement": {
+		"burrow": {
+			"half": false,
+			"full": false
+		},
+		"swim": {
+			"half": true,
+			"full": false
+		},
+		"fly": {
+			"half": false,
+			"full": false
+		},
+		"climb": {
+			"half": true,
+			"full": false
+		},
+		"glide": {
+			"half": false,
+			"full": false
+		}
+	},
+	"holdBreath": 3,
+	"resistances": [],
+	"vulnerabilities": [],
+	"senses": [],
+	"combatTraining": [
+		{
+			"type": "Weapons",
+			"source": "Combat Training"
+		},
+		{
+			"type": "All_Armor",
+			"source": "Combat Training"
+		},
+		{
+			"type": "All_Shields",
+			"source": "Combat Training"
+		}
+	],
+	"finalPDHeavyThreshold": 16,
+	"finalPDBrutalThreshold": 21,
+	"finalADHeavyThreshold": 19,
+	"finalADBrutalThreshold": 24,
+	"bloodiedValue": 6,
+	"wellBloodiedValue": 3,
+	"finalAttackSpellCheck": 4,
+	"finalMartialCheck": 5,
+	"selectedTraitIds": [
+		"human_attribute_increase",
+		"human_resolve",
+		"human_determination",
+		"human_unbreakable"
+	],
+	"selectedFeatureChoices": {},
+	"skillsData": {
+		"athletics": 1,
+		"intimidation": 1,
+		"acrobatics": 1,
+		"survival": 1,
+		"awareness": 1,
+		"stealth": 1
+	},
+	"tradesData": {
+		"blacksmithing": 1,
+		"leatherworking": 1,
+		"cooking": 1
+	},
+	"languagesData": {
+		"common": {
+			"fluency": "fluent"
+		},
+		"human": {
+			"fluency": "fluent"
+		}
+	},
+	"skillMasteryLimitElevations": {},
+	"tradeMasteryLimitElevations": {},
+	"selectedTalents": {},
+	"pathPointAllocations": {
+		"martial": 0,
+		"spellcasting": 0
+	},
+	"unlockedFeatureIds": [
+		"barbarian_martial_path",
+		"barbarian_rage",
+		"barbarian_berserker",
+		"barbarian_shattering_force"
+	],
+	"pendingSubclassChoice": false,
+	"selectedMulticlassOption": null,
+	"skillTotals": {
+		"athletics": 5,
+		"intimidation": 5,
+		"acrobatics": 3,
+		"trickery": 1,
+		"stealth": 3,
+		"animal": 0,
+		"insight": 0,
+		"influence": 0,
+		"investigation": 1,
+		"medicine": 1,
+		"survival": 3,
+		"awareness": 5
+	},
+	"skillMastery": {
+		"athletics": {
+			"governingAttributes": ["might"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 5
+		},
+		"intimidation": {
+			"governingAttributes": ["might"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 5
+		},
+		"acrobatics": {
+			"governingAttributes": ["agility"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 3
+		},
+		"trickery": {
+			"governingAttributes": ["agility"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"stealth": {
+			"governingAttributes": ["agility"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 3
+		},
+		"animal": {
+			"governingAttributes": ["charisma"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 0
+		},
+		"insight": {
+			"governingAttributes": ["charisma"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 0
+		},
+		"influence": {
+			"governingAttributes": ["charisma"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 0
+		},
+		"investigation": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"medicine": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"survival": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 3
+		},
+		"awareness": {
+			"governingAttributes": ["prime"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 2,
+			"masteryLadder": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 5
+		}
+	},
+	"knowledgeTradeMastery": {
+		"arcana": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"history": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"nature": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"occultism": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		},
+		"religion": {
+			"governingAttributes": ["intelligence"],
+			"baseAttributeValues": {
+				"might": 3,
+				"agility": 1,
+				"charisma": 0,
+				"intelligence": 1
+			},
+			"masteryLevel": 0,
+			"masteryLadder": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"finalValue": 1
+		}
+	},
+	"masteryLadders": {
+		"skills": {
+			"athletics": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"intimidation": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"acrobatics": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"trickery": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"stealth": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"animal": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"insight": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"influence": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"investigation": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"medicine": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"survival": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"awareness": {
+				"2": true,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			}
+		},
+		"knowledgeTrades": {
+			"arcana": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"history": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"nature": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"occultism": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			},
+			"religion": {
+				"2": false,
+				"4": false,
+				"6": false,
+				"8": false,
+				"10": false
+			}
+		},
+		"practicalTrades": {
+			"A": {
+				"label": "Blacksmithing",
+				"ladder": {
+					"2": true,
+					"4": false,
+					"6": false,
+					"8": false,
+					"10": false
+				},
+				"finalValue": 5
+			},
+			"B": {
+				"label": "Cooking",
+				"ladder": {
+					"2": true,
+					"4": false,
+					"6": false,
+					"8": false,
+					"10": false
+				},
+				"finalValue": 3
+			},
+			"C": {
+				"label": "Leatherworking",
+				"ladder": {
+					"2": true,
+					"4": false,
+					"6": false,
+					"8": false,
+					"10": false
+				},
+				"finalValue": 3
+			}
+		}
+	},
+	"languageMastery": {
+		"A": {
+			"name": "Common",
+			"limited": false,
+			"fluent": true
+		},
+		"B": {
+			"name": "Human",
+			"limited": false,
+			"fluent": true
+		}
+	},
+	"spells": [],
+	"maneuvers": [
+		{
+			"id": "maneuver_1789382349178_0.02142659597885377",
+			"name": "Heroic Bash",
+			"type": "Attack",
+			"cost": {
+				"ap": 1,
+				"sp": 1
+			},
+			"range": "Weapon or Unarmed Strike",
+			"description": "Make a Melee Martial Attack against the PD of a target within range, and it makes a Might Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target is pushed 1 Space away from you. Save Failure (each 5): The target is pushed up to 1 additional Space. Knock Prone: After the result, you can choose to reduce the total distance a target is pushed by 1 Space to knock them Prone instead. Airborne: When you choose to push them upward into the air, the distance they're pushed is halved.",
+			"isReaction": false,
+			"enhancements": [
+				{
+					"name": "Increased Distance",
+					"costString": "X SP",
+					"description": "The distance pushed increases by 1 Space."
+				},
+				{
+					"name": "Bowling Ball",
+					"costString": "1 SP",
+					"sp": 1,
+					"description": "If the target collides with another creature as part of this movement, they both take Collision Damage as normal, and the creature it collides with must make a Might Save against your Save DC. Save Failure: The target is knocked Prone. Save Failure (each 5): The target is also pushed 1 Space away from you."
+				}
+			],
+			"notes": ""
+		},
+		{
+			"id": "maneuver_1789382349178_0.49975980441627765",
+			"name": "Savage Strike",
+			"type": "Attack",
+			"cost": {
+				"ap": 1,
+				"sp": 1
+			},
+			"range": "Weapon or Unarmed Strike",
+			"description": "Make a Martial Attack against the PD of a target within range, and it makes a Repeated Physical Save against your Save DC. Hit: The target takes the damage of your Weapon or Unarmed Strike. Save Failure: The target becomes Impaired for 1 minute or begins Bleeding (your choice).",
+			"isReaction": false,
+			"enhancements": [
+				{
+					"name": "Improved Bleed",
+					"costString": "X SP",
+					"description": "The target gains a stack of Bleeding."
+				},
+				{
+					"name": "Improved Impaired",
+					"costString": "X SP",
+					"description": "The target gains a stack of Impaired."
+				},
+				{
+					"name": "Weakened",
+					"costString": "2 SP",
+					"sp": 2,
+					"description": "The target gains a stack of Weakened."
+				}
+			],
+			"notes": ""
+		}
+	],
+	"skillToTradeConversions": 0,
+	"tradeToSkillConversions": 0,
+	"tradeToLanguageConversions": 0,
+	"breakdowns": {
+		"attribute_might": {
+			"statName": "might",
+			"base": 3,
+			"effects": [],
+			"total": 3,
+			"conditionalTotal": 3
+		},
+		"attribute_agility": {
+			"statName": "agility",
+			"base": 1,
+			"effects": [],
+			"total": 1,
+			"conditionalTotal": 1
+		},
+		"attribute_charisma": {
+			"statName": "charisma",
+			"base": 0,
+			"effects": [],
+			"total": 0,
+			"conditionalTotal": 0
+		},
+		"attribute_intelligence": {
+			"statName": "intelligence",
+			"base": 1,
+			"effects": [],
+			"total": 1,
+			"conditionalTotal": 1
+		},
+		"hpMax": {
+			"statName": "hpMax",
+			"base": 11,
+			"effects": [],
+			"total": 11,
+			"conditionalTotal": 11
+		},
+		"spMax": {
+			"statName": "spMax",
+			"base": 2,
+			"effects": [],
+			"total": 2,
+			"conditionalTotal": 2
+		},
+		"mpMax": {
+			"statName": "mpMax",
+			"base": 0,
+			"effects": [],
+			"total": 0,
+			"conditionalTotal": 0
+		},
+		"pd": {
+			"statName": "pd",
+			"base": 11,
+			"effects": [
+				{
+					"source": {
+						"type": "class_feature",
+						"id": "Rage_Reduced Defense",
+						"name": "Reduced Defense",
+						"description": "Your PD decreases by 5.",
+						"category": "Barbarian Level 1"
+					},
+					"value": -5,
+					"condition": "while_raging",
+					"description": "Reduced Defense: -5 (while_raging)",
+					"isActive": false
+				}
+			],
+			"total": 11,
+			"conditionalTotal": 6
+		},
+		"ad": {
+			"statName": "ad",
+			"base": 12,
+			"effects": [
+				{
+					"source": {
+						"type": "class_feature",
+						"id": "Berserker_Berserker Defense",
+						"name": "Berserker Defense",
+						"description": "While you aren't wearing Armor you gain +2 AD.",
+						"category": "Barbarian Level 1"
+					},
+					"value": 2,
+					"condition": "not_wearing_armor",
+					"description": "Berserker Defense: +2 (not_wearing_armor)",
+					"isActive": true
+				}
+			],
+			"total": 14,
+			"conditionalTotal": 14
+		},
+		"attributePoints": {
+			"statName": "attributePoints",
+			"base": 12,
+			"effects": [
+				{
+					"source": {
+						"type": "trait",
+						"id": "human_attribute_increase",
+						"name": "Attribute Increase",
+						"description": "Grants 1 Attribute Point to spend on any Attribute (up to the Attribute Limit).",
+						"category": "Selected Trait"
+					},
+					"value": 1,
+					"description": "Attribute Increase: +1",
+					"isActive": true
+				}
+			],
+			"total": 13,
+			"conditionalTotal": 13
+		},
+		"move_speed": {
+			"statName": "moveSpeed",
+			"base": 5,
+			"effects": [
+				{
+					"source": {
+						"type": "class_feature",
+						"id": "Berserker_Fast Movement",
+						"name": "Fast Movement",
+						"description": "You gain +1 Speed.",
+						"category": "Barbarian Level 1"
+					},
+					"value": 1,
+					"description": "Fast Movement: +1",
+					"isActive": true
+				}
+			],
+			"total": 6,
+			"conditionalTotal": 6
+		},
+		"jump_distance": {
+			"statName": "jumpDistance",
+			"base": 3,
+			"effects": [],
+			"total": 3,
+			"conditionalTotal": 3
+		},
+		"attack_spell_check": {
+			"statName": "attackSpellCheck",
+			"base": 4,
+			"effects": [],
+			"total": 4,
+			"conditionalTotal": 4
+		},
+		"save_dc": {
+			"statName": "saveDC",
+			"base": 14,
+			"effects": [],
+			"total": 14,
+			"conditionalTotal": 14
+		},
+		"death_threshold": {
+			"statName": "deathThreshold",
+			"base": 4,
+			"effects": [
+				{
+					"source": {
+						"type": "trait",
+						"id": "human_resolve",
+						"name": "Human Resolve",
+						"description": "Your Deaths Door Threshold value is expanded by 1.",
+						"category": "Selected Trait"
+					},
+					"value": 1,
+					"description": "Human Resolve: +1",
+					"isActive": true
+				}
+			],
+			"total": 5,
+			"conditionalTotal": 5
+		},
+		"initiative": {
+			"statName": "Initiative",
+			"base": 0,
+			"effects": [
+				{
+					"source": {
+						"name": "Combat Mastery",
+						"id": "combatMastery",
+						"type": "base"
+					},
+					"value": 1,
+					"description": "Combat Mastery: 1",
+					"isActive": true
+				},
+				{
+					"source": {
+						"name": "Agility Modifier",
+						"id": "agility",
+						"type": "base"
+					},
+					"value": 1,
+					"description": "Agility Modifier: 1",
+					"isActive": true
+				}
+			],
+			"total": 2
+		},
+		"martial_check": {
+			"statName": "Martial Check",
+			"base": 3,
+			"effects": [
+				{
+					"source": {
+						"name": "Acrobatics Option",
+						"id": "acrobatics",
+						"type": "base"
+					},
+					"value": 3,
+					"description": "Agility (1) + Proficiency ×2 (2) = 3",
+					"isActive": true
+				},
+				{
+					"source": {
+						"name": "Athletics Option",
+						"id": "athletics",
+						"type": "base"
+					},
+					"value": 5,
+					"description": "Might (3) + Proficiency ×2 (2) = 5",
+					"isActive": true
+				}
+			],
+			"total": 5
+		}
+	},
+	"characterState": {
+		"resources": {
+			"current": {
+				"currentHP": 11,
+				"currentSP": 2,
+				"currentMP": 0,
+				"currentGritPoints": 2,
+				"currentRestPoints": 11,
+				"tempHP": 0,
+				"actionPointsUsed": 0,
+				"exhaustionLevel": 0,
+				"deathSteps": 0,
+				"isDead": false
+			},
+			"original": {
+				"maxHP": 11,
+				"maxSP": 2,
+				"maxMP": 0,
+				"maxGritPoints": 2,
+				"maxRestPoints": 11
+			}
+		},
+		"ui": {
+			"manualDefenseOverrides": {},
+			"combatToggles": {
+				"isRaging": false,
+				"isWildFormed": false
+			}
+		},
+		"inventory": {
+			"items": [],
+			"currency": {
+				"gold": 0,
+				"silver": 0,
+				"copper": 0
+			}
+		},
+		"notes": {
+			"playerNotes": ""
+		},
+		"activeConditions": []
+	},
+	"createdAt": "2026-09-14T10:39:09.177Z",
+	"lastModified": "2026-09-14T10:39:09.178Z",
+	"completedAt": "2026-09-14T10:39:09.177Z",
+	"schemaVersion": "2.2.0",
+	"rulesVersion": "dc20-0.10.5"
+}

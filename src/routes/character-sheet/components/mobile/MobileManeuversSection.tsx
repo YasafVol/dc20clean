@@ -11,6 +11,7 @@ import {
 	MobileSelect
 } from '../../styles/CharacterSheetMobile.styles';
 import { showManeuverDetails } from '../../utils/mobileCharacterSheetUtils';
+import { sortByName } from '../../catalogSorting';
 
 interface MobileManeuversSectionProps {
 	maneuvers: any[];
@@ -59,7 +60,7 @@ const MobileManeuversSection: React.FC<MobileManeuversSectionProps> = ({
 										}}
 									>
 										<option value="">Select a maneuver...</option>
-										{allManeuvers.map((ruleManeuver) => (
+										{sortByName(allManeuvers).map((ruleManeuver) => (
 											<option key={ruleManeuver.name} value={ruleManeuver.name}>
 												{ruleManeuver.name} ({ruleManeuver.type})
 											</option>

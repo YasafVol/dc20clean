@@ -74,7 +74,11 @@ const makeLegacyV010Character = (): SavedCharacter =>
 					currentMP: 0,
 					currentGritPoints: 1,
 					currentRestPoints: 8,
-					tempHP: 0
+					tempHP: 0,
+					actionPointsUsed: 1,
+					exhaustionLevel: 0,
+					deathSteps: 1,
+					isDead: false
 				},
 				original: {
 					maxHP: 12,
@@ -82,11 +86,11 @@ const makeLegacyV010Character = (): SavedCharacter =>
 					maxMP: 0
 				}
 			},
-			attacks: [],
+			attacks: [{ id: 'kept-attack', name: 'Legacy Attack' }],
 			spells: [],
 			maneuvers: [],
 			inventory: {
-				items: [],
+				items: [{ id: 'kept-item', itemName: 'Legacy Item' }],
 				currency: {
 					goldPieces: 0,
 					silverPieces: 0,
@@ -94,7 +98,7 @@ const makeLegacyV010Character = (): SavedCharacter =>
 				}
 			},
 			notes: {
-				playerNotes: ''
+				playerNotes: 'Legacy note'
 			},
 			ui: {
 				manualDefenseOverrides: {},
@@ -105,7 +109,21 @@ const makeLegacyV010Character = (): SavedCharacter =>
 	}) as unknown as SavedCharacter;
 
 function SheetProbe() {
-	const { state, updateHP, saveNow, saveStatus } = useCharacterSheet();
+	const {
+		state,
+		readOnly,
+		canManageResources,
+		updateHP,
+		updateSP,
+		updateMP,
+		updateTempHP,
+		updateGritPoints,
+		updateRestPoints,
+		updateExhaustion,
+		updateInventory,
+		updateNotes,
+		saveNow
+	} = useCharacterSheet();
 	const calculated = useCharacterCalculatedData();
 
 	if (state.loading || !state.character) {
@@ -120,9 +138,31 @@ function SheetProbe() {
 			<div data-testid="current-hp">
 				{state.character.characterState.resources.current.currentHP}
 			</div>
-			<div data-testid="save-status">{saveStatus}</div>
-			<button type="button" onClick={() => updateHP(7)}>
-				Set HP
+			<div data-testid="editability">
+				{readOnly ? 'read-only' : 'editable'}:{canManageResources ? 'resources' : 'locked'}
+			</div>
+			<button
+				type="button"
+				onClick={() => {
+					updateHP(7);
+					updateSP(1);
+					updateMP(0);
+					updateTempHP(2);
+					updateGritPoints(0);
+					updateRestPoints(7);
+					updateExhaustion(2);
+				}}
+			>
+				Change Resources
+			</button>
+			<button
+				type="button"
+				onClick={() => {
+					updateInventory([]);
+					updateNotes('Changed note');
+				}}
+			>
+				Attempt Locked Changes
 			</button>
 			<button type="button" onClick={() => void saveNow()}>
 				Save Now
@@ -144,7 +184,7 @@ describe('CharacterSheetProvider compatibility fence', () => {
 		cleanup();
 	});
 
-	it('loads legacy v0.10 characters from stored data and saves only runtime state', async () => {
+	it('lets legacy owners change only resource counters and saves no structural changes', async () => {
 		mockGetCharacterById.mockResolvedValue(makeLegacyV010Character());
 		mockSaveCharacter.mockResolvedValue(undefined);
 		mockSaveCharacterState.mockResolvedValue(undefined);
@@ -157,22 +197,40 @@ describe('CharacterSheetProvider compatibility fence', () => {
 
 		expect(await screen.findByTestId('character-name')).toHaveTextContent('Legacy v0.10 Sheet');
 		expect(screen.getByTestId('calculation-mode')).toHaveTextContent('stored');
+		expect(screen.getByTestId('editability')).toHaveTextContent('read-only:resources');
 		expect(mockConvertToEnhancedBuildData).not.toHaveBeenCalled();
 		expect(mockCalculateCharacterWithBreakdowns).not.toHaveBeenCalled();
 
-		fireEvent.click(screen.getByRole('button', { name: 'Set HP' }));
+		fireEvent.click(screen.getByRole('button', { name: 'Change Resources' }));
+		fireEvent.click(screen.getByRole('button', { name: 'Attempt Locked Changes' }));
 		expect(screen.getByTestId('current-hp')).toHaveTextContent('7');
 		fireEvent.click(screen.getByRole('button', { name: 'Save Now' }));
 
 		await waitFor(() => {
-			expect(screen.getByTestId('save-status')).toHaveTextContent('idle');
+			expect(mockSaveCharacterState).toHaveBeenCalledTimes(1);
 		});
 		expect(mockSaveCharacterState).toHaveBeenCalledWith(
 			'legacy-v010-sheet',
 			expect.objectContaining({
 				resources: expect.objectContaining({
-					current: expect.objectContaining({ currentHP: 7 })
-				})
+					current: expect.objectContaining({
+						currentHP: 7,
+						currentSP: 1,
+						currentMP: 0,
+						currentGritPoints: 0,
+						currentRestPoints: 7,
+						tempHP: 2,
+						exhaustionLevel: 2,
+						actionPointsUsed: 1,
+						deathSteps: 1,
+						isDead: false
+					})
+				}),
+				inventory: expect.objectContaining({
+					items: [expect.objectContaining({ id: 'kept-item' })]
+				}),
+				notes: { playerNotes: 'Legacy note' },
+				attacks: [expect.objectContaining({ id: 'kept-attack' })]
 			})
 		);
 		expect(mockSaveCharacter).not.toHaveBeenCalled();

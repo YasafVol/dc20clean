@@ -1,9 +1,12 @@
 # DC20Clean – PDF Export System
 
-> Purpose
->
-> Capture the architecture, scope, and acceptance criteria for exporting a calculated character sheet to the official DC20 fillable PDF. This document is the system overview aligned with existing docs (no separate planning spec is currently tracked in-repo).
-> Last Updated: 2026-07-11
+> Purpose: Canonical architecture, scope, and acceptance reference for exporting stored characters to supported DC20 fillable PDFs.
+> Owns: PDF export DTOs, version routing, field maps, transformation, template filling, download behavior, and export-specific validation.
+> Does not own: Character calculation, persisted character values, rules upgrades, authentication policy, or PDF template design.
+> Authoritative source: `src/lib/types/pdfExport.ts`, `src/lib/pdf/`, `docs/migration/pdf-field-audit-current.json`, and PDF routing in `src/lib/rulesdata/versioning/compatibility.ts`.
+> Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD).
+> Status: Active
+> Last Updated: 2026-07-21
 
 ---
 

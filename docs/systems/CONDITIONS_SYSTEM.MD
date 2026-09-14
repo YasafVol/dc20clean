@@ -1,8 +1,12 @@
 # DC20Clean - Conditions System
 
 > Purpose: Source-audited condition catalog, condition interaction effects, active condition tracking, and sheet-facing automation.
+> Owns: Canonical condition data, condition IDs, condition normalization, active-condition presentation, and supported condition-effect summaries.
+> Does not own: Generic effect schemas, encounter turn simulation, automatic target resolution, forced movement, or damage application.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/conditions-v0105-report.json`, and `src/lib/rulesdata/conditions/conditions.data.ts`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-06-20
+> Last Updated: 2026-09-13
 
 ## Source Audit
 
@@ -63,6 +67,11 @@ Condition immunities, resistances, and vulnerabilities are modeled through the e
 | Active condition tracker | `ActiveConditionsTracker.tsx`          | Lets users toggle active conditions and set stack values                      |
 | Roll badges/modifiers    | `conditionEffectsAnalyzer.ts`          | Applies selected active condition mechanics to sheet rolls and badges         |
 
+Weapon attack details resolve enhancement riders through this catalog. Condition text
+is nested under the relevant weapon style; Bleeding also links to the structured
+Medicine action rule in `src/lib/rulesdata/coreActions.ts`. This is reference text only
+and does not automate Bleeding damage or recovery.
+
 Current automated active-condition effects:
 
 - Attacks: Hindered, Restrained.
@@ -73,5 +82,7 @@ Current automated active-condition effects:
 ## TODO
 
 - Apply or surface all remaining in-play condition mechanics from the source catalog. Not yet fully automated: Bleeding/Burning start-of-turn damage, Charmed target restriction, Doomed HP/healing reduction, Exposed incoming attack advantage, Frightened source movement/check restriction, Paralyzed/Unconscious critical hit and auto-save failure details, Petrified resistance/vulnerability/suspension details, Stunned/Surprised AP max reduction, Taunted target restriction, Terrified forced action logic, and Tethered distance logic.
-- Add a sheet-facing "condition effects summary" surface for active effects that cannot be cleanly applied to roll math.
+- The Conditions tab renders a manual-effects summary for active mechanics that cannot
+  be cleanly applied to roll math. Concrete stack IDs substitute their current value;
+  encounter targets, timing, damage, and forced actions remain player-managed.
 - Keep source metadata out of character-sheet grouping unless it becomes useful as an optional debug/audit view.

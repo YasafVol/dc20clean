@@ -1,11 +1,12 @@
 # DC20Clean – Background System (Skills, Trades, Languages)
 
-> Last Updated: 2026-06-27
->
-> Purpose  
-> This document is the single authoritative reference ("bible") for everything related to Background: Skill/Trade/Language data, point budgets, conversions, validation, and UI wiring.
-> • Humans can follow the numbered guides & check-lists.  
-> • AI agents can parse the File Maps and Mermaid graphs to discover dependencies.
+> Purpose: Canonical reference for Background skills, trades, languages, point budgets, conversions, validation, and UI wiring.
+> Owns: Background option data, allocation budgets, conversions, mastery spending behavior, and Background-stage validation and presentation.
+> Does not own: Global mastery-cap policy, generic effect semantics, class progression grants, or character-creation orchestration.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/background-v0105-report.json`, `src/lib/rulesdata/skills.ts`, `src/lib/rulesdata/trades.ts`, `src/lib/rulesdata/languages.ts`, and the calculator Background modules.
+> Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Traits](./TRAITS_SYSTEM.MD).
+> Status: Active
+> Last Updated: 2026-07-21
 
 ---
 

@@ -1,8 +1,12 @@
 # DC20Clean – Traits System
 
 > Purpose: Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.
+> Owns: Trait definitions, trait IDs, prerequisites, trait choices, trait validation, trait effect declarations, and trait-facing UI behavior.
+> Does not own: Ancestry composition, generic effect semantics, derived-stat formulas, or overall ancestry-stage orchestration.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/ancestries-v0105-report.json`, and `src/lib/rulesdata/ancestries/traits.ts`.
+> Related systems: [Ancestries](./ANCESTRY_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD).
 > Status: Active
-> Last Updated: 2026-06-19
+> Last Updated: 2026-07-25
 
 ---
 
@@ -50,6 +54,7 @@ flowchart LR
 | Type Contracts        | `src/lib/rulesdata/schemas/types.ts`                                                      | TS interfaces `ITrait`, `ITraitEffect` (legacy/aux typing)               |
 |                       | `src/lib/rulesdata/schemas/character.schema.ts`                                           | Canonical `Effect` union and `Trait` interface                           |
 | Validation Tests      | `src/lib/rulesdata/rulesdata.spec.ts`                                                     | Loads trait data and asserts required fields are present                 |
+|                       | `src/lib/rulesdata/ancestries/traits.contract.test.ts`                                    | Focused trait records and structured requirement references              |
 | Runtime Engine        | `src/lib/services/enhancedCharacterCalculator.ts`                                         | Aggregates effects, resolves choices, computes breakdowns                |
 | State Layer           | `src/lib/stores/characterContext.tsx`<br>`src/lib/hooks/useCharacterBuilder.ts`           | Provides calculated results and selected choices to UI                   |
 | UI                    | `src/routes/character-creation/*` (selection)<br>`src/routes/character-sheet/*` (display) | Components import `traitsData` results via context                       |
@@ -59,6 +64,11 @@ Notes:
 - Use `schemas/character.schema.ts` as the source of truth for `Effect.type` strings. See also `docs/systems/EFFECT_SYSTEM.MD`.
 - `traits.ts` currently imports `Trait` from `schemas/character.schema.ts` to ensure alignment.
 - For resource maximums, use `hpMax`, `spMax`, and `mpMax` as `target` values. Avoid `mp` (not processed for maximums).
+- Attack-facing ancestry abilities that remain `GRANT_ABILITY` are interpreted by
+  `src/routes/character-sheet/ancestryAttackTraits.ts`. It scopes trait notes and
+  properties to supported attacks and applies Orc Brutal Strikes only to displayed
+  Brutal damage. Conditional traits such as Finishing Blow and Charge remain notes;
+  the sheet does not assume their trigger occurred.
 
 ### Acceptance Criteria (Traits)
 
@@ -320,6 +330,11 @@ The `prerequisites` field is still supported for simple single-trait requirement
 
 **Migration Note:** New traits should use `requirements.hasTrait` for "any-of" scenarios instead of `prerequisites`.
 
+At runtime, every remaining legacy `prerequisites` array is populated into
+`requirements.hasAllTraits`. Explicit structured requirements remain authoritative for
+any-of and prohibition semantics. A data test prevents prerequisite chains from escaping
+the structured contract.
+
 ---
 
 ## 8 Future Evolution
@@ -338,6 +353,9 @@ The `prerequisites` field is still supported for simple single-trait requirement
 - `beastborn_additional_limb` now reflects the v0.10.5 1 Space limb, object handling, push/pull/grapple, and no Weapon/Shield/Spell Focus/Somatic use limitations.
 - `beastborn_capable_limb` costs 2 points and upgrades an Additional Limb to use Weapons, Shields, Spell Focuses, and Somatic Components. Its prerequisite remains `beastborn_additional_limb`.
 - `beastborn_natural_weapon_style` is the current v0.10.5 Natural Weapon trait. The stale `beastborn_natural_weapon_passive` record was removed.
+- `beastborn_natural_weapon` derives a read-only Unarmed Strike on the character sheet.
+  Its unresolved Bludgeoning/Piercing/Slashing choice is presented as `B/P/S`; this
+  display behavior does not add an attack to persisted character state.
 
 ---
 

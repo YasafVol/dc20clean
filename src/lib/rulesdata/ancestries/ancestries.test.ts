@@ -645,6 +645,14 @@ describe('DC20 v0.10.5 source ancestry audit', () => {
 });
 
 describe('DC20 v0.10.5 ancestry trait deltas', () => {
+	it('populates structured requirements for every legacy prerequisite chain', () => {
+		const legacyTraits = traitsData.filter((trait) => trait.prerequisites?.length);
+		expect(legacyTraits.length).toBeGreaterThan(0);
+		for (const trait of legacyTraits) {
+			expect(trait.requirements?.hasAllTraits).toEqual(trait.prerequisites);
+		}
+	});
+
 	it('keeps Hazardous Hide returned with the v0.10.5 grapple damage contract', () => {
 		const hazardousHide = traitsData.find((trait) => trait.id === 'beastborn_hazardous_hide');
 

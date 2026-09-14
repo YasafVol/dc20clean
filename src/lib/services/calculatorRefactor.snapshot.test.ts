@@ -57,7 +57,7 @@ describe('Calculator Refactor Snapshot (Phase 8b)', () => {
 			})
 		},
 		{
-			name: 'Wizard L5 with subclass',
+			name: 'Wizard L5 with selected talents and two Spellcaster Path progressions',
 			data: createFixture({
 				classId: 'wizard',
 				level: 5,
@@ -65,8 +65,15 @@ describe('Calculator Refactor Snapshot (Phase 8b)', () => {
 				attribute_agility: 0,
 				attribute_charisma: 1,
 				attribute_intelligence: 4,
-				selectedSubclass: 'Archmage',
-				pathPointAllocations: { spellcasting: 5 }
+				selectedSubclass: 'Portal Mage',
+				featureChoices: {
+					wizard_spell_school_initiate_0: ['Elemental']
+				},
+				selectedTalents: {
+					wizard_expanded_spell_school: 1,
+					wizard_crowned_sigil: 1
+				},
+				pathPointAllocations: { spellcasting: 2 }
 			})
 		},
 		{

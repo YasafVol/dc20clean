@@ -59,8 +59,6 @@ export const initializeCharacterState = (
 			attackBonus: 0,
 			damage: '',
 			damageType: '',
-			critRange: '',
-			critDamage: '',
 			brutalDamage: '',
 			heavyHitEffect: ''
 		},
@@ -71,8 +69,6 @@ export const initializeCharacterState = (
 			attackBonus: 0,
 			damage: '',
 			damageType: '',
-			critRange: '',
-			critDamage: '',
 			brutalDamage: '',
 			heavyHitEffect: ''
 		},
@@ -83,8 +79,6 @@ export const initializeCharacterState = (
 			attackBonus: 0,
 			damage: '',
 			damageType: '',
-			critRange: '',
-			critDamage: '',
 			brutalDamage: '',
 			heavyHitEffect: ''
 		}

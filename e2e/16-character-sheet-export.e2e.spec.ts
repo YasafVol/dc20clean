@@ -27,11 +27,16 @@ test.describe('Character sheet exports', () => {
 			return characters.find((character: any) => character.id === characterId);
 		}, TEST_CHARACTER.id);
 		expect(storedCharacter).toBeTruthy();
+		const sheetActions = page.getByRole('button', { name: 'Sheet actions' });
 
 		const jsonDownloadPromise = page.waitForEvent('download');
+		if (await sheetActions.isVisible().catch(() => false)) await sheetActions.click();
 		await page.getByRole('button', { name: /download json/i }).click();
 		const jsonDownload = await jsonDownloadPromise;
-		expect(jsonDownload.suggestedFilename()).toBe('Gibble_Bramblebomb.json');
+		const safeName = TEST_CHARACTER.finalName
+			.replace(/[^A-Za-z0-9]+/g, '_')
+			.replace(/^_+|_+$/g, '');
+		expect(jsonDownload.suggestedFilename()).toBe(`${safeName}.json`);
 
 		const exportedCharacter = JSON.parse((await readDownload(jsonDownload)).toString('utf8'));
 		expect(exportedCharacter).toMatchObject({
@@ -49,9 +54,11 @@ test.describe('Character sheet exports', () => {
 		expect(exportedCharacter.exportedAt).toEqual(expect.any(String));
 
 		const pdfDownloadPromise = page.waitForEvent('download');
+		if (await sheetActions.isVisible().catch(() => false)) await sheetActions.click();
 		await page.getByRole('button', { name: /export pdf/i }).click();
 		const pdfDownload = await pdfDownloadPromise;
-		expect(pdfDownload.suggestedFilename()).toBe('Gibble_Bramblebomb_vDC20-0.10.pdf');
+		const rulesVersion = TEST_CHARACTER.rulesVersion.replace(/^dc20-/, '');
+		expect(pdfDownload.suggestedFilename()).toBe(`${safeName}_vDC20-${rulesVersion}.pdf`);
 		const pdfBytes = await readDownload(pdfDownload);
 		expect(pdfBytes.length).toBeGreaterThan(1000);
 		expect(pdfBytes.subarray(0, 5).toString('ascii')).toBe('%PDF-');

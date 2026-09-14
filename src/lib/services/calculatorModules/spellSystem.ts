@@ -122,8 +122,7 @@ export function generateSpellsKnownSlots(
 	const slots: SpellsKnownSlot[] = [];
 
 	// 1. Generate Global Class Progression Slots
-	const totalProgressionSpellSlots =
-		(progressionGains.totalSpellsKnown ?? 0) + (progressionGains.totalCantripsKnown ?? 0);
+	const totalProgressionSpellSlots = progressionGains.totalSpellsKnown ?? 0;
 	for (let i = 0; i < totalProgressionSpellSlots; i++) {
 		slots.push({
 			id: `global_spell_${i}`,

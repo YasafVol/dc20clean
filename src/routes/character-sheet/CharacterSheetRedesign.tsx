@@ -49,6 +49,9 @@ import { HeroSection } from './components/new/HeroSection';
 
 // Import condition analyzer
 import { getDiceModifierForAction } from '../../lib/services/conditionEffectsAnalyzer';
+import EffectsRulesNotes from './components/EffectsRulesNotes';
+import ActiveConditionSummary from './components/ActiveConditionSummary';
+import ComplexFeatureHost from './components/ComplexFeatureHost';
 
 // Import skills data
 import { skillsData } from '../../lib/rulesdata/skills';
@@ -69,6 +72,10 @@ import WeaponPopup from './components/WeaponPopup';
 import InventoryPopup from './components/InventoryPopup';
 import RulebookPanel from './components/RulebookPanel';
 import CalculationTooltip from './components/shared/CalculationTooltip';
+import {
+	createDeathThresholdTooltipBreakdown,
+	createHPTooltipBreakdown
+} from './components/shared/hpTooltipBreakdown';
 import KnowledgeTrades from './components/KnowledgeTrades';
 import Languages from './components/Languages';
 import Attributes from './components/Attributes';
@@ -173,6 +180,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
+	const [headerActionDrawerOpen, setHeaderActionDrawerOpen] = useState(false);
 	const [rulebookOpen, setRulebookOpen] = useState(false);
 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -282,6 +290,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	const {
 		state,
 		readOnly,
+		canManageResources,
 		updateHP,
 		updateMP,
 		updateSP,
@@ -369,6 +378,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		itemId: string,
 		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
 	) => {
+		if (readOnly) return;
+
 		const inventory = state.character?.characterState?.inventory?.items || [];
 		const updatedItems = inventory.map((item: InventoryItemData) =>
 			item.id === itemId ? { ...item, ...updates } : item
@@ -446,6 +457,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		: undefined;
 	const currentHP = resources?.current?.currentHP ?? 0;
 	const maxHP = calculatedData?.breakdowns?.hpMax?.total ?? characterData.finalHPMax ?? 0;
+	const minHP = -(
+		calculatedData?.stats?.finalDeathThreshold ??
+		characterData.finalDeathThreshold ??
+		characterData.finalPrimeModifierValue + characterData.finalCombatMastery
+	);
 	const tempHP = resources?.current?.tempHP ?? 0;
 	const currentMP = resources?.current?.currentMP ?? 0;
 	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? characterData.finalMPMax ?? 0;
@@ -583,6 +599,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
+	const mobileHeaderActions = [
+		{ id: 'rulebook', label: t('characterSheet.rulebook'), emoji: '📖' },
+		{ id: 'long-rest', label: t('characterSheet.longRest'), emoji: '🌙' },
+		{ id: 'copy', label: t('characterSheet.copy'), emoji: '📋' },
+		{ id: 'download-json', label: t('characterSheet.downloadJson'), emoji: '⬇️' },
+		{ id: 'export-pdf', label: t('characterSheet.exportPdf'), emoji: '📄' }
+	];
 
 	// Export PDF from stored character values only.
 	const handleExportPdf = async () => {
@@ -625,8 +648,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!state.character) return;
 
 		try {
-			// Export full character as JSON for reimporting
-			const characterJson = JSON.stringify(state.character, null, 2);
+			const characterBackup = {
+				...state.character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
+			const characterJson = JSON.stringify(characterBackup, null, 2);
 			await navigator.clipboard.writeText(characterJson);
 			showSnackbarWithMessage('Character JSON copied to clipboard!', 'success');
 		} catch (err) {
@@ -641,7 +668,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!state.character) return;
 
 		try {
-			const characterJson = JSON.stringify(state.character, null, 2);
+			const characterBackup = {
+				...state.character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
+			const characterJson = JSON.stringify(characterBackup, null, 2);
 			const blob = new Blob([characterJson], { type: 'application/json' });
 			const safeName = (state.character.finalName || state.character.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
@@ -661,6 +693,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				error: err instanceof Error ? err.message : String(err)
 			});
 			showSnackbarWithMessage('Failed to download JSON', 'error');
+		}
+	};
+
+	const handleMobileHeaderAction = (actionId: string) => {
+		switch (actionId) {
+			case 'rulebook':
+				setRulebookOpen(true);
+				break;
+			case 'long-rest':
+				handleLongRest();
+				break;
+			case 'copy':
+				void copyCharacterToClipboard();
+				break;
+			case 'download-json':
+				downloadCharacterJson();
+				break;
+			case 'export-pdf':
+				void handleExportPdf();
+				break;
 		}
 	};
 
@@ -698,6 +750,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				return {
 					title: t('characterSheet.tooltipHP'),
 					breakdown: calculatedData?.breakdowns?.hpMax
+						? createHPTooltipBreakdown(
+								calculatedData.breakdowns.hpMax,
+								calculatedData.stats.finalMight,
+								characterData.level,
+								calculatedData.stats.className
+							)
+						: undefined,
+					additionalBreakdowns: calculatedData?.breakdowns?.death_threshold
+						? [
+								{
+									title: t('characterSheet.deathThreshold'),
+									breakdown: createDeathThresholdTooltipBreakdown(
+										calculatedData.breakdowns.death_threshold,
+										primeValue,
+										primeAttributeLabel,
+										combatMastery
+									)
+								}
+							]
+						: undefined
 				};
 			case 'mana':
 				return {
@@ -760,6 +832,8 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 	};
 
 	const tooltipData = getTooltipData();
+	const additionalTooltipBreakdowns =
+		'additionalBreakdowns' in tooltipData ? tooltipData.additionalBreakdowns : undefined;
 
 	return (
 		<PageContainer>
@@ -773,7 +847,9 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 						fontSize: '0.875rem'
 					}}
 				>
-					Read-only — viewing {state.character?.finalName ?? 'character'}&apos;s sheet
+					{canManageResources
+						? 'Legacy character — only resources and exhaustion can be changed'
+						: `Read-only — viewing ${state.character?.finalName ?? 'character'}'s sheet`}
 				</div>
 			)}
 			<Header
@@ -816,7 +892,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					</LeftSection>
 
 					{/* Mobile hamburger menu - only visible on mobile */}
-					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
+					<MobileMenuButton
+						aria-label="Sheet actions"
+						onClick={() => setHeaderActionDrawerOpen(true)}
+						whileTap={{ scale: 0.95 }}
+					>
+						☰
+					</MobileMenuButton>
 
 					<ActionButtons>
 						<CampaignFeedAction characterId={characterId} />
@@ -891,6 +973,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 							<HeroSection
 								currentHP={currentHP}
 								maxHP={maxHP}
+								minHP={minHP}
 								tempHP={tempHP}
 								currentMana={currentMP}
 								maxMana={maxMP}
@@ -911,6 +994,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								saveDC={saveDC}
 								initiative={initiative}
 								activeConditions={state.character?.characterState?.activeConditions || []}
+								resourceEditable={canManageResources}
 								hasHealthOverride={hasHealthOverride}
 								hasResourcesOverride={hasResourcesOverride}
 								hasRecoveryOverride={hasRecoveryOverride}
@@ -944,7 +1028,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 								onAreaADMouseLeave={handleMouseLeave}
 								onPrecisionDRMouseEnter={(e) => handleMouseEnter('precisionDR', e)}
 								onPrecisionDRMouseLeave={handleMouseLeave}
-								showRageToggle={hasRageFeature}
+								showRageToggle={hasRageFeature && !readOnly}
 								isRaging={isRaging}
 								onRageToggle={setRageActive}
 							/>
@@ -978,6 +1062,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												key={tab.id}
 												$active={activeTab === tab.id}
 												onClick={() => setActiveTab(tab.id)}
+												data-testid={`sheet-tab-${tab.id}`}
 												whileHover={{ y: -2 }}
 												whileTap={{ scale: 0.98 }}
 											>
@@ -1004,7 +1089,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												/>
 											)}
 											{activeTab === 'spells' && (
-												<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+												<Spells
+													onSpellClick={() => {}}
+													onSpellCast={handleSpellCast}
+													readOnly={readOnly}
+												/>
 											)}
 											{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 											{activeTab === 'maneuvers' && (
@@ -1015,7 +1104,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 													isMobile={isMobile}
 												/>
 											)}
-											{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+											{activeTab === 'features' && (
+												<>
+													<Features onFeatureClick={openFeaturePopup} />
+													<EffectsRulesNotes />
+													<ComplexFeatureHost />
+												</>
+											)}
 											{activeTab === 'conditions' && (
 												<>
 													<ActiveConditionsTracker
@@ -1024,6 +1119,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 														}
 														onToggleCondition={toggleActiveCondition}
 														onSetConditionStacks={setActiveConditionStacks}
+														readOnly={readOnly}
+													/>
+													<ActiveConditionSummary
+														activeConditions={
+															state.character?.characterState?.activeConditions || []
+														}
 													/>
 												</>
 											)}
@@ -1071,7 +1172,11 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 									/>
 								)}
 								{activeTab === 'spells' && (
-									<Spells onSpellClick={() => {}} onSpellCast={handleSpellCast} />
+									<Spells
+										onSpellClick={() => {}}
+										onSpellCast={handleSpellCast}
+										readOnly={readOnly}
+									/>
 								)}
 								{activeTab === 'inventory' && <Inventory onItemClick={openInventoryPopup} />}
 								{activeTab === 'maneuvers' && (
@@ -1082,13 +1187,25 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 										isMobile={isMobile}
 									/>
 								)}
-								{activeTab === 'features' && <Features onFeatureClick={openFeaturePopup} />}
+								{activeTab === 'features' && (
+									<>
+										<Features onFeatureClick={openFeaturePopup} />
+										<EffectsRulesNotes />
+										<ComplexFeatureHost />
+									</>
+								)}
 								{activeTab === 'conditions' && (
-									<ActiveConditionsTracker
-										activeConditions={state.character?.characterState?.activeConditions || []}
-										onToggleCondition={toggleActiveCondition}
-										onSetConditionStacks={setActiveConditionStacks}
-									/>
+									<>
+										<ActiveConditionsTracker
+											activeConditions={state.character?.characterState?.activeConditions || []}
+											onToggleCondition={toggleActiveCondition}
+											onSetConditionStacks={setActiveConditionStacks}
+											readOnly={readOnly}
+										/>
+										<ActiveConditionSummary
+											activeConditions={state.character?.characterState?.activeConditions || []}
+										/>
+									</>
 								)}
 								{activeTab === 'knowledge' && (
 									<>
@@ -1115,11 +1232,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				selectedInventoryItem={selectedInventoryItem}
 				onClose={closeInventoryPopup}
 				onUpdateCustomItem={handleUpdateCustomItem}
+				readOnly={readOnly}
 			/>
 			<RulebookPanel open={rulebookOpen} onClose={() => setRulebookOpen(false)} />
 			<CalculationTooltip
 				title={tooltipData.title}
 				breakdown={tooltipData.breakdown}
+				additionalBreakdowns={additionalTooltipBreakdowns}
 				visible={tooltipState.visible}
 				positionX={tooltipState.x}
 				positionY={tooltipState.y}
@@ -1140,6 +1259,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				items={hamburgerMenuItems}
 				onItemClick={setActiveTab}
 				activeItemId={activeTab}
+			/>
+			<HamburgerDrawer
+				isOpen={headerActionDrawerOpen}
+				onClose={() => setHeaderActionDrawerOpen(false)}
+				items={mobileHeaderActions}
+				onItemClick={handleMobileHeaderAction}
 			/>
 
 			{/* Dice Roller Component */}

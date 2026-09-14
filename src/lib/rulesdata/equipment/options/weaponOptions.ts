@@ -36,6 +36,9 @@ export const WEAPON_TYPES: WeaponTypeDefinition[] = [
 // WEAPON STYLES
 // ================================================================= //
 
+export const WEAPON_ENHANCEMENT_RULE =
+	'When a PC with Weapon Training makes an Attack with a Weapon, they can spend 1 AP or 1 SP to use its Weapon Enhancement.';
+
 export const WEAPON_STYLES: WeaponStyleDefinition[] = [
 	// Melee Styles
 	{

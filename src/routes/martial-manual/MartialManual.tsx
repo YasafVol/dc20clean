@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { allManeuvers, ManeuverType, type Maneuver } from '../../lib/rulesdata/martials/maneuvers';
@@ -11,12 +12,28 @@ import * as S from '../spellbook/Spellbook.styles';
 
 const MartialManual: React.FC = () => {
 	const { t } = useTranslation();
+	const [searchParams] = useSearchParams();
+	const requestedManeuver = allManeuvers.find(
+		(maneuver) => maneuver.id === searchParams.get('maneuver')
+	);
 	const [typeFilter, setTypeFilter] = useState<ManeuverType[]>([]);
 	const [apCostFilter, setApCostFilter] = useState<number[]>([]);
 	const [spCostFilter, setSpCostFilter] = useState<number[]>([]);
 	const [reactionOnly, setReactionOnly] = useState(false);
-	const [searchQuery, setSearchQuery] = useState('');
-	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(new Set());
+	const [searchQuery, setSearchQuery] = useState(requestedManeuver?.name ?? '');
+	const [expandedManeuvers, setExpandedManeuvers] = useState<Set<string>>(
+		() => new Set(requestedManeuver ? [requestedManeuver.id] : [])
+	);
+
+	useEffect(() => {
+		if (!requestedManeuver) return;
+		requestAnimationFrame(() => {
+			document.getElementById(`maneuver-card-${requestedManeuver.id}`)?.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center'
+			});
+		});
+	}, [requestedManeuver]);
 
 	const availableApCosts = useMemo(() => {
 		return Array.from(new Set(allManeuvers.map((maneuver) => maneuver.cost.ap))).sort(
@@ -271,7 +288,11 @@ const ManeuverCard: React.FC<ManeuverCardProps> = ({ maneuver, isExpanded, onTog
 	const { t } = useTranslation();
 
 	return (
-		<S.SpellCardContainer $expanded={isExpanded} onClick={onToggle}>
+		<S.SpellCardContainer
+			id={`maneuver-card-${maneuver.id}`}
+			$expanded={isExpanded}
+			onClick={onToggle}
+		>
 			<S.SpellHeader>
 				<S.SpellName>{maneuver.name}</S.SpellName>
 				<S.SpellBadgesContainer>

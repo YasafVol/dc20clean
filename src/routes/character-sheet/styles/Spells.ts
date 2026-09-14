@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { theme } from './theme';
+import { media, theme } from './theme';
 
 interface MobileStyledProps {
 	$isMobile?: boolean;
@@ -11,6 +11,11 @@ export const StyledSpellsSection = styled.div<MobileStyledProps>`
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.lg};
 	padding: ${theme.spacing[4]};
+	min-width: 0;
+
+	${media.mobile} {
+		padding: ${theme.spacing[3]};
+	}
 `;
 
 export const StyledSpellsHeader = styled.div<MobileStyledProps>`
@@ -20,6 +25,16 @@ export const StyledSpellsHeader = styled.div<MobileStyledProps>`
 	margin-bottom: ${theme.spacing[4]};
 	padding-bottom: ${theme.spacing[2]};
 	border-bottom: 1px solid ${theme.colors.border.default};
+
+	@container sheet-tabs (max-width: 56rem) {
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: ${theme.spacing[3]};
+	}
+
+	${media.mobile} {
+		flex-direction: column;
+	}
 `;
 
 export const StyledSpellsTitle = styled.h3<MobileStyledProps>`
@@ -36,6 +51,13 @@ export const StyledSpellsControls = styled.div<MobileStyledProps>`
 	display: flex;
 	gap: ${theme.spacing[2]};
 	align-items: center;
+	min-width: 0;
+
+	@container sheet-tabs (max-width: 56rem) {
+		flex: 1 1 100%;
+		flex-wrap: wrap;
+		width: 100%;
+	}
 `;
 
 export const StyledAddSpellButton = styled.button<MobileStyledProps>`
@@ -73,6 +95,10 @@ export const StyledSpellsHeaderRow = styled.div<MobileStyledProps>`
 	font-weight: ${theme.typography.fontWeight.bold};
 	font-size: ${theme.typography.fontSize.sm};
 	color: ${theme.colors.accent.primary};
+
+	@container sheet-tabs (max-width: 56rem) {
+		display: none;
+	}
 `;
 
 export const StyledHeaderColumn = styled.div<MobileStyledProps>`
@@ -100,10 +126,47 @@ export const StyledSpellRow = styled.div<MobileStyledProps>`
 	align-items: center;
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
+	min-width: 0;
 
 	&:hover {
 		background: ${theme.colors.bg.elevated};
 		border-color: ${theme.colors.accent.primary};
+	}
+
+	@container sheet-tabs (max-width: 56rem) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: ${theme.spacing[3]};
+		padding: ${theme.spacing[3]};
+
+		& > :first-child,
+		& > :last-child {
+			grid-column: 1 / -1;
+		}
+
+		& > :nth-child(n + 2):nth-child(-n + 6)::before {
+			display: block;
+			margin-bottom: ${theme.spacing[1]};
+			color: ${theme.colors.text.muted};
+			font-size: ${theme.typography.fontSize.xs};
+			font-weight: ${theme.typography.fontWeight.semibold};
+			text-transform: uppercase;
+		}
+
+		& > :nth-child(2)::before {
+			content: 'School';
+		}
+		& > :nth-child(3)::before {
+			content: 'Duration';
+		}
+		& > :nth-child(4)::before {
+			content: 'AP';
+		}
+		& > :nth-child(5)::before {
+			content: 'MP';
+		}
+		& > :nth-child(6)::before {
+			content: 'Range';
+		}
 	}
 `;
 
@@ -112,6 +175,10 @@ export const StyledSpellActions = styled.div`
 	align-items: center;
 	justify-content: flex-end;
 	gap: ${theme.spacing[1]};
+
+	@container sheet-tabs (max-width: 56rem) {
+		justify-content: flex-end;
+	}
 `;
 
 export const StyledSpellActionButton = styled.button`
@@ -167,6 +234,7 @@ export const StyledSpellSelect = styled.select<MobileStyledProps>`
 	background: ${theme.colors.bg.primary};
 	color: ${theme.colors.text.primary};
 	transition: border-color 0.2s;
+	min-width: 0;
 
 	&:focus {
 		outline: none;
@@ -187,6 +255,8 @@ export const StyledSchoolFilter = styled.select<MobileStyledProps>`
 	background: ${theme.colors.bg.primary};
 	color: ${theme.colors.text.primary};
 	transition: border-color 0.2s;
+	min-width: min(10rem, 100%);
+	flex: 1 1 10rem;
 
 	&:focus {
 		outline: none;
@@ -206,6 +276,15 @@ export const StyledSpellCell = styled.div<MobileStyledProps>`
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+	min-width: 0;
+	overflow-wrap: anywhere;
+
+	@container sheet-tabs (max-width: 56rem) {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		text-align: left;
+	}
 `;
 
 interface BoldSpellCellProps extends MobileStyledProps {
@@ -268,6 +347,11 @@ export const StyledFilterLabel = styled.label<MobileStyledProps>`
 	font-size: ${theme.typography.fontSize.sm};
 	color: ${theme.colors.text.secondary};
 	margin-right: ${theme.spacing[2]};
+
+	@container sheet-tabs (max-width: 56rem) {
+		flex: 0 0 100%;
+		margin-right: 0;
+	}
 `;
 
 export const StyledSpellDescriptionContainer = styled.div<MobileStyledProps>`
@@ -278,6 +362,8 @@ export const StyledSpellDescriptionContainer = styled.div<MobileStyledProps>`
 	border-top: none;
 	border-radius: 0 0 ${theme.borderRadius.md} ${theme.borderRadius.md};
 	margin-top: -${theme.spacing[1]};
+	min-width: 0;
+	overflow-wrap: anywhere;
 `;
 
 export const StyledSpellDescriptionHeader = styled.div<MobileStyledProps>`

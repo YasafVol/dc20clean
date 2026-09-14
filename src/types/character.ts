@@ -135,7 +135,7 @@ export interface FeatureData {
 	id: string;
 	name: string;
 	description: string;
-	source: 'ancestry' | 'class' | 'choice';
+	source: 'ancestry' | 'class' | 'subclass' | 'talent' | 'path' | 'choice';
 	sourceDetail?: string; // e.g., "Human (Default)", "Barbarian Lvl 1", etc.
 }
 
@@ -255,8 +255,6 @@ export interface AttackData {
 	attackBonus: number;
 	damage: string;
 	damageType: string;
-	critRange: string;
-	critDamage: string;
 	brutalDamage: string;
 	heavyHitEffect: string;
 }
@@ -288,7 +286,15 @@ export interface SpellData {
 
 export interface InventoryItemData {
 	id: string;
-	itemType: 'Weapon' | 'Armor' | 'Shield' | 'Adventuring Supply' | 'Potion' | 'Custom' | '';
+	itemType:
+		| 'Weapon'
+		| 'Armor'
+		| 'Shield'
+		| 'Adventuring Supply'
+		| 'Spell Focus'
+		| 'Potion'
+		| 'Custom'
+		| '';
 	itemName: string;
 	count: number;
 	cost?: string;

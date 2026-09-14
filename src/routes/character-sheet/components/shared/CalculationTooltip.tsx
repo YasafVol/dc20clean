@@ -29,9 +29,15 @@ interface StatBreakdown {
 	conditionalTotal?: number;
 }
 
+interface AdditionalBreakdown {
+	title: string;
+	breakdown: StatBreakdown;
+}
+
 interface CalculationTooltipProps {
 	title: string;
 	breakdown?: StatBreakdown | null;
+	additionalBreakdowns?: AdditionalBreakdown[];
 	visible: boolean;
 	positionX: number;
 	positionY: number;
@@ -107,6 +113,21 @@ const TooltipTotal = styled(TooltipRow)`
 	font-size: ${theme.typography.fontSize.sm};
 `;
 
+const TooltipSubsection = styled.div`
+	margin-top: ${theme.spacing[3]};
+	padding-top: ${theme.spacing[3]};
+	border-top: 1px solid ${theme.colors.border.default};
+`;
+
+const TooltipSubtitle = styled.div`
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	color: ${theme.colors.text.primary};
+	margin-bottom: ${theme.spacing[2]};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+`;
+
 function getSourceLabel(source: EffectSourceLike): string {
 	if (typeof source === 'string') {
 		return source;
@@ -121,9 +142,41 @@ function getEffectLabel(effect: BreakdownEffect): string {
 	return effect.name || getSourceLabel(effect.source);
 }
 
+function renderBreakdown(breakdown: StatBreakdown) {
+	return (
+		<>
+			<TooltipSection>
+				<TooltipRow>
+					<TooltipLabel>{breakdown.baseLabel || 'Base Value'}</TooltipLabel>
+					<TooltipValue>{breakdown.base}</TooltipValue>
+				</TooltipRow>
+
+				{breakdown.effects.map((effect, index) => (
+					<TooltipRow key={`${getEffectLabel(effect)}-${index}`}>
+						<TooltipLabel>
+							{getEffectLabel(effect)}
+							{effect.condition && ` (${effect.condition})`}
+						</TooltipLabel>
+						<TooltipValue $isPositive={effect.value > 0}>
+							{effect.value > 0 ? '+' : ''}
+							{effect.value}
+						</TooltipValue>
+					</TooltipRow>
+				))}
+			</TooltipSection>
+
+			<TooltipTotal>
+				<TooltipLabel>Total</TooltipLabel>
+				<TooltipValue>{breakdown.total}</TooltipValue>
+			</TooltipTotal>
+		</>
+	);
+}
+
 const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 	title,
 	breakdown,
+	additionalBreakdowns = [],
 	visible,
 	positionX,
 	positionY
@@ -133,35 +186,14 @@ const CalculationTooltip: React.FC<CalculationTooltipProps> = ({
 	return (
 		<TooltipOverlay $visible={visible} $x={positionX} $y={positionY}>
 			<TooltipTitle>{title}</TooltipTitle>
+			{renderBreakdown(breakdown)}
 
-			<TooltipSection>
-				<TooltipRow>
-					<TooltipLabel>{breakdown.baseLabel || 'Base Value'}</TooltipLabel>
-					<TooltipValue>{breakdown.base}</TooltipValue>
-				</TooltipRow>
-
-				{breakdown.effects.length > 0 && (
-					<>
-						{breakdown.effects.map((effect, index) => (
-							<TooltipRow key={index}>
-								<TooltipLabel>
-									{getEffectLabel(effect)}
-									{effect.condition && ` (${effect.condition})`}
-								</TooltipLabel>
-								<TooltipValue $isPositive={effect.value > 0}>
-									{effect.value > 0 ? '+' : ''}
-									{effect.value}
-								</TooltipValue>
-							</TooltipRow>
-						))}
-					</>
-				)}
-			</TooltipSection>
-
-			<TooltipTotal>
-				<TooltipLabel>Total</TooltipLabel>
-				<TooltipValue>{breakdown.total}</TooltipValue>
-			</TooltipTotal>
+			{additionalBreakdowns.map((section) => (
+				<TooltipSubsection key={section.title}>
+					<TooltipSubtitle>{section.title}</TooltipSubtitle>
+					{renderBreakdown(section.breakdown)}
+				</TooltipSubsection>
+			))}
 		</TooltipOverlay>
 	);
 };

@@ -1,8 +1,12 @@
 # DC20Clean – Spells System (v0.10.5)
 
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
+> Owns: Spell catalog generation, spell IDs and taxonomy, spell eligibility and selection, enhancements, and spell-facing creation, sheet, and reference behavior.
+> Does not own: Class progression slot grants, generic derived-stat calculation, equipment rules outside spell focuses, or rules-upgrade policy.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, and `src/lib/rulesdata/spells-data/`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-27
+> Last Updated: 2026-09-13
 
 ---
 
@@ -21,17 +25,16 @@
   - `src/routes/character-creation/*` (spell pickers where applicable)
   - `src/routes/character-sheet/*` (spell list, filters, actions)
 
-### Equipage Integration TODO
+### Equipage Integration
 
-Equipped Spell Focus properties should be reflected in spell viewing wherever possible:
+The sheet's pure `spellPresentation.ts` helper reflects equipped Spell Focus properties
+in spell viewing:
 
 - `Powerful`: show Spell Attack damage as increased by `+1`.
 - `Reach`: flag or adjust spells with Range `1` to show `+1 Space`.
 - `Long-Ranged`: flag or adjust spells with Range greater than `1` to show `+5 Spaces`.
-- `Vicious`: include the equipped focus bonus in spell attack/to-hit display once the
-  sheet exposes a distinct spell attack bonus.
-- `Channeling`: include the equipped focus bonus in spell check display once spell
-  checks are modeled separately from the generic attack/spell check.
+- `Vicious`: adds to the displayed modifier for spells whose rules text calls for a Spell Attack.
+- `Channeling`: adds to the displayed modifier for spells whose rules text calls for a Spell Check.
 
 This belongs with the Equipage effect pipeline: the focus effects should come from
 equipped inventory rows, not from every saved focus in Equipage storage.
@@ -168,6 +171,11 @@ one entry per spell with ID, source, school, tags, cost, range, duration, sustai
 flags, enhancement count, and source line provenance. The old v0.10 school catalogs and
 overlay are not exported at runtime; `ALL_SPELLS` is the sole spell dataset.
 
+The generator populates structured `EffectResolution` metadata when source prose has
+an explicit Spell Attack versus PD/AD, a target Save, or both. Ambiguous and non-roll
+effects remain unset rather than receiving guessed mechanics; the report records
+deterministic resolution coverage.
+
 ### 3.3 Deterministic Audit Boundary
 
 Code can deterministically verify:
@@ -197,6 +205,7 @@ explicit character migration.
 ### 4.2 Spells Known Slots (Pockets)
 
 - Individual "pockets" that grant a single spell from the flat spell list.
+- Current class and path progression produces one Spells Known total; there is no separate cantrip budget or slot category.
 - Can have **Specific Restrictions** (e.g., "Must be from the Elemental school").
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.

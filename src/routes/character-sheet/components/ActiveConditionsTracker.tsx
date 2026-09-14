@@ -23,6 +23,8 @@ interface ActiveConditionsTrackerProps {
 	onToggleCondition: (conditionId: string) => void;
 	onSetConditionStacks?: (conditionId: string, stacks: number) => void;
 	isMobile?: boolean;
+	showTitle?: boolean;
+	readOnly?: boolean;
 }
 
 const Container = styled.section<{ $isMobile?: boolean }>`
@@ -266,7 +268,9 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	activeConditions,
 	onToggleCondition,
 	onSetConditionStacks,
-	isMobile = false
+	isMobile = false,
+	showTitle = true,
+	readOnly = false
 }) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState('');
@@ -345,7 +349,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 	return (
 		<Container $isMobile={isMobile}>
 			<Header>
-				<Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>
+				{showTitle && <Title>⚔️ {t('characterSheet.conditionsTitle')}</Title>}
 				<ActiveCount>
 					{t('characterSheet.conditionsActive', { count: activeConditions.length })}
 				</ActiveCount>
@@ -387,6 +391,7 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 										<Checkbox
 											type="checkbox"
 											checked={isActive}
+											disabled={readOnly}
 											onChange={() =>
 												condition.usesStacks
 													? setConditionStacks(condition.id, isActive ? 0 : 1)
@@ -407,19 +412,23 @@ export const ActiveConditionsTracker: React.FC<ActiveConditionsTrackerProps> = (
 
 								{condition.usesStacks && isActive && (
 									<StackControls onClick={(e) => e.stopPropagation()}>
-										<StackButton
-											type="button"
-											onClick={() => setConditionStacks(condition.id, stackValue - 1)}
-										>
-											-
-										</StackButton>
+										{!readOnly && (
+											<StackButton
+												type="button"
+												onClick={() => setConditionStacks(condition.id, stackValue - 1)}
+											>
+												-
+											</StackButton>
+										)}
 										<StackValue>Stacks: {stackValue}</StackValue>
-										<StackButton
-											type="button"
-											onClick={() => setConditionStacks(condition.id, stackValue + 1)}
-										>
-											+
-										</StackButton>
+										{!readOnly && (
+											<StackButton
+												type="button"
+												onClick={() => setConditionStacks(condition.id, stackValue + 1)}
+											>
+												+
+											</StackButton>
+										)}
 									</StackControls>
 								)}
 

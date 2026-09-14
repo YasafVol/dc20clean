@@ -172,6 +172,6 @@ export const clericCanonicalRecipe: AgenticCharacterRecipe = {
 		}
 	},
 	expectedSheet: {
-		visibleText: ['agentic cleric canonical', 'Cleric', 'Human']
+		visibleText: ['agentic cleric canonical', 'Cleric', 'Human', 'Darkvision 15']
 	}
 };

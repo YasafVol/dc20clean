@@ -1,8 +1,12 @@
 # Feature ID Naming Convention
 
 > Purpose: Standard naming convention for feature IDs in class definitions.
+> Owns: Stable class-feature, subclass-feature, and feature-choice identifier formats and conversion rules.
+> Does not own: Feature mechanics, display names, progression timing, effect semantics, or persistence migration policy.
+> Authoritative source: This document; validation is implemented by class-data tests and source-audit tooling.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-01
+> Last Updated: 2026-07-21
 
 ## Convention Rules
 

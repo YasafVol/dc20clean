@@ -1,10 +1,12 @@
 # DC20Clean – Equipage (Custom Equipment System)
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
+> Owns: Custom weapon, armor, shield, and spell-focus schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
+> Does not own: General character inventory, generic effect semantics, character-sheet equip state, or PDF export mapping.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-06-23
->
-> **Menu Entry:** "Equipage" in Reference Tools section
+> Last Updated: 2026-09-13
 
 ---
 
@@ -36,7 +38,7 @@ treated as `0.10`, while current saves are stamped `0.10.5`.
 
 ### Options/Data (`src/lib/rulesdata/equipment/options/`)
 
-- `weaponOptions.ts` — Weapon styles, enhancements, properties, 38 preset weapons
+- `weaponOptions.ts` — Weapon styles, enhancements, properties, and 45 preset stat blocks covering 48 named standard weapons
 - `armorOptions.ts` — Armor properties, 7 preset armors
 - `shieldOptions.ts` — Shield properties, rules, 5 preset shields
 - `spellFocusOptions.ts` — Spell focus properties, 13 preset spell focuses
@@ -93,6 +95,9 @@ fields and property IDs when the item is equipped from the character sheet inven
 
 Character inventory rows include an explicit `isEquipped` flag. Only equipped/wielded
 items contribute equipment effects; carried inventory does not affect calculations.
+The standard character-sheet inventory includes all 13 preset spell focuses as the
+`Spell Focus` item type. Their item selectors are alphabetical, and equipped presets
+resolve their canonical property effects through the same bridge as custom focuses.
 Rows linked to saved Equipage items keep `itemType: 'Custom'` for selector compatibility
 and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, or `spellFocus`)
 so the inventory can label them as Custom Weapon, Custom Armor, Custom Shield, or
@@ -136,6 +141,11 @@ Each style has a **Weapon Enhancement** costing 1 AP or 1 SP:
 | Sword    | Slashing    | Accuracy    | Add d4 to Attack Check                 |
 | Whip     | Slashing    | Pull        | Pull target 1+ Spaces                  |
 
+`WEAPON_ENHANCEMENT_RULE` stores the shared Weapon Training usage rule once beside
+the style catalog. Character-sheet attack details resolve standard weapon names through
+`PRESET_WEAPONS`, then render each resolved style's enhancement instead of maintaining
+separate popup prose.
+
 ### Weapon Properties
 
 | Property      | Cost | Type   | Effect                                    |
@@ -168,15 +178,27 @@ Weapon property availability is represented with explicit applicability arrays
 equipment effect: equipped/wielded weapons with Guard add `MODIFY_STAT pd +1` to the
 calculator.
 
-### Preset Weapons (38)
+The standard inventory weapon list is derived from `PRESET_WEAPONS`; it is not maintained
+as a second rules table. Grouped stat blocks such as Sickle / Hand Axe / Throwing Star
+are expanded into individual selectable names. The adapter converts canonical style and
+property IDs into the character sheet's display shape and synthesizes ranged `Range`
+facts. Compatibility-only `Special`, `Chained`, and `Capture` type values remain readable
+for old saved data, but Bolas and Net are not selectable current weapons.
+
+The alternative character sheet's add-weapon picker consumes this same expanded catalog.
+Its Inventory source filters the catalog by standard weapon names in character inventory;
+Full list exposes the entire alphabetical catalog. Custom Equipage weapons remain outside
+that picker until attacks persist a stable `customEquipmentId` rather than name alone.
+
+### Preset Weapons (45 stat blocks / 48 names)
 
 Organized by category:
 
-- **One-Handed Melee** (12): Sickle, Brass Knuckles, Club, Light Hammer, etc.
-- **Versatile** (10): Battleaxe, Flail, Longsword, Spear, etc.
-- **Two-Handed Melee** (11): Scythe, Greataxe, Halberd, Greatsword, etc.
-- **One-Handed Ranged** (3): Sling, Hand Crossbow, Hand Stonebow
-- **Two-Handed Ranged** (10): Shortbow, Longbow, Light Crossbow, etc.
+- **One-Handed Melee**: 12 stat blocks / 14 names
+- **Versatile**: 10 stat blocks / 11 names
+- **Two-Handed Melee**: 11 stat blocks / 11 names
+- **One-Handed Ranged**: 3 stat blocks / 3 names
+- **Two-Handed Ranged**: 9 stat blocks / 9 names
 
 ---
 
@@ -447,15 +469,26 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 - Delete individual items
 - Export all to JSON
 - Import from JSON file
+- Duplicate any saved item as an independent `Copy`; the source remains unchanged and
+  the duplicate receives a new ID and timestamps.
+- Edit any saved item in its category builder. Saving preserves the stable item ID and
+  creation timestamp while refreshing its mechanical effects and update timestamp.
+
+### Preset Search
+
+All four builders expose client-side preset search on the first step. Search matches
+all entered tokens across preset names, equipment type, properties, and weapon styles.
+Weapon search replaces the former 12-item truncation, so every preset is selectable
+without a separate modal.
 
 ---
 
 ## 10. Future Enhancements
 
 - [ ] Integration with character creation (equip custom items)
-- [ ] Edit existing saved equipment
-- [ ] Duplicate/clone functionality
-- [ ] Search/filter presets
+- [x] Edit existing saved equipment
+- [x] Duplicate/clone functionality
+- [x] Search/filter presets
 - [ ] Mobile-optimized layout
 - [ ] Share equipment via URL/code
 

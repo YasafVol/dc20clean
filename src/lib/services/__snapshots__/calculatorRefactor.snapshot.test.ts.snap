@@ -430,7 +430,6 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Bar
     "pendingSubclassChoices": 0,
     "totalAncestryPoints": 0,
     "totalAttributePoints": 0,
-    "totalCantripsKnown": 0,
     "totalManeuversKnown": 2,
     "totalPathPoints": 0,
     "totalSkillPoints": 0,
@@ -1074,7 +1073,6 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Dwa
     "pendingSubclassChoices": 0,
     "totalAncestryPoints": 0,
     "totalAttributePoints": 0,
-    "totalCantripsKnown": 0,
     "totalManeuversKnown": 2,
     "totalPathPoints": 1,
     "totalSkillPoints": 0,
@@ -1688,7 +1686,6 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
     "pendingSubclassChoices": 1,
     "totalAncestryPoints": 0,
     "totalAttributePoints": 1,
-    "totalCantripsKnown": 1,
     "totalManeuversKnown": 4,
     "totalPathPoints": 1,
     "totalSkillPoints": 1,
@@ -2285,7 +2282,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Spe
 }
 `;
 
-exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wizard L5 with subclass 1`] = `
+exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wizard L5 with selected talents and two Spellcaster Path progressions 1`] = `
 {
   "ancestry": {
     "ancestryPointsRemaining": 5,
@@ -2468,11 +2465,11 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "total": 5,
     },
     "mpMax": {
-      "base": 21,
-      "conditionalTotal": 21,
+      "base": 18,
+      "conditionalTotal": 18,
       "effects": [],
       "statName": "mpMax",
-      "total": 21,
+      "total": 18,
     },
     "pd": {
       "base": 15,
@@ -2532,6 +2529,71 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
     "tags": [],
   },
   "grantedAbilities": [
+    {
+      "description": "Bind Arcane Sigil to a willing creature for mobility and +2 AD.",
+      "isConditional": false,
+      "name": "crowned_sigil",
+      "source": {
+        "category": "Talent",
+        "description": "When you create an Arcane Sigil, you can bind it to a willing creature within 1 Space. While bound, the Arcane Sigil moves with the creature and grants it a +2 bonus to its AD. A creature can only be bound to one Arcane Sigil at a time. You can spend 1 AP to unbind the Arcane Sigil and place it on the ground within 1 Space of the creature.",
+        "id": "wizard_crowned_sigil",
+        "name": "Crowned Sigil",
+        "type": "talent",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Enhances Arcane Sigil to create a linked teleportation portal.",
+      "isConditional": false,
+      "name": "portal_magic",
+      "source": {
+        "category": "Portal Mage Level 3",
+        "description": "When you use your Arcane Sigil, you can spend 1 additional MP to create a linked Arcane Portal within 10 Spaces. Creatures can spend 1 Space of Movement to teleport between the Sigil and Portal. You can cast spells or make attacks from either location.",
+        "id": "portal_magic",
+        "name": "Portal Magic",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "When you learn a new Spell, you can choose any Spell with the Teleportation Spell Tag.",
+      "isConditional": false,
+      "name": "teleportation_expert",
+      "source": {
+        "category": "Portal Mage Level 3",
+        "description": "When you use your Arcane Sigil, you can spend 1 additional MP to create a linked Arcane Portal within 10 Spaces. Creatures can spend 1 Space of Movement to teleport between the Sigil and Portal. You can cast spells or make attacks from either location.",
+        "id": "portal_magic",
+        "name": "Portal Magic",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "ADV on checks related to Astromancy. Can analyze portals.",
+      "isConditional": false,
+      "name": "portal_sage",
+      "source": {
+        "category": "Portal Mage Level 3",
+        "description": "You have ADV on Checks to learn about the Astromancy Spell School. You can spend 1 minute observing a portal to make a DC 10 Spell Check to understand its destination and duration.",
+        "id": "portal_sage",
+        "name": "Portal Sage",
+        "type": "class_feature",
+      },
+      "type": "active",
+    },
+    {
+      "description": "Reduce MP cost by 1 for Elemental spells (once per Long Rest, regain on Initiative).",
+      "isConditional": false,
+      "name": "signature_school_elemental",
+      "source": {
+        "category": "Wizard Choice",
+        "description": "Specialize in manipulating the elements.",
+        "id": "wizard_spell_school_initiate_0_Elemental",
+        "name": "Elemental",
+        "type": "choice",
+      },
+      "type": "active",
+    },
     {
       "description": "Create Arcane Sigil (1 AP + 1 MP): 1 Space area, choose School/Tag, creatures within have ADV on Spell Checks for that type. Can teleport sigil 1 AP within 10 spaces.",
       "isConditional": false,
@@ -2615,11 +2677,10 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
     "pendingSubclassChoices": 1,
     "totalAncestryPoints": 2,
     "totalAttributePoints": 2,
-    "totalCantripsKnown": 3,
     "totalManeuversKnown": 0,
     "totalPathPoints": 2,
     "totalSkillPoints": 3,
-    "totalSpellsKnown": 9,
+    "totalSpellsKnown": 8,
     "totalTalents": 2,
     "totalTradePoints": 2,
     "unlockedFeatureIds": [
@@ -2629,6 +2690,8 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "wizard_ritual_caster",
       "wizard_prepared_spell",
       "wizard_level_5_placeholder",
+      "portal_magic",
+      "portal_sage",
     ],
   },
   "movements": [
@@ -3242,13 +3305,43 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
       "type": "spell",
     },
     {
-      "id": "global_spell_8",
-      "isGlobal": true,
-      "sourceName": "Wizard Progression",
+      "id": "specialized_wizard_expanded_spell_school_1_0",
+      "isGlobal": false,
+      "sourceName": "Expanded Spell School",
+      "specificRestrictions": {},
       "type": "spell",
     },
     {
-      "id": "specialized_Expert Wizard_Spell School Initiate_5_0",
+      "id": "specialized_wizard_expanded_spell_school_1_1",
+      "isGlobal": false,
+      "sourceName": "Expanded Spell School",
+      "specificRestrictions": {},
+      "type": "spell",
+    },
+    {
+      "id": "specialized_wizard_spell_school_initiate_0_Elemental_8_0",
+      "isGlobal": false,
+      "sourceName": "Elemental",
+      "specificRestrictions": {
+        "schools": [
+          "Elemental",
+        ],
+      },
+      "type": "spell",
+    },
+    {
+      "id": "specialized_wizard_spell_school_initiate_0_Elemental_8_1",
+      "isGlobal": false,
+      "sourceName": "Elemental",
+      "specificRestrictions": {
+        "schools": [
+          "Elemental",
+        ],
+      },
+      "type": "spell",
+    },
+    {
+      "id": "specialized_Expert Wizard_Spell School Initiate_13_0",
       "isGlobal": false,
       "sourceName": "Spell School Initiate",
       "specificRestrictions": {},
@@ -3269,7 +3362,7 @@ exports[`Calculator Refactor Snapshot (Phase 8b) > should match snapshot for Wiz
     "finalInitiativeBonus": 3,
     "finalIntelligence": 4,
     "finalJumpDistance": 0,
-    "finalMPMax": 21,
+    "finalMPMax": 18,
     "finalMartialCheck": 0,
     "finalMight": -1,
     "finalMoveSpeed": 5,

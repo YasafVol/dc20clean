@@ -37,6 +37,11 @@ export const HeaderContent = styled.div`
 	flex-direction: column;
 	align-items: flex-start;
 	gap: ${theme.spacing[4]};
+	min-width: 0;
+
+	${media.mobile} {
+		padding-top: 3.5rem;
+	}
 `;
 
 export const LeftSection = styled.div`
@@ -111,12 +116,18 @@ export const MetaLink = styled(Link)`
 
 export const ActionButtons = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	gap: ${theme.spacing[3]};
-	/* Leave room for the fixed FixedAuthStatus overlay (≈12rem from right edge) */
-	padding-right: 12rem;
 
 	${media.tablet} {
-		padding-right: 10rem;
+		flex-wrap: nowrap;
+		max-width: 100%;
+		overflow-x: auto;
+		padding-bottom: ${theme.spacing[1]};
+
+		& > * {
+			flex: 0 0 auto;
+		}
 	}
 
 	${media.mobile} {
@@ -182,6 +193,9 @@ export const MainContent = styled.main`
 	max-width: 1600px;
 	margin: 0 auto;
 	padding: ${theme.spacing[8]};
+	width: 100%;
+	box-sizing: border-box;
+	min-width: 0;
 
 	${media.tablet} {
 		padding: ${theme.spacing[6]};
@@ -195,11 +209,11 @@ export const MainContent = styled.main`
 
 export const TwoColumnLayout = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 2fr;
+	grid-template-columns: 280px minmax(0, 1fr);
 	gap: ${theme.spacing[6]};
+	min-width: 0;
 
 	${media.tablet} {
-		grid-template-columns: 280px 1fr;
 		gap: ${theme.spacing[4]};
 	}
 
@@ -213,12 +227,14 @@ export const LeftColumn = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: ${theme.spacing[6]};
+	min-width: 0;
 `;
 
 export const RightColumn = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: ${theme.spacing[4]};
+	min-width: 0;
 `;
 
 export const TabContainer = styled.div`
@@ -227,6 +243,8 @@ export const TabContainer = styled.div`
 	box-shadow: ${theme.shadows.lg};
 	overflow: hidden;
 	border: 1px solid ${theme.colors.border.default};
+	container-name: sheet-tabs;
+	container-type: inline-size;
 
 	${media.mobile} {
 		max-width: 100vw;
@@ -292,6 +310,12 @@ export const Tab = styled(motion.button)<{ $active: boolean }>`
 		font-size: ${theme.typography.fontSize.sm};
 	}
 
+	@container sheet-tabs (max-width: 70rem) {
+		padding: ${theme.spacing[3]} ${theme.spacing[2]};
+		gap: ${theme.spacing[1]};
+		font-size: ${theme.typography.fontSize.xs};
+	}
+
 	${(props) =>
 		props.$active &&
 		`
@@ -350,6 +374,7 @@ export const SectionCard = styled(motion.div)<{ $withMarginBottom?: boolean }>`
 	padding: ${theme.spacing[6]};
 	box-shadow: ${theme.shadows.md};
 	border: 1px solid ${theme.colors.border.default};
+	min-width: 0;
 	${(props) => props.$withMarginBottom && `margin-bottom: ${theme.spacing[4]};`}
 `;
 

@@ -26,6 +26,7 @@ import ArmorBuilder from './components/ArmorBuilder';
 import ShieldBuilder from './components/ShieldBuilder';
 import SpellFocusBuilder from './components/SpellFocusBuilder';
 import SavedEquipmentList from './components/SavedEquipmentList';
+import type { CustomEquipment as CustomEquipmentData } from '../../lib/rulesdata/equipment/schemas';
 
 // Category icons
 const CATEGORY_ICONS: Record<EquipmentCategory, string> = {
@@ -41,21 +42,60 @@ const CustomEquipment: React.FC = () => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<TabType>('create');
 	const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory | null>(null);
+	const [editingEquipment, setEditingEquipment] = useState<CustomEquipmentData | null>(null);
 
 	const handleCategorySelect = (category: EquipmentCategory) => {
+		setEditingEquipment(null);
 		setSelectedCategory(category);
+	};
+
+	const closeBuilder = () => {
+		setEditingEquipment(null);
+		setSelectedCategory(null);
+	};
+
+	const handleEdit = (equipment: CustomEquipmentData) => {
+		setEditingEquipment(equipment);
+		setSelectedCategory(equipment.category);
+		setActiveTab('create');
 	};
 
 	const renderBuilder = () => {
 		switch (selectedCategory) {
 			case 'weapon':
-				return <WeaponBuilder onBack={() => setSelectedCategory(null)} />;
+				return (
+					<WeaponBuilder
+						onBack={closeBuilder}
+						initialEquipment={
+							editingEquipment?.category === 'weapon' ? editingEquipment : undefined
+						}
+					/>
+				);
 			case 'armor':
-				return <ArmorBuilder onBack={() => setSelectedCategory(null)} />;
+				return (
+					<ArmorBuilder
+						onBack={closeBuilder}
+						initialEquipment={editingEquipment?.category === 'armor' ? editingEquipment : undefined}
+					/>
+				);
 			case 'shield':
-				return <ShieldBuilder onBack={() => setSelectedCategory(null)} />;
+				return (
+					<ShieldBuilder
+						onBack={closeBuilder}
+						initialEquipment={
+							editingEquipment?.category === 'shield' ? editingEquipment : undefined
+						}
+					/>
+				);
 			case 'spellFocus':
-				return <SpellFocusBuilder onBack={() => setSelectedCategory(null)} />;
+				return (
+					<SpellFocusBuilder
+						onBack={closeBuilder}
+						initialEquipment={
+							editingEquipment?.category === 'spellFocus' ? editingEquipment : undefined
+						}
+					/>
+				);
 			default:
 				return null;
 		}
@@ -106,7 +146,7 @@ const CustomEquipment: React.FC = () => {
 
 				{activeTab === 'create' && selectedCategory && renderBuilder()}
 
-				{activeTab === 'saved' && <SavedEquipmentList />}
+				{activeTab === 'saved' && <SavedEquipmentList onEdit={handleEdit} />}
 			</MainContent>
 		</PageContainer>
 	);

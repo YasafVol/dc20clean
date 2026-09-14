@@ -91,12 +91,14 @@ interface InventoryPopupProps {
 		itemId: string,
 		updates: Partial<Pick<InventoryItemData, 'description' | 'cost'>>
 	) => void;
+	readOnly?: boolean;
 }
 
 const InventoryPopup: React.FC<InventoryPopupProps> = ({
 	selectedInventoryItem,
 	onClose,
-	onUpdateCustomItem
+	onUpdateCustomItem,
+	readOnly = false
 }) => {
 	const { t } = useTranslation();
 
@@ -115,7 +117,8 @@ const InventoryPopup: React.FC<InventoryPopupProps> = ({
 	if (!selectedInventoryItem) return null;
 
 	const { inventoryData, item } = selectedInventoryItem;
-	const isEditableCustom = inventoryData.itemType === 'Custom' && !inventoryData.customEquipmentId;
+	const isEditableCustom =
+		!readOnly && inventoryData.itemType === 'Custom' && !inventoryData.customEquipmentId;
 
 	const infoList = getInventoryItemInfo(item, inventoryData);
 

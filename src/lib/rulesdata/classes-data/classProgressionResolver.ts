@@ -55,7 +55,6 @@ export interface ProgressionBudgets {
 	totalTradePoints: number;
 	totalAttributePoints: number;
 	totalManeuversKnown: number;
-	totalCantripsKnown: number;
 	totalSpellsKnown: number;
 	totalTalents: number;
 	totalPathPoints: number;
@@ -132,7 +131,6 @@ export function resolveClassProgression(classId: string, targetLevel: number): R
 		totalTradePoints: 0,
 		totalAttributePoints: 0,
 		totalManeuversKnown: 0,
-		totalCantripsKnown: 0,
 		totalSpellsKnown: 0,
 		totalTalents: 0,
 		totalPathPoints: 0,
@@ -157,8 +155,8 @@ export function resolveClassProgression(classId: string, targetLevel: number): R
 		budgets.totalTradePoints += levelData.tradePoints || 0;
 		budgets.totalAttributePoints += levelData.attributePoints || 0;
 		budgets.totalManeuversKnown += levelData.maneuversKnown || 0;
-		budgets.totalCantripsKnown += levelData.cantripsKnown || 0;
-		budgets.totalSpellsKnown += levelData.spellsKnown || 0;
+		// Old imported class tables may still contain cantripsKnown; normalize them into Spells.
+		budgets.totalSpellsKnown += (levelData.spellsKnown || 0) + (levelData.cantripsKnown || 0);
 
 		// Accumulate structured gains
 		if (levelData.gains) {

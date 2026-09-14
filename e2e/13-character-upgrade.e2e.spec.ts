@@ -195,7 +195,7 @@ test('blocks automated conversion for an unsupported rules version', async ({ co
 		.getByRole('heading', { name: 'Unsupported E2E Hero', exact: true })
 		.locator('..');
 	await expect(card.getByText('Upgrade blocked')).toBeVisible();
-	await card.getByRole('button', { name: 'Review upgrade blockers' }).click();
+	await card.getByRole('button', { name: 'Review update blockers' }).click();
 	await expect(page.getByText('No automated upgrade path exists from dc20-9.99.')).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Create Current Copy' })).toBeDisabled();
 });

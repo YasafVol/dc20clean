@@ -289,6 +289,9 @@ export async function assertRecipeSheetExpectations(
 	page: Page,
 	recipe: AgenticCharacterRecipe
 ): Promise<void> {
+	const characterTab = page.getByRole('button', { name: /Char/i }).first();
+	if (await characterTab.isVisible().catch(() => false)) await characterTab.click();
+
 	for (const text of recipe.expectedSheet.visibleText) {
 		await expect(page.getByText(text).first(), `sheet text: ${text}`).toBeVisible();
 	}

@@ -656,6 +656,7 @@ const campaignMemberValidator = {
 	userId: v.id('users'),
 	role: v.union(v.literal('dm'), v.literal('co_dm'), v.literal('player')),
 	sharedCharacterIds: v.array(v.string()),
+	sharedCharacterDocIds: v.optional(v.array(v.id('characters'))),
 	displayName: v.optional(v.string()),
 	joinedAt: v.string(),
 	deletedAt: v.optional(v.string()),

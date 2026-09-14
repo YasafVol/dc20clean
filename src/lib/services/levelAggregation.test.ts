@@ -326,7 +326,7 @@ describe('Level Aggregation Logic (M4.1b)', () => {
 		it('should accumulate spells for spellcaster classes', () => {
 			const result3 = resolveClassProgression('wizard', 3);
 			expect(result3.budgets.totalSpellsKnown).toBeGreaterThan(0);
-			// Note: Cantrips are not tracked in progression data (totalCantripsKnown = 0)
+			// Spells are tracked as one current progression budget.
 		});
 
 		it('should have no techniques for barbarian (removed in v0.10)', () => {

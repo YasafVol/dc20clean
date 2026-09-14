@@ -57,6 +57,8 @@ state, behavior, and ownership.
 - **Spell row readability**: Spell names use the sheet's primary foreground color and semibold weight so they remain legible against the dark row background.
 - **Desktop header hierarchy**: Character identity and sheet actions are stacked vertically so long names and the toolbar do not compete for one horizontal row.
 - **Tablet header and floating tools**: The tablet action toolbar stays on one horizontally scrollable row to limit sticky-header height. The collapsed Dice Roller is a square floating control with a minimum 48px touch target and consistent viewport spacing; expanding it restores the full panel inside the viewport.
+- **Mobile sheet actions**: The character header menu exposes Rulebook, Long Rest, Copy, Download JSON, and Export PDF. The bottom-navigation More drawer remains dedicated to overflow content tabs such as Inventory, Conditions, Maneuvers, Knowledge, and Notes.
+- **JSON backup envelope**: Primary, alternative, and load-list JSON exports add transient `exportedAt` and `exportVersion` metadata. Storage preparation strips those envelope fields before persistence.
 - **Ancestry identity**: The header shows the second ancestry only when it exists; legacy `Unknown` placeholders are suppressed with the separator.
 - **Class identity link**: When the saved class ID matches a generated Rulebook article, the `Level + Class` header metadata links directly to `/rulebook/classes/{classId}`; unmatched legacy IDs remain plain text instead of linking to a missing article.
 - **Feature progression display**: The Features tab renders all eligible core class features through the character's level, plus separate Subclass Features, Path Progression, and Talents sections. Talents include both ordinary `selectedTalents` and multiclass Talent selections; path entries resolve from `pathPointAllocations`. Missing selections are not inferred.
@@ -330,11 +332,11 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 ## 7. E2E Links
 
-- `e2e/02-resources.e2e.spec.ts` ? resources and precision notes
+- `e2e/02-resources.e2e.spec.ts` — resource controls
 - `e2e/09-spells.e2e.spec.ts` ? spells list operations
 - `e2e/10-maneuvers.e2e.spec.ts` ? martial operations
 - `e2e/11-currency.e2e.spec.ts` ? currency inputs
-- `e2e/12-exhaustion-info.e2e.spec.ts` ? exhaustion and info buttons
+- `e2e/12-exhaustion-info.e2e.spec.ts` — exhaustion controls and feature details
 - `e2e/20-alternative-weapon-picker.e2e.spec.ts` — alternative add-weapon modal and responsive reflow
 
 ---

@@ -167,9 +167,14 @@ export default function AlternativeCharacterSheet() {
 	};
 
 	const handleDownloadJson = () => {
+		const characterBackup = {
+			...character,
+			exportedAt: new Date().toISOString(),
+			exportVersion: '1.0'
+		};
 		// Export serialization only; character state remains a native object in context.
 		// eslint-disable-next-line no-restricted-syntax
-		const json = JSON.stringify(character, null, 2);
+		const json = JSON.stringify(characterBackup, null, 2);
 		const blob = new Blob([json], { type: 'application/json' });
 		const safeName = (character.finalName || character.id || 'Character')
 			.replace(/[^A-Za-z0-9]+/g, '_')
@@ -188,9 +193,14 @@ export default function AlternativeCharacterSheet() {
 
 	const handleCopyJson = async () => {
 		try {
+			const characterBackup = {
+				...character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
 			// Export serialization only; character state remains a native object in context.
 			// eslint-disable-next-line no-restricted-syntax
-			await navigator.clipboard.writeText(JSON.stringify(character, null, 2));
+			await navigator.clipboard.writeText(JSON.stringify(characterBackup, null, 2));
 			showFeedback('Character JSON copied to clipboard.', 'success');
 		} catch {
 			showFeedback('Failed to copy character JSON.', 'error');

@@ -180,6 +180,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [hamburgerDrawerOpen, setHamburgerDrawerOpen] = useState(false);
+	const [headerActionDrawerOpen, setHeaderActionDrawerOpen] = useState(false);
 	const [rulebookOpen, setRulebookOpen] = useState(false);
 
 	const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -598,6 +599,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		{ id: 'knowledge', label: t('characterSheet.tabKnowledge'), emoji: '📚' },
 		{ id: 'notes', label: t('characterSheet.tabNotes'), emoji: '📝' }
 	];
+	const mobileHeaderActions = [
+		{ id: 'rulebook', label: t('characterSheet.rulebook'), emoji: '📖' },
+		{ id: 'long-rest', label: t('characterSheet.longRest'), emoji: '🌙' },
+		{ id: 'copy', label: t('characterSheet.copy'), emoji: '📋' },
+		{ id: 'download-json', label: t('characterSheet.downloadJson'), emoji: '⬇️' },
+		{ id: 'export-pdf', label: t('characterSheet.exportPdf'), emoji: '📄' }
+	];
 
 	// Export PDF from stored character values only.
 	const handleExportPdf = async () => {
@@ -640,8 +648,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!state.character) return;
 
 		try {
-			// Export full character as JSON for reimporting
-			const characterJson = JSON.stringify(state.character, null, 2);
+			const characterBackup = {
+				...state.character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
+			const characterJson = JSON.stringify(characterBackup, null, 2);
 			await navigator.clipboard.writeText(characterJson);
 			showSnackbarWithMessage('Character JSON copied to clipboard!', 'success');
 		} catch (err) {
@@ -656,7 +668,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		if (!state.character) return;
 
 		try {
-			const characterJson = JSON.stringify(state.character, null, 2);
+			const characterBackup = {
+				...state.character,
+				exportedAt: new Date().toISOString(),
+				exportVersion: '1.0'
+			};
+			const characterJson = JSON.stringify(characterBackup, null, 2);
 			const blob = new Blob([characterJson], { type: 'application/json' });
 			const safeName = (state.character.finalName || state.character.id || 'Character')
 				.replace(/[^A-Za-z0-9]+/g, '_')
@@ -676,6 +693,26 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				error: err instanceof Error ? err.message : String(err)
 			});
 			showSnackbarWithMessage('Failed to download JSON', 'error');
+		}
+	};
+
+	const handleMobileHeaderAction = (actionId: string) => {
+		switch (actionId) {
+			case 'rulebook':
+				setRulebookOpen(true);
+				break;
+			case 'long-rest':
+				handleLongRest();
+				break;
+			case 'copy':
+				void copyCharacterToClipboard();
+				break;
+			case 'download-json':
+				downloadCharacterJson();
+				break;
+			case 'export-pdf':
+				void handleExportPdf();
+				break;
 		}
 	};
 
@@ -855,7 +892,13 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					</LeftSection>
 
 					{/* Mobile hamburger menu - only visible on mobile */}
-					<MobileMenuButton whileTap={{ scale: 0.95 }}>☰</MobileMenuButton>
+					<MobileMenuButton
+						aria-label="Sheet actions"
+						onClick={() => setHeaderActionDrawerOpen(true)}
+						whileTap={{ scale: 0.95 }}
+					>
+						☰
+					</MobileMenuButton>
 
 					<ActionButtons>
 						<CampaignFeedAction characterId={characterId} />
@@ -1019,6 +1062,7 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 												key={tab.id}
 												$active={activeTab === tab.id}
 												onClick={() => setActiveTab(tab.id)}
+												data-testid={`sheet-tab-${tab.id}`}
 												whileHover={{ y: -2 }}
 												whileTap={{ scale: 0.98 }}
 											>
@@ -1215,6 +1259,12 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 				items={hamburgerMenuItems}
 				onItemClick={setActiveTab}
 				activeItemId={activeTab}
+			/>
+			<HamburgerDrawer
+				isOpen={headerActionDrawerOpen}
+				onClose={() => setHeaderActionDrawerOpen(false)}
+				items={mobileHeaderActions}
+				onItemClick={handleMobileHeaderAction}
 			/>
 
 			{/* Dice Roller Component */}

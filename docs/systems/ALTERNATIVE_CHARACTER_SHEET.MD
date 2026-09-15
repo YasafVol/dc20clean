@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-14
+> Last Updated: 2026-09-15
 
 ## 1. Boundary
 
@@ -70,14 +70,20 @@ ambiguous or reload-broken records.
 ## 5. Other Alternative-Only Interaction Rules
 
 1. Attributes and combat values use the shared automatic Dice Roller.
-2. PD and AD abbreviations expose formula tooltips with live values and source bonuses.
-3. Combat Mastery labels Mana Spend Limit under the title and opens the shared MSL rule
+2. The combat action panel aligns Save DC, Initiative, and Jump as equal metrics, then
+   renders Walk and each calculator-returned movement mode in canonical order: Climb,
+   Swim, Fly, Burrow, and Glide. Duplicate movement grants produce one display entry.
+3. PD and AD use compact horizontal rows. Hit is the dominant baseline; Heavy `+5` and
+   Brutal `+10` use progressively smaller values with warning and danger accents.
+4. PD and AD abbreviations expose formula tooltips with live values and source bonuses.
+5. PDR, EDR, and MDR share a compact footer beneath both defense rows.
+6. Combat Mastery labels Mana Spend Limit under the title and opens the shared MSL rule
    explanation.
-4. Feature categories preserve their independent disclosure state across tab changes.
-5. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
+7. Feature categories preserve their independent disclosure state across tab changes.
+8. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
    pencil / confirm / delete lifecycle. The weapon picker changes only creation of new
    standard weapon attacks.
-6. Upgrade-required legacy characters expose only the existing resource counters and
+9. Upgrade-required legacy characters expose only the existing resource counters and
    Exhaustion. All Actions & Details mutation controls remain hidden.
 
 ## 6. Verification

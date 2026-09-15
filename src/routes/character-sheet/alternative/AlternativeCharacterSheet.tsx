@@ -398,6 +398,7 @@ export default function AlternativeCharacterSheet() {
 					initiative={initiative}
 					moveSpeed={moveSpeed}
 					jumpDistance={jumpDistance}
+					movements={calculatedData?.movements}
 					precisionDefense={precisionDefense}
 					areaDefense={areaDefense}
 					combatMastery={combatMastery}

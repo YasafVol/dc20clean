@@ -22,11 +22,18 @@ import {
 	DefensePanel,
 	DefenseThreshold,
 	DefenseThresholdLabel,
+	DefenseThresholdModifier,
 	DefenseThresholds,
 	DefenseThresholdValue,
 	DefenseTitle,
 	MetricLabel,
 	MetricValue,
+	MovementGrid,
+	MovementLabel,
+	MovementMetric,
+	MovementStrip,
+	MovementTitle,
+	MovementValue,
 	ReductionBadge,
 	ReductionCard,
 	ReductionIndicators,
@@ -44,6 +51,7 @@ interface AlternativeCombatResourceSectionProps {
 	initiative: number;
 	moveSpeed: number;
 	jumpDistance: number;
+	movements?: AlternativeMovement[];
 	precisionDefense: number;
 	areaDefense: number;
 	combatMastery: number;
@@ -56,6 +64,52 @@ interface AlternativeCombatResourceSectionProps {
 	physicalDamageReduction: number;
 	resistances: Array<Pick<Resistance, 'type' | 'value'>>;
 	onRoll: (label: string, bonus: number, actionType: RollActionType) => void;
+}
+
+interface AlternativeMovement {
+	type: string;
+	speed: string;
+	source?: { name?: string };
+	isDefault?: boolean;
+}
+
+interface MovementDisplayMode {
+	type: string;
+	label: string;
+	speed: string;
+	source?: string;
+	isDefault?: boolean;
+}
+
+const MOVEMENT_ORDER = ['climb', 'swim', 'fly', 'burrow', 'glide'] as const;
+
+export function getMovementDisplayModes(
+	moveSpeed: number,
+	movements: AlternativeMovement[] = []
+): MovementDisplayMode[] {
+	const movementByType = new Map<string, AlternativeMovement>();
+
+	for (const movement of movements) {
+		const type = movement.type.toLowerCase();
+		if (!movementByType.has(type)) movementByType.set(type, movement);
+	}
+
+	return [
+		{ type: 'walk', label: 'Walk', speed: String(moveSpeed) },
+		...MOVEMENT_ORDER.flatMap((type) => {
+			const movement = movementByType.get(type);
+			if (!movement) return [];
+			return [
+				{
+					type,
+					label: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
+					speed: movement.speed,
+					source: movement.source?.name,
+					isDefault: movement.isDefault
+				}
+			];
+		})
+	];
 }
 
 interface DamageReductionState {
@@ -224,15 +278,24 @@ function DefenseDisplay({
 			</DefenseTitle>
 			<DefenseThresholds>
 				<DefenseThreshold $tone="hit">
-					<DefenseThresholdLabel $tone="hit">Hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="hit">
+						Hit
+						<DefenseThresholdModifier>Base</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="hit">{value}</DefenseThresholdValue>
 				</DefenseThreshold>
 				<DefenseThreshold $tone="heavy">
-					<DefenseThresholdLabel $tone="heavy">Heavy hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="heavy">
+						Heavy
+						<DefenseThresholdModifier>+5</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="heavy">{value + 5}</DefenseThresholdValue>
 				</DefenseThreshold>
 				<DefenseThreshold $tone="brutal">
-					<DefenseThresholdLabel $tone="brutal">Brutal hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="brutal">
+						Brutal
+						<DefenseThresholdModifier>+10</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="brutal">{value + 10}</DefenseThresholdValue>
 				</DefenseThreshold>
 			</DefenseThresholds>
@@ -246,6 +309,7 @@ export default function AlternativeCombatResourceSection({
 	initiative,
 	moveSpeed,
 	jumpDistance,
+	movements = [],
 	precisionDefense,
 	areaDefense,
 	combatMastery,
@@ -261,6 +325,7 @@ export default function AlternativeCombatResourceSection({
 }: AlternativeCombatResourceSectionProps) {
 	const { t } = useTranslation();
 	const damageReduction = getDamageReductionState(physicalDamageReduction, resistances);
+	const movementModes = getMovementDisplayModes(moveSpeed, movements);
 
 	return (
 		<CombatResourceSection aria-label="Alternative combat">
@@ -294,14 +359,25 @@ export default function AlternativeCombatResourceSection({
 							<MetricValue $actionable>{formatSigned(initiative)}</MetricValue>
 						</TacticalButton>
 						<TacticalMetric>
-							<MetricLabel>Move</MetricLabel>
-							<MetricValue>{moveSpeed}</MetricValue>
-						</TacticalMetric>
-						<TacticalMetric>
 							<MetricLabel>Jump</MetricLabel>
 							<MetricValue>{jumpDistance}</MetricValue>
 						</TacticalMetric>
 					</TacticalGrid>
+					<MovementStrip role="group" aria-label="Movement speeds">
+						<MovementTitle>Movement</MovementTitle>
+						<MovementGrid>
+							{movementModes.map((movement) => (
+								<MovementMetric
+									key={movement.type}
+									title={movement.source ? `Source: ${movement.source}` : undefined}
+									$isDefault={movement.isDefault}
+								>
+									<MovementLabel>{movement.label}</MovementLabel>
+									<MovementValue>{movement.speed}</MovementValue>
+								</MovementMetric>
+							))}
+						</MovementGrid>
+					</MovementStrip>
 				</ActionPanel>
 
 				<DefensePanel role="group" aria-label="Defense thresholds">

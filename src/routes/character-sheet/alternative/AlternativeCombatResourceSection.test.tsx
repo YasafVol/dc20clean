@@ -75,7 +75,9 @@ describe('AlternativeCombatResourceSection', () => {
 		expect(screen.getByRole('group', { name: 'Movement speeds' })).toHaveTextContent(
 			'Walk5Climb2Swim2Fly5Glide5'
 		);
-		expect(screen.getByLabelText('Precision Defense 12')).toHaveTextContent(
+		const precisionDefenseCard = screen.getByLabelText('Precision Defense 12');
+		expect(getComputedStyle(precisionDefenseCard).overflow).toBe('visible');
+		expect(precisionDefenseCard).toHaveTextContent(
 			/HitBase12Heavy\+517Brutal\+1022/
 		);
 		expect(screen.getByLabelText('Area Defense 11')).toHaveTextContent(

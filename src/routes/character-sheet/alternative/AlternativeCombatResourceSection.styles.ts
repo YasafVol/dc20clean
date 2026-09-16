@@ -240,7 +240,6 @@ export const DefenseCard = styled.div<{ $color: string }>`
 	background: ${theme.colors.bg.primary};
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.lg};
-	overflow: hidden;
 
 	${media.mobile} {
 		grid-template-columns: 1fr;

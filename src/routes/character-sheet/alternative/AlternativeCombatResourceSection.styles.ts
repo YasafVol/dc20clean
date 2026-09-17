@@ -473,16 +473,19 @@ export const DefenseThresholdValue = styled.span<{ $tone: DefenseThresholdTone }
 
 export const ReductionIndicators = styled.div`
 	display: grid;
-	grid-template-columns: repeat(3, minmax(72px, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	align-items: center;
 	gap: ${theme.spacing[3]};
 
 	& > div {
 		display: block;
+		min-width: 0;
+		width: 100%;
 	}
 
 	& > div > div:first-child {
 		display: block;
+		width: 100%;
 	}
 `;
 
@@ -515,8 +518,9 @@ export const ReductionTitle = styled.h3`
 export const ReductionBadge = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	gap: ${theme.spacing[2]};
+	width: 100%;
 	min-height: 28px;
 	color: ${theme.colors.text.primary};
 	font-size: ${theme.typography.fontSize.sm};

@@ -129,8 +129,27 @@ export const RageEffectList = styled.ul`
 `;
 
 export const RageEnding = styled.p`
-	margin: 0;
-	color: ${theme.colors.text.muted};
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: start;
+	gap: ${theme.spacing[2]};
+	margin: ${theme.spacing[1]} 0 0;
+	padding: ${theme.spacing[3]};
+	background: color-mix(in srgb, ${theme.colors.accent.warning} 8%, ${theme.colors.bg.primary});
+	border-left: 3px solid ${theme.colors.accent.warning};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.primary};
+	line-height: ${theme.typography.lineHeight.relaxed};
+
+	strong {
+		color: ${theme.colors.accent.warning};
+		white-space: nowrap;
+	}
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+		gap: ${theme.spacing[1]};
+	}
 `;
 
 export const ActionPanel = styled.div`

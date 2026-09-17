@@ -390,8 +390,10 @@ export default function AlternativeCombatResourceSection({
 									<li>Resistance (Half) to Elemental and Physical damage.</li>
 								</RageEffectList>
 								<RageEnding>
-									<strong>Ending early:</strong> Rage ends if you fall Unconscious, die, or you end
-									it for free on your turn.
+									<strong>Ending early</strong>
+									<span>
+										Rage ends if you fall Unconscious, die, or you end it for free on your turn.
+									</span>
 								</RageEnding>
 							</RageDetails>
 						)}

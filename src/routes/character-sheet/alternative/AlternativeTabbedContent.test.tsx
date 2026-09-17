@@ -39,7 +39,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 	useCharacterSheetPresentation: () => ({
 		resources: { mana: { current: 0, maximum: 0, visible: false } },
 		access: mockSheet.access,
-		features: { metaMagic: false }
+		features: { metaMagic: false, rage: false }
 	}),
 	useCharacterConditions: () => []
 }));

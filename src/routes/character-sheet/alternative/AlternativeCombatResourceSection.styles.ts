@@ -34,6 +34,105 @@ const panelStyles = css`
 	box-shadow: ${theme.shadows.md};
 `;
 
+export const RagePanel = styled.div<{ $active: boolean }>`
+	grid-column: 1 / -1;
+	min-width: 0;
+	background: ${({ $active }) =>
+		$active ? 'rgba(158, 206, 106, 0.1)' : theme.colors.bg.secondary};
+	border: 1px solid
+		${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.border.default)};
+	border-radius: ${theme.borderRadius.lg};
+	box-shadow: ${theme.shadows.md};
+	overflow: hidden;
+`;
+
+export const RageHeader = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[3]};
+	min-width: 0;
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+`;
+
+export const RageDisclosureButton = styled.button`
+	display: inline-flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: ${theme.colors.text.primary};
+	font: inherit;
+	font-weight: ${theme.typography.fontWeight.bold};
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.accent.primary};
+	}
+`;
+
+export const RageMeta = styled.span`
+	min-width: 0;
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+`;
+
+export const RageStateButton = styled.button<{ $active: boolean }>`
+	min-width: 82px;
+	min-height: 38px;
+	margin-left: auto;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	background: ${({ $active }) => ($active ? 'rgba(158, 206, 106, 0.2)' : 'transparent')};
+	border: 1px solid
+		${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.border.default)};
+	border-radius: ${theme.borderRadius.md};
+	color: ${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.text.secondary)};
+	font: inherit;
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	cursor: pointer;
+	transition: all ${theme.transitions.fast};
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		border-color: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.primary};
+	}
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.65;
+	}
+`;
+
+export const RageDetails = styled.div`
+	display: grid;
+	gap: ${theme.spacing[2]};
+	padding: ${theme.spacing[3]} ${theme.spacing[4]} ${theme.spacing[4]};
+	border-top: 1px solid ${theme.colors.border.default};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+`;
+
+export const RageEffectList = styled.ul`
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: ${theme.spacing[2]} ${theme.spacing[6]};
+	margin: 0;
+	padding-left: ${theme.spacing[5]};
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+	}
+`;
+
+export const RageEnding = styled.p`
+	margin: 0;
+	color: ${theme.colors.text.muted};
+`;
+
 export const ActionPanel = styled.div`
 	${panelStyles}
 	display: grid;

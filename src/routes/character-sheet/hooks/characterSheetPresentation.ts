@@ -16,6 +16,7 @@ export interface CharacterSheetPresentation {
 	};
 	features: {
 		metaMagic: boolean;
+		rage: boolean;
 	};
 }
 
@@ -32,7 +33,8 @@ export const EMPTY_CHARACTER_SHEET_PRESENTATION: CharacterSheetPresentation = {
 		maneuvers: false
 	},
 	features: {
-		metaMagic: false
+		metaMagic: false,
+		rage: false
 	}
 };
 
@@ -68,7 +70,8 @@ export function createCharacterSheetPresentation(
 				(character.maneuvers?.length ?? 0) > 0
 		},
 		features: {
-			metaMagic: hasCanonicalFeature(character, 'sorcerer_meta_magic')
+			metaMagic: hasCanonicalFeature(character, 'sorcerer_meta_magic'),
+			rage: hasCanonicalFeature(character, 'barbarian_rage')
 		}
 	};
 }

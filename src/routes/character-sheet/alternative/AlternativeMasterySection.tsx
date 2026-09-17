@@ -34,6 +34,7 @@ import {
 	MasterySidebar,
 	PrimeCard,
 	SaveButton,
+	SaveEffectNote,
 	TradeRows
 } from './AlternativeMasterySection.styles';
 import { theme } from '../styles/theme';
@@ -52,7 +53,8 @@ export type RollActionType =
 	| 'mental-check'
 	| 'physical-save'
 	| 'mental-save'
-	| 'agility-save';
+	| 'agility-save'
+	| 'might-save';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
 
@@ -79,7 +81,7 @@ function checkActionType(attribute: AttributeKey): RollActionType {
 
 function saveActionType(attribute: AttributeKey): RollActionType {
 	if (attribute === 'agility') return 'agility-save';
-	return attribute === 'might' ? 'physical-save' : 'mental-save';
+	return attribute === 'might' ? 'might-save' : 'mental-save';
 }
 
 function MasteryDots({ proficiency }: { proficiency: number }) {
@@ -136,6 +138,7 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 	const combatMastery = stats?.finalCombatMastery ?? character.finalCombatMastery ?? 0;
 	const hasMana = presentation.resources.mana.visible;
 	const hasMetaMagic = presentation.features.metaMagic;
+	const isRaging = Boolean(character.characterState?.ui?.combatToggles?.isRaging);
 	const masteryBySkill = character.skillsData ?? {};
 
 	const skillGroups = ATTRIBUTE_KEYS.reduce<Record<AttributeKey, MasteryItem[]>>(
@@ -258,6 +261,7 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 								>
 									({formatSigned(saveValues[attribute])}{' '}
 									{t('characterSheet.attrSave').toLowerCase()})
+									{attribute === 'might' && isRaging && <SaveEffectNote>ADV (Rage)</SaveEffectNote>}
 								</SaveButton>
 							</AttributeNumbers>
 						</AttributeHeader>

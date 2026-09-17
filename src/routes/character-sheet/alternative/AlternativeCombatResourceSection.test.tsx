@@ -77,9 +77,7 @@ describe('AlternativeCombatResourceSection', () => {
 		);
 		const precisionDefenseCard = screen.getByLabelText('Precision Defense 12');
 		expect(getComputedStyle(precisionDefenseCard).overflow).toBe('visible');
-		expect(precisionDefenseCard).toHaveTextContent(
-			/HitBase12Heavy\+517Brutal\+1022/
-		);
+		expect(precisionDefenseCard).toHaveTextContent(/HitBase12Heavy\+517Brutal\+1022/);
 		expect(screen.getByLabelText('Area Defense 11')).toHaveTextContent(
 			/HitBase11Heavy\+516Brutal\+1021/
 		);
@@ -137,5 +135,47 @@ describe('AlternativeCombatResourceSection', () => {
 		const adChip = screen.getByLabelText('AD formula');
 		fireEvent.mouseEnter(adChip.parentElement as HTMLElement);
 		expect(screen.getByText('AD = 8 + Combat Mastery + Might + Charisma + Bonuses')).toBeVisible();
+	});
+
+	it('shows the complete Rage rules and uses a two-state button', () => {
+		const onRageToggle = vi.fn();
+		render(
+			<AlternativeCombatResourceSection
+				attackBonus={4}
+				saveDC={14}
+				initiative={4}
+				moveSpeed={5}
+				jumpDistance={3}
+				precisionDefense={15}
+				areaDefense={12}
+				combatMastery={1}
+				might={3}
+				agility={3}
+				charisma={-2}
+				intelligence={3}
+				physicalDamageReduction={0}
+				resistances={[]}
+				onRoll={vi.fn()}
+				showRage
+				isRaging={false}
+				canToggleRage
+				onRageToggle={onRageToggle}
+			/>
+		);
+
+		const stateButton = screen.getByRole('button', { name: 'Activate Rage' });
+		expect(stateButton).toHaveTextContent('Inactive');
+		expect(stateButton).toHaveAttribute('aria-pressed', 'false');
+		fireEvent.click(stateButton);
+		expect(onRageToggle).toHaveBeenCalledWith(true);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Rage' }));
+		expect(
+			screen.getByText('+1 damage on Martial Attacks using Unarmed Strikes or Melee Weapons.')
+		).toBeVisible();
+		expect(screen.getByText('ADV on Might Saves.')).toBeVisible();
+		expect(screen.getByText('PD decreases by 5.')).toBeVisible();
+		expect(screen.getByText('Resistance (Half) to Elemental and Physical damage.')).toBeVisible();
+		expect(screen.getByText(/Rage ends if you fall Unconscious/)).toBeVisible();
 	});
 });

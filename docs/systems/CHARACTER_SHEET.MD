@@ -316,7 +316,11 @@ The `Movement.tsx` component displays multiple panels with combat-relevant infor
 
 - **Spells** shown when `calculationResult.spellsKnownSlots.length > 0` or saved spells exist
 - **Maneuvers** shown when `calculationResult.levelBudgets.totalManeuversKnown > 0` or saved maneuvers exist
-- **Rage toggle** visible when character has a Rage class feature; active Rage maps to calculator condition `while_raging`
+- **Rage toggle** visible when canonical feature resolution finds Rage directly or
+  through multiclassing. Active Rage maps to calculator condition `while_raging`.
+  The alternative sheet exposes the complete base rule behind a disclosure, displays
+  calculator-backed PD and attack-damage changes, and adds one source-labelled ADV stack
+  to Might Save rolls. Read-only campaign views show the current state but cannot change it.
 
 ---
 

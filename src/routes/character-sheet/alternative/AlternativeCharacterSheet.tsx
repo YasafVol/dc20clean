@@ -41,6 +41,7 @@ import AlternativeCombatResourceSection from './AlternativeCombatResourceSection
 import AlternativeMasterySection, { type RollActionType } from './AlternativeMasterySection';
 import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
 import AlternativeTabbedContent from './AlternativeTabbedContent';
+import { getRollModeWithFeatureAdvantage } from './alternativeRollPresentation';
 
 interface Feedback {
 	message: string;
@@ -65,6 +66,7 @@ export default function AlternativeCharacterSheet() {
 		updateGritPoints,
 		updateRestPoints,
 		updateExhaustion,
+		setRageActive,
 		handleDiceRoll,
 		handleLongRestEvent
 	} = useCharacterSheet();
@@ -124,6 +126,7 @@ export default function AlternativeCharacterSheet() {
 	const intelligence = calculatedData?.stats?.finalIntelligence ?? character.finalIntelligence ?? 0;
 	const physicalDamageReduction = calculatedData?.stats?.finalPDR ?? character.finalPDR ?? 0;
 	const resistances = calculatedData?.resistances ?? character.resistances ?? [];
+	const isRaging = Boolean(character.characterState?.ui?.combatToggles?.isRaging);
 
 	const classPath = getArticlePath(`classes/${character.classId}`);
 	const ancestry1Path = getArticlePath(
@@ -211,12 +214,12 @@ export default function AlternativeCharacterSheet() {
 
 	const handleActionRoll = (label: string, bonus: number, actionType: RollActionType) => {
 		const activeConditions = character.characterState?.activeConditions ?? [];
-		const diceModifier = getDiceModifierForAction(activeConditions, actionType);
-		diceRollerRef.current?.addRollWithModifier(
-			bonus - diceModifier.penalty,
-			label,
-			diceModifier.mode
-		);
+		const conditionActionType = actionType === 'might-save' ? 'physical-save' : actionType;
+		const diceModifier = getDiceModifierForAction(activeConditions, conditionActionType);
+		const rageAdvantageStacks = isRaging && actionType === 'might-save' ? 1 : 0;
+		const rollMode = getRollModeWithFeatureAdvantage(diceModifier, rageAdvantageStacks);
+		const rollLabel = rageAdvantageStacks > 0 ? `${label} · ADV (Rage)` : label;
+		diceRollerRef.current?.addRollWithModifier(bonus - diceModifier.penalty, rollLabel, rollMode);
 	};
 
 	return (
@@ -413,6 +416,10 @@ export default function AlternativeCharacterSheet() {
 					physicalDamageReduction={physicalDamageReduction}
 					resistances={resistances}
 					onRoll={handleActionRoll}
+					showRage={presentation.features.rage}
+					isRaging={isRaging}
+					canToggleRage={!readOnly}
+					onRageToggle={setRageActive}
 				/>
 
 				<AlternativeTabbedContent />

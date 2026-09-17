@@ -5,7 +5,8 @@ import AlternativeMasterySection from './AlternativeMasterySection';
 
 const mockState = vi.hoisted(() => ({
 	manaVisible: true,
-	metaMagic: false
+	metaMagic: false,
+	raging: false
 }));
 
 vi.mock('react-i18next', () => ({
@@ -58,7 +59,16 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 	} as SavedCharacter;
 
 	return {
-		useCharacterSheet: () => ({ state: { character } }),
+		useCharacterSheet: () => ({
+			state: {
+				character: {
+					...character,
+					characterState: {
+						ui: { combatToggles: { isRaging: mockState.raging } }
+					}
+				}
+			}
+		}),
 		useCharacterSheetPresentation: () => ({
 			resources: {
 				mana: {
@@ -68,7 +78,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 				}
 			},
 			access: { spells: false, maneuvers: false },
-			features: { metaMagic: mockState.metaMagic }
+			features: { metaMagic: mockState.metaMagic, rage: false }
 		}),
 		useCharacterCalculatedData: () => null,
 		useCharacterTrades: () => [
@@ -87,6 +97,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 beforeEach(() => {
 	mockState.manaVisible = true;
 	mockState.metaMagic = false;
+	mockState.raging = false;
 });
 afterEach(cleanup);
 
@@ -106,10 +117,20 @@ describe('AlternativeMasterySection', () => {
 		expect(screen.getByRole('button', { name: 'Roll Blacksmithing +5' })).toBeTruthy();
 
 		fireEvent.click(screen.getByRole('button', { name: 'Roll MIGHT save +5' }));
-		expect(onRoll).toHaveBeenCalledWith('MIGHT SAVE', 5, 'physical-save');
+		expect(onRoll).toHaveBeenCalledWith('MIGHT SAVE', 5, 'might-save');
 
 		fireEvent.click(screen.getByRole('button', { name: 'Roll Blacksmithing +5' }));
 		expect(onRoll).toHaveBeenLastCalledWith('Blacksmithing', 5, 'physical-check');
+	});
+
+	it('marks the Might Save with the active Rage advantage source', () => {
+		mockState.raging = true;
+		const onRoll = vi.fn();
+		render(<AlternativeMasterySection onRoll={onRoll} />);
+
+		expect(screen.getByText('ADV (Rage)')).toBeVisible();
+		fireEvent.click(screen.getByRole('button', { name: 'Roll MIGHT save +5' }));
+		expect(onRoll).toHaveBeenCalledWith('MIGHT SAVE', 5, 'might-save');
 	});
 
 	it('opens the Mana Spend Limit rules from the Combat Mastery card', () => {

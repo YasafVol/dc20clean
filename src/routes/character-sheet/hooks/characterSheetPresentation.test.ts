@@ -108,4 +108,26 @@ describe('createCharacterSheetPresentation', () => {
 
 		expect(presentation.features.metaMagic).toBe(true);
 	});
+
+	it.each([
+		[
+			'direct progression',
+			makeCharacter({
+				className: 'Barbarian',
+				level: 1
+			})
+		],
+		[
+			'multiclass progression',
+			makeCharacter({
+				className: 'Wizard',
+				selectedMulticlassClass: 'Barbarian',
+				selectedMulticlassFeature: 'barbarian_rage'
+			})
+		]
+	])('recognizes Rage from %s by canonical feature ID', (_source, character) => {
+		const presentation = createCharacterSheetPresentation(character, makeCalculation());
+
+		expect(presentation.features.rage).toBe(true);
+	});
 });

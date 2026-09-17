@@ -94,6 +94,15 @@ ambiguous or reload-broken records.
     slot or the saved character already contains a spell. Maneuvers follows the same rule
     using the calculated maneuver budget or an existing saved maneuver. This preserves
     valid AP-only spell access and saved selections without exposing irrelevant empty panels.
+11. Characters with the canonical Rage feature, including multiclass grants, receive a
+    compact Rage row at the top of Combat. The row keeps cost and duration inline where
+    space permits, uses one `Inactive / Active` state button, and discloses the complete
+    base Rage effects plus its early-ending rule.
+12. Active Rage uses the shared sheet toggle and calculator condition
+    `while_raging`. The calculator applies the PD penalty, attack presentation adds
+    damage only to Unarmed Strikes and melee weapons, and alternative-sheet Might Save
+    rolls add one ADV stack. The roll label and Might card identify the source as
+    `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
 
 ## 6. Verification
 
@@ -105,3 +114,8 @@ ambiguous or reload-broken records.
    desktop/mobile reflow.
 4. Campaign read-only behavior is covered by the lifecycle contract and Convex tests
    documented in `CAMPAIGN_SYSTEM.MD`.
+5. `AlternativeCombatResourceSection.test.tsx` proves the two-state Rage control and
+   complete disclosed rule text.
+6. `AlternativeMasterySection.test.tsx` and
+   `alternativeRollPresentation.test.ts` prove the visible Rage source and ADV/DisADV
+   stack cancellation.

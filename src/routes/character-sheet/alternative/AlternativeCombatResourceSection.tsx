@@ -1,3 +1,5 @@
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Resistance } from '../../../lib/services/calculatorModules/abilityCollection';
 import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
@@ -29,6 +31,14 @@ import {
 	MetricLabel,
 	MetricValue,
 	MovementGrid,
+	RageDetails,
+	RageDisclosureButton,
+	RageEffectList,
+	RageEnding,
+	RageHeader,
+	RageMeta,
+	RagePanel,
+	RageStateButton,
 	MovementLabel,
 	MovementMetric,
 	MovementStrip,
@@ -64,6 +74,10 @@ interface AlternativeCombatResourceSectionProps {
 	physicalDamageReduction: number;
 	resistances: Array<Pick<Resistance, 'type' | 'value'>>;
 	onRoll: (label: string, bonus: number, actionType: RollActionType) => void;
+	showRage?: boolean;
+	isRaging?: boolean;
+	canToggleRage?: boolean;
+	onRageToggle?: (isRaging: boolean) => void;
 }
 
 interface AlternativeMovement {
@@ -321,11 +335,17 @@ export default function AlternativeCombatResourceSection({
 	areaDefenseBreakdown,
 	physicalDamageReduction,
 	resistances,
-	onRoll
+	onRoll,
+	showRage = false,
+	isRaging = false,
+	canToggleRage = false,
+	onRageToggle
 }: AlternativeCombatResourceSectionProps) {
 	const { t } = useTranslation();
+	const [showRageDetails, setShowRageDetails] = useState(false);
 	const damageReduction = getDamageReductionState(physicalDamageReduction, resistances);
 	const movementModes = getMovementDisplayModes(moveSpeed, movements);
+	const rageDetailsId = 'alternative-rage-details';
 
 	return (
 		<CombatResourceSection aria-label="Alternative combat">
@@ -333,6 +353,50 @@ export default function AlternativeCombatResourceSection({
 				id="alternative-combat"
 				title={t('characterSheet.sectionCombat')}
 			>
+				{showRage && (
+					<RagePanel $active={isRaging}>
+						<RageHeader>
+							<RageDisclosureButton
+								type="button"
+								aria-expanded={showRageDetails}
+								aria-controls={rageDetailsId}
+								onClick={() => setShowRageDetails((current) => !current)}
+							>
+								Rage
+								{showRageDetails ? (
+									<ChevronUp size={16} aria-hidden="true" />
+								) : (
+									<ChevronDown size={16} aria-hidden="true" />
+								)}
+							</RageDisclosureButton>
+							<RageMeta>1 AP + 1 SP · 1 minute</RageMeta>
+							<RageStateButton
+								type="button"
+								$active={isRaging}
+								aria-pressed={isRaging}
+								aria-label={isRaging ? 'Deactivate Rage' : 'Activate Rage'}
+								disabled={!canToggleRage}
+								onClick={() => onRageToggle?.(!isRaging)}
+							>
+								{isRaging ? 'Active' : 'Inactive'}
+							</RageStateButton>
+						</RageHeader>
+						{showRageDetails && (
+							<RageDetails id={rageDetailsId}>
+								<RageEffectList>
+									<li>+1 damage on Martial Attacks using Unarmed Strikes or Melee Weapons.</li>
+									<li>ADV on Might Saves.</li>
+									<li>PD decreases by 5.</li>
+									<li>Resistance (Half) to Elemental and Physical damage.</li>
+								</RageEffectList>
+								<RageEnding>
+									<strong>Ending early:</strong> Rage ends if you fall Unconscious, die, or you end
+									it for free on your turn.
+								</RageEnding>
+							</RageDetails>
+						)}
+					</RagePanel>
+				)}
 				<ActionPanel>
 					<AttackButton
 						type="button"

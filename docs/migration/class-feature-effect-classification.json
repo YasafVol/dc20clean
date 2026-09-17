@@ -32,7 +32,7 @@
 			"GRANT_SENSE",
 			"GRANT_VULNERABILITY"
 		],
-		"spellSlotTypes": ["GRANT_CANTRIP", "GRANT_SPELL"],
+		"spellSlotTypes": ["GRANT_SPELL"],
 		"masteryCapTypes": [
 			"INCREASE_SKILL_MASTERY_CAP",
 			"INCREASE_TRADE_MASTERY_CAP",
@@ -58,15 +58,14 @@
 		"GRANT_RESISTANCE": 11,
 		"GRANT_MANEUVERS": 5,
 		"INCREASE_TRADE_MASTERY_CAP": 1,
-		"GRANT_SPELL": 19,
+		"GRANT_SPELL": 20,
 		"GRANT_SENSE": 6,
 		"GRANT_CONDITION_IMMUNITY": 1,
 		"GRANT_CONDITION_RESISTANCE": 3,
 		"GRANT_ADV_ON_CHECK": 10,
 		"GRANT_MOVEMENT": 2,
 		"GRANT_ADV_ON_SAVE": 3,
-		"INCREASE_SKILL_MASTERY_CAP": 1,
-		"GRANT_CANTRIP": 1
+		"INCREASE_SKILL_MASTERY_CAP": 1
 	},
 	"classSummaries": [
 		{
@@ -3543,7 +3542,7 @@
 				{
 					"scope": "feature",
 					"label": "Wild Speech",
-					"type": "GRANT_CANTRIP",
+					"type": "GRANT_SPELL",
 					"target": "druidcraft",
 					"value": 1,
 					"condition": null,

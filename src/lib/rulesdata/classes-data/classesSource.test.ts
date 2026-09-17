@@ -18,6 +18,24 @@ const IGNORED_RUNTIME_FEATURE_NAMES = new Set([
 ]);
 
 describe('DC20 v0.10.5 class source audit', () => {
+	it('does not author legacy cantrip effects or terminology in current classes', () => {
+		const serializedClasses = JSON.stringify(classFeaturesData);
+
+		expect(serializedClasses).not.toContain('GRANT_CANTRIP');
+		expect(serializedClasses).not.toMatch(/\bcantrips?\b/i);
+	});
+
+	it('models Wild Speech as an ordinary Druidcraft Spell grant', () => {
+		const druid = classFeaturesData.find((classData) => classData.className === 'Druid');
+		const wildSpeech = druid?.coreFeatures.find((feature) => feature.id === 'druid_wild_speech');
+
+		expect(wildSpeech?.effects).toContainEqual({
+			type: 'GRANT_SPELL',
+			target: 'druidcraft',
+			value: 1
+		});
+	});
+
 	it('keeps the source class report aligned with loaded runtime classes', () => {
 		const sourceNames = sourceReport.classes.map((classData) => classData.name).sort();
 		const runtimeNames = classFeaturesData.map((classData) => classData.className).sort();

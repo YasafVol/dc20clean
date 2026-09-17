@@ -1,3 +1,5 @@
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Resistance } from '../../../lib/services/calculatorModules/abilityCollection';
 import type { EnhancedStatBreakdown } from '../../../lib/types/effectSystem';
@@ -22,11 +24,26 @@ import {
 	DefensePanel,
 	DefenseThreshold,
 	DefenseThresholdLabel,
+	DefenseThresholdModifier,
 	DefenseThresholds,
 	DefenseThresholdValue,
 	DefenseTitle,
 	MetricLabel,
 	MetricValue,
+	MovementGrid,
+	RageDetails,
+	RageDisclosureButton,
+	RageEffectList,
+	RageEnding,
+	RageHeader,
+	RageMeta,
+	RagePanel,
+	RageStateButton,
+	MovementLabel,
+	MovementMetric,
+	MovementStrip,
+	MovementTitle,
+	MovementValue,
 	ReductionBadge,
 	ReductionCard,
 	ReductionIndicators,
@@ -44,6 +61,7 @@ interface AlternativeCombatResourceSectionProps {
 	initiative: number;
 	moveSpeed: number;
 	jumpDistance: number;
+	movements?: AlternativeMovement[];
 	precisionDefense: number;
 	areaDefense: number;
 	combatMastery: number;
@@ -56,6 +74,56 @@ interface AlternativeCombatResourceSectionProps {
 	physicalDamageReduction: number;
 	resistances: Array<Pick<Resistance, 'type' | 'value'>>;
 	onRoll: (label: string, bonus: number, actionType: RollActionType) => void;
+	showRage?: boolean;
+	isRaging?: boolean;
+	canToggleRage?: boolean;
+	onRageToggle?: (isRaging: boolean) => void;
+}
+
+interface AlternativeMovement {
+	type: string;
+	speed: string;
+	source?: { name?: string };
+	isDefault?: boolean;
+}
+
+interface MovementDisplayMode {
+	type: string;
+	label: string;
+	speed: string;
+	source?: string;
+	isDefault?: boolean;
+}
+
+const MOVEMENT_ORDER = ['climb', 'swim', 'fly', 'burrow', 'glide'] as const;
+
+export function getMovementDisplayModes(
+	moveSpeed: number,
+	movements: AlternativeMovement[] = []
+): MovementDisplayMode[] {
+	const movementByType = new Map<string, AlternativeMovement>();
+
+	for (const movement of movements) {
+		const type = movement.type.toLowerCase();
+		if (!movementByType.has(type)) movementByType.set(type, movement);
+	}
+
+	return [
+		{ type: 'walk', label: 'Walk', speed: String(moveSpeed) },
+		...MOVEMENT_ORDER.flatMap((type) => {
+			const movement = movementByType.get(type);
+			if (!movement) return [];
+			return [
+				{
+					type,
+					label: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
+					speed: movement.speed,
+					source: movement.source?.name,
+					isDefault: movement.isDefault
+				}
+			];
+		})
+	];
 }
 
 interface DamageReductionState {
@@ -224,15 +292,24 @@ function DefenseDisplay({
 			</DefenseTitle>
 			<DefenseThresholds>
 				<DefenseThreshold $tone="hit">
-					<DefenseThresholdLabel $tone="hit">Hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="hit">
+						Hit
+						<DefenseThresholdModifier>Base</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="hit">{value}</DefenseThresholdValue>
 				</DefenseThreshold>
 				<DefenseThreshold $tone="heavy">
-					<DefenseThresholdLabel $tone="heavy">Heavy hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="heavy">
+						Heavy
+						<DefenseThresholdModifier>+5</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="heavy">{value + 5}</DefenseThresholdValue>
 				</DefenseThreshold>
 				<DefenseThreshold $tone="brutal">
-					<DefenseThresholdLabel $tone="brutal">Brutal hit</DefenseThresholdLabel>
+					<DefenseThresholdLabel $tone="brutal">
+						Brutal
+						<DefenseThresholdModifier>+10</DefenseThresholdModifier>
+					</DefenseThresholdLabel>
 					<DefenseThresholdValue $tone="brutal">{value + 10}</DefenseThresholdValue>
 				</DefenseThreshold>
 			</DefenseThresholds>
@@ -246,6 +323,7 @@ export default function AlternativeCombatResourceSection({
 	initiative,
 	moveSpeed,
 	jumpDistance,
+	movements = [],
 	precisionDefense,
 	areaDefense,
 	combatMastery,
@@ -257,10 +335,17 @@ export default function AlternativeCombatResourceSection({
 	areaDefenseBreakdown,
 	physicalDamageReduction,
 	resistances,
-	onRoll
+	onRoll,
+	showRage = false,
+	isRaging = false,
+	canToggleRage = false,
+	onRageToggle
 }: AlternativeCombatResourceSectionProps) {
 	const { t } = useTranslation();
+	const [showRageDetails, setShowRageDetails] = useState(false);
 	const damageReduction = getDamageReductionState(physicalDamageReduction, resistances);
+	const movementModes = getMovementDisplayModes(moveSpeed, movements);
+	const rageDetailsId = 'alternative-rage-details';
 
 	return (
 		<CombatResourceSection aria-label="Alternative combat">
@@ -268,6 +353,52 @@ export default function AlternativeCombatResourceSection({
 				id="alternative-combat"
 				title={t('characterSheet.sectionCombat')}
 			>
+				{showRage && (
+					<RagePanel $active={isRaging}>
+						<RageHeader>
+							<RageDisclosureButton
+								type="button"
+								aria-expanded={showRageDetails}
+								aria-controls={rageDetailsId}
+								onClick={() => setShowRageDetails((current) => !current)}
+							>
+								Rage
+								{showRageDetails ? (
+									<ChevronUp size={16} aria-hidden="true" />
+								) : (
+									<ChevronDown size={16} aria-hidden="true" />
+								)}
+							</RageDisclosureButton>
+							<RageMeta>1 AP + 1 SP · 1 minute</RageMeta>
+							<RageStateButton
+								type="button"
+								$active={isRaging}
+								aria-pressed={isRaging}
+								aria-label={isRaging ? 'Deactivate Rage' : 'Activate Rage'}
+								disabled={!canToggleRage}
+								onClick={() => onRageToggle?.(!isRaging)}
+							>
+								{isRaging ? 'Active' : 'Inactive'}
+							</RageStateButton>
+						</RageHeader>
+						{showRageDetails && (
+							<RageDetails id={rageDetailsId}>
+								<RageEffectList>
+									<li>+1 damage on Martial Attacks using Unarmed Strikes or Melee Weapons.</li>
+									<li>ADV on Might Saves.</li>
+									<li>PD decreases by 5.</li>
+									<li>Resistance (Half) to Elemental and Physical damage.</li>
+								</RageEffectList>
+								<RageEnding>
+									<strong>Ending early</strong>
+									<span>
+										Rage ends if you fall Unconscious, die, or you end it for free on your turn.
+									</span>
+								</RageEnding>
+							</RageDetails>
+						)}
+					</RagePanel>
+				)}
 				<ActionPanel>
 					<AttackButton
 						type="button"
@@ -294,14 +425,25 @@ export default function AlternativeCombatResourceSection({
 							<MetricValue $actionable>{formatSigned(initiative)}</MetricValue>
 						</TacticalButton>
 						<TacticalMetric>
-							<MetricLabel>Move</MetricLabel>
-							<MetricValue>{moveSpeed}</MetricValue>
-						</TacticalMetric>
-						<TacticalMetric>
 							<MetricLabel>Jump</MetricLabel>
 							<MetricValue>{jumpDistance}</MetricValue>
 						</TacticalMetric>
 					</TacticalGrid>
+					<MovementStrip role="group" aria-label="Movement speeds">
+						<MovementTitle>Movement</MovementTitle>
+						<MovementGrid>
+							{movementModes.map((movement) => (
+								<MovementMetric
+									key={movement.type}
+									title={movement.source ? `Source: ${movement.source}` : undefined}
+									$isDefault={movement.isDefault}
+								>
+									<MovementLabel>{movement.label}</MovementLabel>
+									<MovementValue>{movement.speed}</MovementValue>
+								</MovementMetric>
+							))}
+						</MovementGrid>
+					</MovementStrip>
 				</ActionPanel>
 
 				<DefensePanel role="group" aria-label="Defense thresholds">

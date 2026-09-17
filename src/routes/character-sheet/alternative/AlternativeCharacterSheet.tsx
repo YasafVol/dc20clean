@@ -12,7 +12,8 @@ import { StatCard } from '../components/new/StatCard';
 import {
 	useCharacterCalculatedData,
 	useCharacterResources,
-	useCharacterSheet
+	useCharacterSheet,
+	useCharacterSheetPresentation
 } from '../hooks/CharacterSheetProvider';
 import {
 	ActionMenu,
@@ -40,6 +41,7 @@ import AlternativeCombatResourceSection from './AlternativeCombatResourceSection
 import AlternativeMasterySection, { type RollActionType } from './AlternativeMasterySection';
 import AlternativeSectionDisclosure from './AlternativeSectionDisclosure';
 import AlternativeTabbedContent from './AlternativeTabbedContent';
+import { getRollModeWithFeatureAdvantage } from './alternativeRollPresentation';
 
 interface Feedback {
 	message: string;
@@ -64,11 +66,13 @@ export default function AlternativeCharacterSheet() {
 		updateGritPoints,
 		updateRestPoints,
 		updateExhaustion,
+		setRageActive,
 		handleDiceRoll,
 		handleLongRestEvent
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
+	const presentation = useCharacterSheetPresentation();
 	const diceRollerRef = useRef<DiceRollerRef>(null);
 	const [feedback, setFeedback] = useState<Feedback | null>(null);
 
@@ -97,8 +101,8 @@ export default function AlternativeCharacterSheet() {
 		character.finalPrimeModifierValue + character.finalCombatMastery
 	);
 	const tempHP = resources?.current.tempHP ?? 0;
-	const currentMP = resources?.current.currentMP ?? 0;
-	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? character.finalMPMax ?? 0;
+	const currentMP = presentation.resources.mana.current;
+	const maxMP = presentation.resources.mana.maximum;
 	const currentSP = resources?.current.currentSP ?? 0;
 	const maxSP = calculatedData?.breakdowns?.spMax?.total ?? character.finalSPMax ?? 0;
 	const currentRest = resources?.current.currentRestPoints ?? 0;
@@ -122,6 +126,7 @@ export default function AlternativeCharacterSheet() {
 	const intelligence = calculatedData?.stats?.finalIntelligence ?? character.finalIntelligence ?? 0;
 	const physicalDamageReduction = calculatedData?.stats?.finalPDR ?? character.finalPDR ?? 0;
 	const resistances = calculatedData?.resistances ?? character.resistances ?? [];
+	const isRaging = Boolean(character.characterState?.ui?.combatToggles?.isRaging);
 
 	const classPath = getArticlePath(`classes/${character.classId}`);
 	const ancestry1Path = getArticlePath(
@@ -209,12 +214,12 @@ export default function AlternativeCharacterSheet() {
 
 	const handleActionRoll = (label: string, bonus: number, actionType: RollActionType) => {
 		const activeConditions = character.characterState?.activeConditions ?? [];
-		const diceModifier = getDiceModifierForAction(activeConditions, actionType);
-		diceRollerRef.current?.addRollWithModifier(
-			bonus - diceModifier.penalty,
-			label,
-			diceModifier.mode
-		);
+		const conditionActionType = actionType === 'might-save' ? 'physical-save' : actionType;
+		const diceModifier = getDiceModifierForAction(activeConditions, conditionActionType);
+		const rageAdvantageStacks = isRaging && actionType === 'might-save' ? 1 : 0;
+		const rollMode = getRollModeWithFeatureAdvantage(diceModifier, rageAdvantageStacks);
+		const rollLabel = rageAdvantageStacks > 0 ? `${label} · ADV (Rage)` : label;
+		diceRollerRef.current?.addRollWithModifier(bonus - diceModifier.penalty, rollLabel, rollMode);
 	};
 
 	return (
@@ -327,7 +332,7 @@ export default function AlternativeCharacterSheet() {
 									animateOnMount={false}
 								/>
 							</ResourceCardSlot>
-							{maxMP > 0 && (
+							{presentation.resources.mana.visible && (
 								<ResourceCardSlot>
 									<StatCard
 										label="Mana"
@@ -398,6 +403,7 @@ export default function AlternativeCharacterSheet() {
 					initiative={initiative}
 					moveSpeed={moveSpeed}
 					jumpDistance={jumpDistance}
+					movements={calculatedData?.movements}
 					precisionDefense={precisionDefense}
 					areaDefense={areaDefense}
 					combatMastery={combatMastery}
@@ -410,6 +416,10 @@ export default function AlternativeCharacterSheet() {
 					physicalDamageReduction={physicalDamageReduction}
 					resistances={resistances}
 					onRoll={handleActionRoll}
+					showRage={presentation.features.rage}
+					isRaging={isRaging}
+					canToggleRage={!readOnly}
+					onRageToggle={setRageActive}
 				/>
 
 				<AlternativeTabbedContent />

@@ -1221,10 +1221,10 @@ export const traitsData: Trait[] = [
 		id: 'fiendborn_fiendish_aura',
 		name: 'Fiendish Aura',
 		description:
-			"You learn the Sorcery Cantrip, but you must choose the type of energy that's the same as your Fiendish Origin.",
+			"You learn the Sorcery Spell, but you must choose the type of energy that's the same as your Fiendish Origin.",
 		cost: 1,
 		effects: [
-			{ type: 'GRANT_CANTRIP', target: 'Sorcery', value: 1 },
+			{ type: 'GRANT_SPELL', target: 'Sorcery', value: 1 },
 			{
 				type: 'GRANT_ABILITY',
 				target: 'sorcery_energy_type',

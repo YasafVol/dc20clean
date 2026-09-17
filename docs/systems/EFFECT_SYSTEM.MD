@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/schemas/character.schema.ts`, `src/lib/types/effectSystem.ts`, and the calculator effect-collection modules.
 > Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Classes](./CLASS_SYSTEM.MD), [Traits](./TRAITS_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-14
 
 ---
 
@@ -53,8 +53,12 @@ All effect types are defined in `character.schema.ts` as a discriminated union. 
 | Type              | Target                                       | Value              | Special Fields                      | Stacking                                              |
 | ----------------- | -------------------------------------------- | ------------------ | ----------------------------------- | ----------------------------------------------------- |
 | `GRANT_SPELL`     | spell restriction or specific spell          | `number \| string` | `userChoice?: { prompt, options? }` | Per-slot                                              |
-| `GRANT_CANTRIP`   | legacy spell grant alias                     | `number`           | --                                  | Normalized to spell slots                             |
+| `GRANT_CANTRIP`   | compatibility-only legacy spell grant alias  | `number`           | --                                  | Normalized to spell slots                             |
 | `GRANT_MANEUVERS` | maneuver type or `all_attack` (access grant) | `number`           | --                                  | Access grants don't add to budget; specific grants do |
+
+Current rules data must author every spell grant as `GRANT_SPELL`. `GRANT_CANTRIP`
+remains in the schema and calculator only so legacy imported effects continue to load;
+it is not valid in current ancestry, class, subclass, or talent data.
 
 ### Mastery Cap Effects
 

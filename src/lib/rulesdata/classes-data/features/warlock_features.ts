@@ -19,9 +19,6 @@ export const warlockClass: ClassDefinition = {
 			description:
 				'Choose 3 Spell Schools. When you learn a new Spell, you can choose any Spell from the chosen Spell Schools.'
 		},
-		cantrips: {
-			description: 'Cantrips Known column of the Warlock Class Table'
-		},
 		spells: {
 			description: 'Spells Known column of the Warlock Class Table'
 		},
@@ -96,7 +93,7 @@ export const warlockClass: ClassDefinition = {
 			featureName: 'Pact Boon',
 			levelGained: 1,
 			description:
-				'You gain a Pact Boon from your Patron. Choose 1 of the following options: Weapon, Armor, Cantrip, or Familiar.',
+				'You gain a Pact Boon from your Patron. Choose 1 of the following options: Weapon, Armor, Spell, or Familiar.',
 			choices: [
 				{
 					id: 'warlock_pact_boon_0',

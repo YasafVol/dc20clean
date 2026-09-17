@@ -6,8 +6,10 @@ import { StyledDot, StyledProficiencyDots } from '../styles/Skills';
 import {
 	useCharacterCalculatedData,
 	useCharacterSheet,
+	useCharacterSheetPresentation,
 	useCharacterTrades
 } from '../hooks/CharacterSheetProvider';
+import Tooltip from '../components/Tooltip';
 import {
 	AttributeCard,
 	AttributeHeader,
@@ -20,6 +22,7 @@ import {
 	CombatMasteryCard,
 	ManaInfoBody,
 	ManaInfoButton,
+	ManaExemptionChip,
 	ManaInfoExample,
 	ManaInfoHeading,
 	MasteryBonus,
@@ -31,6 +34,7 @@ import {
 	MasterySidebar,
 	PrimeCard,
 	SaveButton,
+	SaveEffectNote,
 	TradeRows
 } from './AlternativeMasterySection.styles';
 import { theme } from '../styles/theme';
@@ -49,7 +53,8 @@ export type RollActionType =
 	| 'mental-check'
 	| 'physical-save'
 	| 'mental-save'
-	| 'agility-save';
+	| 'agility-save'
+	| 'might-save';
 
 type AttributeKey = 'might' | 'agility' | 'charisma' | 'intelligence';
 
@@ -76,7 +81,7 @@ function checkActionType(attribute: AttributeKey): RollActionType {
 
 function saveActionType(attribute: AttributeKey): RollActionType {
 	if (attribute === 'agility') return 'agility-save';
-	return attribute === 'might' ? 'physical-save' : 'mental-save';
+	return attribute === 'might' ? 'might-save' : 'mental-save';
 }
 
 function MasteryDots({ proficiency }: { proficiency: number }) {
@@ -110,6 +115,7 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 	const [showManaSpendInfo, setShowManaSpendInfo] = useState(false);
 	const { state } = useCharacterSheet();
 	const calculatedData = useCharacterCalculatedData();
+	const presentation = useCharacterSheetPresentation();
 	const trades = useCharacterTrades();
 	const character = state.character;
 
@@ -130,6 +136,9 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 	};
 	const primeValue = stats?.finalPrimeModifierValue ?? character.finalPrimeModifierValue ?? 0;
 	const combatMastery = stats?.finalCombatMastery ?? character.finalCombatMastery ?? 0;
+	const hasMana = presentation.resources.mana.visible;
+	const hasMetaMagic = presentation.features.metaMagic;
+	const isRaging = Boolean(character.characterState?.ui?.combatToggles?.isRaging);
 	const masteryBySkill = character.skillsData ?? {};
 
 	const skillGroups = ATTRIBUTE_KEYS.reduce<Record<AttributeKey, MasteryItem[]>>(
@@ -206,16 +215,25 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 					</PrimeCard>
 					<CombatMasteryCard>
 						<CardLabel>{t('characterSheet.attrCombatMastery')}</CardLabel>
-						<CardLimitRow>
-							<CardLimitLabel>{t('characterSheet.attrManaSpendLimit')}</CardLimitLabel>
-							<ManaInfoButton
-								type="button"
-								onClick={() => setShowManaSpendInfo(true)}
-								aria-label={t('characterSheet.manaSpendLimitOpenInfo')}
-							>
-								<Info size={13} aria-hidden="true" />
-							</ManaInfoButton>
-						</CardLimitRow>
+						{hasMana && (
+							<CardLimitRow>
+								<CardLimitLabel>{t('characterSheet.attrManaSpendLimit')}</CardLimitLabel>
+								<ManaInfoButton
+									type="button"
+									onClick={() => setShowManaSpendInfo(true)}
+									aria-label={t('characterSheet.manaSpendLimitOpenInfo')}
+								>
+									<Info size={13} aria-hidden="true" />
+								</ManaInfoButton>
+								{hasMetaMagic && (
+									<Tooltip content={t('characterSheet.manaSpendLimitException')} maxWidth="320px">
+										<ManaExemptionChip>
+											{t('characterSheet.manaSpendLimitMetaMagicChip')}
+										</ManaExemptionChip>
+									</Tooltip>
+								)}
+							</CardLimitRow>
+						)}
 						<CardValue>{formatSigned(combatMastery)}</CardValue>
 					</CombatMasteryCard>
 				</MasterySidebar>
@@ -243,6 +261,7 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 								>
 									({formatSigned(saveValues[attribute])}{' '}
 									{t('characterSheet.attrSave').toLowerCase()})
+									{attribute === 'might' && isRaging && <SaveEffectNote>ADV (Rage)</SaveEffectNote>}
 								</SaveButton>
 							</AttributeNumbers>
 						</AttributeHeader>
@@ -270,7 +289,7 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 					</AttributeCard>
 				))}
 			</AlternativeSectionDisclosure>
-			{showManaSpendInfo && (
+			{hasMana && showManaSpendInfo && (
 				<StyledFeaturePopupOverlay onClick={() => setShowManaSpendInfo(false)}>
 					<StyledFeaturePopupContent
 						role="dialog"
@@ -298,10 +317,14 @@ export default function AlternativeMasterySection({ onRoll }: AlternativeMastery
 							</ul>
 							<ManaInfoHeading>{t('characterSheet.manaSpendLimitExampleHeading')}</ManaInfoHeading>
 							<ManaInfoExample>{t('characterSheet.manaSpendLimitExample')}</ManaInfoExample>
-							<ManaInfoHeading>
-								{t('characterSheet.manaSpendLimitExceptionHeading')}
-							</ManaInfoHeading>
-							<p>{t('characterSheet.manaSpendLimitException')}</p>
+							{hasMetaMagic && (
+								<>
+									<ManaInfoHeading>
+										{t('characterSheet.manaSpendLimitExceptionHeading')}
+									</ManaInfoHeading>
+									<p>{t('characterSheet.manaSpendLimitException')}</p>
+								</>
+							)}
 						</ManaInfoBody>
 					</StyledFeaturePopupContent>
 				</StyledFeaturePopupOverlay>

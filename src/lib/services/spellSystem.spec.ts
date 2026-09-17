@@ -314,6 +314,25 @@ describe('Spell System - Spells Known Slots', () => {
 		expect(slots).toHaveLength(3);
 		expect(slots.every((slot) => slot.type === 'spell')).toBe(true);
 	});
+
+	it('normalizes a legacy GRANT_CANTRIP effect into an ordinary Spell slot', () => {
+		const slots = generateSpellsKnownSlots(createBaseBuild() as any, { totalSpellsKnown: 0 }, [
+			{
+				type: 'GRANT_CANTRIP',
+				target: 'druidcraft',
+				value: 1,
+				resolved: true,
+				source: { id: 'legacy_wild_speech', name: 'Legacy Wild Speech' }
+			}
+		] as any);
+
+		expect(slots).toHaveLength(1);
+		expect(slots[0]).toMatchObject({
+			type: 'spell',
+			sourceName: 'Legacy Wild Speech',
+			specificRestrictions: { exactSpellId: 'druidcraft' }
+		});
+	});
 });
 
 describe('Spell System - Validations', () => {

@@ -16,10 +16,6 @@ export const sorcererClass: ClassDefinition = {
 			description:
 				'Choose 1 Spell Source (Arcane, Divine, or Primal). When you learn a new Spell, you can choose any Spell from the chosen Spell Source.'
 		},
-		cantrips: {
-			description:
-				'The number of Cantrips you know increases as shown in the Cantrips Known column of the Sorcerer Class Table.'
-		},
 		spells: {
 			description:
 				'The number of Spells you know increases as shown in the Spells Known column of the Sorcerer Class Table.'

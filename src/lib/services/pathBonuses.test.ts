@@ -83,7 +83,6 @@ describe('Path Point Bonuses (M3.9)', () => {
 
 		// Spells: Base progression + path bonuses
 		expect(result.levelBudgets?.totalSpellsKnown).toBeGreaterThanOrEqual(0);
-		// Note: Cantrips are not tracked in progression data
 	});
 
 	it('Level 1 character with no path points should have base values', () => {
@@ -154,7 +153,7 @@ describe('Path Point Bonuses (M3.9)', () => {
 		console.log('Mixed path - Spells:', result.levelBudgets.totalSpellsKnown);
 
 		// Should have martial path L1 bonuses: +1 SP, +1 maneuver, +1 technique
-		// Should have spellcaster path L1 bonuses: +2 MP, +1 cantrip, +1 spell
+		// Should have spellcaster path L1 bonuses: +2 MP and +2 spells
 
 		// Verify both types of bonuses are present
 		expect(result.stats.finalSPMax).toBeGreaterThan(0); // Has SP from martial path
@@ -247,7 +246,6 @@ describe('Path Point Bonuses (M3.9)', () => {
 			expect(result.stats.finalMPMax).toBeGreaterThan(0);
 			// Spells should include base + path bonuses
 			expect(result.levelBudgets?.totalSpellsKnown).toBeGreaterThanOrEqual(0);
-			// Note: Cantrips not tracked in progression data
 		});
 
 		it('should handle 4 spellcaster path points correctly', () => {
@@ -379,7 +377,6 @@ describe('Path Point Bonuses (M3.9)', () => {
 			// Verify progressive bonuses - more path points = more MP
 			expect(tier1.stats.finalMPMax).toBeGreaterThanOrEqual(tier0.stats.finalMPMax);
 			expect(tier2.stats.finalMPMax).toBeGreaterThanOrEqual(tier1.stats.finalMPMax);
-			// Note: Cantrips not tracked in progression data
 		});
 
 		describe('Edge Cases', () => {
@@ -466,7 +463,6 @@ describe('Path Point Bonuses (M3.9)', () => {
 				expect(result.stats.finalSPMax).toBeGreaterThanOrEqual(0);
 				expect(result.stats.finalMPMax).toBeGreaterThanOrEqual(0);
 				expect(result.levelBudgets?.totalManeuversKnown).toBeGreaterThanOrEqual(0);
-				// Note: Cantrips not tracked in progression data
 			});
 
 			it('should handle path points without matching class resources', () => {

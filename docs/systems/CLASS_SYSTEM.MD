@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/classes-v0105-report.json`, `docs/migration/class-feature-effect-classification.json`, and `src/lib/rulesdata/classes-data/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Spells](./SPELLS_SYSTEM.MD), [Martials](./MARTIALS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-17
 
 ---
 
@@ -291,6 +291,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 - Spell lists removed; spells are accessed by source (Arcane/Divine/Primal) and school
 - Class features updated with new effects and descriptions
 - **Slot-Based Spell System (M3.20)**: Classes define individual Spell slots ("Pockets"), supporting highly specific restrictions (e.g., expanded schools) alongside broad global magic profiles. Current progression grants Spells only; legacy imported cantrip fields are normalized at the compatibility boundary.
+- **Current Spell-Grant Contract**: Current class, subclass, and talent data author only `GRANT_SPELL` and use Spell terminology. Wild Speech grants Druidcraft through `GRANT_SPELL`; legacy effect tokens and class-path metadata remain accepted only at compatibility boundaries.
 - **Data-Driven Spell Restrictions**: Classes now define `spellRestrictions` (allowed sources, schools, and tags) to automatically filter available spells in the character creator.
 
 **Recent Updates (2026-06-01)**:
@@ -314,7 +315,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 
 - **Duplicate Always-On Effect Audit**: Class feature audit reports and tests now flag duplicate always-on effects across direct feature effects and benefit effects. Barbarian Martial Path combat training now lives only under its `Combat Training` benefit, removing duplicate Weapons/Armor/Shields grants from runtime combat-training output.
 - **Barbarian Runtime Effects**: Rage sheet toggles now feed the calculator `while_raging` condition. Berserker Defense applies from the inferred `not_wearing_armor` condition when no equipped armor row exists. Mighty Leap's `SET_VALUE:jumpCalculationAttribute=might` is calculator-backed and uses the higher of Might or Agility for Jump Distance.
-- **Rage Attack Damage TODO**: Rage's `martial_melee_damage` effect remains an attack-row presentation TODO because the current sheet attack rows do not safely encode Unarmed Strike vs melee weapon vs ranged weapon.
+- **Rage Sheet Resolution**: Rage's `martial_melee_damage` effect applies to supported Unarmed Strike and melee weapon rows while active; ranged and unresolved custom rows remain unchanged. The alternative sheet also applies Rage ADV to Might Saves, shows the PD penalty through calculator output, and discloses the complete base feature rule.
 - **Talent Feature Cleanup**: Generic level-2 `Talent` pseudo-features were removed from class feature data. Talent budgets now come only from shared progression template `gains.talents`, and level-up selection still consumes `selectedTalents`.
 - **Combat Training Source Alignment**: Bard, Monk, Rogue, Champion, and conditional Cleric/Spellblade training are covered by source-aligned `GRANT_COMBAT_TRAINING` tests. Monk/Rogue now expose their missing Martial Path feature records, and Champion uses canonical `All_Armor`.
 - **Martial Path Maneuver Source**: Martial Path maneuver access, including learning all Attack Maneuvers, is represented by class path/progression data (`martialPath.maneuvers`) rather than direct class feature effects. Commander and Hunter Martial Path feature effects now only collect combat training plus class-specific stamina regen where present.
@@ -322,7 +323,7 @@ npm run test:unit -- --project server --run src/lib/rulesdata/classes-data/class
 - **No Text-Only Feature Contract**: Class features should not remain prose-only. Descriptive or in-game-only mechanics use collected effects such as `GRANT_ABILITY` or `GRANT_ADV_ON_CHECK`; choice options should carry selected-option note effects when they have no calculator-backed mechanic. `classesSource.test.ts` fails if `text-only-no-effects` or `flavor-no-effects` reappears in the generated class effect report.
 - **Cleric Domain Effects**: Knowledge now raises the five Knowledge Trade mastery caps through `INCREASE_TRADE_MASTERY_CAP`; Darkvision is range-aware and handles "10 Spaces, or +5 if already present"; Divination uses condition immunity for Flanked; nonnumeric domains are collected as granted abilities.
 - **Hunter Subterranean Senses**: Subterranean Favored Terrain uses the same range-aware sense pattern as Cleric Dark Domain: Darkvision grants 10 or increases existing Darkvision by 5, and Tremorsense grants 3 or increases existing Tremorsense by 2.
-- **Monk Stance TODO**: Monk Stances are currently selected text with no active sheet model. A future character-sheet benefits surface should expose the selected stance benefits and support active-state presentation for nuanced effects such as stance damage bonuses, ADV notes, movement changes, and reductions. This same benefits surface should also expose nuanced Rage benefits such as ADV on Athletics.
+- **Monk Stance TODO**: Monk Stances are currently selected text with no active sheet model. A future character-sheet benefits surface should expose the selected stance benefits and support active-state presentation for nuanced effects such as stance damage bonuses, ADV notes, movement changes, and reductions. Rage now has its own alternative-sheet control and is not part of this remaining stance work.
 - **Spellblade Progression-Derived Paths**: Spellblade Martial Path and Spellcasting Path feature records are marked `isProgressionDerived` and carry no duplicate feature effects. The hybrid progression grants both martial and spellcasting table benefits; the class-specific stamina regen remains on `martialPath.staminaRegen` as collected in-game text.
 - **Warlock Pact Armor MDR**: Pact Armor now grants binary MDR through `GRANT_RESISTANCE:mystical=true` instead of unsupported `MODIFY_STAT:mdr`.
 

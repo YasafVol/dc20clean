@@ -1,7 +1,7 @@
 # Documentation TODO Review
 
 > Status: Active execution tracker
-> Last Updated: 2026-07-12
+> Last Updated: 2026-09-17
 
 ## 1. Scope and scoring
 
@@ -39,6 +39,10 @@
 8. **[Complete] Equipment duplicate/clone — 80/100**
    1. Source: `EQUIPMENT_SYSTEM.MD` section 10.
    2. Requirements completed: generate a new ID and timestamps, append `Copy` to the name, preserve mechanical fields, and open the duplicate for editing without mutating the source.
+9. **[TODO] Alternative character-sheet integration coverage — 95/100**
+   1. Source: `TESTING_SYSTEM.MD` section 3.3.
+   2. Requirements: cover contextual magic surfaces, canonical feature ownership, Rage toggle lifecycle, and exact PD, attack-damage, and Might Save ADV results.
+   3. First implementation: focused provider/calculator/component tests plus one representative Playwright character-page flow.
 
 ## 3. Medium-confidence work
 

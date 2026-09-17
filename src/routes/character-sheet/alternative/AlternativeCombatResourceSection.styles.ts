@@ -3,7 +3,7 @@ import { media, theme } from '../styles/theme';
 
 export const CombatResourceSection = styled.section`
 	display: grid;
-	grid-template-columns: minmax(280px, 0.65fr) minmax(0, 1.35fr);
+	grid-template-columns: minmax(420px, 1.08fr) minmax(460px, 1fr);
 	align-items: stretch;
 	gap: ${theme.spacing[3]};
 	padding: ${theme.spacing[4]};
@@ -13,7 +13,7 @@ export const CombatResourceSection = styled.section`
 	box-shadow: ${theme.shadows.lg};
 
 	@media (max-width: 1200px) {
-		grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1.3fr);
+		grid-template-columns: minmax(360px, 1fr) minmax(430px, 1fr);
 	}
 
 	@media (max-width: 900px) {
@@ -32,6 +32,129 @@ const panelStyles = css`
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.lg};
 	box-shadow: ${theme.shadows.md};
+`;
+
+export const RagePanel = styled.div<{ $active: boolean }>`
+	grid-column: 1 / -1;
+	min-width: 0;
+	background: ${({ $active }) =>
+		$active ? 'rgba(158, 206, 106, 0.1)' : theme.colors.bg.secondary};
+	border: 1px solid
+		${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.border.default)};
+	border-radius: ${theme.borderRadius.lg};
+	box-shadow: ${theme.shadows.md};
+	overflow: hidden;
+`;
+
+export const RageHeader = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[3]};
+	min-width: 0;
+	padding: ${theme.spacing[3]} ${theme.spacing[4]};
+`;
+
+export const RageDisclosureButton = styled.button`
+	display: inline-flex;
+	align-items: center;
+	gap: ${theme.spacing[2]};
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: ${theme.colors.text.primary};
+	font: inherit;
+	font-weight: ${theme.typography.fontWeight.bold};
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		color: ${theme.colors.accent.primary};
+	}
+`;
+
+export const RageMeta = styled.span`
+	min-width: 0;
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+`;
+
+export const RageStateButton = styled.button<{ $active: boolean }>`
+	min-width: 82px;
+	min-height: 38px;
+	margin-left: auto;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	background: ${({ $active }) => ($active ? 'rgba(158, 206, 106, 0.2)' : 'transparent')};
+	border: 1px solid
+		${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.border.default)};
+	border-radius: ${theme.borderRadius.md};
+	color: ${({ $active }) => ($active ? theme.colors.accent.success : theme.colors.text.secondary)};
+	font: inherit;
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.bold};
+	cursor: pointer;
+	transition: all ${theme.transitions.fast};
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		border-color: ${theme.colors.accent.primary};
+		color: ${theme.colors.text.primary};
+	}
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.65;
+	}
+`;
+
+export const RageDetails = styled.div`
+	display: grid;
+	gap: ${theme.spacing[2]};
+	padding: ${theme.spacing[3]} ${theme.spacing[4]} ${theme.spacing[4]};
+	border-top: 1px solid ${theme.colors.border.default};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	line-height: ${theme.typography.lineHeight.relaxed};
+`;
+
+export const RageEffectList = styled.ul`
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: ${theme.spacing[2]} ${theme.spacing[6]};
+	margin: 0;
+	padding-left: ${theme.spacing[5]};
+	list-style: disc;
+
+	li::marker {
+		color: ${theme.colors.accent.success};
+	}
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+	}
+`;
+
+export const RageEnding = styled.p`
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: start;
+	gap: ${theme.spacing[2]};
+	margin: ${theme.spacing[1]} 0 0;
+	padding: ${theme.spacing[3]};
+	background: color-mix(in srgb, ${theme.colors.accent.warning} 8%, ${theme.colors.bg.primary});
+	border-left: 3px solid ${theme.colors.accent.warning};
+	border-radius: ${theme.borderRadius.md};
+	color: ${theme.colors.text.primary};
+	line-height: ${theme.typography.lineHeight.relaxed};
+
+	strong {
+		color: ${theme.colors.accent.warning};
+		white-space: nowrap;
+	}
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+		gap: ${theme.spacing[1]};
+	}
 `;
 
 export const ActionPanel = styled.div`
@@ -98,7 +221,7 @@ export const ActionValue = styled.span`
 
 export const TacticalGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: ${theme.spacing[2]};
 `;
 
@@ -149,42 +272,101 @@ export const MetricValue = styled.span<{ $actionable?: boolean }>`
 	font-variant-numeric: tabular-nums;
 `;
 
-export const DefensePanel = styled.div`
-	${panelStyles}
+export const MovementStrip = styled.div`
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: auto minmax(0, 1fr);
 	align-items: stretch;
-	gap: ${theme.spacing[4]};
-
-	@media (max-width: 1200px) {
-		grid-column: auto;
-	}
+	min-width: 0;
+	background: ${theme.colors.bg.primary};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	overflow: hidden;
 
 	${media.mobile} {
 		grid-template-columns: 1fr;
 	}
+`;
+
+export const MovementTitle = styled.div`
+	display: grid;
+	place-items: center;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	border-right: 1px solid ${theme.colors.border.default};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.bold};
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+
+	${media.mobile} {
+		justify-content: start;
+		border-right: 0;
+		border-bottom: 1px solid ${theme.colors.border.default};
+	}
+`;
+
+export const MovementGrid = styled.div`
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
+	min-width: 0;
+`;
+
+export const MovementMetric = styled.div<{ $isDefault?: boolean }>`
+	display: grid;
+	place-items: center;
+	align-content: center;
+	gap: 2px;
+	min-width: 0;
+	min-height: 54px;
+	padding: ${theme.spacing[2]};
+	border-left: 1px solid ${theme.colors.border.default};
+	opacity: ${({ $isDefault }) => ($isDefault ? 0.72 : 1)};
+
+	&:first-child {
+		border-left: 0;
+	}
+`;
+
+export const MovementLabel = styled.span`
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+`;
+
+export const MovementValue = styled.span`
+	color: ${theme.colors.text.primary};
+	font-size: ${theme.typography.fontSize.lg};
+	font-weight: ${theme.typography.fontWeight.bold};
+	font-variant-numeric: tabular-nums;
+`;
+
+export const DefensePanel = styled.div`
+	${panelStyles}
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto;
+	gap: ${theme.spacing[2]};
 `;
 
 export const DefenseCards = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: ${theme.spacing[3]};
-
-	${media.mobile} {
-		grid-template-columns: 1fr;
-	}
+	grid-template-rows: repeat(2, minmax(0, 1fr));
+	gap: ${theme.spacing[2]};
 `;
 
 export const DefenseCard = styled.div<{ $color: string }>`
 	display: grid;
-	align-content: start;
-	gap: ${theme.spacing[3]};
+	grid-template-columns: minmax(138px, 0.8fr) minmax(0, 2fr);
+	align-items: stretch;
 	min-width: 0;
-	padding: ${theme.spacing[3]};
 	background: ${theme.colors.bg.primary};
 	border: 1px solid ${theme.colors.border.default};
-	border-top: 3px solid ${({ $color }) => $color};
 	border-radius: ${theme.borderRadius.lg};
+
+	${media.mobile} {
+		grid-template-columns: 1fr;
+	}
 `;
 
 export const DefenseTitle = styled.h3<{ $color: string }>`
@@ -193,10 +375,16 @@ export const DefenseTitle = styled.h3<{ $color: string }>`
 	justify-content: space-between;
 	gap: ${theme.spacing[2]};
 	margin: 0;
+	padding: ${theme.spacing[3]};
+	border-top: 3px solid ${({ $color }) => $color};
 	color: ${({ $color }) => $color};
-	font-size: ${theme.typography.fontSize.base};
+	font-size: ${theme.typography.fontSize.sm};
 	font-weight: ${theme.typography.fontWeight.bold};
 	line-height: ${theme.typography.lineHeight.tight};
+
+	${media.mobile} {
+		border-bottom: 1px solid ${theme.colors.border.default};
+	}
 `;
 
 export const DefenseAbbreviation = styled.span<{ $color: string }>`
@@ -243,41 +431,61 @@ export const DefenseFormulaRow = styled.div<{ $total?: boolean }>`
 
 export const DefenseThresholds = styled.div`
 	display: grid;
-	gap: ${theme.spacing[2]};
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	min-width: 0;
 `;
 
 const defenseThresholdColor = {
-	hit: theme.colors.text.primary,
-	heavy: theme.colors.text.secondary,
-	brutal: `color-mix(in srgb, ${theme.colors.text.muted} 60%, ${theme.colors.text.secondary})`
+	hit: theme.colors.accent.primary,
+	heavy: theme.colors.accent.warning,
+	brutal: theme.colors.accent.danger
+} as const;
+
+const defenseThresholdBackground = {
+	hit: theme.colors.accent.infoAlpha20,
+	heavy: theme.colors.accent.warningAlpha10,
+	brutal: theme.colors.accent.dangerAlpha10
 } as const;
 
 type DefenseThresholdTone = keyof typeof defenseThresholdColor;
 
-const defenseThresholdLabelSize: Record<DefenseThresholdTone, string> = {
-	hit: theme.typography.fontSize.base,
-	heavy: theme.typography.fontSize.sm,
-	brutal: theme.typography.fontSize.xs
-};
-
 const defenseThresholdValueSize: Record<DefenseThresholdTone, string> = {
 	hit: theme.typography.fontSize['2xl'],
-	heavy: theme.typography.fontSize.lg,
-	brutal: theme.typography.fontSize.base
+	heavy: theme.typography.fontSize.xl,
+	brutal: theme.typography.fontSize.lg
 };
 
 export const DefenseThreshold = styled.div<{ $tone: DefenseThresholdTone }>`
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: baseline;
-	gap: ${theme.spacing[2]};
+	place-items: center;
+	align-content: center;
+	gap: ${theme.spacing[1]};
+	min-width: 0;
+	padding: ${theme.spacing[2]};
+	background: ${({ $tone }) => defenseThresholdBackground[$tone]};
+	border-top: 3px solid ${({ $tone }) => defenseThresholdColor[$tone]};
+	border-left: 1px solid ${theme.colors.border.default};
 	color: ${({ $tone }) => defenseThresholdColor[$tone]};
 `;
 
 export const DefenseThresholdLabel = styled.span<{ $tone: DefenseThresholdTone }>`
-	font-size: ${({ $tone }) => defenseThresholdLabelSize[$tone]};
-	font-weight: ${theme.typography.fontWeight.semibold};
+	display: grid;
+	justify-items: center;
+	gap: 1px;
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${({ $tone }) =>
+		$tone === 'hit' ? theme.typography.fontWeight.bold : theme.typography.fontWeight.semibold};
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 	white-space: nowrap;
+`;
+
+export const DefenseThresholdModifier = styled.span`
+	color: ${theme.colors.text.muted};
+	font-size: 0.625rem;
+	font-weight: ${theme.typography.fontWeight.medium};
+	text-transform: none;
+	letter-spacing: 0.02em;
 `;
 
 export const DefenseThresholdValue = styled.span<{ $tone: DefenseThresholdTone }>`
@@ -289,54 +497,55 @@ export const DefenseThresholdValue = styled.span<{ $tone: DefenseThresholdTone }
 
 export const ReductionIndicators = styled.div`
 	display: grid;
-	grid-template-rows: repeat(3, auto);
-	align-content: center;
-	gap: ${theme.spacing[2]};
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: center;
+	gap: ${theme.spacing[3]};
 
 	& > div {
 		display: block;
+		min-width: 0;
+		width: 100%;
 	}
 
 	& > div > div:first-child {
 		display: block;
-	}
-
-	${media.mobile} {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		grid-template-rows: none;
+		width: 100%;
 	}
 `;
 
 export const ReductionCard = styled.div`
 	display: grid;
-	align-content: start;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
 	gap: ${theme.spacing[3]};
-	min-width: 116px;
-	padding: ${theme.spacing[3]};
+	min-width: 0;
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
 	background: ${theme.colors.bg.primary};
 	border: 1px solid ${theme.colors.border.default};
-	border-top: 3px solid ${theme.colors.text.muted};
 	border-radius: ${theme.borderRadius.lg};
 
 	${media.mobile} {
-		min-width: 0;
+		grid-template-columns: 1fr;
 	}
 `;
 
 export const ReductionTitle = styled.h3`
 	margin: 0;
-	color: ${theme.colors.text.primary};
-	font-size: ${theme.typography.fontSize.sm};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.xs};
 	font-weight: ${theme.typography.fontWeight.bold};
 	line-height: ${theme.typography.lineHeight.tight};
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 `;
 
 export const ReductionBadge = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	gap: ${theme.spacing[2]};
-	min-height: 32px;
+	width: 100%;
+	min-height: 28px;
 	color: ${theme.colors.text.primary};
 	font-size: ${theme.typography.fontSize.sm};
 	font-weight: ${theme.typography.fontWeight.bold};

@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, and `src/lib/rulesdata/spells-data/`.
 > Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-17
 
 ---
 
@@ -23,7 +23,7 @@
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
 - UI selection and display:
   - `src/routes/character-creation/*` (spell pickers where applicable)
-  - `src/routes/character-sheet/*` (spell list, filters, actions)
+  - `src/routes/character-sheet/*` (spell list, filters, actions; sheet navigation is shown only for characters with calculated spell slots or saved spells)
 
 ### Equipage Integration
 
@@ -210,7 +210,9 @@ explicit character migration.
 - Sources: Class Progression, Subclass Features, Talents (Grant Spell effect).
 - Selection is tracked per-slot: `Record<SlotID, SpellID>`.
 - Exact class grants such as `Charm` and `Call Familiar` resolve to canonical generated spell IDs instead of broad unrestricted slots.
-- `GRANT_SPELL` / legacy `GRANT_CANTRIP` effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school. `GRANT_CANTRIP` is normalized into an ordinary spell slot.
+- Current rules data uses `GRANT_SPELL` exclusively. Compatibility parsing accepts legacy `GRANT_CANTRIP` effects and normalizes them into ordinary spell slots; current catalogs are contract-tested against authoring that token or its retired terminology.
+- Current class records omit the retired separate-progression metadata. Schemas retain those optional fields only to parse older imports.
+- Spell-grant effects with unresolved `userChoice` metadata are skipped until the choice is present; resolved nested choices can narrow a slot by selected tag or school.
 - Tag-targeted grants such as Warlock Eldritch `any_psychic_tag` create tag-restricted slots rather than falling back to the global profile.
 
 ### 4.3 Validation Rules

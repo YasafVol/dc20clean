@@ -76,6 +76,7 @@ const martialPathSchema = z
 const spellcasterPathSchema = z
 	.object({
 		spellList: z.any().optional(),
+		// Legacy import compatibility; current class data has one Spells progression.
 		cantrips: z.object({ description: z.string() }).optional(),
 		spells: z.object({ description: z.string() }).optional(),
 		manaPoints: z.object({ maximumIncreasesBy: z.string().optional() }).optional()

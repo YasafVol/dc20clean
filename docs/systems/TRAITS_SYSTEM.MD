@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/ancestries-v0105-report.json`, and `src/lib/rulesdata/ancestries/traits.ts`.
 > Related systems: [Ancestries](./ANCESTRY_SYSTEM.MD), [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD).
 > Status: Active
-> Last Updated: 2026-07-25
+> Last Updated: 2026-09-14
 
 ---
 
@@ -356,6 +356,9 @@ the structured contract.
 - `beastborn_natural_weapon` derives a read-only Unarmed Strike on the character sheet.
   Its unresolved Bludgeoning/Piercing/Slashing choice is presented as `B/P/S`; this
   display behavior does not add an attack to persisted character state.
+- Current trait data uses `GRANT_SPELL` for every spell grant. Fiendish Aura grants
+  Sorcery through that current effect and uses Spell terminology; `GRANT_CANTRIP`
+  remains compatibility-only outside the current trait catalog.
 
 ---
 

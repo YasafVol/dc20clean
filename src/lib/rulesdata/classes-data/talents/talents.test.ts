@@ -59,7 +59,6 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				'GRANT_CHOICE',
 				'GRANT_SPELL',
 				'GRANT_RESISTANCE',
-				'GRANT_CANTRIP',
 				'GRANT_MANEUVER'
 			];
 			for (const talent of generalTalents) {
@@ -382,7 +381,6 @@ describe('Talent System Data Integrity (M4.1a)', () => {
 				'GRANT_COMBAT_TRAINING',
 				'GRANT_CHOICE',
 				'GRANT_SPELL',
-				'GRANT_CANTRIP',
 				'GRANT_MANEUVER',
 				'GRANT_RESISTANCE'
 			];

@@ -20,9 +20,6 @@ export const wizardClass: ClassDefinition = {
 			description: 'Arcane spells from multiple schools of magic',
 			type: 'arcane'
 		},
-		cantrips: {
-			description: 'Cantrips Known column of the Wizard Class Table'
-		},
 		spells: {
 			description: 'Spells Known column of the Wizard Class Table'
 		},

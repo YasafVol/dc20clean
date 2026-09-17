@@ -291,7 +291,6 @@ describe('Ancestry & Trait System', () => {
 			'GRANT_SKILL_EXPERTISE',
 			'GRANT_TRADE_EXPERTISE',
 			'GRANT_SPELL',
-			'GRANT_CANTRIP',
 			'GRANT_MANEUVER',
 			'MODIFY_MASTERY_CAP',
 			'INCREASE_MASTERY_CAP',

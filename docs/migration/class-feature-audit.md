@@ -13,7 +13,7 @@ Generated from runtime class feature data and v0.10.5 source audit JSON.
 - Duplicate always-on effects: 0
 - Source detailed class chapters: 12
 - Source findings: 1
-- Coverage: covered: 131, partial: 4, progression-derived: 2
+- Coverage: covered: 132, partial: 4, progression-derived: 1
 
 ## Source Findings
 
@@ -33,7 +33,7 @@ Generated from runtime class feature data and v0.10.5 source audit JSON.
 | Monk | martial | 7 | 2 | 4 | 1 | 0 | 35 | covered: 11 |
 | Rogue | martial | 7 | 2 | 4 | 0 | 0 | 19 | covered: 11 |
 | Sorcerer | spellcaster | 6 | 2 | 4 | 2 | 0 | 29 | covered: 9, partial: 1 |
-| Spellblade | hybrid | 8 | 2 | 5 | 2 | 0 | 38 | covered: 11, progression-derived: 2 |
+| Spellblade | hybrid | 8 | 2 | 5 | 2 | 0 | 42 | covered: 12, progression-derived: 1 |
 | Warlock | spellcaster | 6 | 2 | 4 | 2 | 0 | 30 | covered: 9, partial: 1 |
 | Wizard | spellcaster | 6 | 2 | 5 | 2 | 0 | 34 | covered: 11 |
 
@@ -749,7 +749,7 @@ Selections: none.
 
 | Scope | Label | Type | Target | Value | Coverage | Path | Confidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| feature | Wild Speech | GRANT_CANTRIP | druidcraft | 1 | calculated | spell-slot-generation | 0.9 |
+| feature | Wild Speech | GRANT_SPELL | druidcraft | 1 | calculated | spell-slot-generation | 0.9 |
 | feature | Wild Speech | GRANT_CHOICE | wild_speech | 1 | choice-tracked | unresolved-choice-or-ui-selection | 0.7 |
 
 ### Druid / Nature's Torrent
@@ -1387,11 +1387,16 @@ Selections: none.
 
 ### Spellblade / Martial Path
 
-Level 1; core; status progression-derived; score 1; selections 0; effects 0.
+Level 1; core; status covered; score 1; selections 0; effects 4.
 
 Selections: none.
 
-Effects: none.
+| Scope   | Label        | Type                  | Target        | Value | Coverage  | Path            | Confidence |
+| ------- | ------------ | --------------------- | ------------- | ----- | --------- | --------------- | ---------- |
+| feature | Martial Path | GRANT_COMBAT_TRAINING | Weapons       | true  | collected | sheet-collector | 0.8        |
+| feature | Martial Path | GRANT_COMBAT_TRAINING | Spell_Focuses | true  | collected | sheet-collector | 0.8        |
+| feature | Martial Path | GRANT_COMBAT_TRAINING | Light_Armor   | true  | collected | sheet-collector | 0.8        |
+| feature | Martial Path | GRANT_COMBAT_TRAINING | Light_Shields | true  | collected | sheet-collector | 0.8        |
 
 ### Spellblade / Sense Magic
 

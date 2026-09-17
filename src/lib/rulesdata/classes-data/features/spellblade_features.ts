@@ -38,9 +38,6 @@ export const spellbladeClass: ClassDefinition = {
 			schoolCount: 2,
 			tags: ['Weapon', 'Ward']
 		},
-		cantrips: {
-			description: 'Cantrips Known column of the Spellblade Class Table'
-		},
 		spells: {
 			description: 'Spells Known column of the Spellblade Class Table'
 		},

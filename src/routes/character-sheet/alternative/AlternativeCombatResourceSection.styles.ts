@@ -122,6 +122,11 @@ export const RageEffectList = styled.ul`
 	gap: ${theme.spacing[2]} ${theme.spacing[6]};
 	margin: 0;
 	padding-left: ${theme.spacing[5]};
+	list-style: disc;
+
+	li::marker {
+		color: ${theme.colors.accent.success};
+	}
 
 	${media.mobile} {
 		grid-template-columns: 1fr;

@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, and `src/lib/rulesdata/spells-data/`.
 > Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-14
+> Last Updated: 2026-09-17
 
 ---
 
@@ -23,7 +23,7 @@
 - `src/lib/services/enhancedCharacterCalculator.ts`: Aggregates class/trait effects that alter MP
 - UI selection and display:
   - `src/routes/character-creation/*` (spell pickers where applicable)
-  - `src/routes/character-sheet/*` (spell list, filters, actions)
+  - `src/routes/character-sheet/*` (spell list, filters, actions; sheet navigation is shown only for characters with calculated spell slots or saved spells)
 
 ### Equipage Integration
 

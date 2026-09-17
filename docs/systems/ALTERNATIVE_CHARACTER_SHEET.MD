@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-15
+> Last Updated: 2026-09-17
 
 ## 1. Boundary
 
@@ -77,14 +77,23 @@ ambiguous or reload-broken records.
    Brutal `+10` use progressively smaller values with warning and danger accents.
 4. PD and AD abbreviations expose formula tooltips with live values and source bonuses.
 5. PDR, EDR, and MDR share a compact footer beneath both defense rows.
-6. Combat Mastery labels Mana Spend Limit under the title and opens the shared MSL rule
-   explanation.
+6. `CharacterSheetProvider` owns the alternative sheet's normalized presentation facts.
+   The Mana card and Combat Mastery consume the same provider-owned Mana visibility fact,
+   which is true only when calculated maximum Mana is greater than zero. Its info control
+   opens the shared MSL explanation. The provider resolves Meta Magic by canonical feature
+   ID, including multiclass grants; eligible characters receive the exemption chip and
+   feature-specific exception text.
 7. Feature categories preserve their independent disclosure state across tab changes.
 8. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
    pencil / confirm / delete lifecycle. The weapon picker changes only creation of new
    standard weapon attacks.
 9. Upgrade-required legacy characters expose only the existing resource counters and
    Exhaustion. All Actions & Details mutation controls remain hidden.
+10. Spells and Maneuvers are contextual tabs driven by the same provider-owned
+    presentation facts. Spells appears only when the calculator grants at least one spell
+    slot or the saved character already contains a spell. Maneuvers follows the same rule
+    using the calculated maneuver budget or an existing saved maneuver. This preserves
+    valid AP-only spell access and saved selections without exposing irrelevant empty panels.
 
 ## 6. Verification
 

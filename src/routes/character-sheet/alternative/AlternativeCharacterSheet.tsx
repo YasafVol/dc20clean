@@ -12,7 +12,8 @@ import { StatCard } from '../components/new/StatCard';
 import {
 	useCharacterCalculatedData,
 	useCharacterResources,
-	useCharacterSheet
+	useCharacterSheet,
+	useCharacterSheetPresentation
 } from '../hooks/CharacterSheetProvider';
 import {
 	ActionMenu,
@@ -69,6 +70,7 @@ export default function AlternativeCharacterSheet() {
 	} = useCharacterSheet();
 	const resources = useCharacterResources();
 	const calculatedData = useCharacterCalculatedData();
+	const presentation = useCharacterSheetPresentation();
 	const diceRollerRef = useRef<DiceRollerRef>(null);
 	const [feedback, setFeedback] = useState<Feedback | null>(null);
 
@@ -97,8 +99,8 @@ export default function AlternativeCharacterSheet() {
 		character.finalPrimeModifierValue + character.finalCombatMastery
 	);
 	const tempHP = resources?.current.tempHP ?? 0;
-	const currentMP = resources?.current.currentMP ?? 0;
-	const maxMP = calculatedData?.breakdowns?.mpMax?.total ?? character.finalMPMax ?? 0;
+	const currentMP = presentation.resources.mana.current;
+	const maxMP = presentation.resources.mana.maximum;
 	const currentSP = resources?.current.currentSP ?? 0;
 	const maxSP = calculatedData?.breakdowns?.spMax?.total ?? character.finalSPMax ?? 0;
 	const currentRest = resources?.current.currentRestPoints ?? 0;
@@ -327,7 +329,7 @@ export default function AlternativeCharacterSheet() {
 									animateOnMount={false}
 								/>
 							</ResourceCardSlot>
-							{maxMP > 0 && (
+							{presentation.resources.mana.visible && (
 								<ResourceCardSlot>
 									<StatCard
 										label="Mana"

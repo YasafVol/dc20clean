@@ -50,6 +50,10 @@ import type { DiceRollResult, RollMode } from '../components/DiceRoller';
 import type { SpellData } from '../../../types';
 import type { ManeuverData } from '../../../types';
 import { buildProgressionFeatureEntries } from '../featureDisplay';
+import {
+	createCharacterSheetPresentation,
+	type CharacterSheetPresentation
+} from './characterSheetPresentation';
 
 /**
  * Converts the movements array from calculator into the movement structure for SavedCharacter
@@ -311,6 +315,8 @@ function appendConditionFeatureEntries(
 interface CharacterSheetContextType {
 	state: SheetState;
 	dispatch: React.Dispatch<SheetAction>;
+	calculatedData: ReturnType<typeof calculateCharacterWithBreakdowns> | null;
+	presentation: CharacterSheetPresentation;
 	// Helper functions from the reducer
 	updateHP: (hp: number) => void;
 	updateSP: (sp: number) => void;
@@ -721,10 +727,24 @@ function CharacterSheetProviderCore({
 		() => campaignEventHandlers.current.handleLongRestEvent(),
 		[]
 	);
+	const calculatedData = useMemo(() => {
+		if (!state.character) return null;
+		const compatibility = assessCharacterCompatibility(state.character);
+		if (compatibility.autoSaveMode !== 'full') return null;
+
+		const buildData = convertToEnhancedBuildData(state.character);
+		return calculateCharacterWithBreakdowns(buildData) ?? null;
+	}, [state.character]);
+	const presentation = useMemo(
+		() => createCharacterSheetPresentation(state.character, calculatedData),
+		[state.character, calculatedData]
+	);
 
 	const contextValue: CharacterSheetContextType = {
 		state,
 		dispatch,
+		calculatedData,
+		presentation,
 		updateHP,
 		updateSP,
 		updateMP,
@@ -1250,19 +1270,11 @@ export function useCharacterCurrency() {
 
 // Hook for calculated character data with breakdowns
 export function useCharacterCalculatedData() {
-	const { state } = useCharacterSheet();
+	return useCharacterSheet().calculatedData;
+}
 
-	return useMemo(() => {
-		if (!state.character) return null;
-		const compatibility = assessCharacterCompatibility(state.character);
-		if (compatibility.autoSaveMode !== 'full') return null;
-
-		// Convert SavedCharacter to EnhancedCharacterBuildData
-		const buildData = convertToEnhancedBuildData(state.character);
-		// Run calculation to get CharacterSheetData with breakdowns
-		const calculationResult = calculateCharacterWithBreakdowns(buildData);
-		return calculationResult;
-	}, [state.character]);
+export function useCharacterSheetPresentation() {
+	return useCharacterSheet().presentation;
 }
 
 // Hook for character knowledge data

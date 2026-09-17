@@ -1,7 +1,12 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SavedCharacter } from '../../../lib/types/dataContracts';
 import AlternativeMasterySection from './AlternativeMasterySection';
+
+const mockState = vi.hoisted(() => ({
+	manaVisible: true,
+	metaMagic: false
+}));
 
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
@@ -17,7 +22,9 @@ vi.mock('react-i18next', () => ({
 				'characterSheet.manaSpendLimitExampleHeading': 'Example from the rules',
 				'characterSheet.manaSpendLimitExample': 'Level 6 Sorcerer example',
 				'characterSheet.manaSpendLimitExceptionHeading': 'Exception: Sorcerer Meta Magic',
-				'characterSheet.manaSpendLimitException': 'Meta Magic exception',
+				'characterSheet.manaSpendLimitException':
+					'MP spent on Meta Magic enhancements does not count toward your Mana Spend Limit. Other MP spent on the spell still counts.',
+				'characterSheet.manaSpendLimitMetaMagicChip': 'Meta Magic',
 				'characterSheet.attrPrime': 'Prime',
 				'characterSheet.attrMight': 'MIGHT',
 				'characterSheet.attrAgility': 'AGILITY',
@@ -42,6 +49,7 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 		finalSaveCharisma: 3,
 		finalSaveIntelligence: 2,
 		finalPrimeModifierValue: 3,
+		finalMPMax: 4,
 		finalCombatMastery: 2,
 		skillsData: {
 			awareness: 1,
@@ -51,6 +59,17 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 
 	return {
 		useCharacterSheet: () => ({ state: { character } }),
+		useCharacterSheetPresentation: () => ({
+			resources: {
+				mana: {
+					current: mockState.manaVisible ? 4 : 0,
+					maximum: mockState.manaVisible ? 4 : 0,
+					visible: mockState.manaVisible
+				}
+			},
+			access: { spells: false, maneuvers: false },
+			features: { metaMagic: mockState.metaMagic }
+		}),
 		useCharacterCalculatedData: () => null,
 		useCharacterTrades: () => [
 			{
@@ -65,6 +84,10 @@ vi.mock('../hooks/CharacterSheetProvider', () => {
 	};
 });
 
+beforeEach(() => {
+	mockState.manaVisible = true;
+	mockState.metaMagic = false;
+});
 afterEach(cleanup);
 
 describe('AlternativeMasterySection', () => {
@@ -96,9 +119,35 @@ describe('AlternativeMasterySection', () => {
 
 		expect(screen.getByRole('dialog', { name: 'Mana Spend Limit' })).toBeTruthy();
 		expect(screen.getByText('Mana Spend Limit rule')).toBeTruthy();
-		expect(screen.getByText('Meta Magic exception')).toBeTruthy();
+		expect(screen.queryByText('Exception: Sorcerer Meta Magic')).toBeNull();
 
 		fireEvent.click(screen.getByRole('button', { name: 'Close Mana Spend Limit rules' }));
 		expect(screen.queryByRole('dialog')).toBeNull();
+	});
+
+	it('shows the provider-resolved Meta Magic exemption', () => {
+		mockState.metaMagic = true;
+		render(<AlternativeMasterySection onRoll={vi.fn()} />);
+
+		expect(screen.getByText('Meta Magic')).toBeTruthy();
+		expect(
+			screen.getByText(
+				'MP spent on Meta Magic enhancements does not count toward your Mana Spend Limit. Other MP spent on the spell still counts.'
+			)
+		).toBeTruthy();
+
+		fireEvent.click(screen.getByRole('button', { name: 'Open Mana Spend Limit rules' }));
+		expect(screen.getByText('Exception: Sorcerer Meta Magic')).toBeTruthy();
+	});
+
+	it('hides Mana Spend Limit and Meta Magic affordances for characters without Mana', () => {
+		mockState.manaVisible = false;
+		mockState.metaMagic = true;
+		render(<AlternativeMasterySection onRoll={vi.fn()} />);
+
+		expect(screen.getByText('Combat Mastery')).toBeTruthy();
+		expect(screen.queryByText('Mana Spend Limit')).toBeNull();
+		expect(screen.queryByText('Meta Magic')).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Open Mana Spend Limit rules' })).toBeNull();
 	});
 });

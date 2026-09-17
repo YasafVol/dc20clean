@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AttackData, FeatureData, InventoryItemData } from '../../../types';
 import type { InventoryItem, Weapon } from '../../../lib/rulesdata/inventoryItems';
@@ -16,7 +16,11 @@ import InventoryPopup from '../components/InventoryPopup';
 import Maneuvers from '../components/Maneuvers';
 import PlayerNotes from '../components/PlayerNotes';
 import Spells from '../components/Spells';
-import { useCharacterConditions, useCharacterSheet } from '../hooks/CharacterSheetProvider';
+import {
+	useCharacterConditions,
+	useCharacterSheet,
+	useCharacterSheetPresentation
+} from '../hooks/CharacterSheetProvider';
 import {
 	TabBadge,
 	TabButton,
@@ -39,6 +43,7 @@ export default function AlternativeTabbedContent() {
 		setActiveConditionStacks,
 		updateInventory
 	} = useCharacterSheet();
+	const presentation = useCharacterSheetPresentation();
 	const conditionStatuses = useCharacterConditions();
 	const [activeTab, setActiveTab] = useState<TabId>('attacks');
 	const [selectedFeature, setSelectedFeature] = useState<FeatureData | null>(null);
@@ -60,11 +65,22 @@ export default function AlternativeTabbedContent() {
 		() => conditionStatuses.filter((status) => status.interactions?.length).length,
 		[conditionStatuses]
 	);
+	const hasSpells = presentation.access.spells;
+	const hasManeuvers = presentation.access.maneuvers;
+
+	useEffect(() => {
+		if ((activeTab === 'spells' && !hasSpells) || (activeTab === 'maneuvers' && !hasManeuvers)) {
+			setActiveTab('attacks');
+		}
+	}, [activeTab, hasManeuvers, hasSpells]);
+
 	const tabs: Array<{ id: TabId; label: string; badge?: number }> = [
 		{ id: 'attacks', label: t('characterSheet.tabAttacks') },
-		{ id: 'spells', label: t('characterSheet.tabSpells') },
+		...(hasSpells ? [{ id: 'spells' as const, label: t('characterSheet.tabSpells') }] : []),
 		{ id: 'inventory', label: t('characterSheet.tabInventory') },
-		{ id: 'maneuvers', label: t('characterSheet.tabManeuvers') },
+		...(hasManeuvers
+			? [{ id: 'maneuvers' as const, label: t('characterSheet.tabManeuvers') }]
+			: []),
 		{ id: 'features', label: t('characterSheet.tabFeatures') },
 		{
 			id: 'conditions',

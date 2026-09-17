@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
 > Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-15
+> Last Updated: 2026-09-17
 
 ## Recent UX additions
 
@@ -19,6 +19,7 @@ state, behavior, and ownership.
 - **Alternative section disclosure**: Resources; Attributes, Skills & Trades; Combat; and Actions & Details each have a visible section heading and an independent disclosure control. All four sections start expanded at every viewport size. Collapsing hides the mounted content immediately without a slide animation, so local tab and row-edit state survives reopening.
 - **Alternative sheet color roles**: Structural surfaces and passive values stay neutral; crystal blue identifies roll actions and interaction states; each Attribute color is limited to its title, top border, and filled mastery dots; both defenses use the purple defense family; resource colors retain their established meanings; green is reserved for active positive states such as damage reduction.
 - **Alternative tab interaction**: Subtle dividers separate the uppercase tabs; the active tab uses a crystal-tinted surface, inset outline, and thicker top accent. Existing editable rows in Attacks, Spells, Inventory, Maneuvers, and Notes use a trailing pencil to enter edit mode, check to finish, and delete only while editing. New standard weapon attacks are the exception: Add Weapon opens the alternative picker and creates a populated row only after confirmation. Features and Conditions retain their existing view/control behavior.
+- **Contextual rules tabs**: Spells and Maneuvers appear only when their calculated known-slot/budget entitlement is positive or the saved character already contains an entry. The saved-entry fallback keeps legacy data reachable when current calculation is unavailable.
 - **Hero strip restructured to fluid columns**: `HeroSection` uses a container-driven layout:
   - **Col 1**: Health (HP + Temp HP + Health Status + Exhaustion) — unchanged.
   - **Col 2**: Resources (Mana and Stamina) above Recovery (Rest and Grit).
@@ -32,7 +33,7 @@ state, behavior, and ownership.
 - **Compact resource labels**: Hero resource cards use Hit Points, Mana, Stamina, Rest, and Grit without the redundant “Points” suffix.
 - **Defense cards**: Combat Stats uses the canonical labels PD, Damage Reduction, and AD. Both PD and AD show Heavy and Brutal thresholds on separate lines using defense +5/+10. On the alternative sheet, hovering the PD or AD abbreviation shows the canonical formula, its live component values, active source-attributed bonuses, and any displayed override.
 - **Attribute headers**: Might, Agility, Charisma, and INT use a compact `Attribute ±score (±save save)` reading order; duplicate abbreviation boxes are removed while score tooltips and clickable save rolls remain intact.
-- **Prime hierarchy**: Prime occupies the first column beside the four Attributes, uses their exact header structure and spacing, and owns Awareness. Compact Combat Mastery sits directly beneath Prime and labels Mana Spend Limit immediately under its title. Its single-ring info control opens the MSL rule, level calculation, example, and Sorcerer Meta Magic exception. Both cards use purple top-border accents, with Combat Mastery using a 30%-lighter treatment. Awareness and every Attribute skill list share the same top baseline.
+- **Prime hierarchy**: Prime occupies the first column beside the four Attributes, uses their exact header structure and spacing, and owns Awareness. Compact Combat Mastery sits directly beneath Prime. Mana Spend Limit and the Mana resource consume one provider-owned visibility fact derived from calculated maximum Mana. A Meta Magic exemption chip and exception text appear only when the provider resolves the canonical Meta Magic feature ID, including a multiclass grant. Both cards use purple top-border accents, with Combat Mastery using a 30%-lighter treatment. Awareness and every Attribute skill list share the same top baseline.
 - **CompactUtility component** (`components/new/CompactUtility.tsx`): compact replacement for the old Utility tab:
   1. Move | Jump as two mini stat cards in one row.
   2. GP | SP | CP inline editable pills.
@@ -87,7 +88,7 @@ New files: `components/RulebookPanel.tsx`, `components/RichDescription.tsx`. Rul
 The character sheet uses a **context provider pattern** with a reducer for state management:
 
 1. `CharacterSheetRouter.tsx` ? entry point; wraps everything in `CharacterSheetProvider`
-2. `CharacterSheetProvider` (in `hooks/`) ? loads character from storage, checks compatibility, runs `calculateCharacterWithBreakdowns()` only when full recalculation is allowed, provides computed state via context
+2. `CharacterSheetProvider` (in `hooks/`) ? loads character from storage, checks compatibility, runs `calculateCharacterWithBreakdowns()` once per character state when full recalculation is allowed, and provides both calculated data and normalized sheet-presentation facts through context. Mana visibility, spell access, maneuver access, and canonical Meta Magic eligibility are resolved here rather than independently inside section components.
 3. `useCharacterSheetReducer` ? reducer for local sheet state (resource changes, condition toggles, inventory edits)
 4. Layout components render sections based on breakpoint
 

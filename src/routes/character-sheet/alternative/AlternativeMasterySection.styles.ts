@@ -92,6 +92,19 @@ export const CardLimitLabel = styled.span`
 	letter-spacing: 0.04em;
 `;
 
+export const ManaExemptionChip = styled.span`
+	display: inline-flex;
+	align-items: center;
+	padding: 2px ${theme.spacing[2]};
+	border: 1px solid ${theme.colors.accent.secondaryAlpha40};
+	border-radius: ${theme.borderRadius.full};
+	background: ${theme.colors.accent.secondaryAlpha10};
+	color: ${theme.colors.accent.secondary};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	line-height: 1.2;
+`;
+
 export const ManaInfoButton = styled.button`
 	display: inline-flex;
 	align-items: center;

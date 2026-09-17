@@ -119,3 +119,5 @@ ambiguous or reload-broken records.
 6. `AlternativeMasterySection.test.tsx` and
    `alternativeRollPresentation.test.ts` prove the visible Rage source and ADV/DisADV
    stack cancellation.
+7. The deferred character-level magic, feature-mode, and derived-calculation suite is
+   specified in `TESTING_SYSTEM.MD` section 3.3.

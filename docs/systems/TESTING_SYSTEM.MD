@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-14
+> Last Updated: 2026-09-17
 
 ---
 
@@ -128,6 +128,29 @@ fixtures belong in explicit compatibility or upgrade scenarios and must not be r
 1. Use a readable Gherkin scenario when several progression sources combine into one expected character result.
 2. Back the scenario with a focused rules-data or calculator test using the same named choices and exact totals.
 3. `e2e/features/wizard-level-5-progression.feature` maps to `src/lib/services/dc20v0105ProgressionResources.test.ts`.
+
+### 3.3 Alternative Character Sheet Integration TODO
+
+Add a current-rules character-page suite that proves presentation and calculations stay
+connected across the shared provider, calculator, and alternative sheet:
+
+1. Magic context:
+   1. a noncaster hides Mana, Mana Spend Limit, and Spells;
+   2. an AP-only caster shows Spells without showing Mana or Mana Spend Limit;
+   3. a Mana caster shows Mana, Mana Spend Limit, and Spells;
+   4. the Meta Magic exemption appears only for a character that owns the canonical feature,
+      including a multiclass grant.
+2. Combat feature modes:
+   1. Rage appears only for a character that owns the canonical feature;
+   2. activating and deactivating Rage updates the shared condition state and survives the
+      intended sheet-state lifecycle.
+3. Derived combat results:
+   1. active Rage applies the PD penalty and restores PD when deactivated;
+   2. its damage bonus applies to Unarmed Strikes and melee weapons, but not ranged weapons;
+   3. its Might Save ADV source is visible and participates in normal ADV/DisADV cancellation.
+
+Keep exact rule permutations in focused calculator and component tests. Use one representative
+Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.
 
 ---
 

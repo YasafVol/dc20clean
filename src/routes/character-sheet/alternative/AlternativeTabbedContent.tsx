@@ -151,6 +151,7 @@ export default function AlternativeTabbedContent() {
 						{activeTab === 'spells' && (
 							<Spells
 								showTitle={false}
+								useSpellPicker
 								onSpellClick={() => {}}
 								onSpellCast={handleSpellCast}
 								readOnly={readOnly}

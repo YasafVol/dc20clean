@@ -15,7 +15,9 @@ import {
 } from '../hooks/CharacterSheetProvider';
 import { getSpellPresentation } from '../spellPresentation';
 import { logger } from '../../../lib/utils/logger';
+import { createSpellDataFromSpell } from '../spellData';
 import RowEditControls from './shared/RowEditControls';
+import SpellPickerModal from './SpellPickerModal';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -123,6 +125,7 @@ export interface SpellsProps {
 	isMobile?: boolean;
 	onSpellCast?: (spell: SpellData) => void;
 	showTitle?: boolean;
+	useSpellPicker?: boolean;
 }
 
 const Spells: React.FC<SpellsProps> = ({
@@ -130,7 +133,8 @@ const Spells: React.FC<SpellsProps> = ({
 	readOnly = false,
 	isMobile,
 	onSpellCast,
-	showTitle = true
+	showTitle = true,
+	useSpellPicker = false
 }) => {
 	const { t } = useTranslation();
 	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
@@ -147,6 +151,7 @@ const Spells: React.FC<SpellsProps> = ({
 
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
 	const [editingSpellIds, setEditingSpellIds] = useState<Set<string>>(new Set());
+	const [isSpellPickerOpen, setIsSpellPickerOpen] = useState(false);
 	const expansionSessionKey = state.character.id;
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
 		const cached = expandedSpellSessionState.get(expansionSessionKey);
@@ -202,7 +207,25 @@ const Spells: React.FC<SpellsProps> = ({
 		});
 	}, [spells, schoolFilter]);
 
+	const pickerCatalogSpells = useMemo(() => {
+		const knownSpellNames = new Set(spells.map((spell) => spell.spellName.toLowerCase()));
+		return sortedSpells.filter((spell) => !knownSpellNames.has(spell.name.toLowerCase()));
+	}, [spells]);
+
+	const pickerAllowedSpells = useMemo(() => {
+		const nextSpellSlot = calculation?.spellsKnownSlots?.[spells.length];
+		if (!nextSpellSlot) return [];
+		return pickerCatalogSpells.filter((spell) =>
+			matchesSpellSlot(spell, nextSpellSlot, calculation?.globalMagicProfile)
+		);
+	}, [calculation, pickerCatalogSpells, spells.length]);
+
 	const addSpellSlot = () => {
+		if (useSpellPicker) {
+			setIsSpellPickerOpen(true);
+			return;
+		}
+
 		const newSpell: SpellData = {
 			id: `spell_${Date.now()}`,
 			spellName: '',
@@ -215,6 +238,13 @@ const Spells: React.FC<SpellsProps> = ({
 		};
 		addSpell(newSpell);
 		setEditingSpellIds((prev) => new Set(prev).add(newSpell.id));
+	};
+
+	const addSelectedSpell = (spell: Spell) => {
+		const newSpell = createSpellDataFromSpell(spell);
+		addSpell(newSpell);
+		setExpandedSpells((prev) => new Set(prev).add(newSpell.id));
+		setIsSpellPickerOpen(false);
 	};
 
 	const removeSpellSlot = (spellIndex: number) => {
@@ -398,7 +428,9 @@ const Spells: React.FC<SpellsProps> = ({
 							data-testid="add-spell"
 							aria-label="Add Spell"
 						>
-							+ Add {schoolFilter !== 'all' ? `${schoolFilter} ` : ''}Spell
+							{useSpellPicker
+								? '+ Add Spell'
+								: '+ Add ' + (schoolFilter !== 'all' ? schoolFilter + ' ' : '') + 'Spell'}
 						</StyledAddSpellButton>
 					</StyledSpellsControls>
 				)}
@@ -712,6 +744,14 @@ const Spells: React.FC<SpellsProps> = ({
 					})
 				)}
 			</StyledSpellsContainer>
+			{isSpellPickerOpen ? (
+				<SpellPickerModal
+					allowedSpells={pickerAllowedSpells}
+					catalogSpells={pickerCatalogSpells}
+					onAdd={addSelectedSpell}
+					onClose={() => setIsSpellPickerOpen(false)}
+				/>
+			) : null}
 		</StyledSpellsSection>
 	);
 };

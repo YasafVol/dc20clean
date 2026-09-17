@@ -149,6 +149,9 @@ connected across the shared provider, calculator, and alternative sheet:
    2. its damage bonus applies to Unarmed Strikes and melee weapons, but not ranged weapons;
    3. its Might Save ADV source is visible and participates in normal ADV/DisADV cancellation.
 
+The focused `Spells.test.tsx` component coverage is complete for the alternative
+picker no-blank-row, next-slot eligibility, full-catalog ordering, and confirmation flow.
+
 Keep exact rule permutations in focused calculator and component tests. Use one representative
 Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.
 

@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AlternativeTabbedContent from './AlternativeTabbedContent';
 
@@ -53,7 +53,11 @@ vi.mock('../components/ComplexFeatureHost', () => ({ default: () => null }));
 vi.mock('../components/EffectsRulesNotes', () => ({ default: () => null }));
 vi.mock('../components/Features', () => ({ default: () => null }));
 vi.mock('../components/Inventory', () => ({ default: () => null }));
-vi.mock('../components/Maneuvers', () => ({ default: () => null }));
+vi.mock('../components/Maneuvers', () => ({
+	default: ({ useCompactToolbar }: { useCompactToolbar?: boolean }) => (
+		<div data-testid="maneuver-toolbar-mode">{useCompactToolbar ? 'compact' : 'legacy'}</div>
+	)
+}));
 vi.mock('../components/PlayerNotes', () => ({ default: () => null }));
 vi.mock('../components/Spells', () => ({ default: () => null }));
 vi.mock('../components/FeaturePopup', () => ({ default: () => null }));
@@ -87,6 +91,15 @@ describe('AlternativeTabbedContent contextual tabs', () => {
 
 		expect(screen.getByRole('tab', { name: 'Maneuvers' })).toBeInTheDocument();
 		expect(screen.queryByRole('tab', { name: 'Spells' })).not.toBeInTheDocument();
+	});
+
+	it('uses the compact catalog toolbar for alternative-sheet maneuvers', () => {
+		mockSheet.access.maneuvers = true;
+		render(<AlternativeTabbedContent />);
+
+		fireEvent.click(screen.getByRole('tab', { name: 'Maneuvers' }));
+
+		expect(screen.getByTestId('maneuver-toolbar-mode')).toHaveTextContent('compact');
 	});
 
 	it('shows both contextual tabs when the provider grants both kinds of access', () => {

@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-17
+> Last Updated: 2026-09-18
 
 ## 1. Boundary
 
@@ -82,6 +82,9 @@ ambiguous or reload-broken records.
 7. Cancelling or closing creates no record.
 8. The picker uses the weapon picker's responsive list/detail structure.
 9. Read-only campaign views do not render `Add Spell`.
+10. The tab uses one compact catalog toolbar: Spellbook reference, School filter,
+    neutral grouped Expand/Collapse controls, and a primary Add Spell action. Controls
+    wrap without changing their order when space is constrained.
 
 Phase boundary: advanced catalog filters and custom-spell creation are not part of this
 picker. The primary sheet retains its existing blank-row and custom-spell workflow.
@@ -122,6 +125,9 @@ picker. The primary sheet retains its existing blank-row and custom-spell workfl
     damage only to Unarmed Strikes and melee weapons, and alternative-sheet Might Save
     rolls add one ADV stack. The roll label and Might card identify the source as
     `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
+13. The Maneuvers tab follows the same compact catalog-toolbar hierarchy: Martial
+    Manual reference, Type filter, neutral grouped Expand/Collapse controls, and a
+    primary Add Maneuver action. The primary sheet retains its existing controls.
 
 ## 7. Verification
 

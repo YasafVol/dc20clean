@@ -109,6 +109,17 @@ beforeEach(() => {
 });
 
 describe('alternative spell picker', () => {
+	it('uses the compact catalog toolbar', () => {
+		renderAlternativeSpells();
+
+		expect(screen.getByRole('link', { name: 'Spellbook' })).toHaveAttribute('href', '/spellbook');
+		expect(screen.getByText('School')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Expand all' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Collapse all' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Add Spell' })).toBeInTheDocument();
+		expect(screen.queryByText('Review Spellbook')).not.toBeInTheDocument();
+	});
+
 	it('adds a populated catalog spell without creating a blank row first', () => {
 		renderAlternativeSpells();
 		fireEvent.click(screen.getByTestId('add-spell'));

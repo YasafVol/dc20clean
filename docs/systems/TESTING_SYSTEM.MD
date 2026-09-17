@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-17
+> Last Updated: 2026-09-18
 
 ---
 
@@ -150,7 +150,9 @@ connected across the shared provider, calculator, and alternative sheet:
    3. its Might Save ADV source is visible and participates in normal ADV/DisADV cancellation.
 
 The focused `Spells.test.tsx` component coverage is complete for the alternative
-picker no-blank-row, next-slot eligibility, full-catalog ordering, and confirmation flow.
+picker no-blank-row, next-slot eligibility, full-catalog ordering, confirmation flow,
+and compact catalog-toolbar composition. `AlternativeTabbedContent.test.tsx` proves
+the alternative Maneuvers panel opts into the same compact toolbar.
 
 Keep exact rule permutations in focused calculator and component tests. Use one representative
 Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.

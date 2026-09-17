@@ -18,6 +18,7 @@ import { logger } from '../../../lib/utils/logger';
 import { createSpellDataFromSpell } from '../spellData';
 import RowEditControls from './shared/RowEditControls';
 import SpellPickerModal from './SpellPickerModal';
+import CatalogToolbar from './shared/CatalogToolbar';
 import {
 	StyledSpellsSection,
 	StyledSpellsHeader,
@@ -373,7 +374,29 @@ const Spells: React.FC<SpellsProps> = ({
 		<StyledSpellsSection $isMobile={effectiveIsMobile} data-testid="spells-section">
 			<StyledSpellsHeader $isMobile={effectiveIsMobile}>
 				{showTitle && <StyledSpellsTitle $isMobile={effectiveIsMobile}>Spells</StyledSpellsTitle>}
-				{!isLocked && (
+				{!isLocked && useSpellPicker && (
+					<CatalogToolbar
+						referenceTo="/spellbook"
+						referenceLabel="Spellbook"
+						filterLabel="School"
+						filterValue={schoolFilter}
+						onFilterChange={handleSchoolFilterChange}
+						filterTestId="spell-filter"
+						onExpand={expandAll}
+						onCollapse={collapseAll}
+						onAdd={addSpellSlot}
+						addLabel="Add Spell"
+						addTestId="add-spell"
+					>
+						<option value="all">All Schools</option>
+						{(Object.values(SpellSchool) as string[]).map((school) => (
+							<option key={school} value={school}>
+								{school}
+							</option>
+						))}
+					</CatalogToolbar>
+				)}
+				{!isLocked && !useSpellPicker && (
 					<StyledSpellsControls $isMobile={effectiveIsMobile} data-testid="spells-controls">
 						<Link
 							to="/spellbook"
@@ -428,9 +451,7 @@ const Spells: React.FC<SpellsProps> = ({
 							data-testid="add-spell"
 							aria-label="Add Spell"
 						>
-							{useSpellPicker
-								? '+ Add Spell'
-								: '+ Add ' + (schoolFilter !== 'all' ? schoolFilter + ' ' : '') + 'Spell'}
+							{'+ Add ' + (schoolFilter !== 'all' ? schoolFilter + ' ' : '') + 'Spell'}
 						</StyledAddSpellButton>
 					</StyledSpellsControls>
 				)}

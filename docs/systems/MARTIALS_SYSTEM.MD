@@ -104,7 +104,7 @@ import { allManeuvers, getManeuverById, getManeuversByType } from './martials/ma
 - Remaining count and filter by `ManeuverType` are displayed in `Maneuvers.tsx`.
 - If no maneuver budget exists, the Maneuvers stage is hidden by step gating in `CharacterCreation.tsx`.
 - Sheet maneuver rows mirror spell rows: the row toggles details, Use remains directly available, and changing/removing a slot requires its trailing edit action. Expansion state persists across sheet-tab changes and resets on a full page load.
-- The alternative sheet presents Martial Manual, Type filtering, grouped Expand/Collapse controls, and Add Maneuver in the shared compact catalog-toolbar hierarchy. The primary sheet retains its existing toolbar.
+- The alternative sheet presents Martial Manual, Type filtering, grouped Expand/Collapse controls, and Add Maneuver in the shared compact catalog-toolbar hierarchy. Add Maneuver opens a responsive list/detail picker, previews the complete catalog card, and creates a populated row only after confirmation. The primary sheet retains its existing toolbar and blank-row workflow.
 - Sheet navigation exposes Maneuvers only when the calculated maneuver budget is positive or the saved character already contains a maneuver.
 - Expanded known rows expose `View full card`, which opens the Martial Manual filtered
   to the canonical maneuver ID and automatically expands that card.

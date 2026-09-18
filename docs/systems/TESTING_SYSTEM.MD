@@ -151,8 +151,10 @@ connected across the shared provider, calculator, and alternative sheet:
 
 The focused `Spells.test.tsx` component coverage is complete for the alternative
 picker no-blank-row, next-slot eligibility, full-catalog ordering, confirmation flow,
-and compact catalog-toolbar composition. `AlternativeTabbedContent.test.tsx` proves
-the alternative Maneuvers panel opts into the same compact toolbar.
+and compact catalog-toolbar composition. `Maneuvers.test.tsx` proves the
+alternative picker creates complete catalog data without a blank row and excludes
+already-known maneuvers. `AlternativeTabbedContent.test.tsx` proves the panel opts
+into both the compact toolbar and picker flow.
 
 Keep exact rule permutations in focused calculator and component tests. Use one representative
 Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.

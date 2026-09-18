@@ -171,6 +171,7 @@ export default function AlternativeTabbedContent() {
 							<Maneuvers
 								showTitle={false}
 								useCompactToolbar
+								useManeuverPicker
 								onManeuverClick={() => {}}
 								onManeuverUse={handleManeuverUse}
 								readOnly={readOnly}

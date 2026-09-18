@@ -89,7 +89,24 @@ ambiguous or reload-broken records.
 Phase boundary: advanced catalog filters and custom-spell creation are not part of this
 picker. The primary sheet retains its existing blank-row and custom-spell workflow.
 
-## 6. Other Alternative-Only Interaction Rules
+## 6. Alternative Maneuver Add Flow
+
+1. `Add Maneuver` opens `ManeuverPickerModal`; it does not create a blank row.
+2. The picker lists the current maneuver catalog alphabetically and excludes maneuvers
+   already recorded on the character.
+3. Each list choice identifies maneuver type and base AP/SP cost.
+4. The selected card presents type, cost, range, action/reaction timing, description,
+   reaction trigger when present, and every enhancement before confirmation.
+5. Confirming creates one fully populated `ManeuverData` record and closes the picker.
+6. Cancelling or closing creates no record.
+7. The picker uses the same responsive list/detail structure as the weapon and spell pickers.
+8. Read-only campaign views do not render `Add Maneuver`.
+
+Phase boundary: advanced catalog filters and custom-maneuver creation are not part of
+this picker. Maneuver eligibility is a count budget rather than a catalog restriction,
+so the picker does not present an Allowed / All source switch.
+
+## 7. Other Alternative-Only Interaction Rules
 
 1. Attributes and combat values use the shared automatic Dice Roller.
 2. The combat action panel aligns Save DC, Initiative, and Jump as equal metrics, then
@@ -125,11 +142,8 @@ picker. The primary sheet retains its existing blank-row and custom-spell workfl
     damage only to Unarmed Strikes and melee weapons, and alternative-sheet Might Save
     rolls add one ADV stack. The roll label and Might card identify the source as
     `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
-13. The Maneuvers tab follows the same compact catalog-toolbar hierarchy: Martial
-    Manual reference, Type filter, neutral grouped Expand/Collapse controls, and a
-    primary Add Maneuver action. The primary sheet retains its existing controls.
 
-## 7. Verification
+## 8. Verification
 
 1. `src/routes/character-sheet/components/Attacks.test.tsx` proves the picker creates a
    populated attack, folds in the source switch, and sorts the catalog.
@@ -141,11 +155,12 @@ picker. The primary sheet retains its existing blank-row and custom-spell workfl
    documented in `CAMPAIGN_SYSTEM.MD`.
 5. `AlternativeCombatResourceSection.test.tsx` proves the two-state Rage control and
    complete disclosed rule text.
-6. `AlternativeMasterySection.test.tsx` and
+6. `Maneuvers.test.tsx` proves the alternative picker creates a complete catalog-backed row, excludes existing choices, and never creates a blank row.
+7. `AlternativeMasterySection.test.tsx` and
    `alternativeRollPresentation.test.ts` prove the visible Rage source and ADV/DisADV
    stack cancellation.
-7. The deferred character-level magic, feature-mode, and derived-calculation suite is
+8. The deferred character-level magic, feature-mode, and derived-calculation suite is
    specified in `TESTING_SYSTEM.MD` section 3.3.
-8. `src/routes/character-sheet/components/Spells.test.tsx` proves the alternative
+9. `src/routes/character-sheet/components/Spells.test.tsx` proves the alternative
    picker opens without mutation, applies next-slot restrictions, switches to an
    alphabetical full catalog, and confirms one populated spell.

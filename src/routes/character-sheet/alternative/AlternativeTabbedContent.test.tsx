@@ -54,8 +54,16 @@ vi.mock('../components/EffectsRulesNotes', () => ({ default: () => null }));
 vi.mock('../components/Features', () => ({ default: () => null }));
 vi.mock('../components/Inventory', () => ({ default: () => null }));
 vi.mock('../components/Maneuvers', () => ({
-	default: ({ useCompactToolbar }: { useCompactToolbar?: boolean }) => (
-		<div data-testid="maneuver-toolbar-mode">{useCompactToolbar ? 'compact' : 'legacy'}</div>
+	default: ({
+		useCompactToolbar,
+		useManeuverPicker
+	}: {
+		useCompactToolbar?: boolean;
+		useManeuverPicker?: boolean;
+	}) => (
+		<div data-testid="maneuver-mode">
+			{useCompactToolbar ? 'compact' : 'legacy'} / {useManeuverPicker ? 'picker' : 'row'}
+		</div>
 	)
 }));
 vi.mock('../components/PlayerNotes', () => ({ default: () => null }));
@@ -99,7 +107,7 @@ describe('AlternativeTabbedContent contextual tabs', () => {
 
 		fireEvent.click(screen.getByRole('tab', { name: 'Maneuvers' }));
 
-		expect(screen.getByTestId('maneuver-toolbar-mode')).toHaveTextContent('compact');
+		expect(screen.getByTestId('maneuver-mode')).toHaveTextContent('compact / picker');
 	});
 
 	it('shows both contextual tabs when the provider grants both kinds of access', () => {

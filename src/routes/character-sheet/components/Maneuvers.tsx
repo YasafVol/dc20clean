@@ -19,6 +19,8 @@ import RowEditControls from './shared/RowEditControls';
 import { sortByName } from '../catalogSorting';
 import RichDescription from './RichDescription';
 import CatalogToolbar from './shared/CatalogToolbar';
+import ManeuverPickerModal from './ManeuverPickerModal';
+import { createManeuverDataFromManeuver } from '../maneuverData';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -58,6 +60,7 @@ export interface ManeuversProps {
 	isMobile?: boolean;
 	showTitle?: boolean;
 	useCompactToolbar?: boolean;
+	useManeuverPicker?: boolean;
 }
 
 const Maneuvers: React.FC<ManeuversProps> = ({
@@ -66,7 +69,8 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	readOnly = false,
 	isMobile,
 	showTitle = true,
-	useCompactToolbar = false
+	useCompactToolbar = false,
+	useManeuverPicker = false
 }) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
@@ -88,6 +92,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		return new Set([...cached].filter((maneuverId) => currentManeuverIds.has(maneuverId)));
 	});
 	const [editingManeuverIds, setEditingManeuverIds] = useState<Set<string>>(new Set());
+	const [isManeuverPickerOpen, setIsManeuverPickerOpen] = useState(false);
 	const [declaredEnhancements, setDeclaredEnhancements] = useState<
 		Record<string, Record<string, number>>
 	>({});
@@ -120,7 +125,21 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		});
 	}, [maneuvers, typeFilter]);
 
+	const pickerManeuvers = useMemo(() => {
+		const knownManeuverNames = new Set(
+			maneuvers.map((maneuver) => maneuver.name.trim().toLowerCase()).filter(Boolean)
+		);
+		return sortedManeuvers.filter(
+			(maneuver) => !knownManeuverNames.has(maneuver.name.toLowerCase())
+		);
+	}, [maneuvers]);
+
 	const addManeuverSlot = () => {
+		if (useManeuverPicker) {
+			setIsManeuverPickerOpen(true);
+			return;
+		}
+
 		const newManeuver: ManeuverData = {
 			id: `maneuver_${Date.now()}`,
 			name: '',
@@ -134,6 +153,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		};
 		addManeuver(newManeuver);
 		setEditingManeuverIds((prev) => new Set(prev).add(newManeuver.id));
+	};
+
+	const addSelectedManeuver = (maneuver: Maneuver) => {
+		const newManeuver = createManeuverDataFromManeuver(maneuver);
+		addManeuver(newManeuver);
+		setExpandedManeuvers((prev) => new Set(prev).add(newManeuver.id));
+		setIsManeuverPickerOpen(false);
 	};
 
 	const removeManeuverSlot = (maneuverIndex: number) => {
@@ -540,6 +566,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 					})
 				)}
 			</StyledManeuversContainer>
+			{isManeuverPickerOpen ? (
+				<ManeuverPickerModal
+					maneuvers={pickerManeuvers}
+					onAdd={addSelectedManeuver}
+					onClose={() => setIsManeuverPickerOpen(false)}
+				/>
+			) : null}
 		</StyledManeuversSection>
 	);
 };

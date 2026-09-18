@@ -1,5 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
-import { BrowserRouter, Routes, Route, useParams, useSearchParams, Navigate } from 'react-router-dom';
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	useParams,
+	useSearchParams,
+	Navigate
+} from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import CharacterCreation from './routes/character-creation/CharacterCreation.tsx';
 import { CharacterProvider } from './lib/stores/characterContext';
@@ -14,7 +21,13 @@ import CustomEquipment from './routes/custom-equipment/CustomEquipment.tsx';
 import Conditions from './routes/conditions/Conditions.tsx';
 import { MonsterList, MonsterDesigner } from './routes/dm/monsters';
 import { EncounterList, EncounterPlanner } from './routes/dm/encounters';
-import { CampaignList, CampaignDetail, JoinCampaign, CampaignCharacterView } from './routes/campaigns';
+import {
+	CampaignList,
+	CampaignDetail,
+	JoinCampaign,
+	CampaignCharacterView
+} from './routes/campaigns';
+import AlternativeSheetUpdate from './routes/product-update/AlternativeSheetUpdate';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
@@ -151,6 +164,10 @@ function App() {
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
 						<Route
+							path="/updates/alternative-character-sheet"
+							element={<AlternativeSheetUpdate />}
+						/>
+						<Route
 							path="/rulebook/*"
 							element={
 								<Suspense fallback={<div className="p-8 text-center">Loading rulebook...</div>}>
@@ -181,7 +198,10 @@ function App() {
 						<Route path="/campaigns/join" element={<JoinCampaign />} />
 						<Route path="/campaigns/join/:code" element={<JoinCampaign />} />
 						<Route path="/campaigns/:id" element={<CampaignDetail />} />
-						<Route path="/campaigns/:campaignId/character/:characterId" element={<CampaignCharacterViewWrapper />} />
+						<Route
+							path="/campaigns/:campaignId/character/:characterId"
+							element={<CampaignCharacterViewWrapper />}
+						/>
 					</Routes>
 				</BrowserRouter>
 			</StyledApp>
@@ -203,9 +223,13 @@ function CampaignCharacterViewWrapper() {
 	const { campaignId, characterId } = useParams();
 	const [searchParams] = useSearchParams();
 	const characterDocId = searchParams.get('record') ?? undefined;
-	return campaignId && characterId
-		? <CampaignCharacterView campaignId={campaignId} characterId={characterId} characterDocId={characterDocId} />
-		: null;
+	return campaignId && characterId ? (
+		<CampaignCharacterView
+			campaignId={campaignId}
+			characterId={characterId}
+			characterDocId={characterDocId}
+		/>
+	) : null;
 }
 
 export default App;

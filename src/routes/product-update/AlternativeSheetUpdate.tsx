@@ -109,7 +109,9 @@ export default function AlternativeSheetUpdate() {
 		<Page>
 			<Shell>
 				<Hero>
-					<Eyebrow>Player update · July–September 2026</Eyebrow>
+					<Eyebrow>
+						Product update · <time dateTime="2026-09-18">September 18, 2026</time>
+					</Eyebrow>
 					<Title>The new character sheet</Title>
 					<Lead>
 						A faster, clearer place to run your character at the table—built around the decisions
@@ -121,7 +123,10 @@ export default function AlternativeSheetUpdate() {
 						</PrimaryAction>
 						<SecondaryAction to="/create-character">Create a character</SecondaryAction>
 					</Actions>
-					<HeroNote>Choose Alternative Sheet from any saved, current-rules character.</HeroNote>
+					<HeroNote>
+						This update covers work from July 24 through September 18. Choose Alternative Sheet from
+						any saved, current-rules character.
+					</HeroNote>
 				</Hero>
 
 				<Section aria-labelledby="highlights-title">

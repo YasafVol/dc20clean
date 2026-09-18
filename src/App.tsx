@@ -164,8 +164,12 @@ function App() {
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
 						<Route
-							path="/updates/alternative-character-sheet"
+							path="/updates/2026-09-18-alternative-character-sheet"
 							element={<AlternativeSheetUpdate />}
+						/>
+						<Route
+							path="/updates/alternative-character-sheet"
+							element={<Navigate to="/updates/2026-09-18-alternative-character-sheet" replace />}
 						/>
 						<Route
 							path="/rulebook/*"

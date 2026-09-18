@@ -30,7 +30,7 @@
 - The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
 - Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.
 - The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
-- `/updates/alternative-character-sheet` is the public, player-facing release summary for the Alternative Character Sheet. Keep its claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; it is product communication, not an additional behavior authority.
+- `/updates/2026-09-18-alternative-character-sheet` is the dated, player-facing release summary for the Alternative Character Sheet; the original undated route redirects to it. Future releases should use their own dated slug so an updates index can list stable URLs. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
 
 ## Local Setup
 

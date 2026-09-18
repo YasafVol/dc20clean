@@ -14,6 +14,7 @@ describe('AlternativeSheetUpdate', () => {
 		expect(
 			screen.getByRole('heading', { name: 'The new character sheet', level: 1 })
 		).toBeInTheDocument();
+		expect(screen.getByText('September 18, 2026')).toHaveAttribute('datetime', '2026-09-18');
 		expect(screen.getByText('Allowed spells or all spells')).toBeInTheDocument();
 		expect(screen.getByText('Full tactical preview')).toBeInTheDocument();
 		expect(screen.getByText('Campaign-ready records')).toBeInTheDocument();

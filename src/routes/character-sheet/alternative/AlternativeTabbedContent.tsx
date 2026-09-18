@@ -151,6 +151,7 @@ export default function AlternativeTabbedContent() {
 						{activeTab === 'spells' && (
 							<Spells
 								showTitle={false}
+								useSpellPicker
 								onSpellClick={() => {}}
 								onSpellCast={handleSpellCast}
 								readOnly={readOnly}
@@ -169,6 +170,8 @@ export default function AlternativeTabbedContent() {
 						{activeTab === 'maneuvers' && (
 							<Maneuvers
 								showTitle={false}
+								useCompactToolbar
+								useManeuverPicker
 								onManeuverClick={() => {}}
 								onManeuverUse={handleManeuverUse}
 								readOnly={readOnly}

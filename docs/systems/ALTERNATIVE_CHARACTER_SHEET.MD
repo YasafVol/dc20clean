@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-17
+> Last Updated: 2026-09-18
 
 ## 1. Boundary
 
@@ -67,7 +67,46 @@ current `AttackData` model stores only `weaponName`; custom weapons need a stabl
 `customEquipmentId` link and compatibility handling before they can be added without
 ambiguous or reload-broken records.
 
-## 5. Other Alternative-Only Interaction Rules
+## 5. Alternative Spell Add Flow
+
+1. `Add Spell` opens `SpellPickerModal`; it does not create a blank spell row.
+2. The picker starts on Allowed spells. This list applies the restriction of the next
+   available `spellsKnownSlots` entry through `matchesSpellSlot`, including the
+   Global Magic Profile when that slot is global.
+3. All spells lists the complete current catalog in alphabetical order.
+4. Both lists exclude spells already recorded on the character.
+5. The list identifies school, cost, and sustained spells. The detail card presents
+   sources, school, tags, sustained state, cost, range, duration, effects, passive text,
+   and enhancements before confirmation.
+6. Confirming creates one fully populated `SpellData` record and closes the picker.
+7. Cancelling or closing creates no record.
+8. The picker uses the weapon picker's responsive list/detail structure.
+9. Read-only campaign views do not render `Add Spell`.
+10. The tab uses one compact catalog toolbar: Spellbook reference, School filter,
+    neutral grouped Expand/Collapse controls, and a primary Add Spell action. Controls
+    wrap without changing their order when space is constrained.
+
+Phase boundary: advanced catalog filters and custom-spell creation are not part of this
+picker. The primary sheet retains its existing blank-row and custom-spell workflow.
+
+## 6. Alternative Maneuver Add Flow
+
+1. `Add Maneuver` opens `ManeuverPickerModal`; it does not create a blank row.
+2. The picker lists the current maneuver catalog alphabetically and excludes maneuvers
+   already recorded on the character.
+3. Each list choice identifies maneuver type and base AP/SP cost.
+4. The selected card presents type, cost, range, action/reaction timing, description,
+   reaction trigger when present, and every enhancement before confirmation.
+5. Confirming creates one fully populated `ManeuverData` record and closes the picker.
+6. Cancelling or closing creates no record.
+7. The picker uses the same responsive list/detail structure as the weapon and spell pickers.
+8. Read-only campaign views do not render `Add Maneuver`.
+
+Phase boundary: advanced catalog filters and custom-maneuver creation are not part of
+this picker. Maneuver eligibility is a count budget rather than a catalog restriction,
+so the picker does not present an Allowed / All source switch.
+
+## 7. Other Alternative-Only Interaction Rules
 
 1. Attributes and combat values use the shared automatic Dice Roller.
 2. The combat action panel aligns Save DC, Initiative, and Jump as equal metrics, then
@@ -85,8 +124,8 @@ ambiguous or reload-broken records.
    feature-specific exception text.
 7. Feature categories preserve their independent disclosure state across tab changes.
 8. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
-   pencil / confirm / delete lifecycle. The weapon picker changes only creation of new
-   standard weapon attacks.
+   pencil / confirm / delete lifecycle. The weapon and spell pickers change only creation
+   of new catalog-backed rows.
 9. Upgrade-required legacy characters expose only the existing resource counters and
    Exhaustion. All Actions & Details mutation controls remain hidden.
 10. Spells and Maneuvers are contextual tabs driven by the same provider-owned
@@ -104,7 +143,7 @@ ambiguous or reload-broken records.
     rolls add one ADV stack. The roll label and Might card identify the source as
     `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
 
-## 6. Verification
+## 8. Verification
 
 1. `src/routes/character-sheet/components/Attacks.test.tsx` proves the picker creates a
    populated attack, folds in the source switch, and sorts the catalog.
@@ -116,8 +155,12 @@ ambiguous or reload-broken records.
    documented in `CAMPAIGN_SYSTEM.MD`.
 5. `AlternativeCombatResourceSection.test.tsx` proves the two-state Rage control and
    complete disclosed rule text.
-6. `AlternativeMasterySection.test.tsx` and
+6. `Maneuvers.test.tsx` proves the alternative picker creates a complete catalog-backed row, excludes existing choices, and never creates a blank row.
+7. `AlternativeMasterySection.test.tsx` and
    `alternativeRollPresentation.test.ts` prove the visible Rage source and ADV/DisADV
    stack cancellation.
-7. The deferred character-level magic, feature-mode, and derived-calculation suite is
+8. The deferred character-level magic, feature-mode, and derived-calculation suite is
    specified in `TESTING_SYSTEM.MD` section 3.3.
+9. `src/routes/character-sheet/components/Spells.test.tsx` proves the alternative
+   picker opens without mutation, applies next-slot restrictions, switches to an
+   alphabetical full catalog, and confirms one populated spell.

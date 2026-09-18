@@ -18,6 +18,9 @@ import { logger } from '../../../lib/utils/logger';
 import RowEditControls from './shared/RowEditControls';
 import { sortByName } from '../catalogSorting';
 import RichDescription from './RichDescription';
+import CatalogToolbar from './shared/CatalogToolbar';
+import ManeuverPickerModal from './ManeuverPickerModal';
+import { createManeuverDataFromManeuver } from '../maneuverData';
 import {
 	StyledManeuversSection,
 	StyledManeuversHeader,
@@ -56,6 +59,8 @@ export interface ManeuversProps {
 	readOnly?: boolean;
 	isMobile?: boolean;
 	showTitle?: boolean;
+	useCompactToolbar?: boolean;
+	useManeuverPicker?: boolean;
 }
 
 const Maneuvers: React.FC<ManeuversProps> = ({
@@ -63,7 +68,9 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 	onManeuverUse,
 	readOnly = false,
 	isMobile,
-	showTitle = true
+	showTitle = true,
+	useCompactToolbar = false,
+	useManeuverPicker = false
 }) => {
 	const { t } = useTranslation();
 	const { addManeuver, removeManeuver, state } = useCharacterSheet();
@@ -85,6 +92,7 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		return new Set([...cached].filter((maneuverId) => currentManeuverIds.has(maneuverId)));
 	});
 	const [editingManeuverIds, setEditingManeuverIds] = useState<Set<string>>(new Set());
+	const [isManeuverPickerOpen, setIsManeuverPickerOpen] = useState(false);
 	const [declaredEnhancements, setDeclaredEnhancements] = useState<
 		Record<string, Record<string, number>>
 	>({});
@@ -117,7 +125,21 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		});
 	}, [maneuvers, typeFilter]);
 
+	const pickerManeuvers = useMemo(() => {
+		const knownManeuverNames = new Set(
+			maneuvers.map((maneuver) => maneuver.name.trim().toLowerCase()).filter(Boolean)
+		);
+		return sortedManeuvers.filter(
+			(maneuver) => !knownManeuverNames.has(maneuver.name.toLowerCase())
+		);
+	}, [maneuvers]);
+
 	const addManeuverSlot = () => {
+		if (useManeuverPicker) {
+			setIsManeuverPickerOpen(true);
+			return;
+		}
+
 		const newManeuver: ManeuverData = {
 			id: `maneuver_${Date.now()}`,
 			name: '',
@@ -131,6 +153,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 		};
 		addManeuver(newManeuver);
 		setEditingManeuverIds((prev) => new Set(prev).add(newManeuver.id));
+	};
+
+	const addSelectedManeuver = (maneuver: Maneuver) => {
+		const newManeuver = createManeuverDataFromManeuver(maneuver);
+		addManeuver(newManeuver);
+		setExpandedManeuvers((prev) => new Set(prev).add(newManeuver.id));
+		setIsManeuverPickerOpen(false);
 	};
 
 	const removeManeuverSlot = (maneuverIndex: number) => {
@@ -221,58 +250,81 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 				{showTitle && (
 					<StyledManeuversTitle $isMobile={effectiveIsMobile}>Maneuvers</StyledManeuversTitle>
 				)}
-				<StyledManeuversControls $isMobile={effectiveIsMobile}>
-					{!readOnly && (
-						<>
-							<StyledManeuverTypeFilter
-								$isMobile={effectiveIsMobile}
-								value={typeFilter}
-								onChange={(e: any) => setTypeFilter(e.target.value)}
-							>
-								<option value="all">All Types</option>
-								{getUniqueTypes().map((type) => (
-									<option key={type} value={type}>
-										{type}
-									</option>
-								))}
-							</StyledManeuverTypeFilter>
-							<StyledAddManeuverButton
-								$isMobile={effectiveIsMobile}
-								onClick={expandAll}
-								style={{
-									backgroundColor: '#059669',
-									marginRight: '0.5rem',
-									fontSize: '0.85rem',
-									padding: '0.4rem 0.8rem'
-								}}
-								aria-label="Expand All"
-							>
-								▼ Expand All
-							</StyledAddManeuverButton>
-							<StyledAddManeuverButton
-								$isMobile={effectiveIsMobile}
-								onClick={collapseAll}
-								style={{
-									backgroundColor: '#dc2626',
-									marginRight: '0.5rem',
-									fontSize: '0.85rem',
-									padding: '0.4rem 0.8rem'
-								}}
-								aria-label="Collapse All"
-							>
-								▲ Collapse All
-							</StyledAddManeuverButton>
+				{!readOnly && useCompactToolbar && (
+					<CatalogToolbar
+						referenceTo="/martial-manual"
+						referenceLabel="Martial Manual"
+						filterLabel="Type"
+						filterValue={typeFilter}
+						onFilterChange={(event) => setTypeFilter(event.target.value)}
+						onExpand={expandAll}
+						onCollapse={collapseAll}
+						onAdd={addManeuverSlot}
+						addLabel="Add Maneuver"
+						addTestId="add-maneuver"
+					>
+						<option value="all">All Types</option>
+						{getUniqueTypes().map((type) => (
+							<option key={type} value={type}>
+								{type}
+							</option>
+						))}
+					</CatalogToolbar>
+				)}
+				{!useCompactToolbar && (
+					<StyledManeuversControls $isMobile={effectiveIsMobile}>
+						{!readOnly && (
+							<>
+								<StyledManeuverTypeFilter
+									$isMobile={effectiveIsMobile}
+									value={typeFilter}
+									onChange={(e: any) => setTypeFilter(e.target.value)}
+								>
+									<option value="all">All Types</option>
+									{getUniqueTypes().map((type) => (
+										<option key={type} value={type}>
+											{type}
+										</option>
+									))}
+								</StyledManeuverTypeFilter>
+								<StyledAddManeuverButton
+									$isMobile={effectiveIsMobile}
+									onClick={expandAll}
+									style={{
+										backgroundColor: '#059669',
+										marginRight: '0.5rem',
+										fontSize: '0.85rem',
+										padding: '0.4rem 0.8rem'
+									}}
+									aria-label="Expand All"
+								>
+									▼ Expand All
+								</StyledAddManeuverButton>
+								<StyledAddManeuverButton
+									$isMobile={effectiveIsMobile}
+									onClick={collapseAll}
+									style={{
+										backgroundColor: '#dc2626',
+										marginRight: '0.5rem',
+										fontSize: '0.85rem',
+										padding: '0.4rem 0.8rem'
+									}}
+									aria-label="Collapse All"
+								>
+									▲ Collapse All
+								</StyledAddManeuverButton>
 
-							<StyledAddManeuverButton
-								data-testid="add-maneuver"
-								$isMobile={effectiveIsMobile}
-								onClick={addManeuverSlot}
-							>
-								+ {t('characterSheet.maneuversAddManeuver')}
-							</StyledAddManeuverButton>
-						</>
-					)}
-				</StyledManeuversControls>
+								<StyledAddManeuverButton
+									data-testid="add-maneuver"
+									$isMobile={effectiveIsMobile}
+									onClick={addManeuverSlot}
+								>
+									+ {t('characterSheet.maneuversAddManeuver')}
+								</StyledAddManeuverButton>
+							</>
+						)}
+					</StyledManeuversControls>
+				)}
 			</StyledManeuversHeader>
 
 			<StyledManeuversContainer $isMobile={effectiveIsMobile}>
@@ -514,6 +566,13 @@ const Maneuvers: React.FC<ManeuversProps> = ({
 					})
 				)}
 			</StyledManeuversContainer>
+			{isManeuverPickerOpen ? (
+				<ManeuverPickerModal
+					maneuvers={pickerManeuvers}
+					onAdd={addSelectedManeuver}
+					onClose={() => setIsManeuverPickerOpen(false)}
+				/>
+			) : null}
 		</StyledManeuversSection>
 	);
 };

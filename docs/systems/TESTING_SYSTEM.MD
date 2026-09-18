@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-17
+> Last Updated: 2026-09-18
 
 ---
 
@@ -148,6 +148,13 @@ connected across the shared provider, calculator, and alternative sheet:
    1. active Rage applies the PD penalty and restores PD when deactivated;
    2. its damage bonus applies to Unarmed Strikes and melee weapons, but not ranged weapons;
    3. its Might Save ADV source is visible and participates in normal ADV/DisADV cancellation.
+
+The focused `Spells.test.tsx` component coverage is complete for the alternative
+picker no-blank-row, next-slot eligibility, full-catalog ordering, confirmation flow,
+and compact catalog-toolbar composition. `Maneuvers.test.tsx` proves the
+alternative picker creates complete catalog data without a blank row and excludes
+already-known maneuvers. `AlternativeTabbedContent.test.tsx` proves the panel opts
+into both the compact toolbar and picker flow.
 
 Keep exact rule permutations in focused calculator and component tests. Use one representative
 Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.

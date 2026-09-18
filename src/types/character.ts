@@ -2,6 +2,7 @@
 
 import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
 import type { ManeuverEnhancement } from '../lib/rulesdata/schemas/maneuver.schema';
+import type { SpellCost } from '../lib/rulesdata/schemas/spell.schema';
 
 export interface CharacterSheetProps {
 	characterId: string;
@@ -264,10 +265,7 @@ export interface SpellData {
 	spellName: string;
 	school: string;
 	isCantrip?: boolean; // Legacy field - cantrips removed in DC20 v0.10
-	cost: {
-		ap: number;
-		mp?: number;
-	};
+	cost: SpellCost;
 	range: string;
 	duration: string;
 	isPrepared?: boolean;

@@ -237,9 +237,13 @@ explicit character migration.
 
 ### Sheet (`character-sheet/components/Spells.tsx`)
 
-- Displays known spells with filtering by school, source, and tags
-- Shows spell details via `SpellPopup` modal
-- Visibility: shown when `spellsKnownSlots.length > 0` or saved spells exist
+- Displays known spells with filtering by school.
+- Visibility: shown when `spellsKnownSlots.length > 0` or saved spells exist.
+- The primary sheet retains row-first creation and custom spell entry.
+- On the alternative sheet, Add Spell opens `SpellPickerModal` without mutating the character. Allowed spells filters the current catalog through the next positional `spellsKnownSlots` entry and `matchesSpellSlot`; global slots also consume the Global Magic Profile. All spells exposes the complete catalog.
+- Both picker lists are alphabetical and exclude already-known spell names.
+- The preview exposes source, school, tags, sustained state, cost, range, duration, effects, passive text, and enhancements. Confirmation maps the catalog `Spell` to one complete `SpellData`; cancellation persists nothing.
+- Advanced picker filters and custom-spell creation remain outside the alternative flow.
 
 ### Spellbook (`routes/spellbook/Spellbook.tsx`)
 

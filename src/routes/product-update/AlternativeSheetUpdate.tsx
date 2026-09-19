@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import {
 	ChevronRight,
 	Dices,
+	ExternalLink,
 	Gauge,
 	HeartPulse,
 	Link2,
@@ -122,6 +123,9 @@ export default function AlternativeSheetUpdate() {
 							Open your characters <ChevronRight size={18} aria-hidden="true" />
 						</PrimaryAction>
 						<SecondaryAction to="/create-character">Create a character</SecondaryAction>
+						<SecondaryAction to="/character2">
+							Open the alternative sheet <ExternalLink size={16} aria-hidden="true" />
+						</SecondaryAction>
 					</Actions>
 					<HeroNote>
 						This update covers work from July 24 through September 18. Choose Alternative Sheet from

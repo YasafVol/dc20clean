@@ -63,6 +63,133 @@ export const StyledSectionTitle = styled.h3`
 	font-family: 'Urbanist', sans-serif;
 `;
 
+export const StyledWhatsNewSection = styled.section`
+	width: 100%;
+	max-width: 900px;
+	margin-bottom: 1.5rem;
+	padding: 1.15rem;
+	border: 1px solid rgba(125, 207, 255, 0.35);
+	border-radius: 12px;
+	background:
+		radial-gradient(circle at 100% 0%, rgba(187, 154, 247, 0.12), transparent 14rem),
+		rgba(26, 27, 38, 0.72);
+	backdrop-filter: blur(5px);
+`;
+
+export const StyledWhatsNewHeader = styled.div`
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.95rem;
+
+	@media (max-width: 34rem) {
+		flex-direction: column;
+	}
+`;
+
+export const StyledWhatsNewKicker = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	margin-bottom: 0.35rem;
+	color: #7dcfff;
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+`;
+
+export const StyledWhatsNewTitle = styled.h2`
+	margin: 0;
+	color: #f1f5ff;
+	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+	font-size: clamp(1.2rem, 3vw, 1.55rem);
+	line-height: 1.15;
+`;
+
+export const StyledWhatsNewDate = styled.time`
+	color: #737da8;
+	font-size: 0.82rem;
+`;
+
+export const StyledWhatsNewCopy = styled.p`
+	max-width: 55rem;
+	margin: 0;
+	color: #a9b1d6;
+	font-size: 0.95rem;
+	line-height: 1.55;
+`;
+
+export const StyledWhatsNewHighlights = styled.ul`
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	margin: 0.85rem 0 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		padding: 0.3rem 0.55rem;
+		border: 1px solid rgba(158, 206, 106, 0.3);
+		border-radius: 999px;
+		background: rgba(158, 206, 106, 0.08);
+		color: #c4e6a3;
+		font-size: 0.78rem;
+	}
+`;
+
+export const StyledWhatsNewActions = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.65rem;
+	margin-top: 1rem;
+`;
+
+export const StyledWhatsNewLink = styled.a`
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	min-height: 2.45rem;
+	padding: 0.55rem 0.8rem;
+	border-radius: 0.65rem;
+	font-size: 0.85rem;
+	font-weight: 800;
+	text-decoration: none;
+	transition:
+		transform 150ms ease,
+		background 150ms ease;
+
+	&:hover {
+		transform: translateY(-1px);
+	}
+
+	&:focus-visible {
+		outline: 2px solid #7dcfff;
+		outline-offset: 3px;
+	}
+`;
+
+export const StyledWhatsNewPrimaryLink = styled(StyledWhatsNewLink)`
+	background: #7dcfff;
+	color: #16161e;
+
+	&:hover {
+		background: #a8e0ff;
+	}
+`;
+
+export const StyledWhatsNewSecondaryLink = styled(StyledWhatsNewLink)`
+	border: 1px solid rgba(125, 207, 255, 0.35);
+	background: rgba(125, 207, 255, 0.08);
+	color: #c0e7ff;
+
+	&:hover {
+		background: rgba(125, 207, 255, 0.16);
+	}
+`;
+
 // Character section - Gold/Amber highlight
 export const StyledCharacterGrid = styled.div`
 	display: grid;

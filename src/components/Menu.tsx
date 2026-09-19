@@ -196,11 +196,21 @@ import {
 	StyledTextContent,
 	StyledMenuCard,
 	StyledCardTitle,
-	StyledIcon
+	StyledIcon,
+	StyledWhatsNewActions,
+	StyledWhatsNewCopy,
+	StyledWhatsNewDate,
+	StyledWhatsNewHeader,
+	StyledWhatsNewHighlights,
+	StyledWhatsNewKicker,
+	StyledWhatsNewPrimaryLink,
+	StyledWhatsNewSection,
+	StyledWhatsNewSecondaryLink,
+	StyledWhatsNewTitle
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { BookOpenText, KeyRound, Map } from 'lucide-react';
+import { ArrowRight, BookOpenText, KeyRound, Map, Sparkles } from 'lucide-react';
 import { useIsAuthenticated } from './auth';
 import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
@@ -246,6 +256,38 @@ function Menu() {
 				<br />
 				{t('menu.subtitleCta')}
 			</StyledSubtitle>
+
+			<StyledWhatsNewSection aria-labelledby="whats-new-title">
+				<StyledWhatsNewHeader>
+					<div>
+						<StyledWhatsNewKicker>
+							<Sparkles size={14} aria-hidden="true" /> What&apos;s new
+						</StyledWhatsNewKicker>
+						<StyledWhatsNewTitle id="whats-new-title">The new character sheet</StyledWhatsNewTitle>
+					</div>
+					<StyledWhatsNewDate dateTime="2026-09-18">September 18, 2026</StyledWhatsNewDate>
+				</StyledWhatsNewHeader>
+				<StyledWhatsNewCopy>
+					A faster, clearer way to run a saved character—focused combat, complete pickers, and a
+					responsive layout built for the table.
+				</StyledWhatsNewCopy>
+				<StyledWhatsNewHighlights>
+					<li>Focused combat view</li>
+					<li>Weapon, spell, and maneuver pickers</li>
+					<li>Same character, new presentation</li>
+				</StyledWhatsNewHighlights>
+				<StyledWhatsNewActions>
+					<StyledWhatsNewPrimaryLink href="/updates/2026-09-18-alternative-character-sheet">
+						Read the full update <ArrowRight size={15} aria-hidden="true" />
+					</StyledWhatsNewPrimaryLink>
+					<StyledWhatsNewSecondaryLink href="/updates">
+						Browse What&apos;s New
+					</StyledWhatsNewSecondaryLink>
+					<StyledWhatsNewSecondaryLink href="/character2">
+						Open the alternative sheet
+					</StyledWhatsNewSecondaryLink>
+				</StyledWhatsNewActions>
+			</StyledWhatsNewSection>
 
 			{/* Character Creation Section */}
 			<StyledMenuSection>

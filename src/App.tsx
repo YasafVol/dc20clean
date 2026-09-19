@@ -28,6 +28,7 @@ import {
 	CampaignCharacterView
 } from './routes/campaigns';
 import AlternativeSheetUpdate from './routes/product-update/AlternativeSheetUpdate';
+import UpdatesIndex from './routes/product-update/UpdatesIndex';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
@@ -163,6 +164,7 @@ function App() {
 						<Route path="/spellbook" element={<Spellbook />} />
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
+						<Route path="/updates" element={<UpdatesIndex />} />
 						<Route
 							path="/updates/2026-09-18-alternative-character-sheet"
 							element={<AlternativeSheetUpdate />}

@@ -4,7 +4,7 @@
 > Owns: Alternative-only composition, section disclosures, tab presentation, responsive layout, and alternative-only interaction choices.
 > Does not own: Character state, calculations, persistence, campaign authorization, shared panel behavior, equipment rules, or PDF export.
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
-> Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
+> Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Spells](./SPELLS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
 > Last Updated: 2026-09-19
 
@@ -107,6 +107,26 @@ browser-local Equipage storage.
 
 Phase boundary: custom-spell creation is not part of this picker. The primary sheet
 retains its existing blank-row and custom-spell workflow.
+
+### 5.1 Alternative Spell Cast Flow
+
+1. A known spell's `Cast` action opens a focused modal for that spell. The modal does
+   not duplicate the known-spell list or allow changing the selected spell.
+2. The modal starts with the spell's base AP/MP cost and no enhancements declared.
+3. Fixed, repeatable, variable, alternative-cost, and prerequisite-dependent spell
+   enhancements use the structured saved spell data. Repeatable and variable costs use
+   quantity controls; alternative costs expose a resource-cost choice.
+4. Mana Spend Limit applies to base MP plus declared enhancement MP. AP costs remain
+   visible but are not automatically deducted by this Mana-only flow.
+5. MP increment controls stop at both the calculated Mana Spend Limit and current Mana.
+   A base cost that already exceeds either constraint disables confirmation and explains
+   the failure.
+6. Confirming subtracts the total MP from the shared current Mana resource, emits the
+   existing spell-cast campaign event, and closes the modal. Cancelling, closing, or
+   pressing Escape changes no resource.
+7. Enhancement declarations are session-only casting choices; they do not rewrite the
+   saved spell row.
+8. This modal is alternative-only. The primary sheet retains its direct Cast behavior.
 
 ## 6. Alternative Maneuver Add Flow
 
@@ -228,3 +248,9 @@ uses it; other equipment categories retain their existing Equipage builders.
     applies quantity and equipped state, and confirms one complete inventory row.
 12. `e2e/21-alternative-inventory-picker.e2e.spec.ts` proves the inventory picker flow,
     populated-row creation, responsive reflow, and horizontal-overflow guard.
+13. `spellCastSpend.test.ts` proves fixed, repeatable, variable, alternative-cost, and
+    prerequisite calculations. `Spells.test.tsx` proves the focused modal, MSL guard,
+    Mana deduction, campaign callback, and close-on-confirm behavior.
+14. `e2e/22-alternative-spell-cast.e2e.spec.ts` proves the current-rules alternative
+    sheet opens the modal, stops enhancement MP at MSL, confirms the cast, and visibly
+    reduces the Mana card.

@@ -9,24 +9,30 @@ import Spells from './Spells';
 interface MockCalculation {
 	spellsKnownSlots: SpellsKnownSlot[];
 	globalMagicProfile: GlobalMagicProfile;
-	stats: { finalAttackSpellCheck: number };
+	stats: { finalAttackSpellCheck: number; manaSpendLimit: number };
+	breakdowns: { mpMax: { total: number } };
 	grantedAbilities: [];
 }
 
 const fireball = ALL_SPELLS.find((spell) => spell.name === 'Fireball');
 if (!fireball) throw new Error('Fireball fixture is missing');
+const heal = ALL_SPELLS.find((spell) => spell.name === 'Heal');
+if (!heal) throw new Error('Heal fixture is missing');
 
 const mockSheet = vi.hoisted(() => ({
 	spells: [] as SpellData[],
 	calculation: {
 		spellsKnownSlots: [],
 		globalMagicProfile: { sources: [], schools: [], tags: [] },
-		stats: { finalAttackSpellCheck: 0 },
+		stats: { finalAttackSpellCheck: 0, manaSpendLimit: 3 },
+		breakdowns: { mpMax: { total: 6 } },
 		grantedAbilities: []
 	} as MockCalculation,
 	addSpell: vi.fn(),
 	removeSpell: vi.fn(),
-	updateSpell: vi.fn()
+	updateSpell: vi.fn(),
+	updateMP: vi.fn(),
+	currentMana: 6
 }));
 
 vi.mock('react-i18next', () => ({
@@ -74,10 +80,15 @@ vi.mock('../hooks/CharacterSheetProvider', () => ({
 		addSpell: mockSheet.addSpell,
 		removeSpell: mockSheet.removeSpell,
 		updateSpell: mockSheet.updateSpell,
+		updateMP: mockSheet.updateMP,
 		state: {
 			character: {
 				id: 'character-test',
-				finalAttackSpellCheck: 0
+				finalAttackSpellCheck: 0,
+				finalMPMax: 6,
+				characterState: {
+					resources: { current: { currentMP: mockSheet.currentMana } }
+				}
 			}
 		}
 	})
@@ -105,12 +116,98 @@ beforeEach(() => {
 			}
 		],
 		globalMagicProfile: { sources: [], schools: [], tags: [] },
-		stats: { finalAttackSpellCheck: 0 },
+		stats: { finalAttackSpellCheck: 0, manaSpendLimit: 3 },
+		breakdowns: { mpMax: { total: 6 } },
 		grantedAbilities: []
 	};
 	mockSheet.addSpell.mockReset();
 	mockSheet.removeSpell.mockReset();
 	mockSheet.updateSpell.mockReset();
+	mockSheet.updateMP.mockReset();
+	mockSheet.currentMana = 6;
+});
+
+describe('alternative spell casting', () => {
+	it('opens the focused modal and spends base plus enhancement Mana on confirmation', () => {
+		const castSpell = vi.fn();
+		mockSheet.spells.push({
+			id: 'known-heal',
+			spellName: heal.name,
+			school: heal.school,
+			cost: heal.cost,
+			range: heal.range,
+			duration: heal.duration,
+			enhancements: heal.enhancements
+		});
+		render(
+			<MemoryRouter>
+				<Spells onSpellClick={vi.fn()} onSpellCast={castSpell} useSpellCastModal />
+			</MemoryRouter>
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Cast' }));
+		const modal = screen.getByTestId('spell-cast-modal');
+		expect(within(modal).getByRole('heading', { name: 'Cast Heal' })).toBeInTheDocument();
+		expect(within(modal).getByText('1 / 3 MP')).toBeInTheDocument();
+
+		fireEvent.click(within(modal).getByRole('button', { name: 'Increase Increased Healing' }));
+		expect(within(modal).getByText('2 / 3 MP')).toBeInTheDocument();
+		fireEvent.click(within(modal).getByTestId('spell-cast-confirm'));
+
+		expect(mockSheet.updateMP).toHaveBeenCalledWith(4);
+		expect(castSpell).toHaveBeenCalledWith(expect.objectContaining({ spellName: 'Heal' }));
+		expect(screen.queryByTestId('spell-cast-modal')).not.toBeInTheDocument();
+	});
+
+	it('prevents another MP enhancement when it would exceed MSL', () => {
+		mockSheet.calculation.stats.manaSpendLimit = 2;
+		mockSheet.spells.push({
+			id: 'known-heal',
+			spellName: heal.name,
+			school: heal.school,
+			cost: heal.cost,
+			range: heal.range,
+			duration: heal.duration,
+			enhancements: heal.enhancements
+		});
+		render(
+			<MemoryRouter>
+				<Spells onSpellClick={vi.fn()} onSpellCast={vi.fn()} useSpellCastModal />
+			</MemoryRouter>
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Cast' }));
+		const increaseHealing = screen.getByRole('button', { name: 'Increase Increased Healing' });
+		fireEvent.click(increaseHealing);
+
+		expect(screen.getByText('2 / 2 MP')).toBeInTheDocument();
+		expect(increaseHealing).toBeDisabled();
+		expect(screen.getByRole('button', { name: 'Increase Chain Heal' })).toBeDisabled();
+	});
+
+	it('prevents enhancement spending above current Mana even below MSL', () => {
+		mockSheet.currentMana = 1;
+		mockSheet.spells.push({
+			id: 'known-heal',
+			spellName: heal.name,
+			school: heal.school,
+			cost: heal.cost,
+			range: heal.range,
+			duration: heal.duration,
+			enhancements: heal.enhancements
+		});
+		render(
+			<MemoryRouter>
+				<Spells onSpellClick={vi.fn()} onSpellCast={vi.fn()} useSpellCastModal />
+			</MemoryRouter>
+		);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Cast' }));
+
+		expect(screen.getByText('1 / 3 MP')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Increase Increased Healing' })).toBeDisabled();
+		expect(screen.getByRole('button', { name: 'Increase Chain Heal' })).toBeDisabled();
+	});
 });
 
 describe('alternative spell picker', () => {

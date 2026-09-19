@@ -151,7 +151,12 @@ connected across the shared provider, calculator, and alternative sheet:
 
 The focused `Spells.test.tsx` component coverage is complete for the alternative
 picker no-blank-row, next-slot eligibility, full-catalog ordering, confirmation flow,
-search, school filtering, and compact catalog-toolbar composition. `Attacks.test.tsx`
+search, school filtering, and compact catalog-toolbar composition. It also proves the
+alternative-only focused casting modal, MSL control guard, exact Mana deduction,
+campaign callback, and close-on-confirm behavior. `spellCastSpend.test.ts` isolates
+fixed, repeatable, variable, alternative-resource, and prerequisite cost calculation.
+`e2e/22-alternative-spell-cast.e2e.spec.ts` completes the browser path through the
+visible Mana card. `Attacks.test.tsx`
 proves weapon search and melee/ranged filtering. Both source-switching pickers preserve
 their active search and filter. It also proves the separate v0.10.5 five-panel
 custom-weapon builder creates a populated attack with an embedded canonical snapshot,

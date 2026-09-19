@@ -10,7 +10,7 @@ export const StyledContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	min-height: 100vh;
 	padding: 2rem;
 	background: url('${mainBgImage}') center/cover no-repeat;
@@ -18,6 +18,19 @@ export const StyledContainer = styled.div`
 
 	${media.mobile} {
 		padding: 1rem;
+	}
+`;
+
+export const StyledMenuPrimaryContent = styled.div`
+	display: flex;
+	width: 100%;
+	min-height: calc(100vh - 4rem);
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	${media.mobile} {
+		min-height: calc(100vh - 2rem);
 	}
 `;
 
@@ -29,6 +42,12 @@ export const StyledTitle = styled.h1`
 	font-weight: bold;
 	font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
 	letter-spacing: 2px;
+	-webkit-text-stroke: 2px rgba(0, 0, 0, 0.95);
+	paint-order: stroke fill;
+	text-shadow:
+		0 2px 1px #000,
+		0 0 8px #000,
+		0 0 22px rgba(0, 0, 0, 0.95);
 	margin-top: 10rem;
 `;
 
@@ -39,8 +58,11 @@ export const StyledSubtitle = styled.p`
 	text-align: center;
 	font-size: 1.3rem;
 	font-family: 'Urbanist', 'Georgia', 'Times New Roman', serif;
-	font-weight: 400;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	font-weight: 600;
+	text-shadow:
+		0 1px 2px #000,
+		0 0 6px #000,
+		0 0 16px rgba(0, 0, 0, 0.95);
 	max-width: 600px;
 	line-height: 1.6;
 `;
@@ -50,6 +72,31 @@ export const StyledMenuSection = styled.div`
 	width: 100%;
 	max-width: 900px;
 	margin-bottom: 1.5rem;
+`;
+
+export const StyledCharacterSection = styled(StyledMenuSection)`
+	position: relative;
+	margin-top: 5rem;
+
+	${media.mobile} {
+		margin-top: 1rem;
+	}
+`;
+
+export const StyledInlineRulesVersion = styled.span`
+	position: absolute;
+	top: calc(100% + 0.35rem);
+	left: 0;
+	width: calc((100% - 1rem) / 2);
+	padding-right: 0.25rem;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.75rem;
+	line-height: 1;
+	text-align: right;
+
+	${media.mobile} {
+		width: 100%;
+	}
 `;
 
 export const StyledSectionTitle = styled.h3`
@@ -64,6 +111,7 @@ export const StyledSectionTitle = styled.h3`
 `;
 
 export const StyledWhatsNewSection = styled.section`
+	position: relative;
 	width: 100%;
 	max-width: 900px;
 	margin-bottom: 1.5rem;
@@ -81,10 +129,41 @@ export const StyledWhatsNewHeader = styled.div`
 	align-items: start;
 	justify-content: space-between;
 	gap: 1rem;
+	padding-right: 2.25rem;
 	margin-bottom: 0.95rem;
 
 	@media (max-width: 34rem) {
 		flex-direction: column;
+	}
+`;
+
+export const StyledWhatsNewCloseButton = styled.button`
+	position: absolute;
+	top: 0.7rem;
+	right: 0.7rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+	border: 1px solid rgba(125, 207, 255, 0.25);
+	border-radius: 0.5rem;
+	background: rgba(22, 22, 30, 0.55);
+	color: #a9b1d6;
+	cursor: pointer;
+	transition:
+		background 150ms ease,
+		color 150ms ease;
+
+	&:hover {
+		background: rgba(125, 207, 255, 0.14);
+		color: #f1f5ff;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #7dcfff;
+		outline-offset: 2px;
 	}
 `;
 
@@ -122,20 +201,19 @@ export const StyledWhatsNewCopy = styled.p`
 `;
 
 export const StyledWhatsNewHighlights = styled.ul`
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.45rem;
+	display: grid;
+	gap: 0.25rem;
 	margin: 0.85rem 0 0;
-	padding: 0;
-	list-style: none;
+	padding-left: 1.15rem;
 
 	li {
-		padding: 0.3rem 0.55rem;
-		border: 1px solid rgba(158, 206, 106, 0.3);
-		border-radius: 999px;
-		background: rgba(158, 206, 106, 0.08);
 		color: #c4e6a3;
-		font-size: 0.78rem;
+		font-size: 0.82rem;
+		line-height: 1.4;
+
+		&::marker {
+			color: #7dcfff;
+		}
 	}
 `;
 

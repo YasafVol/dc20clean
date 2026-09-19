@@ -186,7 +186,9 @@ import {
 	StyledContainer,
 	StyledTitle,
 	StyledSubtitle,
+	StyledMenuPrimaryContent,
 	StyledMenuSection,
+	StyledCharacterSection,
 	StyledSectionTitle,
 	StyledCharacterGrid,
 	StyledDMGrid,
@@ -197,23 +199,15 @@ import {
 	StyledMenuCard,
 	StyledCardTitle,
 	StyledIcon,
-	StyledWhatsNewActions,
-	StyledWhatsNewCopy,
-	StyledWhatsNewDate,
-	StyledWhatsNewHeader,
-	StyledWhatsNewHighlights,
-	StyledWhatsNewKicker,
-	StyledWhatsNewPrimaryLink,
-	StyledWhatsNewSection,
-	StyledWhatsNewSecondaryLink,
-	StyledWhatsNewTitle
+	StyledInlineRulesVersion
 } from './styled';
 
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpenText, KeyRound, Map, Sparkles } from 'lucide-react';
+import { BookOpenText, KeyRound, Map } from 'lucide-react';
 import { useIsAuthenticated } from './auth';
 import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
+import WhatsNewCard, { useWhatsNewCardVisibility } from './WhatsNewCard';
 
 // Encounter planner icon
 export const EncounterIcon = () => (
@@ -247,176 +241,152 @@ function Menu() {
 	const isAuthenticated = useIsAuthenticated();
 	const { isConvexEnabled } = useAppAuth();
 	const { t } = useTranslation();
+	const { isVisible: isWhatsNewVisible, dismiss: dismissWhatsNew } = useWhatsNewCardVisibility();
 
 	return (
 		<StyledContainer>
-			<StyledTitle>{t('menu.title')}</StyledTitle>
-			<StyledSubtitle>
-				{t('menu.subtitle')}
-				<br />
-				{t('menu.subtitleCta')}
-			</StyledSubtitle>
+			<StyledMenuPrimaryContent>
+				<StyledTitle>{t('menu.title')}</StyledTitle>
+				<StyledSubtitle>
+					{t('menu.subtitle')}
+					<br />
+					{t('menu.subtitleCta')}
+				</StyledSubtitle>
 
-			<StyledWhatsNewSection aria-labelledby="whats-new-title">
-				<StyledWhatsNewHeader>
-					<div>
-						<StyledWhatsNewKicker>
-							<Sparkles size={14} aria-hidden="true" /> What&apos;s new
-						</StyledWhatsNewKicker>
-						<StyledWhatsNewTitle id="whats-new-title">The new character sheet</StyledWhatsNewTitle>
-					</div>
-					<StyledWhatsNewDate dateTime="2026-09-18">September 18, 2026</StyledWhatsNewDate>
-				</StyledWhatsNewHeader>
-				<StyledWhatsNewCopy>
-					A faster, clearer way to run a saved character—focused combat, complete pickers, and a
-					responsive layout built for the table.
-				</StyledWhatsNewCopy>
-				<StyledWhatsNewHighlights>
-					<li>Focused combat view</li>
-					<li>Weapon, spell, and maneuver pickers</li>
-					<li>Same character, new presentation</li>
-				</StyledWhatsNewHighlights>
-				<StyledWhatsNewActions>
-					<StyledWhatsNewPrimaryLink href="/updates/2026-09-18-alternative-character-sheet">
-						Read the full update <ArrowRight size={15} aria-hidden="true" />
-					</StyledWhatsNewPrimaryLink>
-					<StyledWhatsNewSecondaryLink href="/updates">
-						Browse What&apos;s New
-					</StyledWhatsNewSecondaryLink>
-					<StyledWhatsNewSecondaryLink href="/character2">
-						Open the alternative sheet
-					</StyledWhatsNewSecondaryLink>
-				</StyledWhatsNewActions>
-			</StyledWhatsNewSection>
+				{/* Character Creation Section */}
+				<StyledCharacterSection>
+					<StyledSectionTitle>{t('menu.characterSection')}</StyledSectionTitle>
+					<StyledCharacterGrid>
+						<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
+							<StyledIcon $variant="character">
+								<HeadIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="character">{t('menu.createCharacter')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
 
-			{/* Character Creation Section */}
-			<StyledMenuSection>
-				<StyledSectionTitle>{t('menu.characterSection')}</StyledSectionTitle>
-				<StyledCharacterGrid>
-					<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
-						<StyledIcon $variant="character">
-							<HeadIcon />
-						</StyledIcon>
-						<StyledTextContent>
-							<StyledCardTitle $variant="character">{t('menu.createCharacter')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
+						<StyledMenuCard $variant="character" onClick={() => navigate('/load-character')}>
+							<StyledIcon $variant="character">
+								<GroupIcon />
+							</StyledIcon>
+							<StyledTextContent>
+								<StyledCardTitle $variant="character">{t('menu.loadCharacter')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+					</StyledCharacterGrid>
+					{isWhatsNewVisible && (
+						<StyledInlineRulesVersion>{t('menu.rulesVersion')}</StyledInlineRulesVersion>
+					)}
+				</StyledCharacterSection>
 
-					<StyledMenuCard $variant="character" onClick={() => navigate('/load-character')}>
-						<StyledIcon $variant="character">
-							<GroupIcon />
-						</StyledIcon>
-						<StyledTextContent>
-							<StyledCardTitle $variant="character">{t('menu.loadCharacter')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-				</StyledCharacterGrid>
-			</StyledMenuSection>
-
-			{/* Authenticated tools - one desktop row */}
-			{isAuthenticated && (
-				<StyledMenuSection>
-					<StyledDMGrid>
-						<StyledDMGroup>
-							<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
-							<StyledDMGroupCards>
-								<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
-									<StyledIcon $variant="dm">
-										<EncounterIcon />
-									</StyledIcon>
-									<StyledTextContent>
-										<StyledCardTitle $variant="dm">{t('menu.encounterPlanner')}</StyledCardTitle>
-									</StyledTextContent>
-								</StyledMenuCard>
-
-								<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
-									<StyledIcon $variant="dm">
-										<MonsterIcon />
-									</StyledIcon>
-									<StyledTextContent>
-										<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
-									</StyledTextContent>
-								</StyledMenuCard>
-							</StyledDMGroupCards>
-						</StyledDMGroup>
-
-						{isConvexEnabled && (
+				{/* Authenticated tools - one desktop row */}
+				{isAuthenticated && (
+					<StyledMenuSection>
+						<StyledDMGrid>
 							<StyledDMGroup>
-								<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
+								<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
 								<StyledDMGroupCards>
-									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
+									<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
 										<StyledIcon $variant="dm">
-											<Map aria-hidden="true" />
+											<EncounterIcon />
 										</StyledIcon>
 										<StyledTextContent>
-											<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
+											<StyledCardTitle $variant="dm">{t('menu.encounterPlanner')}</StyledCardTitle>
 										</StyledTextContent>
 									</StyledMenuCard>
-									<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
+
+									<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
 										<StyledIcon $variant="dm">
-											<KeyRound aria-hidden="true" />
+											<MonsterIcon />
 										</StyledIcon>
 										<StyledTextContent>
-											<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
+											<StyledCardTitle $variant="dm">{t('menu.laboratory')}</StyledCardTitle>
 										</StyledTextContent>
 									</StyledMenuCard>
 								</StyledDMGroupCards>
 							</StyledDMGroup>
-						)}
-					</StyledDMGrid>
+
+							{isConvexEnabled && (
+								<StyledDMGroup>
+									<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
+									<StyledDMGroupCards>
+										<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
+											<StyledIcon $variant="dm">
+												<Map aria-hidden="true" />
+											</StyledIcon>
+											<StyledTextContent>
+												<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
+											</StyledTextContent>
+										</StyledMenuCard>
+										<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
+											<StyledIcon $variant="dm">
+												<KeyRound aria-hidden="true" />
+											</StyledIcon>
+											<StyledTextContent>
+												<StyledCardTitle $variant="dm">{t('menu.joinCampaign')}</StyledCardTitle>
+											</StyledTextContent>
+										</StyledMenuCard>
+									</StyledDMGroupCards>
+								</StyledDMGroup>
+							)}
+						</StyledDMGrid>
+					</StyledMenuSection>
+				)}
+
+				{/* Tools Section */}
+				<StyledMenuSection>
+					<StyledSectionTitle>{t('menu.referenceToolsSection')}</StyledSectionTitle>
+					<StyledToolsGrid>
+						<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
+							<StyledIcon $variant="tools">
+								<SpellbookIcon />
+							</StyledIcon>
+							<StyledTextContent $center>
+								<StyledCardTitle $variant="tools">{t('menu.spellbook')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+
+						<StyledMenuCard $variant="tools" onClick={() => navigate('/martial-manual')}>
+							<StyledIcon $variant="tools">
+								<MartialManualIcon />
+							</StyledIcon>
+							<StyledTextContent $center>
+								<StyledCardTitle $variant="tools">{t('menu.martialManual')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+
+						<StyledMenuCard $variant="tools" onClick={() => navigate('/conditions')}>
+							<StyledIcon $variant="tools">
+								<ConditionsIcon />
+							</StyledIcon>
+							<StyledTextContent $center>
+								<StyledCardTitle $variant="tools">{t('menu.conditions')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+
+						<StyledMenuCard $variant="tools" onClick={() => navigate('/custom-equipment')}>
+							<StyledIcon $variant="tools">
+								<EquipmentIcon />
+							</StyledIcon>
+							<StyledTextContent $center>
+								<StyledCardTitle $variant="tools">{t('menu.equipage')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+
+						<StyledMenuCard $variant="rulebook" onClick={() => navigate('/rulebook')}>
+							<StyledIcon $variant="rulebook">
+								<BookOpenText aria-hidden="true" strokeWidth={1.5} />
+							</StyledIcon>
+							<StyledTextContent $center>
+								<StyledCardTitle $variant="rulebook">{t('menu.rulebook')}</StyledCardTitle>
+							</StyledTextContent>
+						</StyledMenuCard>
+					</StyledToolsGrid>
 				</StyledMenuSection>
-			)}
+			</StyledMenuPrimaryContent>
 
-			{/* Tools Section */}
-			<StyledMenuSection>
-				<StyledSectionTitle>{t('menu.referenceToolsSection')}</StyledSectionTitle>
-				<StyledToolsGrid>
-					<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
-						<StyledIcon $variant="tools">
-							<SpellbookIcon />
-						</StyledIcon>
-						<StyledTextContent $center>
-							<StyledCardTitle $variant="tools">{t('menu.spellbook')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-
-					<StyledMenuCard $variant="tools" onClick={() => navigate('/martial-manual')}>
-						<StyledIcon $variant="tools">
-							<MartialManualIcon />
-						</StyledIcon>
-						<StyledTextContent $center>
-							<StyledCardTitle $variant="tools">{t('menu.martialManual')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-
-					<StyledMenuCard $variant="tools" onClick={() => navigate('/conditions')}>
-						<StyledIcon $variant="tools">
-							<ConditionsIcon />
-						</StyledIcon>
-						<StyledTextContent $center>
-							<StyledCardTitle $variant="tools">{t('menu.conditions')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-
-					<StyledMenuCard $variant="tools" onClick={() => navigate('/custom-equipment')}>
-						<StyledIcon $variant="tools">
-							<EquipmentIcon />
-						</StyledIcon>
-						<StyledTextContent $center>
-							<StyledCardTitle $variant="tools">{t('menu.equipage')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-
-					<StyledMenuCard $variant="rulebook" onClick={() => navigate('/rulebook')}>
-						<StyledIcon $variant="rulebook">
-							<BookOpenText aria-hidden="true" strokeWidth={1.5} />
-						</StyledIcon>
-						<StyledTextContent $center>
-							<StyledCardTitle $variant="rulebook">{t('menu.rulebook')}</StyledCardTitle>
-						</StyledTextContent>
-					</StyledMenuCard>
-				</StyledToolsGrid>
-			</StyledMenuSection>
+			{isWhatsNewVisible && <WhatsNewCard onDismiss={dismissWhatsNew} />}
 
 			{/* Rules Version Note */}
 			<div className="absolute right-4 bottom-4 text-xs text-white/50">

@@ -84,13 +84,8 @@ import HamburgerDrawer from './components/shared/HamburgerDrawer';
 import Snackbar from '../../components/Snackbar';
 import { downloadCharacterPdf } from '../../lib/pdf/exportPdf';
 import { getRulebookArticle, getRulebookArticlePath } from '../rulebook/rulebookData';
-import { useCampaignNotifications } from './hooks/useCampaignNotifications';
-import { CampaignFeedPanel } from './components/CampaignFeedPanel';
-import { useCurrentUser } from '../../components/auth/CurrentUserContext';
-import { useAppAuth } from '../../components/auth/AuthModeContext';
-
-// Import theme
-import { theme } from './styles/theme';
+import { CampaignFeedAction } from './components/CampaignFeedAction';
+import { restoreLongRestResources } from './longRest';
 import { logger } from '../../lib/utils/logger';
 import { getDefaultStorage } from '../../lib/storage';
 
@@ -108,67 +103,6 @@ type TabId =
 	| 'conditions'
 	| 'knowledge'
 	| 'notes';
-
-function CampaignFeedActionInner({ characterId }: { characterId: string }) {
-	const currentUser = useCurrentUser();
-	const { campaignName, events, unreadCount, markSeen, inCampaign } =
-		useCampaignNotifications(characterId);
-	const [feedOpen, setFeedOpen] = useState(false);
-
-	if (!inCampaign) return null;
-	return (
-		<>
-			<ActionButton
-				onClick={() => {
-					markSeen();
-					setFeedOpen(true);
-				}}
-				whileHover={{ scale: 1.05 }}
-				whileTap={{ scale: 0.95 }}
-				title="Campaign feed"
-				style={{ position: 'relative' }}
-			>
-				🔔
-				{unreadCount > 0 ? (
-					<span
-						style={{
-							position: 'absolute',
-							top: '-4px',
-							right: '-4px',
-							background: theme.colors.accent.danger,
-							color: '#fff',
-							borderRadius: '9999px',
-							fontSize: '0.6rem',
-							fontWeight: 700,
-							minWidth: '16px',
-							height: '16px',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							padding: '0 3px',
-							lineHeight: 1
-						}}
-					>
-						{unreadCount > 99 ? '99+' : unreadCount}
-					</span>
-				) : null}
-			</ActionButton>
-			{feedOpen && campaignName && currentUser ? (
-				<CampaignFeedPanel
-					campaignName={campaignName}
-					events={events}
-					onClose={() => setFeedOpen(false)}
-				/>
-			) : null}
-		</>
-	);
-}
-
-function CampaignFeedAction({ characterId }: { characterId: string }) {
-	const { isConvexEnabled, isAuthenticated } = useAppAuth();
-	if (!isConvexEnabled || !isAuthenticated) return null;
-	return <CampaignFeedActionInner characterId={characterId} />;
-}
 
 const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ characterId, onBack }) => {
 	logger.debug('ui', 'CharacterSheetRedesign render', { characterId });
@@ -624,20 +558,24 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 		}
 	};
 
-	// Long Rest: full reset of all combat resources.
-	// Per DC20 rules a long rest restores HP/MP/SP to max, restores Rest Points,
-	// and removes all levels of Exhaustion. Temp HP is consumed on rest.
+	// Long Rest: restore renewable resources, clear temporary HP, and remove Exhaustion.
 	const handleLongRest = () => {
 		if (!characterData) return;
 		const confirmed = window.confirm(t('characterSheet.longRestConfirm'));
 		if (!confirmed) return;
 
-		updateHP(maxHP);
-		updateMP(maxMP);
-		updateSP(maxSP);
-		updateRestPoints(maxRest);
-		updateTempHP(0);
-		updateExhaustion(0);
+		restoreLongRestResources(
+			{ hp: maxHP, mana: maxMP, stamina: maxSP, rest: maxRest, grit: maxGrit },
+			{
+				updateHP,
+				updateMP,
+				updateSP,
+				updateRestPoints,
+				updateGritPoints,
+				updateTempHP,
+				updateExhaustion
+			}
+		);
 
 		showSnackbarWithMessage(t('characterSheet.longRestDone'), 'success');
 		handleLongRestEvent();
@@ -901,7 +839,21 @@ const CharacterSheetRedesign: React.FC<CharacterSheetRedesignProps> = ({ charact
 					</MobileMenuButton>
 
 					<ActionButtons>
-						<CampaignFeedAction characterId={characterId} />
+						<CampaignFeedAction
+							characterId={characterId}
+							renderTrigger={({ ariaLabel, content, onClick, title }) => (
+								<ActionButton
+									type="button"
+									onClick={onClick}
+									aria-label={ariaLabel}
+									title={title}
+									whileHover={{ scale: 1.05 }}
+									whileTap={{ scale: 0.95 }}
+								>
+									{content}
+								</ActionButton>
+							)}
+						/>
 						<ActionButton
 							onClick={() => setRulebookOpen(true)}
 							whileHover={{ scale: 1.05 }}

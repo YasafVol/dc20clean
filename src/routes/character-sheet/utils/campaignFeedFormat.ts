@@ -1,8 +1,9 @@
 import { theme } from '../styles/theme';
 import type { CampaignEvent } from '../../../lib/types/campaign';
+import { formatDiceRollExpression, type CampaignEventPayload } from '../../../lib/utils/campaignEventFormat';
 
 export function formatEvent(event: CampaignEvent): string {
-  const p = event.payload as any;
+  const p = event.payload as CampaignEventPayload;
   const name = p?.characterName ?? p?.displayName ?? 'Someone';
   switch (event.type) {
     case 'well_bloodied':      return `[!!] ${name} is well-bloodied!`;
@@ -30,13 +31,7 @@ export function formatEvent(event: CampaignEvent): string {
         : `[+] ${name} exhaustion → level ${lvl} (was ${prev}).`;
     }
     case 'dice_roll': {
-      const label = p?.label ?? 'd20';
-      const mode = p?.mode === 'advantage' ? ' (adv)' : p?.mode === 'disadvantage' ? ' (dis)' : '';
-      const all = Array.isArray(p?.allResults) ? `[${p.allResults.join(', ')}]` : '';
-      const mod = (p?.modifier ?? 0) !== 0
-        ? ((p.modifier > 0 ? ' +' : ' ') + p.modifier)
-        : '';
-      return `[d] ${name}: ${label}${mode} ${all}${mod} = ${p?.total ?? '?'}`;
+      return `[d] ${name}: ${formatDiceRollExpression(p)}`;
     }
     case 'member_joined':      return `[+] ${name} joined the campaign.`;
     case 'character_shared':   return `[~] ${name} shared a character.`;

@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMyCampaigns, useCampaignEvents } from './useCampaigns';
 import type { CampaignEvent } from '../types/campaign';
+import { formatDiceRollExpression, type CampaignEventPayload } from '../utils/campaignEventFormat';
 
 function eventMessage(event: CampaignEvent): string {
-  const p = event.payload as any;
+  const p = event.payload as CampaignEventPayload;
   const name = p?.characterName ?? p?.displayName ?? 'Someone';
   switch (event.type) {
     case 'well_bloodied':      return `${name} is well-bloodied!`;
@@ -21,7 +22,7 @@ function eventMessage(event: CampaignEvent): string {
     case 'condition_gained':   return `${name} gains: ${p?.conditionId ?? 'a condition'}.`;
     case 'condition_cured':    return `${name} cured of: ${p?.conditionId ?? 'a condition'}.`;
     case 'exhaustion_changed': return `${name} exhaustion level: ${p?.level ?? '?'}.`;
-    case 'dice_roll':          return `${name}: ${p?.label ?? 'd20'} = ${p?.total ?? '?'}`;
+    case 'dice_roll':          return `${name}: ${formatDiceRollExpression(p)}`;
     case 'member_joined':      return `${name} joined the campaign.`;
     case 'character_shared':   return `${name} shared a character.`;
     default:                   return `${name}: ${event.type}`;
@@ -43,7 +44,7 @@ export function CampaignEventWatcher({
   const seenIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    const WARNING_TYPES = new Set([
+	const WARNING_TYPES = new Set([
       'well_bloodied', 'deaths_door', 'dead',
       'rage_start', 'wild_form_enter', 'condition_gained', 'exhaustion_changed',
     ]);
@@ -53,7 +54,7 @@ export function CampaignEventWatcher({
       seenIds.current.add(event._id);
       // Skip events that predate mount (history replay prevention)
       if (event.createdAt < mountTimestamp) continue;
-      const variant = WARNING_TYPES.has(event.type as any) ? 'warning' : 'info';
+		const variant = WARNING_TYPES.has(event.type as any) ? 'warning' : 'info';
       onNewEvent(eventMessage(event), variant);
     }
   }, [events, mountTimestamp, onNewEvent]);

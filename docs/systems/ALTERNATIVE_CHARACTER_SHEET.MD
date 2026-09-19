@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Spells](./SPELLS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-20
 
 ## 1. Boundary
 
@@ -33,6 +33,8 @@ This companion specification keeps alternative-only UI detail out of
 5. Actions & Details reuses the shared Attacks, Spells, Inventory, Maneuvers, Features,
    Conditions, and Notes panels. The alternative tab supplies the section heading, so
    shared panels suppress duplicate top-level titles.
+6. Authenticated cloud users who belong to a campaign receive the same bell, unread
+   count, and campaign-feed drawer as the primary sheet.
 
 ## 3. Responsive Contract
 
@@ -219,6 +221,11 @@ uses it; other equipment categories retain their existing Equipage builders.
     damage only to Unarmed Strikes and melee weapons, and alternative-sheet Might Save
     rolls add one ADV stack. The roll label and Might card identify the source as
     `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
+13. Automatic rolls snapshot the requested dice, mode, label, and modifier before the
+    roll animation. Campaign events and toasts show the dice, signed modifier, and final
+    total from that same snapshot.
+14. Long Rest uses the shared sheet reset and restores HP, MP, SP, Rest Points, and Grit
+    Points to maximum, clears temporary HP and Exhaustion, and emits the existing event.
 
 ## 9. Verification
 
@@ -256,3 +263,9 @@ uses it; other equipment categories retain their existing Equipage builders.
 14. `e2e/22-alternative-spell-cast.e2e.spec.ts` proves the current-rules alternative
     sheet opens the modal, stops enhancement MP at MSL, confirms the cast, and visibly
     reduces the Mana card.
+15. `CampaignFeedAction.test.tsx` proves the shared bell marks notifications seen and
+    opens the feed without mounting cloud hooks when cloud authentication is unavailable.
+16. `DiceRoller.test.tsx`, `campaignEventFormat.test.ts`, and `longRest.test.ts` prove
+    automatic-roll totals, party-event formatting, and complete Long Rest restoration.
+17. `e2e/23-alternative-long-rest.e2e.spec.ts` proves the alternative-sheet action
+    visibly restores spent Grit and persists the restored value across reload.

@@ -7,6 +7,7 @@ import { getDiceModifierForAction } from '../../../lib/services/conditionEffects
 import { getDefaultStorage } from '../../../lib/storage';
 import { getRulebookArticle, getRulebookArticlePath } from '../../rulebook/rulebookData';
 import DeathExhaustion, { HealthStatusIndicator } from '../components/DeathExhaustion';
+import { CampaignFeedAction } from '../components/CampaignFeedAction';
 import DiceRoller, { type DiceRollerRef } from '../components/DiceRoller';
 import { StatCard } from '../components/new/StatCard';
 import {
@@ -15,6 +16,7 @@ import {
 	useCharacterSheet,
 	useCharacterSheetPresentation
 } from '../hooks/CharacterSheetProvider';
+import { restoreLongRestResources } from '../longRest';
 import {
 	ActionMenu,
 	CharacterMeta,
@@ -146,12 +148,18 @@ export default function AlternativeCharacterSheet() {
 
 	const handleLongRest = () => {
 		if (!window.confirm(t('characterSheet.longRestConfirm'))) return;
-		updateHP(maxHP);
-		updateMP(maxMP);
-		updateSP(maxSP);
-		updateRestPoints(maxRest);
-		updateTempHP(0);
-		updateExhaustion(0);
+		restoreLongRestResources(
+			{ hp: maxHP, mana: maxMP, stamina: maxSP, rest: maxRest, grit: maxGrit },
+			{
+				updateHP,
+				updateMP,
+				updateSP,
+				updateRestPoints,
+				updateGritPoints,
+				updateTempHP,
+				updateExhaustion
+			}
+		);
 		handleLongRestEvent();
 		showFeedback(t('characterSheet.longRestDone'), 'success');
 	};
@@ -284,6 +292,14 @@ export default function AlternativeCharacterSheet() {
 					</Identity>
 
 					<HeaderActions>
+						<CampaignFeedAction
+							characterId={character.id}
+							renderTrigger={({ ariaLabel, content, onClick, title }) => (
+								<SheetButton type="button" onClick={onClick} aria-label={ariaLabel} title={title}>
+									{content}
+								</SheetButton>
+							)}
+						/>
 						<SheetButton
 							type="button"
 							onClick={handleLongRest}

@@ -1,7 +1,6 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyledDiceRollerContainer } from '../styles/DiceRoller';
-import { theme } from '../styles/theme';
 import { logger } from '../../../lib/utils/logger';
 import {
 	StyledDiceContainer,
@@ -51,6 +50,13 @@ export interface DiceRollResult {
 interface AdditionalDice {
 	type: DiceType;
 	count: number;
+}
+
+interface RollExecution {
+	mode?: RollMode;
+	modifier?: number;
+	label?: string;
+	additionalDice?: AdditionalDice[];
 }
 
 interface DiceRollerProps {
@@ -103,19 +109,6 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		return sideMap[type];
 	};
 
-	const getDiceIcon = (type: DiceType): string => {
-		// Using dice symbols
-		// const iconMap: Record<DiceType, string> = {
-		// 	d4: '⚃',
-		// 	d6: '⚅',
-		// 	d8: '🎲',
-		// 	d10: '🎯',
-		// 	d12: '⭐',
-		// 	d20: '❄️'
-		// };
-		return '❄️';
-	};
-
 	const addDice = (type: DiceType) => {
 		setAdditionalDice((prev) => {
 			const existing = prev.find((d) => d.type === type);
@@ -138,11 +131,13 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		});
 	};
 
-	const handleRoll = async (effectiveMode?: RollMode) => {
+	const handleRoll = async (execution: RollExecution = {}) => {
 		if (isRolling) return;
 
-		// Use provided mode or fall back to state
-		const mode = effectiveMode ?? rollMode;
+		const mode = execution.mode ?? rollMode;
+		const rollModifier = execution.modifier ?? modifier;
+		const rollLabel = execution.label ?? modifierLabel;
+		const diceToRoll = execution.additionalDice ?? additionalDice;
 
 		setIsRolling(true);
 
@@ -203,7 +198,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		}
 
 		// Roll additional dice
-		additionalDice.forEach(({ type, count }) => {
+		diceToRoll.forEach(({ type, count }) => {
 			const maxValue = getDiceMax(type);
 			for (let i = 0; i < count; i++) {
 				const value = rollDice(maxValue);
@@ -226,7 +221,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 			return sum + result.value;
 		}, 0);
 
-		const totalValue = diceTotal + modifier;
+		const totalValue = diceTotal + rollModifier;
 
 		setLastResults(results);
 		setTotal(totalValue);
@@ -239,7 +234,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 		]);
 
 		// Call callback if provided
-		onRoll?.(results, totalValue, mode, modifier, modifierLabel ?? '');
+		onRoll?.(results, totalValue, mode, rollModifier, rollLabel);
 	};
 
 	const clearDice = () => {
@@ -250,7 +245,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 
 	// Expose methods via ref for external control
 	useImperativeHandle(ref, () => ({
-		addRollWithModifier: async (bonus: number, label?: string, mode?: RollMode) => {
+		addRollWithModifier: (bonus: number, label?: string, mode?: RollMode) => {
 			logger.debug('ui', 'DiceRoller addRollWithModifier called', { bonus, label, mode });
 			// Set roll mode if provided (prevents race condition)
 			if (mode !== undefined) {
@@ -263,11 +258,12 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 			setModifierLabel(label || '');
 			// Expand the roller
 			setIsExpanded(true);
-			// Wait longer for state to update (increased from 50ms)
-			await new Promise((resolve) => setTimeout(resolve, 100));
-			// Trigger the roll automatically with explicit mode to prevent race condition
-			console.log('[GIMLI] Triggering auto-roll with mode:', mode);
-			handleRoll(mode);
+			void handleRoll({
+				mode,
+				modifier: bonus,
+				label: label || '',
+				additionalDice: []
+			});
 		},
 		addDiceType: (type: DiceType, count: number = 1) => {
 			for (let i = 0; i < count; i++) {
@@ -434,7 +430,7 @@ const DiceRoller = forwardRef<DiceRollerRef, DiceRollerProps>(({ onRoll }, ref) 
 							<StyledAdditionalDiceContainer key={type}>
 								{Array.from({ length: count }).map((_, index) => (
 									<StyledDiceIcon key={index} $isRolling={isRolling} $type={type} $size="small">
-										{isRolling ? '💫' : getDiceIcon(type)}
+										{isRolling ? '💫' : '❄️'}
 									</StyledDiceIcon>
 								))}
 							</StyledAdditionalDiceContainer>

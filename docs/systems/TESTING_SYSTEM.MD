@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-20
 
 ---
 
@@ -172,6 +172,17 @@ state, and complete-row creation.
 `AlternativeTabbedContent.test.tsx` proves the panel opts into the compact toolbar and
 picker flows.
 
+Shared in-play sheet actions use focused component and logic coverage:
+
+1. `CampaignFeedAction.test.tsx` covers the authenticated/cloud gate, unread label,
+   mark-seen action, and shared drawer opening.
+2. `DiceRoller.test.tsx` proves an automatic roll uses the requested modifier and label
+   rather than stale pre-render state.
+3. `campaignEventFormat.test.ts` proves positive and negative signed-modifier expressions,
+   including Advantage dice and final totals.
+4. `longRest.test.ts` proves HP, MP, SP, Rest, Grit, temporary HP, and Exhaustion reset
+   through the shared Long Rest helper used by both sheet presentations.
+
 Equipage coverage proves that version-1 storage remains importable, version-2 storage
 persists and duplicates General Equipment, general records produce no calculator effects,
 the builder requires a name, and the inventory picker preserves the saved description,
@@ -207,6 +218,8 @@ Playwright flow to prove character load, toggle wiring, visible results, and rel
 | `e2e/19-resource-value-layout.e2e.spec.ts`            | Primary-sheet paired resource controls do not overlap; alternative-sheet resources retain the standard layout                                                                                                                                          |
 | `e2e/20-alternative-weapon-picker.e2e.spec.ts`        | Alternative-sheet add-weapon modal, populated-row creation, shared weapon detail card, desktop split layout, compact stacked layout, and horizontal-overflow guard                                                                                     |
 | `e2e/21-alternative-inventory-picker.e2e.spec.ts`     | Alternative-sheet add-inventory modal, search and filtering, populated-row creation, quantity and equipped setup, desktop split layout, compact stacked layout, and horizontal-overflow guard                                                          |
+| `e2e/22-alternative-spell-cast.e2e.spec.ts`           | Alternative-sheet focused casting modal, Mana Spend Limit guard, enhancement declaration, and visible Mana deduction                                                                                                                                   |
+| `e2e/23-alternative-long-rest.e2e.spec.ts`            | Alternative-sheet Long Rest restores spent Grit and persists the restored value across reload                                                                                                                                                          |
 | `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
 | `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
 | `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |

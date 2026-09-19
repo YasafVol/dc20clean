@@ -668,7 +668,11 @@ const Spells: React.FC<SpellsProps> = ({
 												onClick={(event) => {
 													event.stopPropagation();
 													if (useSpellCastModal) {
-														setSpellPendingCast(spell);
+														setSpellPendingCast(
+															selectedSpell && !spell.enhancements?.length
+																? { ...spell, enhancements: selectedSpell.enhancements }
+																: spell
+														);
 														return;
 													}
 													onSpellCast(spell);

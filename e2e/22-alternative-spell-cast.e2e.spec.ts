@@ -9,7 +9,10 @@ const fireball = ALL_SPELLS.find((spell) => spell.id === 'fireball');
 if (!fireball) throw new Error('Fireball fixture is missing');
 
 test('22 - alternative sheet declares spell enhancements and spends Mana', async ({ page }) => {
-	const savedSpell = createSpellDataFromSpell(fireball, 'spell-fireball');
+	const savedSpell = {
+		...createSpellDataFromSpell(fireball, 'spell-fireball'),
+		enhancements: undefined
+	};
 	const character = {
 		...richCharacter,
 		schemaVersion: '2.2.0',

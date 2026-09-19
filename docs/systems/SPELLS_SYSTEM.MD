@@ -246,9 +246,11 @@ explicit character migration.
 - On the alternative sheet, Cast opens a focused modal for the clicked known spell. It
   starts with no enhancements declared, supports structured fixed, repeatable, variable,
   alternative, and prerequisite costs, and treats base MP plus enhancement MP as the
-  MSL-constrained spend. MP controls also stop at current Mana. Confirmation subtracts
-  the exact MP total and then emits the existing spell-cast event; cancellation persists
-  neither resource nor selection state. AP costs are shown but not automatically spent.
+  MSL-constrained spend. A saved row with no enhancement snapshot uses the same
+  alias-aware current-catalog fallback as its expanded spell details. MP controls also
+  stop at current Mana. Confirmation subtracts the exact MP total and then emits the
+  existing spell-cast event; cancellation persists neither resource nor selection state.
+  AP costs are shown but not automatically spent.
 - The primary sheet retains its direct Cast behavior.
 - Advanced picker filters and custom-spell creation remain outside the alternative flow.
 

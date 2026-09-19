@@ -137,7 +137,7 @@ describe('alternative spell casting', () => {
 			cost: heal.cost,
 			range: heal.range,
 			duration: heal.duration,
-			enhancements: heal.enhancements
+			enhancements: undefined
 		});
 		render(
 			<MemoryRouter>
@@ -148,6 +148,7 @@ describe('alternative spell casting', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Cast' }));
 		const modal = screen.getByTestId('spell-cast-modal');
 		expect(within(modal).getByRole('heading', { name: 'Cast Heal' })).toBeInTheDocument();
+		expect(within(modal).getByText('Increased Healing')).toBeInTheDocument();
 		expect(within(modal).getByText('1 / 3 MP')).toBeInTheDocument();
 
 		fireEvent.click(within(modal).getByRole('button', { name: 'Increase Increased Healing' }));

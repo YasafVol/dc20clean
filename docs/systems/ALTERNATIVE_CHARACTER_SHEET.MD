@@ -114,8 +114,10 @@ retains its existing blank-row and custom-spell workflow.
    not duplicate the known-spell list or allow changing the selected spell.
 2. The modal starts with the spell's base AP/MP cost and no enhancements declared.
 3. Fixed, repeatable, variable, alternative-cost, and prerequisite-dependent spell
-   enhancements use the structured saved spell data. Repeatable and variable costs use
-   quantity controls; alternative costs expose a resource-cost choice.
+   enhancements use the structured saved spell data. Older rows that lack an enhancement
+   snapshot resolve it through the same current-catalog lookup used by the expanded spell
+   details. Repeatable and variable costs use quantity controls; alternative costs expose
+   a resource-cost choice.
 4. Mana Spend Limit applies to base MP plus declared enhancement MP. AP costs remain
    visible but are not automatically deducted by this Mana-only flow.
 5. MP increment controls stop at both the calculated Mana Spend Limit and current Mana.

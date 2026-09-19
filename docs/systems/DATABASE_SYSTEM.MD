@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-14
+> Last Updated: 2026-09-19
 
 ---
 
@@ -102,6 +102,12 @@ interface CharacterState {
 
 Attack objects no longer create or type the obsolete `critRange` and `critDamage` keys. The permissive attack storage boundary continues to accept older saved objects containing those keys; current character-sheet code ignores them, so this retirement does not require an in-place migration or schema-version bump.
 
+An attack created through the alternative sheet's Custom weapon source may include an
+optional canonical `customWeapon` snapshot. The snapshot is stored inside the existing
+permissive `attacks` payload and travels with local, Convex, and JSON character storage.
+Older attacks remain valid, and no character schema-version bump is required because the
+opaque attack-array contract has not changed.
+
 ---
 
 ## 3. Storage Architecture
@@ -185,6 +191,7 @@ valid.
 ```
 savedCharacters → JSON array of SavedCharacter objects
 savedCharacters_backup → Backup copy (for migration safety)
+customEquipment → Versioned local Equipage data, including reusable general equipment
 ```
 
 ### 4.2 Key Functions

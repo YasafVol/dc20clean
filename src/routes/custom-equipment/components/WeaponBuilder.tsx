@@ -16,7 +16,13 @@ import {
 import { PHYSICAL_DAMAGE_TYPES } from '../../../lib/rulesdata/equipment/schemas/baseEquipment';
 import { validateWeapon } from '../../../lib/rulesdata/equipment/validation/equipmentValidator';
 import { saveCustomWeapon } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
-import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipmentEffects';
+import {
+	buildCustomWeapon,
+	calculateCustomWeaponDamage,
+	calculateCustomWeaponPoints,
+	calculateCustomWeaponRange,
+	getCustomWeaponMaxPoints
+} from '../../../lib/rulesdata/equipment/customWeapon';
 import type {
 	CustomWeapon,
 	WeaponType,
@@ -73,14 +79,12 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 	);
 	const [presetQuery, setPresetQuery] = useState('');
 
-	const maxPoints = weaponType === 'ranged' ? 1 : 2;
+	const maxPoints = weaponType ? getCustomWeaponMaxPoints(weaponType) : 2;
 
-	const pointsSpent = useMemo(() => {
-		return selectedProperties.reduce((total, propId) => {
-			const prop = ALL_WEAPON_PROPERTIES.find((p) => p.id === propId);
-			return total + (prop?.cost || 0);
-		}, 0);
-	}, [selectedProperties]);
+	const pointsSpent = useMemo(
+		() => calculateCustomWeaponPoints(selectedProperties),
+		[selectedProperties]
+	);
 
 	const availableStyles = useMemo(() => {
 		if (!weaponType) return [];
@@ -173,60 +177,19 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 		setStep(4); // Jump to summary
 	};
 
-	const calculateDamage = () => {
-		let damage = 1; // Base damage
-		if (selectedProperties.includes('heavy') || selectedProperties.includes('heavy-ranged')) {
-			damage += 1;
-		}
-		if (selectedProperties.includes('reload')) {
-			damage += 1;
-		}
-		return damage;
-	};
-
-	const calculateRange = () => {
-		if (weaponType === 'ranged') {
-			if (selectedProperties.includes('long-ranged')) {
-				return '30/90';
-			}
-			return '15/45';
-		}
-		// Melee
-		if (selectedProperties.includes('reach')) {
-			return '2';
-		}
-		return '1';
-	};
-
 	const buildWeapon = (): CustomWeapon => {
-		const styleData = WEAPON_STYLES.find((s) => s.id === style);
-
-		const now = new Date().toISOString();
-		const weapon: CustomWeapon = {
-			id: initialEquipment?.id ?? `custom-weapon-${Date.now()}`,
-			category: 'weapon',
+		return buildCustomWeapon({
+			id: initialEquipment?.id,
+			createdAt: initialEquipment?.createdAt,
 			name: name || 'Custom Weapon',
 			weaponType: weaponType!,
 			style: style!,
-			secondaryStyle: hasMultiFaceted ? secondaryStyle || undefined : undefined,
-			damageType: damageType || styleData?.defaultDamageType || 'slashing',
-			secondaryDamageType:
-				hasMultiFaceted && secondaryStyle
-					? WEAPON_STYLES.find((s) => s.id === secondaryStyle)?.defaultDamageType
-					: undefined,
-			baseDamage: 1,
-			finalDamage: calculateDamage(),
-			range: calculateRange(),
+			secondaryStyle: hasMultiFaceted ? (secondaryStyle ?? undefined) : undefined,
+			damageType: damageType ?? 'slashing',
 			properties: selectedProperties,
-			pointsSpent,
-			maxPoints,
 			isPreset: !!selectedPreset,
-			presetOrigin: selectedPreset || undefined,
-			createdAt: initialEquipment?.createdAt ?? now,
-			updatedAt: now
-		};
-
-		return withEquipmentEffects(weapon);
+			presetOrigin: selectedPreset ?? undefined
+		});
 	};
 
 	const handleSave = () => {
@@ -582,11 +545,14 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
 						<SummaryRow>
 							<SummaryLabel>Damage</SummaryLabel>
-							<SummaryValue>{calculateDamage()}</SummaryValue>
+							<SummaryValue>{calculateCustomWeaponDamage(selectedProperties)}</SummaryValue>
 						</SummaryRow>
 						<SummaryRow>
 							<SummaryLabel>Range</SummaryLabel>
-							<SummaryValue>{calculateRange()} Space(s)</SummaryValue>
+							<SummaryValue>
+								{weaponType ? calculateCustomWeaponRange(weaponType, selectedProperties) : '—'}{' '}
+								Space(s)
+							</SummaryValue>
 						</SummaryRow>
 
 						{/* Enhancement */}

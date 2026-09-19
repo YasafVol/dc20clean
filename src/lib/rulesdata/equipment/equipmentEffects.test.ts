@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { aggregateEquipmentEffects, getCustomEquipmentEffects } from './equipmentEffects';
 import type { CustomWeapon } from './schemas/weaponSchema';
 import type { CustomSpellFocus } from './schemas/spellFocusSchema';
+import type { CustomGeneralEquipment } from './schemas/generalEquipmentSchema';
 
 describe('equipmentEffects', () => {
 	it('derives Guard as a PD effect for custom weapons', () => {
@@ -106,5 +107,21 @@ describe('equipmentEffects', () => {
 				})
 			})
 		);
+	});
+
+	it('keeps general equipment non-mechanical', () => {
+		const item: CustomGeneralEquipment = {
+			id: 'field-journal',
+			category: 'general',
+			name: 'Field Journal',
+			cost: '2g',
+			properties: [],
+			pointsSpent: 0,
+			maxPoints: 0,
+			createdAt: '2026-09-19T00:00:00.000Z',
+			updatedAt: '2026-09-19T00:00:00.000Z'
+		};
+
+		expect(getCustomEquipmentEffects(item)).toEqual([]);
 	});
 });

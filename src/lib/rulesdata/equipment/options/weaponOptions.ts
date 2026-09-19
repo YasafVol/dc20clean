@@ -954,10 +954,12 @@ export const getWeaponProperty = (id: string): WeaponProperty | undefined =>
 export const getPresetWeapon = (id: string): PresetWeapon | undefined =>
 	PRESET_WEAPONS.find((w) => w.id === id);
 
-export const getStylesForWeaponType = (weaponType: 'melee' | 'ranged'): WeaponStyleDefinition[] =>
-	WEAPON_STYLES.filter((s) =>
-		weaponType === 'melee' ? s.availableForMelee : s.availableForRanged
-	);
+// v0.10.5's Reskinning Weapons rule explicitly permits any style on either weapon type.
+// The availability flags record the rulebook's default style grouping, not a creation limit.
+export const getStylesForWeaponType = (weaponType: 'melee' | 'ranged'): WeaponStyleDefinition[] => {
+	void weaponType;
+	return WEAPON_STYLES;
+};
 
 export const getPropertiesForWeaponType = (weaponType: 'melee' | 'ranged'): WeaponProperty[] => {
 	return ALL_WEAPON_PROPERTIES.filter((p) => {

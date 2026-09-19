@@ -3,6 +3,7 @@
 import type { EnhancedStatBreakdown } from '../lib/types/effectSystem';
 import type { ManeuverEnhancement } from '../lib/rulesdata/schemas/maneuver.schema';
 import type { SpellCost } from '../lib/rulesdata/schemas/spell.schema';
+import type { CustomWeapon } from '../lib/rulesdata/equipment/schemas/weaponSchema';
 
 export interface CharacterSheetProps {
 	characterId: string;
@@ -258,6 +259,8 @@ export interface AttackData {
 	damageType: string;
 	brutalDamage: string;
 	heavyHitEffect: string;
+	/** Character-local canonical rules snapshot for a custom weapon attack. */
+	customWeapon?: CustomWeapon;
 }
 
 export interface SpellData {
@@ -301,7 +304,7 @@ export interface InventoryItemData {
 	/** Links to a saved Equipage item's id (when picked from custom equipment storage) */
 	customEquipmentId?: string;
 	/** Saved Equipage category for display and effect fallback labeling */
-	customEquipmentCategory?: 'weapon' | 'armor' | 'shield' | 'spellFocus';
+	customEquipmentCategory?: 'weapon' | 'armor' | 'shield' | 'spellFocus' | 'general';
 	/** User-written description for custom freeform items */
 	description?: string;
 }

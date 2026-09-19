@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-09-14
+> Last Updated: 2026-09-19
 
 ---
 
@@ -43,6 +43,10 @@ DC20Clean uses separate version lanes. Do not collapse them into one field.
 | PDF routing                      | `src/lib/rulesdata/versioning/compatibility.ts`, `docs/systems/PDF_EXPORT_SYSTEM.MD` |
 | PDF field-version audits         | `scripts/pdf/auditPdfFields.mjs`, `scripts/pdf/pdfFieldAuditService.mjs`             |
 | Equipage source/version metadata | `src/lib/rulesdata/equipment/schemas/baseEquipment.ts`                               |
+
+Equipage also owns a separate localStorage envelope version. Version 2 adds the
+`generalEquipment` array; version-1 data and imports remain valid and normalize a
+missing array to empty. This does not change character `schemaVersion` or rules identity.
 
 ## 4. Rules Version Policy
 
@@ -99,6 +103,11 @@ If a legacy character already has a current-rules copy, the default action opens
 - Automatic schema migrations may fill missing fields or normalize legacy structures, but must not reinterpret old rules choices.
 
 Campaign membership's optional `sharedCharacterDocIds` is an additive backend-table compatibility field, not a `SavedCharacter` shape change. Legacy app-ID links remain owner-scoped and readable; reconnect lazily records the exact character IDs. No character `schemaVersion` bump is required.
+
+The optional canonical `customWeapon` snapshot inside an attack is also an additive
+field within the already-permissive attack-array payload. It does not change the
+character envelope or require a schema-version bump; attacks without the snapshot retain
+their existing catalog/name-based behavior.
 
 ## 6. PDF Version Policy
 

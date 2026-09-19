@@ -162,6 +162,7 @@ export default function AlternativeTabbedContent() {
 								showTitle={false}
 								showInfoHeader={false}
 								explicitEditMode
+								useInventoryPicker
 								onItemClick={(inventoryData, item) =>
 									setSelectedInventoryItem({ inventoryData, item })
 								}

@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-18
+> Last Updated: 2026-09-19
 
 ---
 
@@ -151,10 +151,30 @@ connected across the shared provider, calculator, and alternative sheet:
 
 The focused `Spells.test.tsx` component coverage is complete for the alternative
 picker no-blank-row, next-slot eligibility, full-catalog ordering, confirmation flow,
-and compact catalog-toolbar composition. `Maneuvers.test.tsx` proves the
+search, school filtering, and compact catalog-toolbar composition. `Attacks.test.tsx`
+proves weapon search and melee/ranged filtering. Both source-switching pickers preserve
+their active search and filter. It also proves the separate v0.10.5 five-panel
+custom-weapon builder creates a populated attack with an embedded canonical snapshot,
+exposes reskinned styles across weapon types, and returns to the unchanged picker state
+when cancelled. It also proves contextual guidance moves with the active build-sheet
+section instead of remaining visible across stages, and that damage type has its own
+2.5 stage between style and properties. `Maneuvers.test.tsx` proves the
 alternative picker creates complete catalog data without a blank row and excludes
-already-known maneuvers. `AlternativeTabbedContent.test.tsx` proves the panel opts
-into both the compact toolbar and picker flow.
+already-known maneuvers, including name search and type filtering. `Inventory.test.tsx`
+proves alternative inventory creation is mutation-free until confirmation, with
+catalog search/type filtering, source-switch state preservation, quantity, equipped
+state, and complete-row creation.
+`AlternativeTabbedContent.test.tsx` proves the panel opts into the compact toolbar and
+picker flows.
+
+Equipage coverage proves that version-1 storage remains importable, version-2 storage
+persists and duplicates General Equipment, general records produce no calculator effects,
+the builder requires a name, and the inventory picker preserves the saved description,
+cost, stable ID, and category.
+
+`customWeapon.test.ts` and `equipmentValidator.test.ts` prove the v0.10.5 custom-weapon
+point accounting, ranged Two-Handed removal cost, unrestricted style reskinning,
+Multi-Faceted secondary-style requirement, and canonical snapshot construction.
 
 Keep exact rule permutations in focused calculator and component tests. Use one representative
 Playwright flow to prove character load, toggle wiring, visible results, and reload behavior.
@@ -181,6 +201,7 @@ Playwright flow to prove character load, toggle wiring, visible results, and rel
 | `e2e/18-load-character-ordering.e2e.spec.ts`          | Load-character newest-first ordering across timestamp fallbacks and immediate reordering after JSON import                                                                                                                                             |
 | `e2e/19-resource-value-layout.e2e.spec.ts`            | Primary-sheet paired resource controls do not overlap; alternative-sheet resources retain the standard layout                                                                                                                                          |
 | `e2e/20-alternative-weapon-picker.e2e.spec.ts`        | Alternative-sheet add-weapon modal, populated-row creation, shared weapon detail card, desktop split layout, compact stacked layout, and horizontal-overflow guard                                                                                     |
+| `e2e/21-alternative-inventory-picker.e2e.spec.ts`     | Alternative-sheet add-inventory modal, search and filtering, populated-row creation, quantity and equipped setup, desktop split layout, compact stacked layout, and horizontal-overflow guard                                                          |
 | `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
 | `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
 | `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |

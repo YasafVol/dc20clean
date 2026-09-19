@@ -25,6 +25,7 @@ import WeaponBuilder from './components/WeaponBuilder';
 import ArmorBuilder from './components/ArmorBuilder';
 import ShieldBuilder from './components/ShieldBuilder';
 import SpellFocusBuilder from './components/SpellFocusBuilder';
+import GeneralEquipmentBuilder from './components/GeneralEquipmentBuilder';
 import SavedEquipmentList from './components/SavedEquipmentList';
 import type { CustomEquipment as CustomEquipmentData } from '../../lib/rulesdata/equipment/schemas';
 
@@ -33,7 +34,8 @@ const CATEGORY_ICONS: Record<EquipmentCategory, string> = {
 	weapon: '⚔️',
 	armor: '🛡️',
 	shield: '🔰',
-	spellFocus: '🔮'
+	spellFocus: '🔮',
+	general: '🎒'
 };
 
 type TabType = 'create' | 'saved';
@@ -93,6 +95,15 @@ const CustomEquipment: React.FC = () => {
 						onBack={closeBuilder}
 						initialEquipment={
 							editingEquipment?.category === 'spellFocus' ? editingEquipment : undefined
+						}
+					/>
+				);
+			case 'general':
+				return (
+					<GeneralEquipmentBuilder
+						onBack={closeBuilder}
+						initialEquipment={
+							editingEquipment?.category === 'general' ? editingEquipment : undefined
 						}
 					/>
 				);

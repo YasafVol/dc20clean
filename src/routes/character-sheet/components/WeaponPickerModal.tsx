@@ -1,33 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Weapon } from '../../../lib/rulesdata/inventoryItems';
+import type { CustomWeapon } from '../../../lib/rulesdata/equipment/schemas/weaponSchema';
 import { getAttackPresentation } from '../attackPresentation';
+import { filterCatalogEntries } from '../catalogPickerFiltering';
 import { createAttackDataFromWeapon } from '../weaponAttackData';
 import {
-	StyledFeaturePopupClose,
-	StyledFeaturePopupOverlay,
-	StyledFeaturePopupTitle
-} from '../styles/FeaturePopup';
-import {
-	PickerActions,
-	PickerBody,
-	PickerCancelButton,
-	PickerConfirmButton,
-	PickerContent,
-	PickerEmpty,
-	PickerFooter,
-	PickerHeader,
-	PickerList,
-	PickerListPane,
-	PickerPaneTitle,
+	PickerCreateCustomButton,
+	PickerFooterLeading,
 	PickerPlaceholder,
-	PickerPreview,
 	PickerSourceButton,
 	PickerSourceSwitch,
 	PickerWeaponButton,
 	PickerWeaponMeta,
 	PickerWeaponName
 } from '../styles/WeaponPickerModal.styles';
+import CatalogPickerModal, { type CatalogPickerFilter } from './CatalogPickerModal';
+import CustomWeaponBuilderModal from './CustomWeaponBuilderModal';
 import WeaponAttackDetails from './WeaponAttackDetails';
 
 type WeaponSource = 'inventory' | 'catalog';
@@ -36,6 +25,7 @@ interface WeaponPickerModalProps {
 	inventoryWeapons: Weapon[];
 	catalogWeapons: Weapon[];
 	onAdd: (weapon: Weapon) => void;
+	onAddCustom: (weapon: CustomWeapon) => void;
 	onClose: () => void;
 }
 
@@ -43,107 +33,128 @@ export default function WeaponPickerModal({
 	inventoryWeapons,
 	catalogWeapons,
 	onAdd,
+	onAddCustom,
 	onClose
 }: WeaponPickerModalProps) {
 	const { t } = useTranslation();
 	const [source, setSource] = useState<WeaponSource>('inventory');
+	const [search, setSearch] = useState('');
+	const [filter, setFilter] = useState('all');
 	const [selectedName, setSelectedName] = useState(inventoryWeapons[0]?.name ?? '');
-	const visibleWeapons = source === 'inventory' ? inventoryWeapons : catalogWeapons;
+	const [isCustomBuilderOpen, setIsCustomBuilderOpen] = useState(false);
+	const sourceWeapons = source === 'inventory' ? inventoryWeapons : catalogWeapons;
+	const visibleWeapons = useMemo(
+		() =>
+			filterCatalogEntries(
+				sourceWeapons,
+				search,
+				filter,
+				(weapon) => weapon.name,
+				(weapon) => weapon.type
+			),
+		[filter, search, sourceWeapons]
+	);
 	const selectedWeapon = visibleWeapons.find((weapon) => weapon.name === selectedName) ?? null;
-	const previewAttack = selectedWeapon ? createAttackDataFromWeapon(selectedWeapon) : null;
+	const previewWeapon = selectedWeapon;
+	const previewAttack = previewWeapon ? createAttackDataFromWeapon(previewWeapon) : null;
 	const previewPresentation =
-		previewAttack && selectedWeapon
-			? getAttackPresentation({ attack: previewAttack, weapon: selectedWeapon })
+		previewAttack && previewWeapon
+			? getAttackPresentation({ attack: previewAttack, weapon: previewWeapon })
 			: null;
-
-	useEffect(() => {
-		const closeOnEscape = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') onClose();
-		};
-		window.addEventListener('keydown', closeOnEscape);
-		return () => window.removeEventListener('keydown', closeOnEscape);
-	}, [onClose]);
+	const filters: CatalogPickerFilter[] = [
+		{ value: 'all', label: t('characterSheet.pickerFilterAll') },
+		{ value: 'Melee', label: t('characterSheet.weaponPickerFilterMelee') },
+		{ value: 'Ranged', label: t('characterSheet.weaponPickerFilterRanged') }
+	];
 
 	const changeSource = (nextSource: WeaponSource) => {
 		const nextWeapons = nextSource === 'inventory' ? inventoryWeapons : catalogWeapons;
+		const nextVisibleWeapons = filterCatalogEntries(
+			nextWeapons,
+			search,
+			filter,
+			(weapon) => weapon.name,
+			(weapon) => weapon.type
+		);
 		setSource(nextSource);
 		setSelectedName((current) =>
-			nextWeapons.some((weapon) => weapon.name === current) ? current : (nextWeapons[0]?.name ?? '')
+			nextVisibleWeapons.some((weapon) => weapon.name === current)
+				? current
+				: (nextVisibleWeapons[0]?.name ?? '')
 		);
 	};
 
+	if (isCustomBuilderOpen) {
+		return (
+			<CustomWeaponBuilderModal
+				onCreate={(weapon) => {
+					onAddCustom(weapon);
+					setIsCustomBuilderOpen(false);
+				}}
+				onClose={() => setIsCustomBuilderOpen(false)}
+			/>
+		);
+	}
+
 	return (
-		<StyledFeaturePopupOverlay onClick={onClose}>
-			<PickerContent
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="weapon-picker-title"
-				data-testid="weapon-picker"
-				onClick={(event) => event.stopPropagation()}
-			>
-				<PickerHeader>
-					<StyledFeaturePopupTitle id="weapon-picker-title">
-						{t('characterSheet.weaponPickerTitle')}
-					</StyledFeaturePopupTitle>
-					<StyledFeaturePopupClose
-						type="button"
-						aria-label={t('characterSheet.weaponPickerClose')}
-						onClick={onClose}
-					>
-						×
-					</StyledFeaturePopupClose>
-				</PickerHeader>
-
-				<PickerBody>
-					<PickerListPane
-						aria-labelledby="weapon-picker-list-title"
-						data-testid="weapon-picker-list-pane"
-					>
-						<PickerPaneTitle id="weapon-picker-list-title">
-							{source === 'inventory'
-								? t('characterSheet.weaponPickerInventoryWeapons')
-								: t('characterSheet.weaponPickerCatalogWeapons')}
-						</PickerPaneTitle>
-						{visibleWeapons.length > 0 ? (
-							<PickerList role="listbox" aria-label={t('characterSheet.weaponPickerListLabel')}>
-								{visibleWeapons.map((weapon) => (
-									<PickerWeaponButton
-										key={weapon.name}
-										type="button"
-										role="option"
-										aria-selected={weapon.name === selectedName}
-										$selected={weapon.name === selectedName}
-										data-testid={`weapon-picker-option-${weapon.name}`}
-										onClick={() => setSelectedName(weapon.name)}
-									>
-										<PickerWeaponName>{weapon.name}</PickerWeaponName>
-										<PickerWeaponMeta>
-											{weapon.handedness} · {weapon.type}
-										</PickerWeaponMeta>
-									</PickerWeaponButton>
-								))}
-							</PickerList>
-						) : (
-							<PickerEmpty>{t('characterSheet.weaponPickerEmptyInventory')}</PickerEmpty>
-						)}
-					</PickerListPane>
-
-					<PickerPreview data-testid="weapon-picker-preview">
-						{previewAttack && selectedWeapon && previewPresentation ? (
-							<WeaponAttackDetails
-								attack={previewAttack}
-								weapon={selectedWeapon}
-								presentation={previewPresentation}
-								headingIdPrefix="weapon-picker"
-								contained
-							/>
-						) : (
-							<PickerPlaceholder>{t('characterSheet.weaponPickerSelectPrompt')}</PickerPlaceholder>
-						)}
-					</PickerPreview>
-				</PickerBody>
-
-				<PickerFooter>
+		<CatalogPickerModal
+			idPrefix="weapon-picker"
+			testId="weapon-picker"
+			title={t('characterSheet.weaponPickerTitle')}
+			closeLabel={t('characterSheet.weaponPickerClose')}
+			listTitle={
+				source === 'inventory'
+					? t('characterSheet.weaponPickerInventoryWeapons')
+					: t('characterSheet.weaponPickerCatalogWeapons')
+			}
+			listLabel={t('characterSheet.weaponPickerListLabel')}
+			listPaneTestId="weapon-picker-list-pane"
+			previewTestId="weapon-picker-preview"
+			searchValue={search}
+			searchLabel={t('characterSheet.weaponPickerSearchLabel')}
+			searchPlaceholder={t('characterSheet.weaponPickerSearchPlaceholder')}
+			onSearchChange={setSearch}
+			filterValue={filter}
+			filterLabel={t('characterSheet.weaponPickerFilterLabel')}
+			filters={filters}
+			onFilterChange={setFilter}
+			hasResults={visibleWeapons.length > 0}
+			emptyText={
+				source === 'inventory' && inventoryWeapons.length === 0
+					? t('characterSheet.weaponPickerEmptyInventory')
+					: t('characterSheet.weaponPickerNoMatches')
+			}
+			listContent={visibleWeapons.map((weapon) => (
+				<PickerWeaponButton
+					key={weapon.name}
+					type="button"
+					role="option"
+					aria-selected={weapon.name === selectedName}
+					$selected={weapon.name === selectedName}
+					data-testid={`weapon-picker-option-${weapon.name}`}
+					onClick={() => setSelectedName(weapon.name)}
+				>
+					<PickerWeaponName>{weapon.name}</PickerWeaponName>
+					<PickerWeaponMeta>
+						{weapon.handedness} · {weapon.type}
+					</PickerWeaponMeta>
+				</PickerWeaponButton>
+			))}
+			preview={
+				previewAttack && previewWeapon && previewPresentation ? (
+					<WeaponAttackDetails
+						attack={previewAttack}
+						weapon={previewWeapon}
+						presentation={previewPresentation}
+						headingIdPrefix="weapon-picker"
+						contained
+					/>
+				) : (
+					<PickerPlaceholder>{t('characterSheet.weaponPickerSelectPrompt')}</PickerPlaceholder>
+				)
+			}
+			footerLeading={
+				<PickerFooterLeading>
 					<PickerSourceSwitch
 						role="group"
 						aria-label={t('characterSheet.weaponPickerSource')}
@@ -166,21 +177,23 @@ export default function WeaponPickerModal({
 							{t('characterSheet.weaponPickerFullList')}
 						</PickerSourceButton>
 					</PickerSourceSwitch>
-					<PickerActions>
-						<PickerCancelButton type="button" onClick={onClose}>
-							{t('characterSheet.weaponPickerCancel')}
-						</PickerCancelButton>
-						<PickerConfirmButton
-							type="button"
-							disabled={!selectedWeapon}
-							data-testid="weapon-picker-confirm"
-							onClick={() => selectedWeapon && onAdd(selectedWeapon)}
-						>
-							{t('characterSheet.weaponPickerAdd')}
-						</PickerConfirmButton>
-					</PickerActions>
-				</PickerFooter>
-			</PickerContent>
-		</StyledFeaturePopupOverlay>
+					<PickerCreateCustomButton
+						type="button"
+						data-action-id="create-custom-weapon"
+						onClick={() => setIsCustomBuilderOpen(true)}
+					>
+						{t('characterSheet.customWeaponCreateAction')}
+					</PickerCreateCustomButton>
+				</PickerFooterLeading>
+			}
+			cancelLabel={t('characterSheet.weaponPickerCancel')}
+			confirmLabel={t('characterSheet.weaponPickerAdd')}
+			confirmDisabled={!selectedWeapon}
+			confirmTestId="weapon-picker-confirm"
+			onConfirm={() => {
+				if (selectedWeapon) onAdd(selectedWeapon);
+			}}
+			onClose={onClose}
+		/>
 	);
 }

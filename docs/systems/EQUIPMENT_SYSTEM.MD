@@ -1,12 +1,12 @@
 # DC20Clean – Equipage (Custom Equipment System)
 
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
-> Owns: Custom weapon, armor, shield, and spell-focus schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
-> Does not own: General character inventory, generic effect semantics, character-sheet equip state, or PDF export mapping.
+> Owns: Custom weapon, armor, shield, spell-focus, and reusable general-equipment schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
+> Does not own: Character inventory rows, generic effect semantics, character-sheet equip state, or PDF export mapping.
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-19
 
 ---
 
@@ -23,6 +23,8 @@
 
 Stored custom equipment exports include `rulesVersion`; legacy exports without it are
 treated as `0.10`, while current saves are stamped `0.10.5`.
+General equipment is an app-defined reusable inventory template, not a DC20 point-buy
+rules category. It has no rules-source section and contributes no calculator effects.
 
 ---
 
@@ -35,6 +37,7 @@ treated as `0.10`, while current saves are stamped `0.10.5`.
 - `armorSchema.ts` — Armor types, properties, CustomArmor interface
 - `shieldSchema.ts` — Shield types, properties, CustomShield interface
 - `spellFocusSchema.ts` — Spell focus properties, CustomSpellFocus interface
+- `generalEquipmentSchema.ts` — Name, description, and cost for non-mechanical reusable items
 
 ### Options/Data (`src/lib/rulesdata/equipment/options/`)
 
@@ -66,7 +69,15 @@ second positive property point; removing it leaves the ranged weapon with only i
 - `components/ArmorBuilder.tsx` — 3-step armor creation wizard
 - `components/ShieldBuilder.tsx` — 3-step shield creation wizard
 - `components/SpellFocusBuilder.tsx` — 3-step spell focus creation wizard
+- `components/GeneralEquipmentBuilder.tsx` — Single-page general equipment form
 - `components/SavedEquipmentList.tsx` — View/filter/delete/export saved equipment
+
+### Shared Builder UI (`src/components/equipment/`)
+
+- `EquipmentBuildSheet.tsx` — Reusable accessible accordion shell for category builders;
+  the category owns its steps, summaries, validation, choices, and record construction.
+- The alternative custom-weapon flow is the first consumer. Armor, shield, spell-focus,
+  and general-equipment builders have not yet migrated to this shell.
 
 ---
 
@@ -99,11 +110,21 @@ The standard character-sheet inventory includes all 13 preset spell focuses as t
 `Spell Focus` item type. Their item selectors are alphabetical, and equipped presets
 resolve their canonical property effects through the same bridge as custom focuses.
 Rows linked to saved Equipage items keep `itemType: 'Custom'` for selector compatibility
-and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, or `spellFocus`)
-so the inventory can label them as Custom Weapon, Custom Armor, Custom Shield, or
-Custom Spell Focus.
+and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, `spellFocus`, or
+`general`) so the inventory can label them with their Equipage category.
 
-### Equipment Categories (4)
+On the alternative character sheet, Add Item opens a picker instead of inserting a
+blank row. Its Custom items source exposes saved Equipage records with their stable
+`customEquipmentId`, category, name, chosen quantity, and equipped state, plus a
+freeform custom-item path for inventory records that are not Equipage-backed.
+
+Alternative-sheet custom attack creation is character-local rather than Equipage-backed.
+The attack stores a complete canonical `CustomWeapon` snapshot so its styles, damage,
+properties, and rules detail survive character export/import and cloud sync without a
+localStorage Equipage dependency. Creating that attack does not add an inventory row or
+activate equipped-item effects.
+
+### Equipment Categories (5)
 
 | Category    | Points    | Description                                   |
 | ----------- | --------- | --------------------------------------------- |
@@ -111,6 +132,7 @@ Custom Spell Focus.
 | Armor       | 2         | Light/heavy with PD, AD, and damage reduction |
 | Shield      | 2         | Light/heavy with defensive bonuses            |
 | Spell Focus | 1 (2H: 2) | One/two-handed with spellcasting bonuses      |
+| General     | None      | Name, description, and cost; no effects       |
 
 ---
 
@@ -140,6 +162,11 @@ Each style has a **Weapon Enhancement** costing 1 AP or 1 SP:
 | Staff    | Bludgeoning | Trip        | Target falls Prone                     |
 | Sword    | Slashing    | Accuracy    | Add d4 to Attack Check                 |
 | Whip     | Slashing    | Pull        | Pull target 1+ Spaces                  |
+
+The v0.10.5 Reskinning Weapons rule allows any style on either Melee or Ranged custom
+weapons. The style table's Melee/Ranged grouping describes the default examples, not a
+creation restriction. Both Equipage and the alternative-sheet composer expose all 11
+styles after the weapon type is selected.
 
 `WEAPON_ENHANCEMENT_RULE` stores the shared Weapon Training usage rule once beside
 the style catalog. Character-sheet attack details resolve standard weapon names through
@@ -187,8 +214,10 @@ for old saved data, but Bolas and Net are not selectable current weapons.
 
 The alternative character sheet's add-weapon picker consumes this same expanded catalog.
 Its Inventory source filters the catalog by standard weapon names in character inventory;
-Full list exposes the entire alphabetical catalog. Custom Equipage weapons remain outside
-that picker until attacks persist a stable `customEquipmentId` rather than name alone.
+Full list exposes the entire alphabetical catalog. `Create custom weapon` is a separate
+action beside that source switch. It opens the five-panel build sheet and embeds the
+resulting character-local snapshot in `AttackData`. Saved Equipage weapons are not
+silently linked or copied into attacks.
 
 ### Preset Weapons (45 stat blocks / 48 names)
 
@@ -359,7 +388,20 @@ plain ability notes:
 
 ---
 
-## 7. Validation Rules
+## 7. General Equipment
+
+General equipment stores reusable non-mechanical inventory templates such as tools,
+supplies, treasures, and campaign-specific objects. Name is required; description and
+cost are optional. These records use empty property and effect arrays, do not enter the
+point-buy validator, and never change calculated character values when marked equipped.
+
+The character sheet stores the stable Equipage ID and `general` category on inventory
+rows. Both the primary selector and alternative inventory picker preserve the saved cost
+and expose the saved description.
+
+---
+
+## 8. Validation Rules
 
 ### Point Budget
 
@@ -389,6 +431,8 @@ Some properties require one of several enablers instead of a single fixed proper
 }
 ```
 
+Multi-Faceted is invalid until a different secondary style is chosen.
+
 ### Property Exclusions
 
 ```typescript
@@ -413,7 +457,7 @@ Some properties require one of several enablers instead of a single fixed proper
 
 ---
 
-## 8. Storage
+## 9. Storage
 
 ### localStorage Key
 
@@ -429,8 +473,12 @@ interface StoredEquipmentData {
 	armor: CustomArmor[];
 	shields: CustomShield[];
 	spellFocuses: CustomSpellFocus[];
+	generalEquipment: CustomGeneralEquipment[];
 }
 ```
+
+The envelope is version 2. Loading or importing a version-1 payload treats a missing
+`generalEquipment` array as empty. New exports always include the array.
 
 ### API Functions
 
@@ -440,7 +488,7 @@ getAllCustomWeapons(): CustomWeapon[]
 saveCustomWeapon(weapon: CustomWeapon): void
 deleteCustomWeapon(id: string): void
 
-// Same pattern for armor, shields, spellFocuses
+// Same pattern for armor, shields, spellFocuses, and generalEquipment
 
 // Export/Import
 exportEquipmentToJson(): string
@@ -449,7 +497,7 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 
 ---
 
-## 9. UI Flow
+## 10. UI Flow
 
 ### Main Page (`/custom-equipment`)
 
@@ -463,9 +511,34 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 3. **Step 3**: Choose Properties (point budget tracked)
 4. **Step 4**: Review & Save (name, final stats preview)
 
+### Alternative-Sheet Custom Weapon Flow
+
+The attack picker exposes custom creation as a separate action rather than a third
+catalog source. It opens a responsive accordion build sheet instead of embedding the
+Equipage page UI:
+
+1. **Stage 1:** Choose Melee or Ranged type.
+2. **Stage 2:** Choose any weapon style.
+3. **Stage 2.5:** Confirm the style's default physical damage type or choose another.
+4. **Stage 3:** Choose properties within the point budget; ranged weapons identify Ammo and
+   Two-Handed as automatic, and removing Two-Handed consumes one point. Multi-Faceted
+   requires a different second style and damage type.
+5. **Stage 4:** Name and review the complete weapon.
+
+Completed sections remain reopenable without losing selections. The live attack preview
+uses the same `WeaponAttackDetails` presentation as catalog weapons. On compact layouts,
+the build sheet and preview stack vertically. Cancelling returns to the picker with its
+source, search, and filter unchanged. Confirmation adds one attack with an embedded
+canonical weapon snapshot. It does not save an Equipage record or create/equip an
+inventory row.
+
+The active section displays its contextual guidance beside the section heading; inactive
+sections show only their selection summary. Choice descriptions use normal body-text
+contrast and line spacing rather than muted metadata styling.
+
 ### Saved Equipment List
 
-- Filter by category (All, Weapons, Armor, Shields, Spell Focuses)
+- Filter by category (All, Weapons, Armor, Shields, Spell Focuses, General)
 - Delete individual items
 - Export all to JSON
 - Import from JSON file
@@ -476,16 +549,16 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 
 ### Preset Search
 
-All four builders expose client-side preset search on the first step. Search matches
+The four rules-backed builders expose client-side preset search on the first step. Search matches
 all entered tokens across preset names, equipment type, properties, and weapon styles.
 Weapon search replaces the former 12-item truncation, so every preset is selectable
 without a separate modal.
 
 ---
 
-## 10. Future Enhancements
+## 11. Future Enhancements
 
-- [ ] Integration with character creation (equip custom items)
+- [x] Integration with character-sheet inventory
 - [x] Edit existing saved equipment
 - [x] Duplicate/clone functionality
 - [x] Search/filter presets
@@ -494,7 +567,7 @@ without a separate modal.
 
 ---
 
-## 11. Related Systems
+## 12. Related Systems
 
 - **Character Sheet** — `docs/systems/CHARACTER_SHEET.MD`
 - **Calculation System** — `docs/systems/CALCULATION_SYSTEM.MD`

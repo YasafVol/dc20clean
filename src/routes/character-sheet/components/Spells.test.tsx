@@ -55,6 +55,11 @@ vi.mock('react-i18next', () => ({
 				'characterSheet.spellPickerPassive': 'Spell passive',
 				'characterSheet.spellPickerEnhancements': 'Enhancements',
 				'characterSheet.spellPickerSustained': 'Sustained',
+				'characterSheet.spellPickerSearchLabel': 'Search spells',
+				'characterSheet.spellPickerSearchPlaceholder': 'Search spells...',
+				'characterSheet.spellPickerFilterLabel': 'Filter spells by school',
+				'characterSheet.spellPickerNoMatches': 'No matching spells.',
+				'characterSheet.pickerFilterAll': 'All',
 				'characterSheet.spellsNoSpellsSelected': 'No spells selected.'
 			};
 			return translations[key] ?? key;
@@ -168,5 +173,46 @@ describe('alternative spell picker', () => {
 				left.localeCompare(right, undefined, { sensitivity: 'base' })
 			)
 		);
+	});
+
+	it('searches and filters the spell catalog', () => {
+		renderAlternativeSpells();
+		fireEvent.click(screen.getByTestId('add-spell'));
+		const picker = screen.getByTestId('spell-picker');
+		fireEvent.click(within(picker).getByRole('button', { name: 'All spells' }));
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search spells' }), {
+			target: { value: fireball.name }
+		});
+		expect(within(picker).getAllByRole('option')).toHaveLength(1);
+		expect(within(picker).getByRole('option', { name: new RegExp(fireball.name) })).toBeVisible();
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search spells' }), {
+			target: { value: '' }
+		});
+		fireEvent.click(within(picker).getByRole('button', { name: fireball.school }));
+		for (const option of within(picker).getAllByRole('option')) {
+			expect(option).toHaveTextContent(fireball.school);
+		}
+	});
+
+	it('preserves spell search and filtering when the source changes', () => {
+		renderAlternativeSpells();
+		fireEvent.click(screen.getByTestId('add-spell'));
+		const picker = screen.getByTestId('spell-picker');
+		const search = within(picker).getByRole('searchbox', { name: 'Search spells' });
+		const schoolFilter = within(picker).getByRole('button', { name: fireball.school });
+		fireEvent.change(search, { target: { value: fireball.name } });
+		fireEvent.click(schoolFilter);
+		fireEvent.click(within(picker).getByRole('button', { name: 'All spells' }));
+
+		expect(search).toHaveValue(fireball.name);
+		expect(schoolFilter).toHaveAttribute('aria-pressed', 'true');
+		expect(within(picker).getByRole('option', { name: new RegExp(fireball.name) })).toBeVisible();
+
+		fireEvent.click(within(picker).getByRole('button', { name: 'Allowed spells' }));
+		expect(search).toHaveValue(fireball.name);
+		expect(schoolFilter).toHaveAttribute('aria-pressed', 'true');
+		expect(within(picker).getByRole('option', { name: new RegExp(fireball.name) })).toBeVisible();
 	});
 });

@@ -8,6 +8,7 @@ import { CustomWeapon } from '../schemas/weaponSchema';
 import { CustomArmor } from '../schemas/armorSchema';
 import { CustomShield } from '../schemas/shieldSchema';
 import { CustomSpellFocus } from '../schemas/spellFocusSchema';
+import { CustomGeneralEquipment } from '../schemas/generalEquipmentSchema';
 import {
 	getWeaponProperty,
 	getPropertiesForWeaponType,
@@ -169,7 +170,17 @@ export function validateWeapon(weapon: Partial<CustomWeapon>): ValidationResult 
 
 	// Multi-Faceted validation
 	if (weapon.properties.includes('multi-faceted') && !weapon.secondaryStyle) {
-		warnings.push('Multi-Faceted property selected but no secondary style chosen');
+		errors.push({
+			propertyId: 'multi-faceted',
+			message: 'Property "Multi-Faceted" requires a secondary weapon style'
+		});
+	}
+
+	if (weapon.secondaryStyle && weapon.secondaryStyle === weapon.style) {
+		errors.push({
+			propertyId: 'multi-faceted',
+			message: 'Multi-Faceted requires two different weapon styles'
+		});
 	}
 
 	return {
@@ -427,7 +438,9 @@ export function validateSpellFocus(focus: Partial<CustomSpellFocus>): Validation
 // ================================================================= //
 
 export function validateEquipment(
-	equipment: Partial<CustomWeapon | CustomArmor | CustomShield | CustomSpellFocus>
+	equipment: Partial<
+		CustomWeapon | CustomArmor | CustomShield | CustomSpellFocus | CustomGeneralEquipment
+	>
 ): ValidationResult {
 	if ('weaponType' in equipment || equipment.category === 'weapon') {
 		return validateWeapon(equipment as Partial<CustomWeapon>);
@@ -440,6 +453,13 @@ export function validateEquipment(
 	}
 	if ('hands' in equipment || equipment.category === 'spellFocus') {
 		return validateSpellFocus(equipment as Partial<CustomSpellFocus>);
+	}
+	if (equipment.category === 'general') {
+		return {
+			isValid: Boolean(equipment.name?.trim()),
+			errors: equipment.name?.trim() ? [] : [{ message: 'General equipment requires a name' }],
+			warnings: []
+		};
 	}
 
 	return {

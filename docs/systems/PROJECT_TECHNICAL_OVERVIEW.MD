@@ -119,6 +119,8 @@ Versioning policy is centralized in `docs/systems/VERSIONING_SYSTEM.MD`.
 
 ```
 src/
+├── components/
+│   └── equipment/                  # Reusable equipment-builder presentation shells
 ├── routes/                        # Application routes
 │   ├── character-creation/        # Multi-step character creation wizard
 │   ├── character-sheet/           # Character sheet (desktop + mobile)

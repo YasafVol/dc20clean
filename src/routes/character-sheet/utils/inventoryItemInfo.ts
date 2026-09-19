@@ -5,6 +5,7 @@ import type { CustomWeapon } from '../../../lib/rulesdata/equipment/schemas/weap
 import type { CustomArmor } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
 import type { CustomShield } from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
 import type { CustomSpellFocus } from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
+import type { CustomGeneralEquipment } from '../../../lib/rulesdata/equipment/schemas/generalEquipmentSchema';
 
 export interface InventoryItemInfo {
 	label: string;
@@ -84,6 +85,13 @@ function getCustomEquipmentInfo(customEquipmentId: string): InventoryItemInfo[] 
 			if (f.description) info.push({ label: 'Description', value: f.description });
 			break;
 		}
+		case 'general': {
+			const item = equipment as CustomGeneralEquipment;
+			info.push({ label: 'Category', value: 'Custom General Equipment' });
+			if (item.description) info.push({ label: 'Description', value: item.description });
+			if (item.cost && item.cost !== '-') info.push({ label: 'Cost', value: item.cost });
+			break;
+		}
 	}
 
 	return info;
@@ -91,7 +99,8 @@ function getCustomEquipmentInfo(customEquipmentId: string): InventoryItemInfo[] 
 
 export function getInventoryItemInfo(
 	item: InventoryItem | null,
-	inventoryData?: InventoryItemData
+	inventoryData?: InventoryItemData,
+	includeInventoryFields = true
 ): InventoryItemInfo[] {
 	const info: InventoryItemInfo[] = [];
 
@@ -117,9 +126,13 @@ export function getInventoryItemInfo(
 		}
 
 		// Always append count and cost for custom items
-		if (inventoryData) {
+		if (inventoryData && includeInventoryFields) {
 			info.push({ label: 'Count', value: inventoryData.count });
-			if (inventoryData.cost && inventoryData.cost !== '-')
+			if (
+				inventoryData.cost &&
+				inventoryData.cost !== '-' &&
+				!info.some((entry) => entry.label === 'Cost')
+			)
 				info.push({ label: 'Cost', value: inventoryData.cost });
 		}
 
@@ -192,7 +205,7 @@ export function getInventoryItemInfo(
 			break;
 	}
 
-	if (inventoryData) {
+	if (inventoryData && includeInventoryFields) {
 		info.push({ label: 'Count', value: inventoryData.count });
 		if (inventoryData.cost) info.push({ label: 'Cost', value: inventoryData.cost });
 	}

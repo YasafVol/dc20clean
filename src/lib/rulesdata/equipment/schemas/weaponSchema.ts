@@ -52,9 +52,9 @@ export interface WeaponStyleDefinition {
 	};
 	/** Special notes about this style */
 	specialNotes?: string;
-	/** Whether this style is available for melee weapons */
+	/** Whether the rulebook lists this style under melee weapon examples */
 	availableForMelee: boolean;
-	/** Whether this style is available for ranged weapons */
+	/** Whether the rulebook lists this style under ranged weapon examples */
 	availableForRanged: boolean;
 }
 

@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import { theme, media } from '../../character-sheet/styles/theme';
+import { theme } from '../../character-sheet/styles/theme';
 
 export const PageContainer = styled.div`
 	min-height: 100vh;
@@ -52,7 +52,7 @@ export const MainContent = styled.div`
 
 export const CategoryGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	gap: ${theme.spacing[6]};
 	margin-top: ${theme.spacing[8]};
 `;
@@ -313,6 +313,7 @@ export const PresetBadge = styled.span`
 
 export const TabContainer = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	gap: ${theme.spacing[2]};
 	margin-bottom: ${theme.spacing[6]};
 	border-bottom: 1px solid ${theme.colors.border.default};

@@ -3,6 +3,7 @@ export interface ProductUpdateSummary {
 	date: string;
 	dateTime: string;
 	kicker: string;
+	area: string;
 	title: string;
 	excerpt: string;
 	highlights: string[];
@@ -21,6 +22,7 @@ export const productUpdates: ProductUpdateSummary[] = [
 		date: 'September 18, 2026',
 		dateTime: '2026-09-18',
 		kicker: 'Product update',
+		area: 'Character',
 		title: 'The new character sheet',
 		excerpt:
 			'A faster, clearer place to run your character at the table—with focused sections, responsive layouts, and complete pickers for the actions you use most.',

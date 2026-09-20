@@ -208,6 +208,7 @@ import { useIsAuthenticated } from './auth';
 import { useAppAuth } from './auth/AuthModeContext';
 import { useTranslation } from 'react-i18next';
 import WhatsNewCard, { useWhatsNewCardVisibility } from './WhatsNewCard';
+import { getMenuSectionVisibility, menuActionRoutes } from './menuNavigation';
 
 // Encounter planner icon
 export const EncounterIcon = () => (
@@ -242,6 +243,7 @@ function Menu() {
 	const { isConvexEnabled } = useAppAuth();
 	const { t } = useTranslation();
 	const { isVisible: isWhatsNewVisible, dismiss: dismissWhatsNew } = useWhatsNewCardVisibility();
+	const menuVisibility = getMenuSectionVisibility({ isAuthenticated, isConvexEnabled });
 
 	return (
 		<StyledContainer>
@@ -257,7 +259,10 @@ function Menu() {
 				<StyledCharacterSection>
 					<StyledSectionTitle>{t('menu.characterSection')}</StyledSectionTitle>
 					<StyledCharacterGrid>
-						<StyledMenuCard $variant="character" onClick={() => navigate('/create-character')}>
+						<StyledMenuCard
+							$variant="character"
+							onClick={() => navigate(menuActionRoutes.createCharacter)}
+						>
 							<StyledIcon $variant="character">
 								<HeadIcon />
 							</StyledIcon>
@@ -266,7 +271,10 @@ function Menu() {
 							</StyledTextContent>
 						</StyledMenuCard>
 
-						<StyledMenuCard $variant="character" onClick={() => navigate('/load-character')}>
+						<StyledMenuCard
+							$variant="character"
+							onClick={() => navigate(menuActionRoutes.loadCharacter)}
+						>
 							<StyledIcon $variant="character">
 								<GroupIcon />
 							</StyledIcon>
@@ -281,13 +289,16 @@ function Menu() {
 				</StyledCharacterSection>
 
 				{/* Authenticated tools - one desktop row */}
-				{isAuthenticated && (
+				{menuVisibility.dmTools && (
 					<StyledMenuSection>
 						<StyledDMGrid>
 							<StyledDMGroup>
 								<StyledSectionTitle>{t('menu.dmToolsSection')}</StyledSectionTitle>
 								<StyledDMGroupCards>
-									<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/encounters')}>
+									<StyledMenuCard
+										$variant="dm"
+										onClick={() => navigate(menuActionRoutes.encounterPlanner)}
+									>
 										<StyledIcon $variant="dm">
 											<EncounterIcon />
 										</StyledIcon>
@@ -296,7 +307,10 @@ function Menu() {
 										</StyledTextContent>
 									</StyledMenuCard>
 
-									<StyledMenuCard $variant="dm" onClick={() => navigate('/dm/monsters')}>
+									<StyledMenuCard
+										$variant="dm"
+										onClick={() => navigate(menuActionRoutes.laboratory)}
+									>
 										<StyledIcon $variant="dm">
 											<MonsterIcon />
 										</StyledIcon>
@@ -307,11 +321,14 @@ function Menu() {
 								</StyledDMGroupCards>
 							</StyledDMGroup>
 
-							{isConvexEnabled && (
+							{menuVisibility.campaigns && (
 								<StyledDMGroup>
 									<StyledSectionTitle>{t('menu.campaignsSection')}</StyledSectionTitle>
 									<StyledDMGroupCards>
-										<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns')}>
+										<StyledMenuCard
+											$variant="dm"
+											onClick={() => navigate(menuActionRoutes.myCampaigns)}
+										>
 											<StyledIcon $variant="dm">
 												<Map aria-hidden="true" />
 											</StyledIcon>
@@ -319,7 +336,10 @@ function Menu() {
 												<StyledCardTitle $variant="dm">{t('menu.myCampaigns')}</StyledCardTitle>
 											</StyledTextContent>
 										</StyledMenuCard>
-										<StyledMenuCard $variant="dm" onClick={() => navigate('/campaigns/join')}>
+										<StyledMenuCard
+											$variant="dm"
+											onClick={() => navigate(menuActionRoutes.joinCampaign)}
+										>
 											<StyledIcon $variant="dm">
 												<KeyRound aria-hidden="true" />
 											</StyledIcon>
@@ -338,7 +358,7 @@ function Menu() {
 				<StyledMenuSection>
 					<StyledSectionTitle>{t('menu.referenceToolsSection')}</StyledSectionTitle>
 					<StyledToolsGrid>
-						<StyledMenuCard $variant="tools" onClick={() => navigate('/spellbook')}>
+						<StyledMenuCard $variant="tools" onClick={() => navigate(menuActionRoutes.spellbook)}>
 							<StyledIcon $variant="tools">
 								<SpellbookIcon />
 							</StyledIcon>
@@ -347,7 +367,10 @@ function Menu() {
 							</StyledTextContent>
 						</StyledMenuCard>
 
-						<StyledMenuCard $variant="tools" onClick={() => navigate('/martial-manual')}>
+						<StyledMenuCard
+							$variant="tools"
+							onClick={() => navigate(menuActionRoutes.martialManual)}
+						>
 							<StyledIcon $variant="tools">
 								<MartialManualIcon />
 							</StyledIcon>
@@ -356,7 +379,7 @@ function Menu() {
 							</StyledTextContent>
 						</StyledMenuCard>
 
-						<StyledMenuCard $variant="tools" onClick={() => navigate('/conditions')}>
+						<StyledMenuCard $variant="tools" onClick={() => navigate(menuActionRoutes.conditions)}>
 							<StyledIcon $variant="tools">
 								<ConditionsIcon />
 							</StyledIcon>
@@ -365,7 +388,7 @@ function Menu() {
 							</StyledTextContent>
 						</StyledMenuCard>
 
-						<StyledMenuCard $variant="tools" onClick={() => navigate('/custom-equipment')}>
+						<StyledMenuCard $variant="tools" onClick={() => navigate(menuActionRoutes.equipage)}>
 							<StyledIcon $variant="tools">
 								<EquipmentIcon />
 							</StyledIcon>
@@ -374,7 +397,7 @@ function Menu() {
 							</StyledTextContent>
 						</StyledMenuCard>
 
-						<StyledMenuCard $variant="rulebook" onClick={() => navigate('/rulebook')}>
+						<StyledMenuCard $variant="rulebook" onClick={() => navigate(menuActionRoutes.rulebook)}>
 							<StyledIcon $variant="rulebook">
 								<BookOpenText aria-hidden="true" strokeWidth={1.5} />
 							</StyledIcon>

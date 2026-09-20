@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-20
 
 ## Tech Stack
 
@@ -28,9 +28,10 @@
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
 - Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
 - The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
+- The homepage top-left hamburger mirrors every action currently exposed on `/menu`, grouped by the same sections and using the same authentication and Convex availability rules. “What's New” remains the first entry; non-homepage routes retain the existing Back to Menu control where the page does not provide its own navigation.
 - Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.
 - The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
-- `/updates` is the player-facing What's New index. It shows the release path from homepage to dated update to the live feature. The homepage card renders the latest entry and can be dismissed; `dc20clean.dismissedWhatsNewUpdate` stores its slug so the same release stays hidden while a future release appears normally. Open `/menu?showWhatsNew=1` to temporarily show the latest card again without clearing that stored choice. `/updates/2026-09-18-alternative-character-sheet` is the first dated release summary for the Alternative Character Sheet; the old undated `/updates/alternative-character-sheet` route redirects to it. Future releases should use their own dated slug and add one entry to `src/routes/product-update/updates.ts`. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
+- `/updates` is the player-facing What's New index. It uses a compact, newest-first release log with one row per update and direct links to both the dated note and changed product surface. The homepage card renders the latest entry and can be dismissed; `dc20clean.dismissedWhatsNewUpdate` stores its slug so the same release stays hidden while a future release appears normally. Open `/menu?showWhatsNew=1` to temporarily show the latest card again without clearing that stored choice. `/updates/2026-09-18-alternative-character-sheet` is the first dated release summary for the Alternative Character Sheet; the old undated `/updates/alternative-character-sheet` route redirects to it. Future releases should use their own dated slug and add one entry to `src/routes/product-update/updates.ts`. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
 
 ## Local Setup
 

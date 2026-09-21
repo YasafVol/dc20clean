@@ -3,6 +3,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { Swords } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import {
@@ -31,10 +32,13 @@ import type {
 import type { PhysicalDamageType } from '../../../lib/rulesdata/equipment/schemas/baseEquipment';
 import { filterEquipmentPresets } from '../presetSearch';
 import PresetSearchInput from './PresetSearchInput';
+import EquipageBuilderFrame from './EquipageBuilderFrame';
+import CreationSourceSwitch, { type CreationSource } from './CreationSourceSwitch';
 import {
 	BuilderContainer,
 	SectionTitle,
 	OptionGrid,
+	PresetOptionGrid,
 	OptionCard,
 	OptionTitle,
 	OptionDescription,
@@ -42,14 +46,7 @@ import {
 	PointsDisplay,
 	PointsLabel,
 	PointsValue,
-	SummaryCard,
-	SummaryRow,
-	SummaryLabel,
-	SummaryValue,
 	ActionButtons,
-	StepIndicator,
-	Step,
-	StepConnector,
 	PresetBadge
 } from '../styles/CustomEquipment.styles';
 
@@ -78,6 +75,9 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 		initialEquipment?.presetOrigin ?? null
 	);
 	const [presetQuery, setPresetQuery] = useState('');
+	const [creationSource, setCreationSource] = useState<CreationSource>(
+		initialEquipment?.presetOrigin ? 'preset' : 'fresh'
+	);
 
 	const maxPoints = weaponType ? getCustomWeaponMaxPoints(weaponType) : 2;
 
@@ -205,419 +205,457 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 
 	return (
 		<BuilderContainer>
-			{/* Step Indicator */}
-			<StepIndicator>
-				<Step $active={step === 1} $completed={step > 1}>
-					1
-				</Step>
-				<StepConnector $active={step > 1} />
-				<Step $active={step === 2} $completed={step > 2}>
-					2
-				</Step>
-				<StepConnector $active={step > 2} />
-				<Step $active={step === 3} $completed={step > 3}>
-					3
-				</Step>
-				<StepConnector $active={step > 3} />
-				<Step $active={step === 4}>4</Step>
-			</StepIndicator>
+			<EquipageBuilderFrame
+				category="weapon"
+				title={initialEquipment ? 'Edit custom weapon' : 'Custom weapon'}
+				activeStepId={String(step)}
+				onStepChange={(id) => setStep(Number(id))}
+				steps={[
+					{
+						id: '1',
+						title: 'Start',
+						summary: selectedPreset
+							? name
+							: weaponType
+								? `${weaponType} weapon`
+								: 'Choose a type or preset',
+						complete: Boolean(weaponType)
+					},
+					{
+						id: '2',
+						title: 'Style',
+						summary: styleData?.name || 'Choose a weapon style',
+						complete: Boolean(style),
+						disabled: !weaponType
+					},
+					{
+						id: '2.5',
+						stepLabel: '2.5',
+						title: 'Damage type',
+						summary: damageType || 'Choose a physical damage type',
+						complete: Boolean(damageType),
+						disabled: !style
+					},
+					{
+						id: '3',
+						stepLabel: '3',
+						title: 'Properties',
+						summary: `${selectedProperties.length} selected · ${pointsSpent} / ${maxPoints} points`,
+						complete: Boolean(validation.isValid),
+						disabled: !damageType
+					},
+					{
+						id: '4',
+						stepLabel: '4',
+						title: 'Review',
+						summary: name.trim() || 'Name, confirm, and save',
+						complete: Boolean(name.trim() && validation.isValid),
+						disabled: !damageType
+					}
+				]}
+				summaryIcon={<Swords />}
+				summaryTitle={name.trim() || 'Unnamed weapon'}
+				summarySubtitle={
+					[weaponType, styleData?.name, damageType].filter(Boolean).join(' · ') ||
+					'Choose a weapon type'
+				}
+				summaryRows={[
+					{
+						label: 'Type',
+						value: weaponType
+							? `${weaponType === 'ranged' ? 'Ranged' : 'Melee'} Weapon`
+							: 'Not chosen'
+					},
+					{
+						label: 'Style',
+						value: styleData
+							? `${styleData.name}${secondaryStyleData ? ` / ${secondaryStyleData.name}` : ''}`
+							: 'Not chosen'
+					},
+					{
+						label: 'Damage type',
+						value: damageType
+							? `${damageType}${secondaryStyleData ? ` / ${secondaryStyleData.defaultDamageType}` : ''}`
+							: 'Not chosen'
+					},
+					{ label: 'Points', value: `${pointsSpent} / ${maxPoints}` },
+					{
+						label: 'Damage',
+						value: weaponType ? calculateCustomWeaponDamage(selectedProperties) : 'Not chosen'
+					},
+					{
+						label: 'Range',
+						value: weaponType
+							? `${calculateCustomWeaponRange(weaponType, selectedProperties)} Spaces`
+							: 'Not chosen'
+					}
+				]}
+				summaryDetails={
+					<>
+						{styleData && (
+							<div className="mb-3 text-sm">
+								<div className="mb-1 font-semibold text-gray-300">Weapon enhancement</div>
+								<div className="font-semibold text-amber-400">{styleData.enhancement.name}</div>
+								<div className="text-gray-400">{styleData.enhancement.effect}</div>
+								<div className="mt-1 text-xs text-gray-500">
+									Cost: {styleData.enhancement.costToUse}
+								</div>
+							</div>
+						)}
+						{secondaryStyleData && (
+							<div className="mb-3 text-sm">
+								<div className="font-semibold text-amber-400">
+									{secondaryStyleData.enhancement.name}
+								</div>
+								<div className="text-gray-400">{secondaryStyleData.enhancement.effect}</div>
+							</div>
+						)}
+						<div className="mb-2 text-sm font-semibold text-gray-300">Properties</div>
+						{selectedProperties.length ? (
+							<div className="flex flex-wrap gap-2">
+								{selectedProperties.map((propId) => {
+									const prop = ALL_WEAPON_PROPERTIES.find((item) => item.id === propId);
+									return (
+										<Badge key={propId} variant="secondary">
+											{prop?.name || propId}
+										</Badge>
+									);
+								})}
+							</div>
+						) : (
+							<div className="text-sm text-gray-400">None selected</div>
+						)}
+						{selectedPreset && (
+							<div className="mt-3 text-sm text-blue-400">
+								Based on preset:{' '}
+								{PRESET_WEAPONS.find((preset) => preset.id === selectedPreset)?.name}
+							</div>
+						)}
+					</>
+				}
+			>
+				{/* Step 1: Choose Type or Preset */}
+				{step === 1 && (
+					<>
+						<SectionTitle>Step 1: Choose Weapon Type or Load Preset</SectionTitle>
 
-			{/* Step 1: Choose Type or Preset */}
-			{step === 1 && (
-				<>
-					<SectionTitle>Step 1: Choose Weapon Type or Load Preset</SectionTitle>
+						<CreationSourceSwitch
+							category="weapon"
+							source={creationSource}
+							onSourceChange={setCreationSource}
+							fresh={
+								<OptionGrid>
+									{WEAPON_TYPES.map((type) => (
+										<OptionCard
+											key={type.id}
+											$selected={weaponType === type.id}
+											onClick={() => {
+												setWeaponType(type.id);
+												setStyle(null);
+												setSecondaryStyle(null);
+												setDamageType(null);
+												setSelectedProperties(type.inherentProperties || []);
+												setSelectedPreset(null);
+											}}
+										>
+											<OptionTitle>{type.name}</OptionTitle>
+											<OptionDescription>{type.description}</OptionDescription>
+											{type.baseRange && (
+												<div className="mt-2 text-xs text-amber-400">Range: {type.baseRange}</div>
+											)}
+										</OptionCard>
+									))}
+								</OptionGrid>
+							}
+							preset={
+								<>
+									<PresetSearchInput
+										value={presetQuery}
+										onChange={setPresetQuery}
+										resultCount={filteredPresets.length}
+									/>
+									<div className="max-h-96 overflow-y-auto">
+										<PresetOptionGrid>
+											{filteredPresets.map((preset) => (
+												<OptionCard
+													key={preset.id}
+													$selected={selectedPreset === preset.id}
+													onClick={() => loadPreset(preset.id)}
+												>
+													<OptionTitle>
+														{preset.name}
+														<PresetBadge>
+															{preset.weaponType === 'ranged' ? 'Ranged' : preset.category}
+														</PresetBadge>
+													</OptionTitle>
+													<div className="mt-1 text-xs text-gray-500">
+														{preset.damage} {preset.damageType} • {preset.styles.join('/')}
+													</div>
+													<div className="mt-2 flex flex-wrap gap-1">
+														{preset.properties.slice(0, 3).map((propId) => (
+															<Badge key={propId} variant="secondary" className="text-xs">
+																{propId}
+															</Badge>
+														))}
+														{preset.properties.length > 3 && (
+															<span className="text-xs text-gray-500">
+																+{preset.properties.length - 3}
+															</span>
+														)}
+													</div>
+												</OptionCard>
+											))}
+										</PresetOptionGrid>
+									</div>
+									{filteredPresets.length === 0 && (
+										<p className="py-4 text-center text-sm text-gray-500">
+											No weapon presets match.
+										</p>
+									)}
+								</>
+							}
+						/>
 
-					<div className="mb-6">
-						<h4 className="mb-3 text-sm font-semibold text-gray-400">Start Fresh</h4>
+						<ActionButtons>
+							<Button variant="outline" onClick={onBack}>
+								Cancel
+							</Button>
+							<Button onClick={() => setStep(2)} disabled={!weaponType}>
+								Next: Choose Style
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+
+				{/* Step 2: Choose Style */}
+				{step === 2 && (
+					<>
+						<SectionTitle>Step 2: Choose Weapon Style</SectionTitle>
+
+						<p className="mb-4 text-sm text-gray-400">
+							Each style determines your Weapon Enhancement (costs 1 AP or 1 SP to use).
+						</p>
+
 						<OptionGrid>
-							{WEAPON_TYPES.map((type) => (
+							{availableStyles.map((styleOption) => (
 								<OptionCard
-									key={type.id}
-									$selected={weaponType === type.id}
+									key={styleOption.id}
+									$selected={style === styleOption.id}
 									onClick={() => {
-										setWeaponType(type.id);
-										setStyle(null);
-										setSecondaryStyle(null);
-										setDamageType(null);
-										setSelectedProperties(type.inherentProperties || []);
-										setSelectedPreset(null);
+										setStyle(styleOption.id);
+										setDamageType(styleOption.defaultDamageType);
 									}}
 								>
-									<OptionTitle>{type.name}</OptionTitle>
-									<OptionDescription>{type.description}</OptionDescription>
-									{type.baseRange && (
-										<div className="mt-2 text-xs text-amber-400">Range: {type.baseRange}</div>
+									<OptionTitle>{styleOption.name}</OptionTitle>
+									<div className="mb-2 text-xs text-amber-400">
+										Default: {styleOption.defaultDamageType}
+									</div>
+									<div className="rounded bg-slate-800/50 p-2">
+										<div className="text-sm font-semibold text-amber-400">
+											{styleOption.enhancement.name}
+										</div>
+										<div className="text-xs text-gray-400">{styleOption.enhancement.effect}</div>
+									</div>
+									{styleOption.specialNotes && (
+										<div className="mt-2 text-xs text-gray-500 italic">
+											{styleOption.specialNotes}
+										</div>
 									)}
 								</OptionCard>
 							))}
 						</OptionGrid>
-					</div>
 
-					<div className="mb-6">
-						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
-						<PresetSearchInput
-							value={presetQuery}
-							onChange={setPresetQuery}
-							resultCount={filteredPresets.length}
-						/>
-						<div className="max-h-96 overflow-y-auto">
-							<OptionGrid>
-								{filteredPresets.map((preset) => (
-									<OptionCard
-										key={preset.id}
-										$selected={selectedPreset === preset.id}
-										onClick={() => loadPreset(preset.id)}
-									>
-										<OptionTitle>
-											{preset.name}
-											<PresetBadge>
-												{preset.weaponType === 'ranged' ? 'Ranged' : preset.category}
-											</PresetBadge>
-										</OptionTitle>
-										<div className="mt-1 text-xs text-gray-500">
-											{preset.damage} {preset.damageType} • {preset.styles.join('/')}
-										</div>
-										<div className="mt-2 flex flex-wrap gap-1">
-											{preset.properties.slice(0, 3).map((propId) => (
-												<Badge key={propId} variant="secondary" className="text-xs">
-													{propId}
-												</Badge>
-											))}
-											{preset.properties.length > 3 && (
-												<span className="text-xs text-gray-500">
-													+{preset.properties.length - 3}
-												</span>
-											)}
-										</div>
-									</OptionCard>
-								))}
-							</OptionGrid>
-						</div>
-						{filteredPresets.length === 0 && (
-							<p className="py-4 text-center text-sm text-gray-500">No weapon presets match.</p>
-						)}
-					</div>
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(1)}>
+								Back
+							</Button>
+							<Button onClick={() => setStep(2.5)} disabled={!style}>
+								Next: Damage Type
+							</Button>
+						</ActionButtons>
+					</>
+				)}
 
-					<ActionButtons>
-						<Button variant="outline" onClick={onBack}>
-							Cancel
-						</Button>
-						<Button onClick={() => setStep(2)} disabled={!weaponType}>
-							Next: Choose Style
-						</Button>
-					</ActionButtons>
-				</>
-			)}
-
-			{/* Step 2: Choose Style & Damage Type */}
-			{step === 2 && (
-				<>
-					<SectionTitle>Step 2: Choose Weapon Style</SectionTitle>
-
-					<p className="mb-4 text-sm text-gray-400">
-						Each style determines your Weapon Enhancement (costs 1 AP or 1 SP to use).
-					</p>
-
-					<OptionGrid>
-						{availableStyles.map((styleOption) => (
-							<OptionCard
-								key={styleOption.id}
-								$selected={style === styleOption.id}
-								onClick={() => {
-									setStyle(styleOption.id);
-									setDamageType(styleOption.defaultDamageType);
-								}}
-							>
-								<OptionTitle>{styleOption.name}</OptionTitle>
-								<div className="mb-2 text-xs text-amber-400">
-									Default: {styleOption.defaultDamageType}
-								</div>
-								<div className="rounded bg-slate-800/50 p-2">
-									<div className="text-sm font-semibold text-amber-400">
-										{styleOption.enhancement.name}
-									</div>
-									<div className="text-xs text-gray-400">{styleOption.enhancement.effect}</div>
-								</div>
-								{styleOption.specialNotes && (
-									<div className="mt-2 text-xs text-gray-500 italic">
-										{styleOption.specialNotes}
-									</div>
-								)}
-							</OptionCard>
-						))}
-					</OptionGrid>
-
-					{style && (
-						<div className="mt-6">
-							<h4 className="mb-3 text-sm font-semibold text-gray-400">
-								Change Damage Type (Optional)
-							</h4>
-							<div className="flex gap-2">
-								{PHYSICAL_DAMAGE_TYPES.map((dt) => (
-									<Button
-										key={dt}
-										variant={damageType === dt ? 'default' : 'outline'}
-										size="sm"
-										onClick={() => setDamageType(dt)}
-										className={damageType === dt ? 'bg-amber-500 text-slate-900' : ''}
-									>
-										{dt.charAt(0).toUpperCase() + dt.slice(1)}
-									</Button>
-								))}
-							</div>
-						</div>
-					)}
-
-					<ActionButtons>
-						<Button variant="outline" onClick={() => setStep(1)}>
-							Back
-						</Button>
-						<Button onClick={() => setStep(3)} disabled={!style}>
-							Next: Choose Properties
-						</Button>
-					</ActionButtons>
-				</>
-			)}
-
-			{/* Step 3: Choose Properties */}
-			{step === 3 && (
-				<>
-					<SectionTitle>Step 3: Choose Properties</SectionTitle>
-
-					<div className="mb-4 flex items-center justify-between">
-						<PointsDisplay>
-							<PointsLabel>Points:</PointsLabel>
-							<PointsValue $over={pointsSpent > maxPoints}>
-								{pointsSpent} / {maxPoints}
-							</PointsValue>
-						</PointsDisplay>
-						{weaponType === 'ranged' && (
-							<Badge variant="secondary">Ranged: Ammo & Two-Handed included</Badge>
-						)}
-					</div>
-
-					<OptionGrid>
-						{availableProperties.map((property) => {
-							const isSelected = selectedProperties.includes(property.id);
-							const wouldExceedPoints = !isSelected && pointsSpent + property.cost > maxPoints;
-							const isLocked = weaponType === 'ranged' && property.id === 'ammo';
-
-							// Check requirements
-							const requirementsMet =
-								!property.requires ||
-								property.requires.every((req) => selectedProperties.includes(req));
-							const hasExcluded =
-								property.excludes &&
-								property.excludes.some((exc) => selectedProperties.includes(exc));
-
-							const isDisabled =
-								isLocked ||
-								(wouldExceedPoints && !isSelected) ||
-								(!isSelected && (!requirementsMet || hasExcluded));
-
-							return (
+				{step === 2.5 && (
+					<>
+						<SectionTitle>Step 2.5: Damage Type</SectionTitle>
+						<p className="mb-4 text-sm text-gray-400">
+							The selected style provides a default. Choose another physical damage type if needed.
+						</p>
+						<OptionGrid>
+							{PHYSICAL_DAMAGE_TYPES.map((dt) => (
 								<OptionCard
-									key={property.id}
-									$selected={isSelected}
-									onClick={() => !isDisabled && toggleProperty(property.id)}
-									disabled={isDisabled}
+									key={dt}
+									$selected={damageType === dt}
+									onClick={() => setDamageType(dt)}
 								>
-									<div className="mb-1 flex items-center justify-between">
-										<OptionTitle>{property.name}</OptionTitle>
-										<PropertyTag $cost={property.cost}>
-											{property.cost > 0
-												? `+${property.cost}`
-												: property.cost === 0
-													? 'Free'
-													: property.cost}
-										</PropertyTag>
-									</div>
-									<OptionDescription>{property.description}</OptionDescription>
-									{property.effect && (
-										<div className="mt-2 text-xs text-amber-400">{property.effect}</div>
-									)}
-									{isLocked && <div className="mt-2 text-xs text-gray-500">Inherent</div>}
-									{property.requires && (
-										<div className="mt-2 text-xs text-gray-500">
-											Requires: {property.requires.join(', ')}
-										</div>
-									)}
-									{property.excludes && (
-										<div className="mt-2 text-xs text-red-400/70">
-											Excludes: {property.excludes.join(', ')}
-										</div>
-									)}
+									<OptionTitle>{dt.charAt(0).toUpperCase() + dt.slice(1)}</OptionTitle>
 								</OptionCard>
-							);
-						})}
-					</OptionGrid>
-
-					{/* Secondary Style Selection (if Multi-Faceted) */}
-					{hasMultiFaceted && (
-						<div className="mt-6">
-							<h4 className="mb-3 text-sm font-semibold text-amber-400">
-								Choose Secondary Style (Multi-Faceted)
-							</h4>
-							<OptionGrid>
-								{availableStyles
-									.filter((s) => s.id !== style)
-									.map((styleOption) => (
-										<OptionCard
-											key={styleOption.id}
-											$selected={secondaryStyle === styleOption.id}
-											onClick={() => setSecondaryStyle(styleOption.id)}
-										>
-											<OptionTitle>{styleOption.name}</OptionTitle>
-											<div className="text-xs text-gray-400">
-												{styleOption.enhancement.name}: {styleOption.enhancement.effect}
-											</div>
-										</OptionCard>
-									))}
-							</OptionGrid>
-						</div>
-					)}
-
-					{!validation.isValid && validation.errors.length > 0 && (
-						<div className="mt-4 rounded-md bg-red-500/10 p-3">
-							{validation.errors.map((error, i) => (
-								<p key={i} className="text-sm text-red-400">
-									{error.message}
-								</p>
 							))}
+						</OptionGrid>
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(2)}>
+								Back
+							</Button>
+							<Button onClick={() => setStep(3)} disabled={!damageType}>
+								Next: Choose Properties
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+
+				{/* Step 3: Choose Properties */}
+				{step === 3 && (
+					<>
+						<SectionTitle>Step 3: Choose Properties</SectionTitle>
+
+						<div className="mb-4 flex items-center justify-between">
+							<PointsDisplay>
+								<PointsLabel>Points:</PointsLabel>
+								<PointsValue $over={pointsSpent > maxPoints}>
+									{pointsSpent} / {maxPoints}
+								</PointsValue>
+							</PointsDisplay>
+							{weaponType === 'ranged' && (
+								<Badge variant="secondary">Ranged: Ammo & Two-Handed included</Badge>
+							)}
 						</div>
-					)}
 
-					<ActionButtons>
-						<Button variant="outline" onClick={() => setStep(2)}>
-							Back
-						</Button>
-						<Button onClick={() => setStep(4)} disabled={pointsSpent > maxPoints}>
-							Next: Review & Save
-						</Button>
-					</ActionButtons>
-				</>
-			)}
+						<OptionGrid>
+							{availableProperties.map((property) => {
+								const isSelected = selectedProperties.includes(property.id);
+								const wouldExceedPoints = !isSelected && pointsSpent + property.cost > maxPoints;
+								const isLocked = weaponType === 'ranged' && property.id === 'ammo';
 
-			{/* Step 4: Summary & Save */}
-			{step === 4 && (
-				<>
-					<SectionTitle>Step 4: Review & Save</SectionTitle>
+								// Check requirements
+								const requirementsMet =
+									!property.requires ||
+									property.requires.every((req) => selectedProperties.includes(req));
+								const hasExcluded =
+									property.excludes &&
+									property.excludes.some((exc) => selectedProperties.includes(exc));
 
-					<div className="mb-4">
-						<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>
-						<input
-							type="text"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							placeholder="Enter a name for your weapon..."
-							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
-						/>
-					</div>
+								const isDisabled =
+									isLocked ||
+									(wouldExceedPoints && !isSelected) ||
+									(!isSelected && (!requirementsMet || hasExcluded));
 
-					<SummaryCard>
-						<SummaryRow>
-							<SummaryLabel>Type</SummaryLabel>
-							<SummaryValue>
-								{weaponType === 'ranged' ? 'Ranged Weapon' : 'Melee Weapon'}
-							</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Style</SummaryLabel>
-							<SummaryValue>
-								{styleData?.name}
-								{secondaryStyleData && ` / ${secondaryStyleData.name}`}
-							</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Damage Type</SummaryLabel>
-							<SummaryValue className="capitalize">
-								{damageType}
-								{secondaryStyleData && ` / ${secondaryStyleData.defaultDamageType}`}
-							</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Points Spent</SummaryLabel>
-							<SummaryValue>
-								{pointsSpent} / {maxPoints}
-							</SummaryValue>
-						</SummaryRow>
+								return (
+									<OptionCard
+										key={property.id}
+										$selected={isSelected}
+										onClick={() => !isDisabled && toggleProperty(property.id)}
+										disabled={isDisabled}
+									>
+										<div className="mb-1 flex items-center justify-between">
+											<OptionTitle>{property.name}</OptionTitle>
+											<PropertyTag $cost={property.cost}>
+												{property.cost > 0
+													? `+${property.cost}`
+													: property.cost === 0
+														? 'Free'
+														: property.cost}
+											</PropertyTag>
+										</div>
+										<OptionDescription>{property.description}</OptionDescription>
+										{property.effect && (
+											<div className="mt-2 text-xs text-amber-400">{property.effect}</div>
+										)}
+										{isLocked && <div className="mt-2 text-xs text-gray-500">Inherent</div>}
+										{property.requires && (
+											<div className="mt-2 text-xs text-gray-500">
+												Requires: {property.requires.join(', ')}
+											</div>
+										)}
+										{property.excludes && (
+											<div className="mt-2 text-xs text-red-400/70">
+												Excludes: {property.excludes.join(', ')}
+											</div>
+										)}
+									</OptionCard>
+								);
+							})}
+						</OptionGrid>
 
-						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
-						<SummaryRow>
-							<SummaryLabel>Damage</SummaryLabel>
-							<SummaryValue>{calculateCustomWeaponDamage(selectedProperties)}</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Range</SummaryLabel>
-							<SummaryValue>
-								{weaponType ? calculateCustomWeaponRange(weaponType, selectedProperties) : '—'}{' '}
-								Space(s)
-							</SummaryValue>
-						</SummaryRow>
-
-						{/* Enhancement */}
-						{styleData && (
-							<>
-								<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">
-									Weapon Enhancement
-								</div>
-								<div className="rounded bg-slate-800/50 p-3">
-									<div className="font-semibold text-amber-400">{styleData.enhancement.name}</div>
-									<div className="text-sm text-gray-400">{styleData.enhancement.effect}</div>
-									<div className="mt-1 text-xs text-gray-500">
-										Cost: {styleData.enhancement.costToUse}
-									</div>
-								</div>
-							</>
-						)}
-
-						{secondaryStyleData && (
-							<div className="mt-2 rounded bg-slate-800/50 p-3">
-								<div className="font-semibold text-amber-400">
-									{secondaryStyleData.enhancement.name}
-								</div>
-								<div className="text-sm text-gray-400">{secondaryStyleData.enhancement.effect}</div>
+						{/* Secondary Style Selection (if Multi-Faceted) */}
+						{hasMultiFaceted && (
+							<div className="mt-6">
+								<h4 className="mb-3 text-sm font-semibold text-amber-400">
+									Choose Secondary Style (Multi-Faceted)
+								</h4>
+								<OptionGrid>
+									{availableStyles
+										.filter((s) => s.id !== style)
+										.map((styleOption) => (
+											<OptionCard
+												key={styleOption.id}
+												$selected={secondaryStyle === styleOption.id}
+												onClick={() => setSecondaryStyle(styleOption.id)}
+											>
+												<OptionTitle>{styleOption.name}</OptionTitle>
+												<div className="text-xs text-gray-400">
+													{styleOption.enhancement.name}: {styleOption.enhancement.effect}
+												</div>
+											</OptionCard>
+										))}
+								</OptionGrid>
 							</div>
 						)}
 
-						{/* Properties */}
-						{selectedProperties.length > 0 && (
-							<>
-								<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Properties</div>
-								<div className="flex flex-wrap gap-2">
-									{selectedProperties.map((propId) => {
-										const prop = ALL_WEAPON_PROPERTIES.find((p) => p.id === propId);
-										return (
-											<Badge key={propId} variant="secondary">
-												{prop?.name || propId}
-											</Badge>
-										);
-									})}
-								</div>
-							</>
+						{!validation.isValid && validation.errors.length > 0 && (
+							<div className="mt-4 rounded-md bg-red-500/10 p-3">
+								{validation.errors.map((error, i) => (
+									<p key={i} className="text-sm text-red-400">
+										{error.message}
+									</p>
+								))}
+							</div>
 						)}
-					</SummaryCard>
 
-					{selectedPreset && (
-						<div className="mt-4 text-sm text-blue-400">
-							Based on preset: {PRESET_WEAPONS.find((p) => p.id === selectedPreset)?.name}
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(2.5)}>
+								Back
+							</Button>
+							<Button onClick={() => setStep(4)} disabled={pointsSpent > maxPoints}>
+								Next: Review & Save
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+
+				{/* Step 4: Summary & Save */}
+				{step === 4 && (
+					<>
+						<SectionTitle>Step 4: Review & Save</SectionTitle>
+
+						<div className="mb-4">
+							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>
+							<input
+								type="text"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								placeholder="Enter a name for your weapon..."
+								className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+							/>
 						</div>
-					)}
 
-					<ActionButtons>
-						<Button variant="outline" onClick={() => setStep(3)}>
-							Back
-						</Button>
-						<Button
-							onClick={handleSave}
-							disabled={!validation.isValid && !selectedPreset}
-							className="bg-amber-500 text-slate-900 hover:bg-amber-400"
-						>
-							Save Weapon
-						</Button>
-					</ActionButtons>
-				</>
-			)}
+						<p className="mb-4 text-sm text-gray-400">Review the build summary, then save.</p>
+
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(3)}>
+								Back
+							</Button>
+							<Button
+								onClick={handleSave}
+								disabled={!validation.isValid && !selectedPreset}
+								className="bg-amber-500 text-slate-900 hover:bg-amber-400"
+							>
+								Save Weapon
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+			</EquipageBuilderFrame>
 		</BuilderContainer>
 	);
 };

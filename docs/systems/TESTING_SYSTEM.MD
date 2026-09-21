@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-21
 
 ---
 
@@ -220,6 +220,7 @@ Playwright flow to prove character load, toggle wiring, visible results, and rel
 | `e2e/21-alternative-inventory-picker.e2e.spec.ts`     | Alternative-sheet add-inventory modal, search and filtering, populated-row creation, quantity and equipped setup, desktop split layout, compact stacked layout, and horizontal-overflow guard                                                          |
 | `e2e/22-alternative-spell-cast.e2e.spec.ts`           | Alternative-sheet focused casting modal, Mana Spend Limit guard, enhancement declaration, and visible Mana deduction                                                                                                                                   |
 | `e2e/23-alternative-long-rest.e2e.spec.ts`            | Alternative-sheet Long Rest restores spent Grit and persists the restored value across reload                                                                                                                                                          |
+| `e2e/24-equipage-builders.e2e.spec.ts`                | Equipage builder and build-summary reflow, saved-tab spacing, and weapon-choice layout across responsive boundaries                                                                                                                                    |
 | `e2e/human-cleric.e2e.spec.ts`                        | Full Human Cleric creation; currently Magic + Ancestral domains                                                                                                                                                                                        |
 | `e2e/hunter-beastborn.e2e.spec.ts`                    | Full Hunter/Beastborn flow                                                                                                                                                                                                                             |
 | `e2e/spellblade-hybrid.e2e.spec.ts`                   | Spellblade hybrid flow                                                                                                                                                                                                                                 |

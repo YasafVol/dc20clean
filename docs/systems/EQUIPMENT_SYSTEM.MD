@@ -6,7 +6,7 @@
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
 > Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-21
 
 ---
 
@@ -64,20 +64,21 @@ second positive property point; removing it leaves the ranged weapon with only i
 
 ### UI (`src/routes/custom-equipment/`)
 
-- `CustomEquipment.tsx` — Main page, category selection, tabs
-- `components/WeaponBuilder.tsx` — 4-step weapon creation wizard
-- `components/ArmorBuilder.tsx` — 3-step armor creation wizard
-- `components/ShieldBuilder.tsx` — 3-step shield creation wizard
-- `components/SpellFocusBuilder.tsx` — 3-step spell focus creation wizard
-- `components/GeneralEquipmentBuilder.tsx` — Single-page general equipment form
+- `CustomEquipment.tsx` — Main page with persistent category selector and Create/Saved tabs
+- `components/EquipageBuilderFrame.tsx` — Shared Equipage build-sheet layout and build summary
+- `components/WeaponBuilder.tsx` — 5-panel weapon builder with separate damage type
+- `components/ArmorBuilder.tsx` — 3-panel armor builder
+- `components/ShieldBuilder.tsx` — 3-panel shield builder
+- `components/SpellFocusBuilder.tsx` — 3-panel spell-focus builder
+- `components/GeneralEquipmentBuilder.tsx` — 2-panel details/review builder
 - `components/SavedEquipmentList.tsx` — View/filter/delete/export saved equipment
 
 ### Shared Builder UI (`src/components/equipment/`)
 
 - `EquipmentBuildSheet.tsx` — Reusable accessible accordion shell for category builders;
   the category owns its steps, summaries, validation, choices, and record construction.
-- The alternative custom-weapon flow is the first consumer. Armor, shield, spell-focus,
-  and general-equipment builders have not yet migrated to this shell.
+- Both the alternative custom-weapon flow and all five Equipage builders use this shell.
+  Equipage owns its category-specific steps, build summary, presets, validation, and save behavior.
 
 ---
 
@@ -501,15 +502,25 @@ importEquipmentFromJson(json: string): { success: boolean; error?: string }
 
 ### Main Page (`/custom-equipment`)
 
-1. **Create New** tab — Select equipment category
+1. **Create New** tab — The five categories remain visible above the active builder;
+   Weapon is selected initially, and selecting another category opens a fresh builder.
 2. **Saved Equipment** tab — View/manage saved items
 
 ### Builder Flow (Example: Weapon)
 
-1. **Step 1**: Choose Type (Melee/Ranged) or load preset
-2. **Step 2**: Choose Style (determines enhancement)
-3. **Step 3**: Choose Properties (point budget tracked)
-4. **Step 4**: Review & Save (name, final stats preview)
+1. **Start**: Start fresh with Melee/Ranged, or load a preset.
+2. **Style**: Choose style and enhancement.
+3. **Damage type (2.5)**: Confirm the style default or choose another physical type.
+4. **Properties**: Track the point budget and prerequisites.
+5. **Review**: Name and save.
+
+Each category uses the same reopenable accordion and persistent build summary, with only
+its relevant stages: Armor and Shield use Start/Properties/Review; Spell Focus uses
+Start/Properties/Review; General uses Details/Review. Existing preset loading, point
+validation, stable edit IDs, local storage, and canonical effect construction remain
+category-owned. The summary holds the calculated stats, properties, effects, and preset
+origin; Review holds the name and save action, without repeating the summary. At 1199px
+and below, the summary stacks after the sheet during selection and before it on Review.
 
 ### Alternative-Sheet Custom Weapon Flow
 
@@ -549,7 +560,10 @@ contrast and line spacing rather than muted metadata styling.
 
 ### Preset Search
 
-The four rules-backed builders expose client-side preset search on the first step. Search matches
+The four rules-backed builders present **Start Fresh** and **Load a Preset** as
+equal first-step choices. Only the selected path is visible; switching paths
+preserves the in-progress selection. The preset path exposes client-side search.
+Search matches
 all entered tokens across preset names, equipment type, properties, and weapon styles.
 Weapon search replaces the former 12-item truncation, so every preset is selectable
 without a separate modal.

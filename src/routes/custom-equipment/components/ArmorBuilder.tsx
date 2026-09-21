@@ -3,6 +3,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { Shirt } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
 import {
@@ -16,10 +17,13 @@ import { withEquipmentEffects } from '../../../lib/rulesdata/equipment/equipment
 import type { CustomArmor, ArmorType } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
 import { filterEquipmentPresets } from '../presetSearch';
 import PresetSearchInput from './PresetSearchInput';
+import CreationSourceSwitch, { type CreationSource } from './CreationSourceSwitch';
+import EquipageBuilderFrame from './EquipageBuilderFrame';
 import {
 	BuilderContainer,
 	SectionTitle,
 	OptionGrid,
+	PresetOptionGrid,
 	OptionCard,
 	OptionTitle,
 	OptionDescription,
@@ -27,14 +31,7 @@ import {
 	PointsDisplay,
 	PointsLabel,
 	PointsValue,
-	SummaryCard,
-	SummaryRow,
-	SummaryLabel,
-	SummaryValue,
 	ActionButtons,
-	StepIndicator,
-	Step,
-	StepConnector,
 	PresetBadge
 } from '../styles/CustomEquipment.styles';
 
@@ -54,6 +51,9 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 		initialEquipment?.presetOrigin ?? null
 	);
 	const [presetQuery, setPresetQuery] = useState('');
+	const [creationSource, setCreationSource] = useState<CreationSource>(
+		initialEquipment?.presetOrigin ? 'preset' : 'fresh'
+	);
 
 	const maxPoints = 2;
 
@@ -168,8 +168,6 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 
 	const buildArmor = (): CustomArmor => {
 		const stats = calculateStats();
-		const armorTypeData = ARMOR_TYPES.find((t) => t.id === armorType);
-
 		const now = new Date().toISOString();
 		const armor: CustomArmor = {
 			id: initialEquipment?.id ?? `custom-armor-${Date.now()}`,
@@ -204,256 +202,280 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 
 	return (
 		<BuilderContainer>
-			{/* Step Indicator */}
-			<StepIndicator>
-				<Step $active={step === 1} $completed={step > 1}>
-					1
-				</Step>
-				<StepConnector $active={step > 1} />
-				<Step $active={step === 2} $completed={step > 2}>
-					2
-				</Step>
-				<StepConnector $active={step > 2} />
-				<Step $active={step === 3}>3</Step>
-			</StepIndicator>
-
-			{/* Step 1: Choose Type or Preset */}
-			{step === 1 && (
-				<>
-					<SectionTitle>Step 1: Choose Armor Type or Load Preset</SectionTitle>
-
-					<div className="mb-6">
-						<h4 className="mb-3 text-sm font-semibold text-gray-400">Start Fresh</h4>
-						<OptionGrid>
-							{ARMOR_TYPES.map((type) => (
-								<OptionCard
-									key={type.id}
-									$selected={armorType === type.id}
-									onClick={() => {
-										setArmorType(type.id);
-										setSelectedProperties([]);
-										setSelectedPreset(null);
-									}}
-								>
-									<OptionTitle>{type.name}</OptionTitle>
-									<OptionDescription>{type.description}</OptionDescription>
-									<div className="mt-2 text-xs text-gray-500">
-										Don/Doff: {type.donTime} • Metal: {type.isMetal ? 'Yes' : 'No'}
+			<EquipageBuilderFrame
+				category="armor"
+				title={initialEquipment ? 'Edit custom armor' : 'Custom armor'}
+				activeStepId={String(step)}
+				onStepChange={(id) => setStep(Number(id))}
+				steps={[
+					{
+						id: '1',
+						title: 'Start',
+						summary: selectedPreset
+							? name
+							: armorType
+								? `${armorType} armor`
+								: 'Choose a type or preset',
+						complete: Boolean(armorType)
+					},
+					{
+						id: '2',
+						title: 'Properties',
+						summary: `${selectedProperties.length} selected · ${pointsSpent} / ${maxPoints} points`,
+						complete: Boolean(armorType && validation.isValid),
+						disabled: !armorType
+					},
+					{
+						id: '3',
+						title: 'Review',
+						summary: name.trim() || 'Name, confirm, and save',
+						complete: Boolean(name.trim() && validation.isValid),
+						disabled: !armorType
+					}
+				]}
+				summaryIcon={<Shirt />}
+				summaryTitle={name.trim() || 'Unnamed armor'}
+				summaryRows={[
+					{ label: 'Type', value: armorType ? `${armorType} armor` : 'Not chosen' },
+					{ label: 'Points', value: `${pointsSpent} / ${maxPoints}` },
+					{ label: 'Physical Defense', value: `+${stats.pdBonus}` },
+					{ label: 'Arcane Defense', value: `+${stats.adBonus}` },
+					{ label: 'Physical DR', value: stats.hasPdr ? 'Half' : 'None' },
+					{ label: 'Elemental DR', value: stats.hasEdr ? 'Yes' : 'None' },
+					{ label: 'Speed penalty', value: armorType === 'heavy' ? '-1' : 'None' },
+					{
+						label: 'Agility checks',
+						value: armorType === 'heavy' || stats.hasRigid ? 'DisADV' : 'Normal'
+					}
+				]}
+				summaryDetails={
+					selectedProperties.length || selectedPreset ? (
+						<>
+							{selectedProperties.length > 0 && (
+								<>
+									<div className="mb-2 text-sm font-semibold text-gray-300">Properties</div>
+									<div className="flex flex-wrap gap-2">
+										{selectedProperties.map((id, index) => (
+											<Badge key={`${id}-${index}`} variant="secondary">
+												{availableProperties.find((property) => property.id === id)?.name || id}
+											</Badge>
+										))}
 									</div>
-								</OptionCard>
-							))}
-						</OptionGrid>
-					</div>
+								</>
+							)}
+							{selectedPreset && (
+								<p className="mt-3 text-xs text-gray-400">
+									Based on preset:{' '}
+									{PRESET_ARMOR.find((preset) => preset.id === selectedPreset)?.name}
+								</p>
+							)}
+						</>
+					) : undefined
+				}
+			>
+				{/* Step 1: Choose Type or Preset */}
+				{step === 1 && (
+					<>
+						<SectionTitle>Step 1: Choose Armor Type or Load Preset</SectionTitle>
 
-					<div className="mb-6">
-						<h4 className="mb-3 text-sm font-semibold text-gray-400">Or Load a Preset</h4>
-						<PresetSearchInput
-							value={presetQuery}
-							onChange={setPresetQuery}
-							resultCount={filteredPresets.length}
-						/>
-						<OptionGrid>
-							{filteredPresets.map((preset) => (
-								<OptionCard
-									key={preset.id}
-									$selected={selectedPreset === preset.id}
-									onClick={() => loadPreset(preset.id)}
-								>
-									<OptionTitle>
-										{preset.name}
-										<PresetBadge>{preset.armorType === 'heavy' ? 'Heavy' : 'Light'}</PresetBadge>
-									</OptionTitle>
-									<div className="mt-2 flex flex-wrap gap-2 text-xs">
-										{preset.pdBonus > 0 && <Badge variant="secondary">PD +{preset.pdBonus}</Badge>}
-										{preset.adBonus > 0 && <Badge variant="secondary">AD +{preset.adBonus}</Badge>}
-										{preset.hasPdr && <Badge variant="secondary">PDR (Half)</Badge>}
-									</div>
-								</OptionCard>
-							))}
-						</OptionGrid>
-						{filteredPresets.length === 0 && (
-							<p className="py-4 text-center text-sm text-gray-500">No armor presets match.</p>
-						)}
-					</div>
-
-					<ActionButtons>
-						<Button variant="outline" onClick={onBack}>
-							Cancel
-						</Button>
-						<Button onClick={() => setStep(2)} disabled={!armorType}>
-							Next: Choose Properties
-						</Button>
-					</ActionButtons>
-				</>
-			)}
-
-			{/* Step 2: Choose Properties */}
-			{step === 2 && (
-				<>
-					<SectionTitle>Step 2: Choose Properties ({armorType} Armor)</SectionTitle>
-
-					<div className="mb-4 flex items-center justify-between">
-						<PointsDisplay>
-							<PointsLabel>Points:</PointsLabel>
-							<PointsValue $over={pointsSpent > maxPoints}>
-								{pointsSpent} / {maxPoints}
-							</PointsValue>
-						</PointsDisplay>
-					</div>
-
-					<OptionGrid>
-						{availableProperties.map((property) => {
-							const count = propertyCounts.get(property.id) || 0;
-							const maxStacks = property.maxStacks || 1;
-							const isSelected = count > 0;
-							const canAddMore = count < maxStacks && pointsSpent + property.cost <= maxPoints;
-
-							return (
-								<OptionCard
-									key={property.id}
-									$selected={isSelected}
-									onClick={() =>
-										isSelected ? toggleProperty(property.id) : addProperty(property.id)
-									}
-									disabled={!canAddMore && !isSelected}
-								>
-									<div className="mb-1 flex items-center justify-between">
-										<OptionTitle>
-											{property.name}
-											{count > 0 && maxStacks > 1 && (
-												<span className="ml-2 text-amber-400">x{count}</span>
-											)}
-										</OptionTitle>
-										<PropertyTag $cost={property.cost}>
-											{property.cost > 0 ? `+${property.cost}` : property.cost}
-										</PropertyTag>
-									</div>
-									<OptionDescription>{property.description}</OptionDescription>
-									{maxStacks > 1 && (
-										<div className="mt-2 text-xs text-gray-500">
-											Can be taken up to {maxStacks}x
-										</div>
-									)}
-									{isSelected && canAddMore && (
-										<Button
-											size="sm"
-											variant="outline"
-											className="mt-2"
-											onClick={(e) => {
-												e.stopPropagation();
-												addProperty(property.id);
+						<CreationSourceSwitch
+							category="armor"
+							source={creationSource}
+							onSourceChange={setCreationSource}
+							fresh={
+								<OptionGrid>
+									{ARMOR_TYPES.map((type) => (
+										<OptionCard
+											key={type.id}
+											$selected={armorType === type.id}
+											onClick={() => {
+												setArmorType(type.id);
+												setSelectedProperties([]);
+												setSelectedPreset(null);
 											}}
 										>
-											Add Another (+{property.cost})
-										</Button>
+											<OptionTitle>{type.name}</OptionTitle>
+											<OptionDescription>{type.description}</OptionDescription>
+											<div className="mt-2 text-xs text-gray-500">
+												Don/Doff: {type.donTime} • Metal: {type.isMetal ? 'Yes' : 'No'}
+											</div>
+										</OptionCard>
+									))}
+								</OptionGrid>
+							}
+							preset={
+								<>
+									<PresetSearchInput
+										value={presetQuery}
+										onChange={setPresetQuery}
+										resultCount={filteredPresets.length}
+									/>
+									<div className="max-h-96 overflow-y-auto">
+										<PresetOptionGrid>
+											{filteredPresets.map((preset) => (
+												<OptionCard
+													key={preset.id}
+													$selected={selectedPreset === preset.id}
+													onClick={() => loadPreset(preset.id)}
+												>
+													<OptionTitle>
+														{preset.name}
+														<PresetBadge>
+															{preset.armorType === 'heavy' ? 'Heavy' : 'Light'}
+														</PresetBadge>
+													</OptionTitle>
+													<div className="mt-2 flex flex-wrap gap-2 text-xs">
+														{preset.pdBonus > 0 && (
+															<Badge variant="secondary">PD +{preset.pdBonus}</Badge>
+														)}
+														{preset.adBonus > 0 && (
+															<Badge variant="secondary">AD +{preset.adBonus}</Badge>
+														)}
+														{preset.hasPdr && <Badge variant="secondary">PDR (Half)</Badge>}
+													</div>
+												</OptionCard>
+											))}
+										</PresetOptionGrid>
+									</div>
+									{filteredPresets.length === 0 && (
+										<p className="py-4 text-center text-sm text-gray-500">
+											No armor presets match.
+										</p>
 									)}
-								</OptionCard>
-							);
-						})}
-					</OptionGrid>
-
-					{!validation.isValid && validation.errors.length > 0 && (
-						<div className="mt-4 rounded-md bg-red-500/10 p-3">
-							{validation.errors.map((error, i) => (
-								<p key={i} className="text-sm text-red-400">
-									{error.message}
-								</p>
-							))}
-						</div>
-					)}
-
-					<ActionButtons>
-						<Button variant="outline" onClick={() => setStep(1)}>
-							Back
-						</Button>
-						<Button onClick={() => setStep(3)} disabled={pointsSpent > maxPoints}>
-							Next: Review & Save
-						</Button>
-					</ActionButtons>
-				</>
-			)}
-
-			{/* Step 3: Summary & Save */}
-			{step === 3 && (
-				<>
-					<SectionTitle>Step 3: Review & Save</SectionTitle>
-
-					<div className="mb-4">
-						<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>
-						<input
-							type="text"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							placeholder="Enter a name for your armor..."
-							className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+								</>
+							}
 						/>
-					</div>
 
-					<SummaryCard>
-						<SummaryRow>
-							<SummaryLabel>Type</SummaryLabel>
-							<SummaryValue>{armorType === 'heavy' ? 'Heavy Armor' : 'Light Armor'}</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Points Spent</SummaryLabel>
-							<SummaryValue>
-								{pointsSpent} / {maxPoints}
-							</SummaryValue>
-						</SummaryRow>
+						<ActionButtons>
+							<Button variant="outline" onClick={onBack}>
+								Cancel
+							</Button>
+							<Button onClick={() => setStep(2)} disabled={!armorType}>
+								Next: Choose Properties
+							</Button>
+						</ActionButtons>
+					</>
+				)}
 
-						<div className="mt-4 mb-2 text-sm font-semibold text-gray-400">Final Stats</div>
-						<SummaryRow>
-							<SummaryLabel>Physical Defense (PD)</SummaryLabel>
-							<SummaryValue>+{stats.pdBonus}</SummaryValue>
-						</SummaryRow>
-						<SummaryRow>
-							<SummaryLabel>Arcane Defense (AD)</SummaryLabel>
-							<SummaryValue>+{stats.adBonus}</SummaryValue>
-						</SummaryRow>
-						{armorType === 'heavy' && (
-							<>
-								<SummaryRow>
-									<SummaryLabel>Physical DR</SummaryLabel>
-									<SummaryValue>{stats.hasPdr ? 'Half' : 'None'}</SummaryValue>
-								</SummaryRow>
-								<SummaryRow>
-									<SummaryLabel>Speed Penalty</SummaryLabel>
-									<SummaryValue>-1</SummaryValue>
-								</SummaryRow>
-								<SummaryRow>
-									<SummaryLabel>Agility Checks</SummaryLabel>
-									<SummaryValue>DisADV</SummaryValue>
-								</SummaryRow>
-							</>
-						)}
-						{stats.hasEdr && (
-							<SummaryRow>
-								<SummaryLabel>Elemental DR</SummaryLabel>
-								<SummaryValue>Yes</SummaryValue>
-							</SummaryRow>
-						)}
-					</SummaryCard>
+				{/* Step 2: Choose Properties */}
+				{step === 2 && (
+					<>
+						<SectionTitle>Step 2: Choose Properties ({armorType} Armor)</SectionTitle>
 
-					{selectedPreset && (
-						<div className="mt-4 text-sm text-blue-400">
-							Based on preset: {PRESET_ARMOR.find((p) => p.id === selectedPreset)?.name}
+						<div className="mb-4 flex items-center justify-between">
+							<PointsDisplay>
+								<PointsLabel>Points:</PointsLabel>
+								<PointsValue $over={pointsSpent > maxPoints}>
+									{pointsSpent} / {maxPoints}
+								</PointsValue>
+							</PointsDisplay>
 						</div>
-					)}
 
-					<ActionButtons>
-						<Button variant="outline" onClick={() => setStep(2)}>
-							Back
-						</Button>
-						<Button
-							onClick={handleSave}
-							disabled={!validation.isValid}
-							className="bg-amber-500 text-slate-900 hover:bg-amber-400"
-						>
-							Save Armor
-						</Button>
-					</ActionButtons>
-				</>
-			)}
+						<OptionGrid>
+							{availableProperties.map((property) => {
+								const count = propertyCounts.get(property.id) || 0;
+								const maxStacks = property.maxStacks || 1;
+								const isSelected = count > 0;
+								const canAddMore = count < maxStacks && pointsSpent + property.cost <= maxPoints;
+
+								return (
+									<OptionCard
+										key={property.id}
+										$selected={isSelected}
+										onClick={() =>
+											isSelected ? toggleProperty(property.id) : addProperty(property.id)
+										}
+										disabled={!canAddMore && !isSelected}
+									>
+										<div className="mb-1 flex items-center justify-between">
+											<OptionTitle>
+												{property.name}
+												{count > 0 && maxStacks > 1 && (
+													<span className="ml-2 text-amber-400">x{count}</span>
+												)}
+											</OptionTitle>
+											<PropertyTag $cost={property.cost}>
+												{property.cost > 0 ? `+${property.cost}` : property.cost}
+											</PropertyTag>
+										</div>
+										<OptionDescription>{property.description}</OptionDescription>
+										{maxStacks > 1 && (
+											<div className="mt-2 text-xs text-gray-500">
+												Can be taken up to {maxStacks}x
+											</div>
+										)}
+										{isSelected && canAddMore && (
+											<Button
+												size="sm"
+												variant="outline"
+												className="mt-2"
+												onClick={(e) => {
+													e.stopPropagation();
+													addProperty(property.id);
+												}}
+											>
+												Add Another (+{property.cost})
+											</Button>
+										)}
+									</OptionCard>
+								);
+							})}
+						</OptionGrid>
+
+						{!validation.isValid && validation.errors.length > 0 && (
+							<div className="mt-4 rounded-md bg-red-500/10 p-3">
+								{validation.errors.map((error, i) => (
+									<p key={i} className="text-sm text-red-400">
+										{error.message}
+									</p>
+								))}
+							</div>
+						)}
+
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(1)}>
+								Back
+							</Button>
+							<Button onClick={() => setStep(3)} disabled={pointsSpent > maxPoints}>
+								Next: Review & Save
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+
+				{/* Step 3: Summary & Save */}
+				{step === 3 && (
+					<>
+						<SectionTitle>Step 3: Review & Save</SectionTitle>
+
+						<div className="mb-4">
+							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>
+							<input
+								type="text"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								placeholder="Enter a name for your armor..."
+								className="w-full rounded-md border border-gray-700 bg-slate-900 px-3 py-2 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none"
+							/>
+						</div>
+
+						<p className="text-sm text-gray-400">Review the build summary, then save.</p>
+
+						<ActionButtons>
+							<Button variant="outline" onClick={() => setStep(2)}>
+								Back
+							</Button>
+							<Button
+								onClick={handleSave}
+								disabled={!validation.isValid}
+								className="bg-amber-500 text-slate-900 hover:bg-amber-400"
+							>
+								Save Armor
+							</Button>
+						</ActionButtons>
+					</>
+				)}
+			</EquipageBuilderFrame>
 		</BuilderContainer>
 	);
 };

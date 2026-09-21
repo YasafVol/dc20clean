@@ -25,12 +25,16 @@ describe('GeneralEquipmentBuilder', () => {
 		const onBack = vi.fn();
 		render(<GeneralEquipmentBuilder onBack={onBack} />);
 
-		expect(screen.getByRole('button', { name: 'Save Equipment' })).toBeDisabled();
+		expect(
+			(screen.getByRole('button', { name: 'Continue to review' }) as HTMLButtonElement).disabled
+		).toBe(true);
 		fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Climbing Kit' } });
 		fireEvent.change(screen.getByLabelText('Description / Notes'), {
 			target: { value: 'Rope, pitons, and a compact hammer.' }
 		});
 		fireEvent.change(screen.getByLabelText('Cost'), { target: { value: '8g' } });
+		fireEvent.click(screen.getByRole('button', { name: 'Continue to review' }));
+		expect(screen.getAllByText('Rope, pitons, and a compact hammer.').length).toBeGreaterThan(0);
 		fireEvent.click(screen.getByRole('button', { name: 'Save Equipment' }));
 
 		expect(getAllCustomGeneralEquipment()).toEqual([

@@ -1,0 +1,23 @@
+#cc-main {
+	--cc-font-family: 'Urbanist', 'Georgia', serif;
+	--cc-bg: #20212b;
+	--cc-primary-color: #f3f4f6;
+	--cc-secondary-color: #cbd5e1;
+	--cc-btn-primary-bg: #7dcfff;
+	--cc-btn-primary-color: #111827;
+	--cc-btn-primary-hover-bg: #a5defd;
+	--cc-btn-secondary-bg: #353746;
+	--cc-btn-secondary-color: #f3f4f6;
+	--cc-btn-secondary-hover-bg: #484a5b;
+	--cc-separator-border-color: #55586b;
+	--cc-toggle-on-bg: #7dcfff;
+	--cc-toggle-off-bg: #55586b;
+	--cc-toggle-on-knob-bg: #111827;
+	--cc-modal-border-radius: 12px;
+	z-index: 10001;
+}
+
+#cc-main a {
+	color: #a5defd;
+	text-decoration: underline;
+}

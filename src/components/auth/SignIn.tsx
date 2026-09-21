@@ -1,10 +1,11 @@
-import * as React from 'react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { cn } from '../../lib/utils';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useTranslation } from 'react-i18next';
+import { logger } from '../../lib/utils/logger';
+import { isLegalConsentFlowEnabled } from '../../lib/analytics/config';
 
 export interface SignInProps {
 	/** Called when user successfully signs in */
@@ -27,6 +28,7 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 	const handleGoogleSignIn = async () => {
 		setError(null);
 		setIsLoading('google');
+		logger.track('sign_in_started', { provider: 'google', feature });
 
 		try {
 			const redirectTo = window.location.href;
@@ -38,6 +40,7 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 
 			onSuccess?.();
 		} catch (err) {
+			logger.track('sign_in_failed', { provider: 'google', feature });
 			setError(err instanceof Error ? err.message : 'Failed to sign in with Google');
 		} finally {
 			setIsLoading(null);
@@ -122,6 +125,17 @@ export function SignIn({ onSuccess, onCancel, feature = 'general', className }: 
 					<br />
 					{t('auth.cloudSyncInfo')}
 				</p>
+				{isLegalConsentFlowEnabled && (
+					<p className="text-center text-xs text-slate-300">
+						<a href="/privacy" className="underline hover:text-sky-300">
+							{t('legal.privacy')}
+						</a>
+						{' · '}
+						<a href="/terms" className="underline hover:text-sky-300">
+							{t('legal.terms')}
+						</a>
+					</p>
+				)}
 			</CardContent>
 		</Card>
 	);

@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const saveCharacterMock = vi.fn();
-const saveAllCharactersMock = vi.fn();
+const { saveCharacterMock, saveAllCharactersMock, trackMock } = vi.hoisted(() => ({
+	saveCharacterMock: vi.fn(),
+	saveAllCharactersMock: vi.fn(),
+	trackMock: vi.fn()
+}));
 
 vi.mock('../storage', () => ({
 	getDefaultStorage: () => ({
@@ -103,7 +106,7 @@ vi.mock('../utils/logger', () => ({
 		info: vi.fn(),
 		debug: vi.fn(),
 		warn: vi.fn(),
-		track: vi.fn()
+		track: trackMock
 	}
 }));
 
@@ -146,6 +149,11 @@ describe('completeCharacter', () => {
 			classId: 'barbarian'
 		});
 		expect(saveAllCharactersMock).not.toHaveBeenCalled();
+		expect(trackMock).toHaveBeenCalledWith('character_creation_completed', {
+			class_id: 'barbarian',
+			level: 1,
+			ancestry_id: 'human'
+		});
 	});
 
 	it('does not persist an Unknown placeholder when no second ancestry is selected', async () => {
@@ -167,5 +175,6 @@ describe('completeCharacter', () => {
 		expect(completed?.finalName).toBe('New Character');
 		expect(saveCharacterMock).not.toHaveBeenCalled();
 		expect(saveAllCharactersMock).not.toHaveBeenCalled();
+		expect(trackMock).not.toHaveBeenCalled();
 	});
 });

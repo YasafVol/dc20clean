@@ -1,4 +1,8 @@
 {
+	"legal": {
+		"privacy": "Aviso de privacidad",
+		"terms": "Condiciones de uso"
+	},
 	"common": {
 		"cancel": "Cancelar",
 		"confirm": "Confirmar",

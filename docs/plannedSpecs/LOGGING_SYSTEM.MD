@@ -1,6 +1,6 @@
 # DC20Clean – Logging & Telemetry System
 
-> **Status: Partial** – Logger is implemented; analytics and full Sentry setup are not wired in `src/main.tsx`. See `docs/plannedSpecs/LOGGING_SPEC.md` for full specification.
+> **Status: Historical plan** – Product analytics is now owned by `docs/systems/ANALYTICS_SYSTEM.MD`. The Vercel Analytics direction below is superseded. Logger and Sentry work remain separate.
 
 > Purpose  
 > Centralized logging, metrics collection, and error tracking for the DC20 Character Creator.

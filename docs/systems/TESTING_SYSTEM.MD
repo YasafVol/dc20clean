@@ -68,6 +68,8 @@ committed legacy-version coverage must construct or name its fixture inside the
 explicit upgrade or compatibility spec.
 
 Vitest uses `client` (browser), `server` (Node), and `convex` (Edge runtime) projects. Tests that stub `import.meta.env` or process-backed environment state must stay in the server project and be excluded from the browser project. Convex function tests use `convex-test` and authenticate with `t.withIdentity`.
+The PostHog SDK adapter test is server-only; analytics privacy and React lifecycle tests also run in the browser project.
+Flag tests must prove PostHog starts without a consent choice when the legal/consent flow is off, while its routes, links, and controls are hidden. With the flow on, consent tests prove no PostHog initialization before a valid analytics choice, cancellation of queued captures after withdrawal, and resume on reacceptance. Browser checks must confirm public signed-out legal access and both languages only with that flag on, plus no Userback request before an explicit feedback action.
 
 Agentic browser QA gates:
 
@@ -334,7 +336,7 @@ rank-2 purchases at that level.
 ## 7. E2E Standards
 
 - Prefer `data-testid` selectors for stable app-owned controls.
-- For Userback/UI feedback changes, validate with `npm run build` and a raw HTML check that production output contains the documented `Userback.access_token` snippet plus `static.userback.io/widget/v1.js`; keep payload checks limited to compact metadata.
+- For Userback/UI feedback changes, validate with `npm run build` and a browser request check: no Userback script loads before the person chooses the footer action and confirms its disclosure; keep app-supplied payloads limited to compact metadata.
 - Recipe-style E2E tests should be written as named user actions and visible assertions. They may use Playwright as the executor, but the test should read as a deterministic user journey rather than DOM plumbing.
 - Add lightweight semantic hooks (`data-testid`, `data-step-id`, `aria-current`) for agent/browser discovery when the visible control is part of a cross-page flow.
 - Assert explicit visible state or saved localStorage state after each meaningful action.
@@ -566,6 +568,7 @@ Add focused tests when changing:
 - Character creation step gating or validation.
 - Character sheet display of calculated values.
 - Persistence, version upgrade, import/export, or PDF output.
+- Analytics identity, event registration, or privacy filtering. Cover pure sanitizers and the SDK adapter in server tests, React lifecycle ordering in a client test, Convex identity shape in a Convex test, and the deployed ingestion boundary with a privacy-safe production event.
 - Any rules behavior where a user can make a selection and expect derived values to change.
 - Agentic browser recipes or UI agent hooks.
 

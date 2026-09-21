@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-21
 
 ## Tech Stack
 
@@ -17,7 +17,8 @@
 - Persistence: Hybrid storage
   - localStorage is active by default (anonymous/offline-first)
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
-- User Feedback: Userback widget when `VITE_USERBACK_ACCESS_TOKEN` is set
+- User Feedback: Userback widget on explicit feedback request when `VITE_USERBACK_ACCESS_TOKEN` is set
+- Product Analytics: PostHog Cloud EU when configured and enabled; explicit events and sanitized pageviews only. The separate default-off legal/consent flag gates the draft pages and choice UI, and only requires opt-in when that flow is enabled. See `ANALYTICS_SYSTEM.MD` and `PRIVACY_AND_LEGAL_SYSTEM.MD` for the unresolved publication review.
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -26,7 +27,7 @@
 - `src/styles/responsive.ts` is the viewport-breakpoint authority. It defines only 768px and 1200px, producing compact, tablet, and desktop modes. Prefer intrinsic CSS (`minmax`, `auto-fit`, wrapping, `clamp`, and container queries) for component-level adaptation; do not add viewport thresholds for isolated components.
 - Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
-- Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
+- Userback feedback is a UI widget, not a storage system. It loads only after a person chooses the footer feedback action and sees its short disclosure. The app attaches only a normalized page type and auth/storage booleans as custom data; the widget may independently observe the current URL and browser context. Do not attach character names/IDs, raw paths, queries, click targets, notes, inventory, or localStorage dumps as custom data.
 - The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
 - The homepage top-left hamburger mirrors every action currently exposed on `/menu`, grouped by the same sections and using the same authentication and Convex availability rules. “What's New” remains the first entry; non-homepage routes retain the existing Back to Menu control where the page does not provide its own navigation.
 - Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.

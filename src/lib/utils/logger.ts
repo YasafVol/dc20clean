@@ -5,12 +5,14 @@
  * - Log levels (debug, info, warn, error)
  * - Context categories for filtering
  * - Session correlation
- * - Vercel Analytics integration
+ * - PostHog product analytics integration
  * - Sentry error tracking integration
  *
- * @see docs/systems/LOGGING_SYSTEM.MD
+ * @see docs/systems/ANALYTICS_SYSTEM.MD
  * @see docs/plannedSpecs/LOGGING_SPEC.md
  */
+
+import { captureAnalyticsEvent } from '../analytics/posthog';
 
 // ============================================================================
 // Types
@@ -208,30 +210,14 @@ function setUserContext(userId: string | null): void {
 }
 
 // ============================================================================
-// Vercel Analytics Integration
+// Product Analytics Integration
 // ============================================================================
 
 /**
- * Track custom event in Vercel Analytics
+ * Track a registered, privacy-safe event in PostHog
  */
 function trackEvent(eventName: string, properties?: object): void {
-	// Only track in production with analytics enabled
-	if (IS_DEV || import.meta.env.VITE_ENABLE_ANALYTICS === 'false') {
-		// Log in dev for debugging
-		if (IS_DEV) {
-			console.log(`[TRACK] ${eventName}`, properties);
-		}
-		return;
-	}
-
-	// Dynamically import analytics to avoid bundle bloat
-	import('@vercel/analytics')
-		.then(({ track }) => {
-			track(eventName, properties);
-		})
-		.catch(() => {
-			// Analytics not available
-		});
+	captureAnalyticsEvent(eventName, properties);
 }
 
 // ============================================================================
@@ -284,11 +270,11 @@ export const logger = {
 	},
 
 	/**
-	 * Track a custom event in Vercel Analytics
+	 * Track a registered custom event in PostHog
 	 * Use for: Feature usage metrics, conversion tracking
 	 *
 	 * @example
-	 * logger.track('pdf_export_completed', { characterId, sizeBytes });
+	 * logger.track('sign_in_started', { provider: 'google', feature: 'general' });
 	 */
 	track: (eventName: string, properties?: object): void => {
 		trackEvent(eventName, properties);

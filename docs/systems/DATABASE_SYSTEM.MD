@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-21
 
 ---
 
@@ -326,9 +326,12 @@ encounters: defineTable({
 
 ### 5.5 Authentication
 
-- **Google OAuth** and **GitHub OAuth** via Convex Auth
+- **Google OAuth** via Convex Auth
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
+- `users.getCurrentUser` returns the stable string `userId`, optional display name,
+  and the user document `_creationTime` as `createdAt`. Consumers preserve
+  `undefined` while the query resolves and use `null` for a resolved signed-out state.
 - Convex authentication is mounted only when `VITE_USE_CONVEX=true`; local mode
   uses an unauthenticated app-auth context, keeps cloud-only routes hidden, and
   renders a disabled `Sign In` affordance so the top-right toolbar does not look

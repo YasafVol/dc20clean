@@ -22,7 +22,11 @@ export default defineConfig({
 						instances: [{ browser: 'chromium' }]
 					},
 					include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
-					exclude: ['src/lib/server/**', 'src/lib/convexClient.test.ts'],
+					exclude: [
+						'src/lib/server/**',
+						'src/lib/convexClient.test.ts',
+						'src/lib/analytics/posthog.test.ts'
+					],
 					setupFiles: ['./vitest-setup-client.ts']
 				}
 			},

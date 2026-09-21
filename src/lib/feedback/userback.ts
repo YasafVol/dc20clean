@@ -4,6 +4,10 @@ type UserbackData = Record<string, UserbackValue>;
 type UserbackGlobal = {
 	access_token?: string;
 	custom_data?: UserbackData;
+	widget_settings?: { position?: string; trigger_type?: string; [key: string]: unknown };
+	on_load?: () => void;
+	open?: () => void;
+	hideLauncher?: () => void;
 	refresh?: () => void;
 	setData?: (data: UserbackData) => void;
 };
@@ -30,9 +34,10 @@ export function loadUserbackWidget(): boolean {
 
 	window.Userback = window.Userback || {};
 	window.Userback.access_token = accessToken;
-	(window.Userback as any).widget_settings = {
-		...((window.Userback as any).widget_settings ?? {}),
-		position: 'bottom-left',
+	window.Userback.widget_settings = {
+		...window.Userback.widget_settings,
+		position: 'sw',
+		trigger_type: 'api'
 	};
 
 	if (document.getElementById(USERBACK_SCRIPT_ID) || findUserbackScript()) {
@@ -45,13 +50,24 @@ export function loadUserbackWidget(): boolean {
 	script.src = USERBACK_SCRIPT_SRC;
 	document.body.appendChild(script);
 
-	// Inject CSS to enforce left: 1rem (mirrors dice roller's right: 1rem)
-	const style = document.createElement('style');
-	style.id = 'userback-position-override';
-	style.textContent = '#userback-button, .userback-button-e { left: 1rem !important; right: auto !important; }';
-	document.head.appendChild(style);
-
 	return true;
+}
+
+export function openUserbackOnLoad(): boolean {
+	if (!isUserbackConfigured() || typeof window === 'undefined') return false;
+	window.Userback = window.Userback || {};
+	if (window.Userback.open) {
+		window.Userback.hideLauncher?.();
+		window.Userback.open();
+		return true;
+	}
+	const previousOnLoad = window.Userback.on_load;
+	window.Userback.on_load = () => {
+		previousOnLoad?.();
+		window.Userback?.hideLauncher?.();
+		window.Userback?.open?.();
+	};
+	return loadUserbackWidget();
 }
 
 export function setUserbackData(data: UserbackData): void {

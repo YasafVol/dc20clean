@@ -1,0 +1,24 @@
+[
+	{
+		"id": "alternative-spell-cast",
+		"question": "Trace the alternative character sheet's Cast action for a known spell through cost calculation, Mana update, and campaign event. Explain how enhancement costs and an older saved spell without an enhancement snapshot are handled. Identify the key source files. Do not propose changes.",
+		"reviewCriteria": [
+			"The Cast action opens the alternative-only focused modal; the primary sheet keeps direct casting.",
+			"The saved enhancement snapshot is used when present; missing snapshots use the alias-aware current-catalog fallback.",
+			"Base MP plus declared enhancement MP is limited by both Mana Spend Limit and current Mana; AP is displayed but not automatically spent.",
+			"Confirmation deducts exact MP and emits the existing campaign spell-cast event; cancellation changes neither resources nor saved spell choices.",
+			"The answer cites the responsible UI, cost, and shared-state source files rather than only the system specification."
+		]
+	},
+	{
+		"id": "custom-weapon",
+		"question": "Trace the alternative sheet's Create custom weapon action from the weapon picker to the resulting attack record. Explain what is saved, what survives export/import or cloud sync, and whether this adds inventory or equipped-item effects. Identify the key source files. Do not propose changes.",
+		"reviewCriteria": [
+			"The separate custom-weapon action launches the builder without replacing the picker's current search and filter state.",
+			"Confirmation creates a populated AttackData record containing a canonical CustomWeapon snapshot.",
+			"The snapshot is character-local, not dependent on Equipage localStorage, and survives character persistence/export.",
+			"Creation adds no inventory row and activates no equipped-item effects.",
+			"The answer cites the picker, builder, attack construction, and state owner source files."
+		]
+	}
+]

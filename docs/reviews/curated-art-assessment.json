@@ -407,10 +407,10 @@
 	},
 	"beowulf-boss-04": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/04_boss_x.png",
-		"reviewName": "Purple Long-necked Creature",
-		"classification": "boss / serpentine monster",
-		"confidence": "low",
-		"note": "Curved neck and large eyes are visible; species unclear."
+		"reviewName": "Naga",
+		"classification": "boss / naga",
+		"confidence": "high",
+		"note": "User-reviewed as a naga; the archive confirms its boss role."
 	},
 	"beowulf-boss-05": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/05_boss_x.png",

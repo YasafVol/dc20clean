@@ -475,7 +475,7 @@ export const ART_ASSETS: ArtAsset[] = [
 	},
 	{
 		id: 'beowulf-boss-04',
-		name: 'Boss 04',
+		name: 'Naga',
 		kind: 'creature',
 		category: 'Bosses',
 		pack: 'monsters-minions',

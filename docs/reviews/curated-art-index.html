@@ -1,0 +1,2578 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Curated art review · DC20Clean</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				font-family: system-ui, sans-serif;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				background: #1a1b26;
+				color: #c0caf5;
+			}
+			main {
+				max-width: 1480px;
+				margin: auto;
+				padding: 32px 24px 64px;
+			}
+			h1 {
+				margin: 0 0 8px;
+				color: #e0af68;
+				font-size: 2rem;
+			}
+			p {
+				line-height: 1.5;
+			}
+			.intro {
+				max-width: 840px;
+				margin: 0 0 22px;
+				color: #a9b1d6;
+			}
+			.summary {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-bottom: 22px;
+			}
+			.summary span {
+				padding: 8px 12px;
+				border: 1px solid #414868;
+				border-radius: 8px;
+				background: #24283b;
+			}
+			.summary strong {
+				color: #e0af68;
+			}
+			.controls {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 12px;
+				margin-bottom: 14px;
+			}
+			.controls input[type='search'],
+			.controls select {
+				min-height: 42px;
+				padding: 8px 12px;
+				border: 1px solid #565f89;
+				border-radius: 8px;
+				background: #24283b;
+				color: #c0caf5;
+				font: inherit;
+			}
+			.controls input[type='search'] {
+				flex: 1 1 260px;
+			}
+			.controls label {
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				white-space: nowrap;
+			}
+			#visible-count {
+				color: #a9b1d6;
+				margin: 0 0 16px;
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 14px;
+			}
+			.card {
+				min-width: 0;
+				overflow: hidden;
+				border: 1px solid #414868;
+				border-radius: 12px;
+				background: #24283b;
+			}
+			.card.uncertain {
+				border-color: #e0af68;
+			}
+			.card[hidden] {
+				display: none;
+			}
+			.image {
+				display: grid;
+				place-items: center;
+				height: 150px;
+				background: #16161e;
+			}
+			.image img {
+				width: 112px;
+				height: 112px;
+				object-fit: contain;
+				image-rendering: pixelated;
+			}
+			.card-body {
+				padding: 14px;
+			}
+			.badges {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 5px;
+			}
+			.badges span {
+				padding: 3px 7px;
+				border-radius: 999px;
+				background: #343b58;
+				color: #a9b1d6;
+				font-size: 0.68rem;
+			}
+			.badges .medium,
+			.badges .low {
+				background: #493b2c;
+				color: #e0af68;
+			}
+			h2 {
+				margin: 12px 0 4px;
+				color: #e0e4ff;
+				font-size: 1.08rem;
+			}
+			.suggestion {
+				margin: 0 0 7px;
+				color: #7aa2f7;
+				font-size: 0.9rem;
+			}
+			.classification {
+				margin: 0 0 12px;
+				color: #bb9af7;
+				font-size: 0.84rem;
+			}
+			.files {
+				display: grid;
+				gap: 8px;
+			}
+			.files small {
+				display: block;
+				margin-bottom: 2px;
+				color: #9aa5ce;
+			}
+			code {
+				display: block;
+				overflow-wrap: anywhere;
+				color: #c0caf5;
+				font-size: 0.75rem;
+			}
+			.note {
+				padding: 8px 10px;
+				margin: 12px 0 0;
+				border-radius: 7px;
+				background: #352f2e;
+				color: #e6bf87;
+				font-size: 0.8rem;
+			}
+			details {
+				margin-top: 12px;
+				color: #9aa5ce;
+				font-size: 0.75rem;
+			}
+			details code {
+				margin-top: 6px;
+			}
+			footer {
+				margin-top: 28px;
+				color: #9aa5ce;
+				font-size: 0.8rem;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Curated art review</h1>
+			<p class="intro">
+				The 70 images selected for the app, with the current catalog name, verified archive
+				filename, review classification, and confidence. Confidence describes how well the visible
+				image and source name support the label. It does not assess usage rights.
+			</p>
+			<div class="summary">
+				<span><strong>40</strong> item icons</span><span><strong>30</strong> creature images</span
+				><span><strong>17</strong> labels to check</span>
+			</div>
+			<div class="controls">
+				<input
+					id="search"
+					type="search"
+					placeholder="Search name, file or classification"
+					aria-label="Search assets"
+				/>
+				<select id="pack" aria-label="Filter by pack">
+					<option value="all">All packs</option>
+					<option value="heroic-icons">Heroic Icon Pack</option>
+					<option value="heroic-creatures">Heroic Creature Pack</option>
+					<option value="monsters-minions">Monsters & Minions</option>
+				</select>
+				<label><input id="uncertain" type="checkbox" /> Labels to check only</label>
+			</div>
+			<p id="visible-count"></p>
+			<div class="grid">
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="cape 1 cape 1 item icon / cape cape icon-cape-01.png capeoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-cape-01.png"
+							alt="Cape 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Cape 1</h2>
+
+						<p class="classification">item icon / Cape</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-cape-01.png</code></div>
+							<div><small>Original file</small><code>CapeOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Cape/CapeOriginal/CapeOriginal 1.png</code
+							><code>icon-cape-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="cape 2 cape 2 item icon / cape cape icon-cape-02.png capeoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-cape-02.png"
+							alt="Cape 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Cape 2</h2>
+
+						<p class="classification">item icon / Cape</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-cape-02.png</code></div>
+							<div><small>Original file</small><code>CapeOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Cape/CapeOriginal/CapeOriginal 2.png</code
+							><code>icon-cape-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="feet 1 feet 1 item icon / feet feet icon-feet-01.png feetoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-feet-01.png"
+							alt="Feet 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Feet 1</h2>
+
+						<p class="classification">item icon / Feet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-feet-01.png</code></div>
+							<div><small>Original file</small><code>FeetOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 1.png</code
+							><code>icon-feet-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="feet 2 feet 2 item icon / feet feet icon-feet-02.png feetoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-feet-02.png"
+							alt="Feet 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Feet 2</h2>
+
+						<p class="classification">item icon / Feet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-feet-02.png</code></div>
+							<div><small>Original file</small><code>FeetOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 2.png</code
+							><code>icon-feet-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="gauntlet 1 gauntlet 1 item icon / gauntlet gauntlet icon-gauntlet-01.png gauntletoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-gauntlet-01.png"
+							alt="Gauntlet 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Gauntlet 1</h2>
+
+						<p class="classification">item icon / Gauntlet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-gauntlet-01.png</code></div>
+							<div><small>Original file</small><code>GauntletOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Gauntlet/GauntletOriginal/GauntletOriginal 1.png</code
+							><code>icon-gauntlet-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="gauntlet 2 gauntlet 2 item icon / gauntlet gauntlet icon-gauntlet-02.png gauntletoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-gauntlet-02.png"
+							alt="Gauntlet 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Gauntlet 2</h2>
+
+						<p class="classification">item icon / Gauntlet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-gauntlet-02.png</code></div>
+							<div><small>Original file</small><code>GauntletOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Gauntlet/GauntletOriginal/GauntletOriginal 2.png</code
+							><code>icon-gauntlet-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="helmet 1 helmet 1 item icon / helmet helmet icon-helmet-01.png helmetoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-helmet-01.png"
+							alt="Helmet 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Helmet 1</h2>
+
+						<p class="classification">item icon / Helmet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-helmet-01.png</code></div>
+							<div><small>Original file</small><code>HelmetOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Helmet/HelmetOriginal/HelmetOriginal 1.png</code
+							><code>icon-helmet-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="helmet 2 helmet 2 item icon / helmet helmet icon-helmet-02.png helmetoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-helmet-02.png"
+							alt="Helmet 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Helmet 2</h2>
+
+						<p class="classification">item icon / Helmet</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-helmet-02.png</code></div>
+							<div><small>Original file</small><code>HelmetOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Helmet/HelmetOriginal/HelmetOriginal 2.png</code
+							><code>icon-helmet-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="leg 1 leg 1 item icon / leg leg icon-leg-01.png legoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-leg-01.png"
+							alt="Leg 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Leg 1</h2>
+
+						<p class="classification">item icon / Leg</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-leg-01.png</code></div>
+							<div><small>Original file</small><code>LegOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Leg/LegOriginal/LegOriginal 1.png</code
+							><code>icon-leg-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="leg 2 leg 2 item icon / leg leg icon-leg-02.png legoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-leg-02.png"
+							alt="Leg 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Leg 2</h2>
+
+						<p class="classification">item icon / Leg</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-leg-02.png</code></div>
+							<div><small>Original file</small><code>LegOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Leg/LegOriginal/LegOriginal 2.png</code
+							><code>icon-leg-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="necklace 1 necklace 1 item icon / necklace necklace icon-necklace-01.png necklaceoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-necklace-01.png"
+							alt="Necklace 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Necklace 1</h2>
+
+						<p class="classification">item icon / Necklace</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-necklace-01.png</code></div>
+							<div><small>Original file</small><code>NecklaceOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Necklace/NecklaceOriginal/NecklaceOriginal 1.png</code
+							><code>icon-necklace-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="necklace 2 necklace 2 item icon / necklace necklace icon-necklace-02.png necklaceoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-necklace-02.png"
+							alt="Necklace 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Necklace 2</h2>
+
+						<p class="classification">item icon / Necklace</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-necklace-02.png</code></div>
+							<div><small>Original file</small><code>NecklaceOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Necklace/NecklaceOriginal/NecklaceOriginal 2.png</code
+							><code>icon-necklace-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="ring 1 ring 1 item icon / ring ring icon-ring-01.png ringoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-ring-01.png"
+							alt="Ring 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Ring 1</h2>
+
+						<p class="classification">item icon / Ring</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-ring-01.png</code></div>
+							<div><small>Original file</small><code>RingOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Ring/RingOriginal/RingOriginal 1.png</code
+							><code>icon-ring-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="ring 2 ring 2 item icon / ring ring icon-ring-02.png ringoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-ring-02.png"
+							alt="Ring 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Ring 2</h2>
+
+						<p class="classification">item icon / Ring</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-ring-02.png</code></div>
+							<div><small>Original file</small><code>RingOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Ring/RingOriginal/RingOriginal 2.png</code
+							><code>icon-ring-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="shield 1 shield 1 item icon / shield shield icon-shield-01.png shieldoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-shield-01.png"
+							alt="Shield 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Shield 1</h2>
+
+						<p class="classification">item icon / Shield</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-shield-01.png</code></div>
+							<div><small>Original file</small><code>ShieldOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Shield/ShieldOriginal/ShieldOriginal 1.png</code
+							><code>icon-shield-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="shield 2 shield 2 item icon / shield shield icon-shield-02.png shieldoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-shield-02.png"
+							alt="Shield 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Shield 2</h2>
+
+						<p class="classification">item icon / Shield</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-shield-02.png</code></div>
+							<div><small>Original file</small><code>ShieldOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Shield/ShieldOriginal/ShieldOriginal 2.png</code
+							><code>icon-shield-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="torso 1 torso 1 item icon / torso torso icon-torso-01.png torsooriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-torso-01.png"
+							alt="Torso 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Torso 1</h2>
+
+						<p class="classification">item icon / Torso</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-torso-01.png</code></div>
+							<div><small>Original file</small><code>TorsoOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Torso/TorsoOriginal/TorsoOriginal 1.png</code
+							><code>icon-torso-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="torso 2 torso 2 item icon / torso torso icon-torso-02.png torsooriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-torso-02.png"
+							alt="Torso 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Torso 2</h2>
+
+						<p class="classification">item icon / Torso</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-torso-02.png</code></div>
+							<div><small>Original file</small><code>TorsoOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Torso/TorsoOriginal/TorsoOriginal 2.png</code
+							><code>icon-torso-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="axe 1 axe 1 item icon / axe axe icon-axe-01.png axeoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-axe-01.png"
+							alt="Axe 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Axe 1</h2>
+
+						<p class="classification">item icon / Axe</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-axe-01.png</code></div>
+							<div><small>Original file</small><code>AxeOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Axe/AxeOriginal/AxeOriginal 1.png</code
+							><code>icon-axe-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="axe 2 axe 2 item icon / axe axe icon-axe-02.png axeoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-axe-02.png"
+							alt="Axe 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Axe 2</h2>
+
+						<p class="classification">item icon / Axe</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-axe-02.png</code></div>
+							<div><small>Original file</small><code>AxeOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Axe/AxeOriginal/AxeOriginal 2.png</code
+							><code>icon-axe-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="dagger 1 dagger 1 item icon / dagger dagger icon-dagger-01.png daggeroriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-dagger-01.png"
+							alt="Dagger 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Dagger 1</h2>
+
+						<p class="classification">item icon / Dagger</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-dagger-01.png</code></div>
+							<div><small>Original file</small><code>DaggerOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Dagger/DaggerOriginal/DaggerOriginal 1.png</code
+							><code>icon-dagger-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="dagger 2 dagger 2 item icon / dagger dagger icon-dagger-02.png daggeroriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-dagger-02.png"
+							alt="Dagger 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Dagger 2</h2>
+
+						<p class="classification">item icon / Dagger</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-dagger-02.png</code></div>
+							<div><small>Original file</small><code>DaggerOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Dagger/DaggerOriginal/DaggerOriginal 2.png</code
+							><code>icon-dagger-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="mace 1 mace 1 item icon / mace mace icon-mace-01.png maceoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-mace-01.png"
+							alt="Mace 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Mace 1</h2>
+
+						<p class="classification">item icon / Mace</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-mace-01.png</code></div>
+							<div><small>Original file</small><code>MaceOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Mace/MaceOriginal/MaceOriginal 1.png</code
+							><code>icon-mace-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="mace 2 mace 2 item icon / mace mace icon-mace-02.png maceoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-mace-02.png"
+							alt="Mace 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Mace 2</h2>
+
+						<p class="classification">item icon / Mace</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-mace-02.png</code></div>
+							<div><small>Original file</small><code>MaceOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Mace/MaceOriginal/MaceOriginal 2.png</code
+							><code>icon-mace-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="ranged 1 ranged 1 item icon / ranged ranged icon-ranged-01.png rangedoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-ranged-01.png"
+							alt="Ranged 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Ranged 1</h2>
+
+						<p class="classification">item icon / Ranged</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-ranged-01.png</code></div>
+							<div><small>Original file</small><code>RangedOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Ranged/RangedOriginal/RangedOriginal 1.png</code
+							><code>icon-ranged-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="ranged 2 ranged 2 item icon / ranged ranged icon-ranged-02.png rangedoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-ranged-02.png"
+							alt="Ranged 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Ranged 2</h2>
+
+						<p class="classification">item icon / Ranged</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-ranged-02.png</code></div>
+							<div><small>Original file</small><code>RangedOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Ranged/RangedOriginal/RangedOriginal 2.png</code
+							><code>icon-ranged-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="spear 1 spear 1 item icon / spear spear icon-spear-01.png spearoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-spear-01.png"
+							alt="Spear 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Spear 1</h2>
+
+						<p class="classification">item icon / Spear</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-spear-01.png</code></div>
+							<div><small>Original file</small><code>SpearOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Spear/SpearOriginal/SpearOriginal 1.png</code
+							><code>icon-spear-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="spear 2 spear 2 item icon / spear spear icon-spear-02.png spearoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-spear-02.png"
+							alt="Spear 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Spear 2</h2>
+
+						<p class="classification">item icon / Spear</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-spear-02.png</code></div>
+							<div><small>Original file</small><code>SpearOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Spear/SpearOriginal/SpearOriginal 2.png</code
+							><code>icon-spear-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="staff 1 staff 1 item icon / staff staff icon-staff-01.png stafforiginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-staff-01.png"
+							alt="Staff 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Staff 1</h2>
+
+						<p class="classification">item icon / Staff</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-staff-01.png</code></div>
+							<div><small>Original file</small><code>StaffOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Staff/StaffOriginal/StaffOriginal 1.png</code
+							><code>icon-staff-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="staff 2 staff 2 item icon / staff staff icon-staff-02.png stafforiginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-staff-02.png"
+							alt="Staff 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Staff 2</h2>
+
+						<p class="classification">item icon / Staff</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-staff-02.png</code></div>
+							<div><small>Original file</small><code>StaffOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Staff/StaffOriginal/StaffOriginal 2.png</code
+							><code>icon-staff-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="sword 1 sword 1 item icon / sword sword icon-sword-01.png swordoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-sword-01.png"
+							alt="Sword 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Sword 1</h2>
+
+						<p class="classification">item icon / Sword</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-sword-01.png</code></div>
+							<div><small>Original file</small><code>SwordOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Sword/SwordOriginal/SwordOriginal 1.png</code
+							><code>icon-sword-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="sword 2 sword 2 item icon / sword sword icon-sword-02.png swordoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-sword-02.png"
+							alt="Sword 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Sword 2</h2>
+
+						<p class="classification">item icon / Sword</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-sword-02.png</code></div>
+							<div><small>Original file</small><code>SwordOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Weapon/Sword/SwordOriginal/SwordOriginal 2.png</code
+							><code>icon-sword-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="arrow 1 arrow 1 item icon / arrow arrow icon-arrow-01.png arroworigin 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-arrow-01.png"
+							alt="Arrow 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Arrow 1</h2>
+
+						<p class="classification">item icon / Arrow</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-arrow-01.png</code></div>
+							<div><small>Original file</small><code>ArrowOrigin 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Arrow/ArrowOrigin/ArrowOrigin 1.png</code
+							><code>icon-arrow-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="arrow 2 arrow 2 item icon / arrow arrow icon-arrow-02.png arroworigin 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-arrow-02.png"
+							alt="Arrow 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Arrow 2</h2>
+
+						<p class="classification">item icon / Arrow</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-arrow-02.png</code></div>
+							<div><small>Original file</small><code>ArrowOrigin 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Arrow/ArrowOrigin/ArrowOrigin 2.png</code
+							><code>icon-arrow-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="artifact 1 artifact 1 item icon / artifact artifact icon-artifact-01.png artifactoriginal 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-artifact-01.png"
+							alt="Artifact 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Artifact 1</h2>
+
+						<p class="classification">item icon / Artifact</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-artifact-01.png</code></div>
+							<div><small>Original file</small><code>ArtifactOriginal 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>IconPack 1.0/AllItems/Miscellaneous/Artifact/ArtifactOriginal/ArtifactOriginal
+								1.png</code
+							><code>icon-artifact-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="artifact 2 artifact 2 item icon / artifact artifact icon-artifact-02.png artifactoriginal 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-artifact-02.png"
+							alt="Artifact 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Artifact 2</h2>
+
+						<p class="classification">item icon / Artifact</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-artifact-02.png</code></div>
+							<div><small>Original file</small><code>ArtifactOriginal 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>IconPack 1.0/AllItems/Miscellaneous/Artifact/ArtifactOriginal/ArtifactOriginal
+								2.png</code
+							><code>icon-artifact-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="book 1 book 1 item icon / book book icon-book-01.png bookorigin 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-book-01.png"
+							alt="Book 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Book 1</h2>
+
+						<p class="classification">item icon / Book</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-book-01.png</code></div>
+							<div><small>Original file</small><code>BookOrigin 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Book/BookOrigin/BookOrigin 1.png</code
+							><code>icon-book-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="book 2 book 2 item icon / book book icon-book-02.png bookorigin 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-book-02.png"
+							alt="Book 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Book 2</h2>
+
+						<p class="classification">item icon / Book</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-book-02.png</code></div>
+							<div><small>Original file</small><code>BookOrigin 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Book/BookOrigin/BookOrigin 2.png</code
+							><code>icon-book-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="key 1 key 1 item icon / key key icon-key-01.png keyorigin 1.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-key-01.png"
+							alt="Key 1"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Key 1</h2>
+
+						<p class="classification">item icon / Key</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-key-01.png</code></div>
+							<div><small>Original file</small><code>KeyOrigin 1.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Key/KeyOrigin/KeyOrigin 1.png</code
+							><code>icon-key-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-icons"
+					data-confidence="high"
+					data-search="key 2 key 2 item icon / key key icon-key-02.png keyorigin 2.png "
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-icons/icon-key-02.png"
+							alt="Key 2"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Icon Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Key 2</h2>
+
+						<p class="classification">item icon / Key</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>icon-key-02.png</code></div>
+							<div><small>Original file</small><code>KeyOrigin 2.png</code></div>
+						</div>
+
+						<details>
+							<summary>Source path and ID</summary>
+							<code>IconPack 1.0/AllItems/Miscellaneous/Key/KeyOrigin/KeyOrigin 2.png</code
+							><code>icon-key-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="griffin griffin griffin castle heroic-creature-castle-griffin.png icon_griffin_0_32x32.png archive name and beaked quadruped silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-castle-griffin.png"
+							alt="Griffin"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Griffin</h2>
+
+						<p class="classification">griffin</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-castle-griffin.png</code></div>
+							<div><small>Original file</small><code>icon_griffin_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and beaked quadruped silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>castle/griffin/icon_griffin_0_32x32.png</code
+							><code>heroic-creature-castle-griffin</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="paladin paladin armored humanoid / paladin role castle heroic-creature-castle-paladin.png icon_paladin_0_32x32.png paladin is the archive name; the image itself mainly shows armor."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-castle-paladin.png"
+							alt="Paladin"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Paladin</h2>
+
+						<p class="classification">armored humanoid / paladin role</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-castle-paladin.png</code></div>
+							<div><small>Original file</small><code>icon_paladin_0_32x32.png</code></div>
+						</div>
+						<p class="note">Paladin is the archive name; the image itself mainly shows armor.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>castle/paladin/icon_paladin_0_32x32.png</code
+							><code>heroic-creature-castle-paladin</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="angel angel celestial humanoid castle heroic-creature-castle-angel.png icon_angel_0_32x32.png archive names it angel; visible wings support the label."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-castle-angel.png"
+							alt="Angel"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Angel</h2>
+
+						<p class="classification">celestial humanoid</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-castle-angel.png</code></div>
+							<div><small>Original file</small><code>icon_angel_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive names it angel; visible wings support the label.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>castle/angel/icon_angel_0_32x32.png</code
+							><code>heroic-creature-castle-angel</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="demon demon demon dark bastion heroic-creature-dark-bastion-demon.png icon_demon_0_32x32.png archive name and visible form support the label."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-dark-bastion-demon.png"
+							alt="Demon"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Demon</h2>
+
+						<p class="classification">demon</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-dark-bastion-demon.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_demon_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and visible form support the label.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>dark bastion/demon/icon_demon_0_32x32.png</code
+							><code>heroic-creature-dark-bastion-demon</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="hell hound hell hound fiendish canine dark bastion heroic-creature-dark-bastion-hell-hound.png icon_hell_hound_0_32x32.png archive name and canine silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-dark-bastion-hell-hound.png"
+							alt="Hell Hound"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Hell Hound</h2>
+
+						<p class="classification">fiendish canine</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-dark-bastion-hell-hound.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_hell_hound_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and canine silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>dark bastion/hell hound/icon_hell_hound_0_32x32.png</code
+							><code>heroic-creature-dark-bastion-hell-hound</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="heroic-creatures"
+					data-confidence="medium"
+					data-search="lich lich undead / archive-labeled lich necropolis heroic-creature-necropolis-lich.png icon_lich_0_32x32.png the archive calls it a lich; the small portrait alone shows a pale humanoid, so lich identity depends on the source label."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-necropolis-lich.png"
+							alt="Lich"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Lich</h2>
+
+						<p class="classification">undead / archive-labeled lich</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-necropolis-lich.png</code></div>
+							<div><small>Original file</small><code>icon_lich_0_32x32.png</code></div>
+						</div>
+						<p class="note">
+							The archive calls it a lich; the small portrait alone shows a pale humanoid, so lich
+							identity depends on the source label.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>necropolis/lich/icon_lich_0_32x32.png</code
+							><code>heroic-creature-necropolis-lich</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="skeleton skeleton undead / skeleton necropolis heroic-creature-necropolis-skeleton.png icon_skeleton_0_32x32.png archive name and skeletal form agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-necropolis-skeleton.png"
+							alt="Skeleton"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Skeleton</h2>
+
+						<p class="classification">undead / skeleton</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-necropolis-skeleton.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_skeleton_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and skeletal form agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>necropolis/skeleton/icon_skeleton_0_32x32.png</code
+							><code>heroic-creature-necropolis-skeleton</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="cyclop cyclops giant / cyclops stronghold heroic-creature-stronghold-cyclop.png icon_cyclop_0_32x32.png the archive spells this cyclop; cyclops is the standard display spelling."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-stronghold-cyclop.png"
+							alt="Cyclop"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Cyclop</h2>
+						<p class="suggestion">Suggested: Cyclops</p>
+						<p class="classification">giant / cyclops</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-stronghold-cyclop.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_cyclop_0_32x32.png</code></div>
+						</div>
+						<p class="note">
+							The archive spells this cyclop; Cyclops is the standard display spelling.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>stronghold/cyclop/icon_cyclop_0_32x32.png</code
+							><code>heroic-creature-stronghold-cyclop</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="goblin goblin humanoid / goblin stronghold heroic-creature-stronghold-goblin.png icon_goblin_0_32x32.png archive name and form support the label."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-stronghold-goblin.png"
+							alt="Goblin"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Goblin</h2>
+
+						<p class="classification">humanoid / goblin</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-stronghold-goblin.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_goblin_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and form support the label.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>stronghold/goblin/icon_goblin_0_32x32.png</code
+							><code>heroic-creature-stronghold-goblin</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="golem golem construct / golem wizards heroic-creature-wizards-golem.png icon_golem_0_32x32.png archive name and constructed form support the label."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-wizards-golem.png"
+							alt="Golem"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Golem</h2>
+
+						<p class="classification">construct / golem</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-wizards-golem.png</code></div>
+							<div><small>Original file</small><code>icon_golem_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and constructed form support the label.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>wizards/golem/icon_golem_0_32x32.png</code
+							><code>heroic-creature-wizards-golem</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="heroic-creatures"
+					data-confidence="medium"
+					data-search="naga naga serpent humanoid / naga wizards heroic-creature-wizards-naga.png icon_naga_0_32x32.png the archive calls it a naga; the small image does not clearly establish its anatomy."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-wizards-naga.png"
+							alt="Naga"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Naga</h2>
+
+						<p class="classification">serpent humanoid / naga</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-wizards-naga.png</code></div>
+							<div><small>Original file</small><code>icon_naga_0_32x32.png</code></div>
+						</div>
+						<p class="note">
+							The archive calls it a naga; the small image does not clearly establish its anatomy.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>wizards/naga/icon_naga_0_32x32.png</code
+							><code>heroic-creature-wizards-naga</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="treant treant plant creature / treant great elf heroic-creature-great-elf-treant.png icon_treant_0_32x32.png archive name and tree-like silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-great-elf-treant.png"
+							alt="Treant"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Treant</h2>
+
+						<p class="classification">plant creature / treant</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-great-elf-treant.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_treant_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and tree-like silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>great elf/treant/icon_treant_0_32x32.png</code
+							><code>heroic-creature-great-elf-treant</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="deer deer beast / deer great elf heroic-creature-great-elf-deer.png icon_deer_0_32x32.png archive name and deer silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-great-elf-deer.png"
+							alt="Deer"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Deer</h2>
+
+						<p class="classification">beast / deer</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>heroic-creature-great-elf-deer.png</code></div>
+							<div><small>Original file</small><code>icon_deer_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and deer silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>great elf/deer/icon_deer_0_32x32.png</code
+							><code>heroic-creature-great-elf-deer</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="fire elemental fire elemental fire elemental elementals heroic-creature-elementals-fire-elemental.png icon_fire_elemental_0_32x32.png archive name and fiery silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-elementals-fire-elemental.png"
+							alt="Fire Elemental"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Fire Elemental</h2>
+
+						<p class="classification">fire elemental</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small
+								><code>heroic-creature-elementals-fire-elemental.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_fire_elemental_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and fiery silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>elementals/fire elemental/icon_fire_elemental_0_32x32.png</code
+							><code>heroic-creature-elementals-fire-elemental</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card"
+					data-pack="heroic-creatures"
+					data-confidence="high"
+					data-search="ice elemental ice elemental ice elemental elementals heroic-creature-elementals-ice-elemental.png icon_ice_elemental_0_32x32.png archive name and icy silhouette agree."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/heroic-creatures/heroic-creature-elementals-ice-elemental.png"
+							alt="Ice Elemental"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Heroic Creature Pack</span><span class="confidence high">High confidence</span>
+						</div>
+						<h2>Ice Elemental</h2>
+
+						<p class="classification">ice elemental</p>
+						<div class="files">
+							<div>
+								<small>Bundled file</small><code>heroic-creature-elementals-ice-elemental.png</code>
+							</div>
+							<div><small>Original file</small><code>icon_ice_elemental_0_32x32.png</code></div>
+						</div>
+						<p class="note">Archive name and icy silhouette agree.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code>elementals/ice elemental/icon_ice_elemental_0_32x32.png</code
+							><code>heroic-creature-elementals-ice-elemental</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="boss 01 pale masked creature boss / masked creature bosses beowulf-boss-01.png 01_boss_x.png archive confirms boss role. the face looks mask-like; body and species remain unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-01.png"
+							alt="Boss 01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Boss 01</h2>
+						<p class="suggestion">Suggested: Pale Masked Creature</p>
+						<p class="classification">boss / masked creature</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-01.png</code></div>
+							<div><small>Original file</small><code>01_boss_x.png</code></div>
+						</div>
+						<p class="note">
+							Archive confirms boss role. The face looks mask-like; body and species remain unclear.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/01_boss_x.png</code
+							><code>beowulf-boss-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="boss 02 green horned creature boss / horned monster bosses beowulf-boss-02.png 02_boss_x.png green horns or limbs and a pink lower mass are visible; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-02.png"
+							alt="Boss 02"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Boss 02</h2>
+						<p class="suggestion">Suggested: Green Horned Creature</p>
+						<p class="classification">boss / horned monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-02.png</code></div>
+							<div><small>Original file</small><code>02_boss_x.png</code></div>
+						</div>
+						<p class="note">
+							Green horns or limbs and a pink lower mass are visible; species unclear.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/02_boss_x.png</code
+							><code>beowulf-boss-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="boss 03 brown round creature boss / round monster bosses beowulf-boss-03.png 03_boss_03_x.png the visible face has multiple eyes; a skull or undead identity is not supported."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-03.png"
+							alt="Boss 03"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Boss 03</h2>
+						<p class="suggestion">Suggested: Brown Round Creature</p>
+						<p class="classification">boss / round monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-03.png</code></div>
+							<div><small>Original file</small><code>03_boss_03_x.png</code></div>
+						</div>
+						<p class="note">
+							The visible face has multiple eyes; a skull or undead identity is not supported.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/03_boss_03_x.png</code
+							><code>beowulf-boss-03</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="boss 04 purple long-necked creature boss / serpentine monster bosses beowulf-boss-04.png 04_boss_x.png curved neck and large eyes are visible; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-04.png"
+							alt="Boss 04"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Boss 04</h2>
+						<p class="suggestion">Suggested: Purple Long-necked Creature</p>
+						<p class="classification">boss / serpentine monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-04.png</code></div>
+							<div><small>Original file</small><code>04_boss_x.png</code></div>
+						</div>
+						<p class="note">Curved neck and large eyes are visible; species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/04_boss_x.png</code
+							><code>beowulf-boss-04</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="boss 05 green eyed figure boss / humanoid monster bosses beowulf-boss-05.png 05_boss_x.png face and extended arms are visible; exact species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-05.png"
+							alt="Boss 05"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Boss 05</h2>
+						<p class="suggestion">Suggested: Green Eyed Figure</p>
+						<p class="classification">boss / humanoid monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-05.png</code></div>
+							<div><small>Original file</small><code>05_boss_x.png</code></div>
+						</div>
+						<p class="note">Face and extended arms are visible; exact species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/05_boss_x.png</code
+							><code>beowulf-boss-05</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="boss 06 purple spined monster boss / spined monster bosses beowulf-boss-06.png 06_boss_x.png spiky purple silhouette is visible; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-boss-06.png"
+							alt="Boss 06"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Boss 06</h2>
+						<p class="suggestion">Suggested: Purple Spined Monster</p>
+						<p class="classification">boss / spined monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-boss-06.png</code></div>
+							<div><small>Original file</small><code>06_boss_x.png</code></div>
+						</div>
+						<p class="note">Spiky purple silhouette is visible; species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/06_boss_x.png</code
+							><code>beowulf-boss-06</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="minion 01-01 pink white-topped creature 1 minion / pink creature variant minions beowulf-minion-01-01.png 01_minion_01_x.png first of four related pink sprites with a white protrusion; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-01-01.png"
+							alt="Minion 01-01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Minion 01-01</h2>
+						<p class="suggestion">Suggested: Pink White-topped Creature 1</p>
+						<p class="classification">minion / pink creature variant</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-01-01.png</code></div>
+							<div><small>Original file</small><code>01_minion_01_x.png</code></div>
+						</div>
+						<p class="note">
+							First of four related pink sprites with a white protrusion; species unclear.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/01_minion_01_x.png</code
+							><code>beowulf-minion-01-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="minion 01-02 pink white-topped creature 2 minion / pink creature variant minions beowulf-minion-01-02.png 01_minion_02_x.png second pink variant with a white protrusion; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-01-02.png"
+							alt="Minion 01-02"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Minion 01-02</h2>
+						<p class="suggestion">Suggested: Pink White-topped Creature 2</p>
+						<p class="classification">minion / pink creature variant</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-01-02.png</code></div>
+							<div><small>Original file</small><code>01_minion_02_x.png</code></div>
+						</div>
+						<p class="note">Second pink variant with a white protrusion; species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/01_minion_02_x.png</code
+							><code>beowulf-minion-01-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="minion 01-03 pink white-topped creature 3 minion / pink creature variant minions beowulf-minion-01-03.png 01_minion_03_x.png third pink variant with a taller white protrusion; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-01-03.png"
+							alt="Minion 01-03"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Minion 01-03</h2>
+						<p class="suggestion">Suggested: Pink White-topped Creature 3</p>
+						<p class="classification">minion / pink creature variant</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-01-03.png</code></div>
+							<div><small>Original file</small><code>01_minion_03_x.png</code></div>
+						</div>
+						<p class="note">Third pink variant with a taller white protrusion; species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/01_minion_03_x.png</code
+							><code>beowulf-minion-01-03</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="minion 01-04 pink white-topped creature 4 minion / pink creature variant minions beowulf-minion-01-04.png 01_minion_04_x.png fourth pink variant with a white protrusion; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-01-04.png"
+							alt="Minion 01-04"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Minion 01-04</h2>
+						<p class="suggestion">Suggested: Pink White-topped Creature 4</p>
+						<p class="classification">minion / pink creature variant</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-01-04.png</code></div>
+							<div><small>Original file</small><code>01_minion_04_x.png</code></div>
+						</div>
+						<p class="note">Fourth pink variant with a white protrusion; species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/01_minion_04_x.png</code
+							><code>beowulf-minion-01-04</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="minion 02-01 green flower-topped creature minion / green monster minions beowulf-minion-02-01.png 02_minion_01_x.png green rounded body with a white flower-like shape; plant identity is uncertain."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-02-01.png"
+							alt="Minion 02-01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Minion 02-01</h2>
+						<p class="suggestion">Suggested: Green Flower-topped Creature</p>
+						<p class="classification">minion / green monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-02-01.png</code></div>
+							<div><small>Original file</small><code>02_minion_01_x.png</code></div>
+						</div>
+						<p class="note">
+							Green rounded body with a white flower-like shape; plant identity is uncertain.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/02_minion_01_x.png</code
+							><code>beowulf-minion-02-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="medium"
+					data-search="minion 02-02 toothed green creature minion / reptilian-looking monster minions beowulf-minion-02-02.png 02_minion_02_x.png low green body and large teeth; exact species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-02-02.png"
+							alt="Minion 02-02"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence medium">Check label · medium</span>
+						</div>
+						<h2>Minion 02-02</h2>
+						<p class="suggestion">Suggested: Toothed Green Creature</p>
+						<p class="classification">minion / reptilian-looking monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-02-02.png</code></div>
+							<div><small>Original file</small><code>02_minion_02_x.png</code></div>
+						</div>
+						<p class="note">Low green body and large teeth; exact species unclear.</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/02_minion_02_x.png</code
+							><code>beowulf-minion-02-02</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="minion 03-01 brown round creature minion / round monster minions beowulf-minion-03-01.png 03_minion_01_x.png brown rounded body with prominent eyes and a pink central feature; species unclear."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-03-01.png"
+							alt="Minion 03-01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Minion 03-01</h2>
+						<p class="suggestion">Suggested: Brown Round Creature</p>
+						<p class="classification">minion / round monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-03-01.png</code></div>
+							<div><small>Original file</small><code>03_minion_01_x.png</code></div>
+						</div>
+						<p class="note">
+							Brown rounded body with prominent eyes and a pink central feature; species unclear.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/03_minion_01_x.png</code
+							><code>beowulf-minion-03-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="minion 04-01 purple wide-eyed creature minion / purple monster minions beowulf-minion-04-01.png 04_minion_01_x.png upright form with possible antennae or horns; imp identity is uncertain."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-04-01.png"
+							alt="Minion 04-01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Minion 04-01</h2>
+						<p class="suggestion">Suggested: Purple Wide-eyed Creature</p>
+						<p class="classification">minion / purple monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-04-01.png</code></div>
+							<div><small>Original file</small><code>04_minion_01_x.png</code></div>
+						</div>
+						<p class="note">
+							Upright form with possible antennae or horns; imp identity is uncertain.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/04_minion_01_x.png</code
+							><code>beowulf-minion-04-01</code>
+						</details>
+					</div>
+				</article>
+				<article
+					class="card uncertain"
+					data-pack="monsters-minions"
+					data-confidence="low"
+					data-search="minion 05-01 green squat creature minion / green monster minions beowulf-minion-05-01.png 05_minion_01_x.png squat green form; an amphibian or humanoid identity would be speculative."
+				>
+					<div class="image">
+						<img
+							data-asset-src="/assets/curated/monsters-minions/beowulf-minion-05-01.png"
+							alt="Minion 05-01"
+							loading="lazy"
+						/>
+					</div>
+					<div class="card-body">
+						<div class="badges">
+							<span>Monsters &amp; Minions</span
+							><span class="confidence low">Needs review · low</span>
+						</div>
+						<h2>Minion 05-01</h2>
+						<p class="suggestion">Suggested: Green Squat Creature</p>
+						<p class="classification">minion / green monster</p>
+						<div class="files">
+							<div><small>Bundled file</small><code>beowulf-minion-05-01.png</code></div>
+							<div><small>Original file</small><code>05_minion_01_x.png</code></div>
+						</div>
+						<p class="note">
+							Squat green form; an amphibian or humanoid identity would be speculative.
+						</p>
+						<details>
+							<summary>Source path and ID</summary>
+							<code
+								>Bosses &amp; Minions Pack_3.5/Bosses &amp; Minions/Sprites (Battlers)
+								1x/05_minion_01_x.png</code
+							><code>beowulf-minion-05-01</code>
+						</details>
+					</div>
+				</article>
+			</div>
+			<footer>
+				Generated from <code>src/lib/assets/assetCatalog.ts</code> and
+				<code>docs/reviews/curated-art-assessment.json</code>. Rebuild with
+				<code>./node_modules/.bin/vite-node scripts/assets/generateCuratedArtIndex.ts</code>.
+			</footer>
+		</main>
+		<script>
+			const prefix = location.protocol === 'file:' ? '../../static' : '';
+			for (const image of document.querySelectorAll('img[data-asset-src]'))
+				image.src = prefix + image.dataset.assetSrc;
+			const cards = [...document.querySelectorAll('.card')];
+			const search = document.querySelector('#search');
+			const pack = document.querySelector('#pack');
+			const uncertain = document.querySelector('#uncertain');
+			const count = document.querySelector('#visible-count');
+			function update() {
+				const term = search.value.trim().toLowerCase();
+				let visible = 0;
+				for (const card of cards) {
+					card.hidden =
+						(pack.value !== 'all' && card.dataset.pack !== pack.value) ||
+						(uncertain.checked && card.dataset.confidence === 'high') ||
+						!card.dataset.search.includes(term);
+					if (!card.hidden) visible++;
+				}
+				count.textContent = visible + ' of ' + cards.length + ' images shown';
+			}
+			for (const control of [search, pack, uncertain]) control.addEventListener('input', update);
+			update();
+		</script>
+	</body>
+</html>

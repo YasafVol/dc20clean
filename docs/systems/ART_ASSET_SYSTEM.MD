@@ -14,6 +14,7 @@
 2. IDs are stable, category-based strings. Saved objects store the ID, never an asset URL. `getArtAsset` resolves known IDs; missing or retired IDs render no image and do not invalidate older records.
 3. `AssetPicker` is the shared Tokyo Night picker. It filters by kind, category, and text, previews one selection, and supports removal. Item icon choices are offered in all five Equipage builders and freeform inventory creation. Creature art is offered in Monster Designer. The same saved monster art appears in its preview, list card, and encounter slot; encounters store only the monster ID.
 4. Images use pixelated rendering. Static URLs come from `static/assets/curated/`; the manifest is the only place that maps IDs to those URLs. Adding or removing art requires updating the manifest and corresponding files together. Do not reuse an ID for different art.
+5. `docs/reviews/curated-art-index.html` is a local review index of the selected images, their archive filenames, proposed classifications, and confidence notes. It is generated from the catalog and `docs/reviews/curated-art-assessment.json` by `scripts/assets/generateCuratedArtIndex.ts`; it is not bundled into the app. Proposed labels in the review index do not change saved asset IDs or catalog names.
 
 ## Provenance and release boundary
 

@@ -50,6 +50,8 @@ export interface BaseProperty {
 export interface BaseEquipment {
 	id: string;
 	name: string;
+	/** Stable ID from the curated item icon catalog. */
+	iconAssetId?: string;
 	description?: string;
 	properties: string[]; // Array of property IDs
 	pointsSpent: number;

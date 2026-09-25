@@ -395,6 +395,7 @@ const monsterValidator = {
 	),
 
 	// Flavor/Lore
+	artAssetId: v.optional(v.string()),
 	size: v.optional(
 		v.union(
 			v.literal('Tiny'),

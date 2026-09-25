@@ -231,6 +231,7 @@ describe('Inventory catalog selectors', () => {
 				id: 'custom-general-climbing-kit',
 				category: 'general',
 				name: 'Climbing Kit',
+				iconAssetId: 'icon-book-01',
 				description: 'Rope, pitons, and a compact hammer.',
 				cost: '8g',
 				properties: [],
@@ -259,7 +260,8 @@ describe('Inventory catalog selectors', () => {
 				itemName: 'Climbing Kit',
 				cost: '8g',
 				customEquipmentId: 'custom-general-climbing-kit',
-				customEquipmentCategory: 'general'
+				customEquipmentCategory: 'general',
+				iconAssetId: 'icon-book-01'
 			})
 		]);
 	});

@@ -77,24 +77,24 @@ const NumberStepper: React.FC<{
 
 	return (
 		<div className="flex flex-col gap-1">
-			<span className="text-xs text-zinc-400">{label}</span>
+			<span className="text-xs text-[var(--dm-subtext)]">{label}</span>
 			<div className="flex items-center gap-1">
 				<button
 					type="button"
 					onClick={decrease}
 					disabled={value <= min}
-					className="flex h-8 w-8 items-center justify-center rounded border border-purple-500/30 bg-black/40 text-white transition-colors hover:bg-purple-500/20 disabled:cursor-not-allowed disabled:opacity-30"
+					className="flex h-8 w-8 items-center justify-center rounded border border-[var(--dm-border)] bg-[var(--dm-field)] text-[var(--dm-text)] transition-colors hover:bg-[var(--dm-accent-soft)] disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					−
 				</button>
-				<div className="flex h-8 w-16 items-center justify-center rounded border border-purple-500/30 bg-black/30 text-sm font-medium text-white">
+				<div className="flex h-8 w-16 items-center justify-center rounded border border-[var(--dm-border)] bg-[var(--dm-field)] text-sm font-medium text-[var(--dm-text)]">
 					{showValue ? showValue(value) : value}
 				</div>
 				<button
 					type="button"
 					onClick={increase}
 					disabled={value >= max}
-					className="flex h-8 w-8 items-center justify-center rounded border border-purple-500/30 bg-black/40 text-white transition-colors hover:bg-purple-500/20 disabled:cursor-not-allowed disabled:opacity-30"
+					className="flex h-8 w-8 items-center justify-center rounded border border-[var(--dm-border)] bg-[var(--dm-field)] text-[var(--dm-text)] transition-colors hover:bg-[var(--dm-accent-soft)] disabled:cursor-not-allowed disabled:opacity-30"
 				>
 					+
 				</button>
@@ -120,16 +120,16 @@ const TraitSelector: React.FC<{
 
 	return (
 		<div className="relative">
-			<span className="mb-1 block text-xs text-zinc-400">Traits</span>
+			<span className="mb-1 block text-xs text-[var(--dm-subtext)]">Traits</span>
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="flex w-full items-center justify-between rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-left text-sm text-white focus:border-purple-500 focus:outline-none"
+				className="flex w-full items-center justify-between rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-left text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 			>
-				<span className={selected.length ? 'text-white' : 'text-zinc-500'}>
+				<span className={selected.length ? 'text-[var(--dm-text)]' : 'text-[var(--dm-muted)]'}>
 					{selected.length ? `${selected.length} selected` : 'Select traits...'}
 				</span>
-				<span className="text-zinc-500">{isOpen ? '▲' : '▼'}</span>
+				<span className="text-[var(--dm-muted)]">{isOpen ? '▲' : '▼'}</span>
 			</button>
 
 			{isOpen && (
@@ -137,7 +137,7 @@ const TraitSelector: React.FC<{
 					{/* Backdrop to close on click outside */}
 					<div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 					{/* Dropdown opens UPWARD */}
-					<div className="absolute right-0 bottom-full left-0 z-20 mb-1 rounded-lg border border-purple-500/40 bg-zinc-900 shadow-xl">
+					<div className="absolute right-0 bottom-full left-0 z-20 mb-1 rounded-lg border border-[var(--dm-accent)] bg-[var(--dm-surface)] shadow-xl">
 						<div className="grid max-h-64 grid-cols-3 gap-1 overflow-y-auto p-2">
 							{ACTION_TRAITS.map((trait) => (
 								<button
@@ -146,8 +146,8 @@ const TraitSelector: React.FC<{
 									onClick={() => toggleTrait(trait)}
 									className={`rounded px-2 py-1.5 text-left text-xs transition-colors ${
 										selected.includes(trait)
-											? 'border border-purple-500/50 bg-purple-500/30 text-purple-300'
-											: 'bg-black/30 text-zinc-400 hover:bg-purple-500/10 hover:text-white'
+											? 'border border-[var(--dm-accent)] bg-[var(--dm-accent-mid)] text-[var(--dm-accent)]'
+											: 'bg-[var(--dm-field)] text-[var(--dm-subtext)] hover:bg-[var(--dm-accent-soft)] hover:text-[var(--dm-text)]'
 									}`}
 								>
 									{trait}
@@ -155,7 +155,7 @@ const TraitSelector: React.FC<{
 							))}
 						</div>
 						{selected.length > 0 && (
-							<div className="border-t border-purple-500/20 p-2">
+							<div className="border-t border-[var(--dm-border)] p-2">
 								<div className="flex flex-wrap gap-1">
 									{selected.map((trait) => (
 										<span
@@ -286,7 +286,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 												type="text"
 												value={editingAction.name}
 												onChange={(e) => handleInputChange('name', e.target.value)}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 												placeholder="Action name"
 											/>
 										</FormGroup>
@@ -295,7 +295,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 											<select
 												value={editingAction.apCost}
 												onChange={(e) => handleInputChange('apCost', parseInt(e.target.value, 10))}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 											>
 												{[1, 2, 3, 4].map((n) => (
 													<option key={n} value={n}>
@@ -312,7 +312,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 											<select
 												value={editingAction.type}
 												onChange={(e) => handleInputChange('type', e.target.value as ActionType)}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 											>
 												{ACTION_TYPES.map((t) => (
 													<option key={t.value} value={t.value}>
@@ -328,7 +328,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 												onChange={(e) =>
 													handleInputChange('targetDefense', e.target.value as TargetDefense)
 												}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 											>
 												{TARGET_DEFENSES.map((t) => (
 													<option key={t.value} value={t.value}>
@@ -364,7 +364,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 												type="text"
 												value={editingAction.damageType}
 												onChange={(e) => handleInputChange('damageType', e.target.value)}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 												placeholder="slashing, fire..."
 											/>
 										</FormGroup>
@@ -377,7 +377,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 												type="text"
 												value={editingAction.area}
 												onChange={(e) => handleInputChange('area', e.target.value)}
-												className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+												className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 												placeholder="cone, sphere, line..."
 											/>
 										</FormGroup>
@@ -394,7 +394,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 										<textarea
 											value={editingAction.description}
 											onChange={(e) => handleInputChange('description', e.target.value)}
-											className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+											className="w-full resize-none rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 											rows={2}
 											placeholder="Describe the action..."
 										/>
@@ -455,7 +455,7 @@ export const ActionBuilder: React.FC<ActionBuilderProps> = ({ actions, baseDamag
 										{action.traits.map((trait) => (
 											<span
 												key={trait}
-												className="rounded border border-purple-500/30 bg-purple-500/20 px-2 py-0.5 text-xs text-purple-300"
+												className="rounded border border-[var(--dm-border)] bg-[var(--dm-accent-soft)] px-2 py-0.5 text-xs text-[var(--dm-accent)]"
 											>
 												{trait}
 											</span>

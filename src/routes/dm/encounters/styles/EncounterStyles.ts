@@ -47,9 +47,9 @@ export const EncounterCardContainer = styled.div<{ $difficulty?: string }>`
 					? 'rgba(239, 68, 68, 0.15)'
 					: props.$difficulty === 'hard'
 						? 'rgba(234, 179, 8, 0.15)'
-						: 'rgba(30, 27, 75, 0.8)'}
+						: 'var(--dm-surface)'}
 			0%,
-		rgba(30, 27, 75, 0.9) 100%
+		var(--dm-surface) 100%
 	);
 	border: 1px solid
 		${(props) =>
@@ -57,7 +57,7 @@ export const EncounterCardContainer = styled.div<{ $difficulty?: string }>`
 				? '#ef4444'
 				: props.$difficulty === 'hard'
 					? '#eab308'
-					: 'rgba(168, 85, 247, 0.4)'};
+					: 'var(--dm-accent-strong)'};
 	border-radius: 12px;
 	overflow: hidden;
 	transition: all 0.2s ease;
@@ -69,19 +69,19 @@ export const EncounterCardContainer = styled.div<{ $difficulty?: string }>`
 				? '#f87171'
 				: props.$difficulty === 'hard'
 					? '#facc15'
-					: '#a855f7'};
-		box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.3);
+					: 'var(--dm-accent)'};
+		box-shadow: 0 8px 24px -4px var(--dm-accent-strong);
 	}
 `;
 
 export const CardHeader = styled.div`
 	padding: 1rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	border-bottom: 1px solid var(--dm-accent-mid);
 `;
 
 export const CardName = styled.h3`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1.125rem;
 	font-weight: 600;
 	margin: 0 0 0.25rem;
@@ -104,7 +104,7 @@ export const MetaBadge = styled.span<{ $color?: string }>`
 				? 'rgba(234, 179, 8, 0.2)'
 				: props.$color === 'green'
 					? 'rgba(74, 222, 128, 0.2)'
-					: 'rgba(168, 85, 247, 0.2)'};
+					: 'var(--dm-accent-mid)'};
 	color: ${(props) =>
 		props.$color === 'red'
 			? '#fca5a5'
@@ -112,7 +112,7 @@ export const MetaBadge = styled.span<{ $color?: string }>`
 				? '#fcd34d'
 				: props.$color === 'green'
 					? '#4ade80'
-					: '#c084fc'};
+					: 'var(--dm-accent)'};
 	border: 1px solid
 		${(props) =>
 			props.$color === 'red'
@@ -121,7 +121,7 @@ export const MetaBadge = styled.span<{ $color?: string }>`
 					? 'rgba(234, 179, 8, 0.4)'
 					: props.$color === 'green'
 						? 'rgba(74, 222, 128, 0.4)'
-						: 'rgba(168, 85, 247, 0.4)'};
+						: 'var(--dm-accent-strong)'};
 `;
 
 export const CardBody = styled.div`
@@ -130,7 +130,7 @@ export const CardBody = styled.div`
 
 export const CardFooter = styled.div`
 	padding: 0.75rem 1rem;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	border-top: 1px solid var(--dm-accent-mid);
 	display: flex;
 	justify-content: flex-end;
 	gap: 0.5rem;
@@ -142,7 +142,7 @@ export const CardFooter = styled.div`
 
 export const BudgetContainer = styled.div`
 	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(168, 85, 247, 0.3);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 12px;
 	padding: 1rem;
 `;
@@ -155,7 +155,7 @@ export const BudgetHeader = styled.div`
 `;
 
 export const BudgetLabel = styled.span`
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-size: 0.875rem;
 `;
 
@@ -249,8 +249,8 @@ export const DifficultyButton = styled.button<{ $selected?: boolean; $difficulty
 						? '#eab308'
 						: props.$difficulty === 'trivial' || props.$difficulty === 'easy'
 							? '#4ade80'
-							: '#a855f7'
-				: 'rgba(168, 85, 247, 0.2)'};
+							: 'var(--dm-accent)'
+				: 'var(--dm-accent-mid)'};
 	background: ${(props) =>
 		props.$selected
 			? props.$difficulty === 'deadly'
@@ -259,7 +259,7 @@ export const DifficultyButton = styled.button<{ $selected?: boolean; $difficulty
 					? 'rgba(234, 179, 8, 0.2)'
 					: props.$difficulty === 'trivial' || props.$difficulty === 'easy'
 						? 'rgba(74, 222, 128, 0.2)'
-						: 'rgba(168, 85, 247, 0.2)'
+						: 'var(--dm-accent-mid)'
 			: 'rgba(0, 0, 0, 0.3)'};
 
 	&:hover {
@@ -268,7 +268,7 @@ export const DifficultyButton = styled.button<{ $selected?: boolean; $difficulty
 				? 'rgba(239, 68, 68, 0.15)'
 				: props.$difficulty === 'hard'
 					? 'rgba(234, 179, 8, 0.15)'
-					: 'rgba(168, 85, 247, 0.15)'};
+					: 'var(--dm-accent-soft)'};
 	}
 `;
 
@@ -276,14 +276,14 @@ export const DifficultyName = styled.div<{ $selected?: boolean }>`
 	font-weight: 600;
 	font-size: 0.75rem;
 	text-transform: uppercase;
-	color: ${(props) => (props.$selected ? '#fbbf24' : '#e5e7eb')};
+	color: ${(props) => (props.$selected ? 'var(--dm-gold)' : 'var(--dm-text)')};
 	margin-bottom: 0.25rem;
 `;
 
 export const DifficultyBudget = styled.div`
 	font-size: 1rem;
 	font-weight: 700;
-	color: #e5e7eb;
+	color: var(--dm-text);
 `;
 
 // ============================================================================
@@ -297,9 +297,8 @@ export const MonsterSlotList = styled.div`
 `;
 
 export const MonsterSlotCard = styled.div<{ $isEmpty?: boolean }>`
-	background: ${(props) => (props.$isEmpty ? 'rgba(0, 0, 0, 0.2)' : 'rgba(30, 27, 75, 0.6)')};
-	border: 1px dashed
-		${(props) => (props.$isEmpty ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.4)')};
+	background: ${(props) => (props.$isEmpty ? 'rgba(0, 0, 0, 0.2)' : 'var(--dm-surface)')};
+	border: 1px dashed var(--dm-accent-strong);
 	border-radius: 8px;
 	padding: 1rem;
 	display: flex;
@@ -313,13 +312,13 @@ export const SlotMonsterInfo = styled.div`
 
 export const SlotMonsterName = styled.div`
 	font-weight: 600;
-	color: #e5e7eb;
+	color: var(--dm-text);
 	margin-bottom: 0.25rem;
 `;
 
 export const SlotMonsterMeta = styled.div`
 	font-size: 0.75rem;
-	color: #71717a;
+	color: var(--dm-muted);
 `;
 
 export const SlotQuantityControl = styled.div`
@@ -335,15 +334,15 @@ export const QuantityButton = styled.button`
 	align-items: center;
 	justify-content: center;
 	background: rgba(0, 0, 0, 0.4);
-	border: 1px solid rgba(168, 85, 247, 0.3);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 4px;
-	color: #e5e7eb;
+	color: var(--dm-text);
 	cursor: pointer;
 	transition: all 0.2s;
 
 	&:hover:not(:disabled) {
-		background: rgba(168, 85, 247, 0.2);
-		border-color: rgba(168, 85, 247, 0.5);
+		background: var(--dm-accent-mid);
+		border-color: var(--dm-accent);
 	}
 
 	&:disabled {
@@ -356,12 +355,12 @@ export const QuantityValue = styled.span`
 	min-width: 32px;
 	text-align: center;
 	font-weight: 600;
-	color: #e5e7eb;
+	color: var(--dm-text);
 `;
 
 export const SlotCost = styled.div`
 	font-weight: 600;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	min-width: 48px;
 	text-align: right;
 `;
@@ -396,7 +395,7 @@ export const PartyConfigGrid = styled.div`
 
 export const PartyStatDisplay = styled.div`
 	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(168, 85, 247, 0.3);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 8px;
 	padding: 0.75rem 1rem;
 	text-align: center;
@@ -404,7 +403,7 @@ export const PartyStatDisplay = styled.div`
 
 export const PartyStatLabel = styled.div`
 	font-size: 0.625rem;
-	color: #71717a;
+	color: var(--dm-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
@@ -412,7 +411,7 @@ export const PartyStatLabel = styled.div`
 export const PartyStatValue = styled.div`
 	font-size: 1.5rem;
 	font-weight: 700;
-	color: #fbbf24;
+	color: var(--dm-gold);
 `;
 
 // ============================================================================

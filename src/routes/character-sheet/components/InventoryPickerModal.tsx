@@ -4,6 +4,8 @@ import type { TFunction } from 'i18next';
 import type { CustomEquipment } from '../../../lib/rulesdata/equipment/schemas';
 import type { InventoryItem } from '../../../lib/rulesdata/inventoryItems';
 import type { InventoryItemData } from '../../../types';
+import AssetPicker from '../../../components/AssetPicker';
+import { getArtAsset } from '../../../lib/assets/assetCatalog';
 import { sortByName } from '../catalogSorting';
 import { filterCatalogEntries } from '../catalogPickerFiltering';
 import {
@@ -174,6 +176,7 @@ export default function InventoryPickerModal({
 	const [customName, setCustomName] = useState('');
 	const [customDescription, setCustomDescription] = useState('');
 	const [customCost, setCustomCost] = useState('-');
+	const [customIconAssetId, setCustomIconAssetId] = useState<string | undefined>();
 	const sourceOptions = source === 'catalog' ? catalogOptions : customOptions;
 	const filters = useMemo<CatalogPickerFilter[]>(() => {
 		const availableValues = new Set(
@@ -239,7 +242,8 @@ export default function InventoryPickerModal({
 				cost: selectedOption.equipment.category === 'general' ? selectedOption.equipment.cost : '-',
 				isEquipped,
 				customEquipmentId: selectedOption.equipment.id,
-				customEquipmentCategory: selectedOption.equipment.category
+				customEquipmentCategory: selectedOption.equipment.category,
+				iconAssetId: selectedOption.equipment.iconAssetId
 			};
 		}
 		const itemName = customName.trim();
@@ -251,7 +255,8 @@ export default function InventoryPickerModal({
 			count,
 			cost: customCost.trim() || '-',
 			isEquipped,
-			description: customDescription.trim() || undefined
+			description: customDescription.trim() || undefined,
+			iconAssetId: customIconAssetId
 		};
 	};
 
@@ -298,6 +303,12 @@ export default function InventoryPickerModal({
 							onChange={(event) => setCustomCost(event.target.value)}
 						/>
 					</InventorySetupField>
+					<AssetPicker
+						kind="item"
+						value={customIconAssetId}
+						onChange={setCustomIconAssetId}
+						label="Icon (optional)"
+					/>
 					{renderSetup(false)}
 				</InventoryPreviewCard>
 			);
@@ -322,7 +333,8 @@ export default function InventoryPickerModal({
 							selectedOption.equipment.category === 'general' ? selectedOption.equipment.cost : '-',
 						isEquipped,
 						customEquipmentId: selectedOption.equipment.id,
-						customEquipmentCategory: selectedOption.equipment.category
+						customEquipmentCategory: selectedOption.equipment.category,
+						iconAssetId: selectedOption.equipment.iconAssetId
 					};
 		const info = getInventoryItemInfo(
 			selectedOption.kind === 'catalog' ? selectedOption.item : null,
@@ -337,7 +349,18 @@ export default function InventoryPickerModal({
 		return (
 			<InventoryPreviewCard>
 				<InventoryPreviewHeader>
-					<InventoryPreviewTitle>{selectedOption.name}</InventoryPreviewTitle>
+					<InventoryPreviewTitle style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+						{getArtAsset(draftData.iconAssetId) && (
+							<img
+								src={getArtAsset(draftData.iconAssetId)!.src}
+								alt=""
+								width={32}
+								height={32}
+								style={{ imageRendering: 'pixelated' }}
+							/>
+						)}
+						{selectedOption.name}
+					</InventoryPreviewTitle>
 					<InventoryTypeBadge>{typeLabel}</InventoryTypeBadge>
 				</InventoryPreviewHeader>
 				<InventoryInfoGrid>

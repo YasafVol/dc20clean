@@ -4,9 +4,9 @@
 > Owns: Monster statistics, roles, tiers, monster features and actions, monster validation, monster persistence contracts, and monster designer workflows.
 > Does not own: Encounter-budget rules, general storage/authentication infrastructure, player-character calculation, or combat execution.
 > Authoritative source: `src/lib/rulesdata/dm/monsterStatistics.ts`, `src/lib/rulesdata/dm/monsterRoles.ts`, `src/lib/services/monsterCalculator.ts`, `src/lib/rulesdata/schemas/monster.schema.ts`, `src/routes/dm/monsters/`, and `convex/monsters.ts`.
-> Related systems: [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
+> Related systems: [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-25
 
 ---
 
@@ -30,6 +30,13 @@
 - `/dm/monsters/new` - Create new monster
 
 **Menu Entry:** "Laboratory" in DM Tools section
+
+The designer offers an optional `artAssetId` from the curated creature catalog.
+Its chosen art appears in the editor preview and monster list card. The ID persists
+with the monster in Convex and is preserved by normal duplication and fork flows.
+Older monsters without art remain valid. DM Tools uses the shared Tokyo Night
+surface, border, text, gold heading, and blue interaction tokens; tier and validation
+colors retain their meanings.
 
 **Key Services:**
 

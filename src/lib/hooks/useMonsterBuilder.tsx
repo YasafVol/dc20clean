@@ -58,6 +58,7 @@ export type MonsterBuilderAction =
 	| { type: 'RESET'; payload?: Partial<SavedMonster> }
 	| { type: 'SET_NAME'; payload: string }
 	| { type: 'SET_DESCRIPTION'; payload: string }
+	| { type: 'SET_ART_ASSET_ID'; payload?: string }
 	| { type: 'SET_LEVEL'; payload: number }
 	| { type: 'SET_TIER'; payload: MonsterTier }
 	| { type: 'SET_ROLE'; payload: MonsterRoleId }
@@ -171,6 +172,10 @@ function monsterBuilderReducer(
 				monster,
 				isDirty: true
 			};
+		}
+
+		case 'SET_ART_ASSET_ID': {
+			return { ...state, monster: { ...state.monster, artAssetId: action.payload }, isDirty: true };
 		}
 
 		case 'SET_LEVEL': {
@@ -398,6 +403,7 @@ interface MonsterBuilderContextValue {
 	// Convenience actions
 	setName: (name: string) => void;
 	setDescription: (description: string) => void;
+	setArtAssetId: (id?: string) => void;
 	setLevel: (level: number) => void;
 	setTier: (tier: MonsterTier) => void;
 	setRole: (roleId: MonsterRoleId) => void;
@@ -442,6 +448,10 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 	const setName = useCallback((name: string) => dispatch({ type: 'SET_NAME', payload: name }), []);
 	const setDescription = useCallback(
 		(description: string) => dispatch({ type: 'SET_DESCRIPTION', payload: description }),
+		[]
+	);
+	const setArtAssetId = useCallback(
+		(id?: string) => dispatch({ type: 'SET_ART_ASSET_ID', payload: id }),
 		[]
 	);
 	const setLevel = useCallback(
@@ -503,6 +513,7 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			dispatch,
 			setName,
 			setDescription,
+			setArtAssetId,
 			setLevel,
 			setTier,
 			setRole,
@@ -521,6 +532,7 @@ export function MonsterBuilderProvider({ children, initialMonster }: MonsterBuil
 			state,
 			setName,
 			setDescription,
+			setArtAssetId,
 			setLevel,
 			setTier,
 			setRole,

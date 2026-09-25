@@ -5,6 +5,7 @@
 import React, { useState, useMemo } from 'react';
 import { Swords } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import AssetPicker from '../../../components/AssetPicker';
 import { Badge } from '../../../components/ui/badge';
 import {
 	WEAPON_TYPES,
@@ -71,6 +72,7 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 		initialEquipment?.properties ?? []
 	);
 	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [iconAssetId, setIconAssetId] = useState(initialEquipment?.iconAssetId);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(
 		initialEquipment?.presetOrigin ?? null
 	);
@@ -178,18 +180,21 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 	};
 
 	const buildWeapon = (): CustomWeapon => {
-		return buildCustomWeapon({
-			id: initialEquipment?.id,
-			createdAt: initialEquipment?.createdAt,
-			name: name || 'Custom Weapon',
-			weaponType: weaponType!,
-			style: style!,
-			secondaryStyle: hasMultiFaceted ? (secondaryStyle ?? undefined) : undefined,
-			damageType: damageType ?? 'slashing',
-			properties: selectedProperties,
-			isPreset: !!selectedPreset,
-			presetOrigin: selectedPreset ?? undefined
-		});
+		return {
+			...buildCustomWeapon({
+				id: initialEquipment?.id,
+				createdAt: initialEquipment?.createdAt,
+				name: name || 'Custom Weapon',
+				weaponType: weaponType!,
+				style: style!,
+				secondaryStyle: hasMultiFaceted ? (secondaryStyle ?? undefined) : undefined,
+				damageType: damageType ?? 'slashing',
+				properties: selectedProperties,
+				isPreset: !!selectedPreset,
+				presetOrigin: selectedPreset ?? undefined
+			}),
+			iconAssetId
+		};
 	};
 
 	const handleSave = () => {
@@ -627,6 +632,14 @@ const WeaponBuilder: React.FC<WeaponBuilderProps> = ({ onBack, initialEquipment 
 				{step === 4 && (
 					<>
 						<SectionTitle>Step 4: Review & Save</SectionTitle>
+						<div className="mb-4">
+							<AssetPicker
+								kind="item"
+								value={iconAssetId}
+								onChange={setIconAssetId}
+								label="Icon (optional)"
+							/>
+						</div>
 
 						<div className="mb-4">
 							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>

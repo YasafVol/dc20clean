@@ -4,11 +4,13 @@
 > Owns: Character-sheet state and presentation, in-play resource controls, sheet actions, auto-save coordination, responsive layouts, and read-only rendering.
 > Does not own: Character-creation rules, derived-stat formulas, persistence implementations, campaign authorization, or PDF field mapping.
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
-> Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
+> Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-25
 
 ## Recent UX additions
+
+- **Inventory icons**: Saved Equipage items copy their optional `iconAssetId` into the inventory row. Freeform custom rows can choose an icon in the primary sheet, and the alternative Add Item picker offers the same choice. Known IDs render beside row names in both sheet presentations. Missing IDs leave the item usable without an image; icons never affect equipment calculations.
 
 Alternative-only composition and interaction detail is maintained in
 `ALTERNATIVE_CHARACTER_SHEET.MD`; this document remains authoritative for shared sheet

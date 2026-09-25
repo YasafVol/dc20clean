@@ -9,6 +9,7 @@ import { MONSTER_ROLES } from '../../../../lib/rulesdata/dm/monsterRoles';
 import { getLevelDisplayName } from '../../../../lib/rulesdata/dm/monsterStatistics';
 import { TIER_COST_MULTIPLIERS } from '../../../../lib/rulesdata/schemas/monster.schema';
 import type { SavedMonster } from '../../../../lib/rulesdata/schemas/monster.schema';
+import { getArtAsset } from '../../../../lib/assets/assetCatalog';
 import type { EditableMonsterStatKey } from '../../../../lib/services/monsterCalculator';
 import {
 	PreviewCard,
@@ -53,6 +54,7 @@ export const StatPreview: React.FC<StatPreviewProps> = ({
 	const levelDisplay = getLevelDisplayName(monster.level);
 	const tierMultiplier = TIER_COST_MULTIPLIERS[monster.tier];
 	const encounterCost = Math.max(0, monster.level * tierMultiplier);
+	const art = getArtAsset(monster.artAssetId);
 	const combatStats: StatDisplay[] = [
 		{ key: 'finalHP', label: 'HP', value: monster.finalHP, step: 1, highlight: true },
 		{ key: 'finalPD', label: 'PD', value: monster.finalPD, step: 1 },
@@ -96,6 +98,15 @@ export const StatPreview: React.FC<StatPreviewProps> = ({
 	return (
 		<PreviewCard>
 			<PreviewHeader>
+				{art && (
+					<img
+						src={art.src}
+						alt=""
+						width={64}
+						height={64}
+						style={{ imageRendering: 'pixelated', objectFit: 'contain', margin: '0 auto 8px' }}
+					/>
+				)}
 				<PreviewName>{monster.name || 'Unnamed Monster'}</PreviewName>
 				<PreviewSubtitle>
 					{levelDisplay} {role?.name} ({monster.tier})

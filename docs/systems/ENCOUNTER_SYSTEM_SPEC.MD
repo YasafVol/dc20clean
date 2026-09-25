@@ -4,9 +4,9 @@
 > Owns: Encounter budgets, difficulty thresholds, party context, monster slotting, encounter validation, encounter persistence, and encounter import/export contracts.
 > Does not own: Monster construction rules, general authentication and storage infrastructure, or combat execution and initiative tracking.
 > Authoritative source: `src/lib/services/encounterBudgetCalculator.ts`, `src/lib/rulesdata/schemas/encounter.schema.ts`, `src/routes/dm/encounters/`, and `convex/encounters.ts`.
-> Related systems: [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
+> Related systems: [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-07-21
+> Last Updated: 2026-09-25
 
 ---
 
@@ -15,6 +15,11 @@
 **Purpose:** Enable DMs to build balanced encounters using DC20's point-buy budget system.
 
 **Scope:** DM-facing War Room for encounter planning. Integrates with Monster Designer.
+
+Encounter list, planner, and monster selection use the shared Tokyo Night DM Tools
+theme. A linked monster's optional curated art appears in the selection list and
+filled slot. Encounter records keep only `monsterId`; they do not duplicate an art
+choice or store an image URL. A deleted or unresolvable art ID leaves the slot usable.
 
 **Key Principles:**
 

@@ -9,6 +9,7 @@ import { Button } from '../../../../components/ui/button';
 import { MONSTER_ROLES } from '../../../../lib/rulesdata/dm/monsterRoles';
 import { getLevelDisplayName } from '../../../../lib/rulesdata/dm/monsterStatistics';
 import type { SavedMonster } from '../../../../lib/rulesdata/schemas/monster.schema';
+import { getArtAsset } from '../../../../lib/assets/assetCatalog';
 import {
 	MonsterCardContainer,
 	CardHeader,
@@ -45,10 +46,25 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
 }) => {
 	const role = MONSTER_ROLES[monster.roleId];
 	const levelDisplay = getLevelDisplayName(monster.level);
+	const art = getArtAsset(monster.artAssetId);
 
 	return (
 		<MonsterCardContainer $tier={monster.tier}>
 			<CardHeader>
+				{art && (
+					<img
+						src={art.src}
+						alt=""
+						width={56}
+						height={56}
+						style={{
+							float: 'left',
+							marginRight: 12,
+							imageRendering: 'pixelated',
+							objectFit: 'contain'
+						}}
+					/>
+				)}
 				<CardTitleRow>
 					<CardName>{monster.name}</CardName>
 					<CardBadges>

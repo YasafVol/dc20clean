@@ -5,6 +5,7 @@
 import React, { useState, useMemo } from 'react';
 import { Shirt } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import AssetPicker from '../../../components/AssetPicker';
 import { Badge } from '../../../components/ui/badge';
 import {
 	ARMOR_TYPES,
@@ -47,6 +48,7 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 		initialEquipment?.properties ?? []
 	);
 	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [iconAssetId, setIconAssetId] = useState(initialEquipment?.iconAssetId);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(
 		initialEquipment?.presetOrigin ?? null
 	);
@@ -172,6 +174,7 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 		const armor: CustomArmor = {
 			id: initialEquipment?.id ?? `custom-armor-${Date.now()}`,
 			category: 'armor',
+			iconAssetId,
 			name: name || 'Custom Armor',
 			armorType: armorType!,
 			properties: selectedProperties,
@@ -447,6 +450,14 @@ const ArmorBuilder: React.FC<ArmorBuilderProps> = ({ onBack, initialEquipment })
 				{step === 3 && (
 					<>
 						<SectionTitle>Step 3: Review & Save</SectionTitle>
+						<div className="mb-4">
+							<AssetPicker
+								kind="item"
+								value={iconAssetId}
+								onChange={setIconAssetId}
+								label="Icon (optional)"
+							/>
+						</div>
 
 						<div className="mb-4">
 							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>

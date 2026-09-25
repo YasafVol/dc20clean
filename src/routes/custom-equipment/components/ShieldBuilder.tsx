@@ -5,6 +5,7 @@
 import React, { useState, useMemo } from 'react';
 import { Shield } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import AssetPicker from '../../../components/AssetPicker';
 import { Badge } from '../../../components/ui/badge';
 import {
 	SHIELD_TYPES,
@@ -53,6 +54,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack, initialEquipment 
 		initialEquipment?.properties ?? []
 	);
 	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [iconAssetId, setIconAssetId] = useState(initialEquipment?.iconAssetId);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(
 		initialEquipment?.presetOrigin ?? null
 	);
@@ -183,6 +185,7 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack, initialEquipment 
 		const shield: CustomShield = {
 			id: initialEquipment?.id ?? `custom-shield-${Date.now()}`,
 			category: 'shield',
+			iconAssetId,
 			name: name || 'Custom Shield',
 			shieldType: shieldType!,
 			properties: selectedProperties,
@@ -481,6 +484,14 @@ const ShieldBuilder: React.FC<ShieldBuilderProps> = ({ onBack, initialEquipment 
 				{step === 3 && (
 					<>
 						<SectionTitle>Step 3: Review & Save</SectionTitle>
+						<div className="mb-4">
+							<AssetPicker
+								kind="item"
+								value={iconAssetId}
+								onChange={setIconAssetId}
+								label="Icon (optional)"
+							/>
+						</div>
 
 						<div className="mb-4">
 							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>

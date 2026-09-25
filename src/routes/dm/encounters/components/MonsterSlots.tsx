@@ -9,6 +9,7 @@ import { Button } from '../../../../components/ui/button';
 import { useMonsterList } from '../../../../lib/hooks/useMonsters';
 import type { EncounterMonsterSlot } from '../../../../lib/rulesdata/schemas/encounter.schema';
 import type { SavedMonster, MonsterTier } from '../../../../lib/rulesdata/schemas/monster.schema';
+import { getArtAsset } from '../../../../lib/assets/assetCatalog';
 import {
 	MonsterSlotList,
 	MonsterSlotCard,
@@ -20,11 +21,7 @@ import {
 	QuantityValue,
 	SlotCost,
 	SlotActions,
-	EmptySlotContent,
-	Section,
-	SectionHeader,
-	SectionTitle,
-	SectionContent
+	EmptySlotContent
 } from '../styles/EncounterStyles';
 
 export interface MonsterSlotsProps {
@@ -54,11 +51,14 @@ const MonsterPicker: React.FC<{
 			{/* Backdrop */}
 			<div className="fixed inset-0 z-40 bg-black/60" onClick={onClose} />
 			{/* Modal */}
-			<div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-purple-500/40 bg-zinc-900 md:inset-auto md:top-1/2 md:left-1/2 md:max-h-[70vh] md:w-[500px] md:-translate-x-1/2 md:-translate-y-1/2">
-				<div className="border-b border-purple-500/20 p-4">
+			<div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-[var(--dm-border)] bg-[var(--dm-surface)] md:inset-auto md:top-1/2 md:left-1/2 md:max-h-[70vh] md:w-[500px] md:-translate-x-1/2 md:-translate-y-1/2">
+				<div className="border-b border-[var(--dm-border)] p-4">
 					<div className="mb-3 flex items-center justify-between">
 						<h3 className="font-cinzel text-lg font-semibold text-amber-400">Select Monster</h3>
-						<button onClick={onClose} className="text-zinc-400 hover:text-white">
+						<button
+							onClick={onClose}
+							className="text-[var(--dm-subtext)] hover:text-[var(--dm-text)]"
+						>
 							✕
 						</button>
 					</div>
@@ -67,15 +67,15 @@ const MonsterPicker: React.FC<{
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder="Search monsters..."
-						className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
+						className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-sm text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 						autoFocus
 					/>
 				</div>
 				<div className="flex-1 overflow-y-auto p-2">
 					{isLoading ? (
-						<div className="py-8 text-center text-zinc-500">Loading...</div>
+						<div className="py-8 text-center text-[var(--dm-muted)]">Loading...</div>
 					) : filtered.length === 0 ? (
-						<div className="py-8 text-center text-zinc-500">
+						<div className="py-8 text-center text-[var(--dm-muted)]">
 							{monsters.length === 0 ? 'No monsters created yet' : 'No monsters match your search'}
 						</div>
 					) : (
@@ -87,14 +87,25 @@ const MonsterPicker: React.FC<{
 										onSelect(monster);
 										onClose();
 									}}
-									className="flex w-full items-center justify-between rounded-lg bg-black/20 p-3 text-left transition-colors hover:bg-purple-500/10"
+									className="flex w-full items-center justify-between rounded-lg bg-[var(--dm-raised)] p-3 text-left transition-colors hover:bg-[var(--dm-accent-soft)]"
 								>
-									<div>
-										<div className="font-medium text-white">{monster.name}</div>
-										<div className="text-xs text-zinc-500">
-											Level {monster.level} {monster.tier} • Cost:{' '}
-											{monster.level *
-												(monster.tier === 'legendary' ? 4 : monster.tier === 'apex' ? 2 : 1)}
+									<div className="flex items-center gap-3">
+										{getArtAsset(monster.artAssetId) && (
+											<img
+												src={getArtAsset(monster.artAssetId)!.src}
+												alt=""
+												width={36}
+												height={36}
+												className="object-contain [image-rendering:pixelated]"
+											/>
+										)}
+										<div>
+											<div className="font-medium text-[var(--dm-text)]">{monster.name}</div>
+											<div className="text-xs text-[var(--dm-muted)]">
+												Level {monster.level} {monster.tier} • Cost:{' '}
+												{monster.level *
+													(monster.tier === 'legendary' ? 4 : monster.tier === 'apex' ? 2 : 1)}
+											</div>
 										</div>
 									</div>
 									<div className="font-bold text-amber-400">
@@ -161,6 +172,15 @@ export const MonsterSlots: React.FC<MonsterSlotsProps> = ({
 					// Filled slot
 					return (
 						<MonsterSlotCard key={slot.id}>
+							{getArtAsset(monster.artAssetId) && (
+								<img
+									src={getArtAsset(monster.artAssetId)!.src}
+									alt=""
+									width={42}
+									height={42}
+									style={{ imageRendering: 'pixelated', objectFit: 'contain', flexShrink: 0 }}
+								/>
+							)}
 							<SlotMonsterInfo>
 								<SlotMonsterName>{monster.name}</SlotMonsterName>
 								<SlotMonsterMeta>

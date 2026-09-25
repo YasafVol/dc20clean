@@ -3,21 +3,24 @@
  */
 
 import styled from 'styled-components';
-import { theme, media } from '../../character-sheet/styles/theme';
+import { theme } from '../../character-sheet/styles/theme';
+import { media } from '../../../styles/responsive';
 
 export const PageContainer = styled.div`
 	min-height: 100vh;
-	background: ${theme.colors.bg.primary};
+	background:
+		radial-gradient(circle at 50% -180px, ${theme.colors.accent.warningAlpha10}, transparent 45%),
+		${theme.colors.bg.primary};
 	color: ${theme.colors.text.primary};
 	font-family: ${theme.typography.fontFamily.primary};
 `;
 
 export const Header = styled.div`
-	padding: ${theme.spacing[8]};
+	padding: 88px ${theme.spacing[6]} ${theme.spacing[3]};
 `;
 
 export const HeaderContent = styled.div`
-	max-width: 1600px;
+	max-width: 1170px;
 	margin: 0 auto;
 `;
 
@@ -30,74 +33,99 @@ export const BackButtonRow = styled.div`
 export const Title = styled.h1`
 	font-size: ${theme.typography.fontSize['3xl']};
 	font-weight: ${theme.typography.fontWeight.bold};
-	color: ${theme.colors.text.primary};
-	letter-spacing: 0.05em;
-	text-align: center;
-	text-transform: uppercase;
+	color: ${theme.colors.accent.warning};
+	letter-spacing: 0.025em;
+	text-align: left;
 	margin: 0 0 ${theme.spacing[2]} 0;
 `;
 
 export const Subtitle = styled.p`
 	color: ${theme.colors.text.secondary};
-	text-align: center;
+	text-align: left;
 	font-size: ${theme.typography.fontSize.base};
 	margin: 0;
 `;
 
 export const MainContent = styled.div`
-	max-width: 1600px;
+	max-width: 1170px;
 	margin: 0 auto;
-	padding: ${theme.spacing[8]} ${theme.spacing[8]};
+	padding: ${theme.spacing[4]} ${theme.spacing[6]} ${theme.spacing[8]};
+`;
+
+export const CategoryPrompt = styled.p`
+	margin: ${theme.spacing[5]} 0 ${theme.spacing[3]};
+	color: ${theme.colors.text.secondary};
+	font-size: ${theme.typography.fontSize.sm};
 `;
 
 export const CategoryGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: ${theme.spacing[6]};
-	margin-top: ${theme.spacing[8]};
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: ${theme.spacing[2]};
+	margin-bottom: ${theme.spacing[6]};
+
+	${media.tablet} {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	${media.mobile} {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 `;
 
 export const CategoryCard = styled.button<{ $selected?: boolean }>`
-	background: ${theme.colors.bg.secondary};
+	display: flex;
+	min-width: 0;
+	min-height: 68px;
+	align-items: center;
+	gap: ${theme.spacing[3]};
+	background: ${(props) =>
+		props.$selected ? theme.colors.accent.warningAlpha10 : theme.colors.bg.secondary};
 	border: 1px solid
-		${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
+		${(props) => (props.$selected ? theme.colors.accent.warning : theme.colors.border.default)};
 	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[6]};
+	padding: ${theme.spacing[3]};
 	text-align: left;
 	cursor: pointer;
-	box-shadow: ${theme.shadows.md};
-	transition: all ${theme.transitions.fast};
+	transition: border-color ${theme.transitions.fast};
 
 	&:hover {
-		transform: translateY(-2px);
-		box-shadow: ${theme.shadows.lg};
-		border-color: ${theme.colors.accent.primary};
+		border-color: ${theme.colors.accent.warning};
 	}
 
-	&:active {
-		transform: scale(0.98);
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 2px;
 	}
 `;
 
 export const CategoryIcon = styled.div`
-	font-size: 3rem;
-	margin-bottom: ${theme.spacing[4]};
+	display: flex;
+	flex: none;
+	color: ${theme.colors.accent.warning};
+
+	svg {
+		width: 20px;
+		height: 20px;
+	}
 `;
 
 export const CategoryTitle = styled.h3`
 	color: ${theme.colors.text.primary};
-	font-size: ${theme.typography.fontSize.xl};
-	font-weight: ${theme.typography.fontWeight.bold};
-	margin: 0 0 ${theme.spacing[2]} 0;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	margin: 0;
 `;
 
 export const CategoryDescription = styled.p`
 	color: ${theme.colors.text.secondary};
-	font-size: ${theme.typography.fontSize.sm};
+	font-size: ${theme.typography.fontSize.xs};
 	line-height: ${theme.typography.lineHeight.normal};
 	margin: 0;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 `;
 
 export const SectionTitle = styled.h2`
@@ -112,12 +140,7 @@ export const SectionTitle = styled.h2`
 `;
 
 export const BuilderContainer = styled.div`
-	background: ${theme.colors.bg.secondary};
-	border: 1px solid ${theme.colors.border.default};
-	border-radius: ${theme.borderRadius.lg};
-	padding: ${theme.spacing[6]};
-	margin-top: ${theme.spacing[4]};
-	box-shadow: ${theme.shadows.md};
+	min-width: 0;
 `;
 
 export const StepIndicator = styled.div`
@@ -157,27 +180,35 @@ export const StepConnector = styled.div<{ $active?: boolean }>`
 
 export const OptionGrid = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
 	gap: ${theme.spacing[4]};
+`;
+
+export const PresetOptionGrid = styled(OptionGrid)`
+	grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
 `;
 
 export const OptionCard = styled.button<{ $selected?: boolean }>`
 	background: ${(props) =>
-		props.$selected ? theme.colors.accent.primary : theme.colors.bg.tertiary};
+		props.$selected ? theme.colors.accent.warningAlpha10 : theme.colors.bg.secondary};
 	border: 1px solid
-		${(props) => (props.$selected ? theme.colors.accent.primary : theme.colors.border.default)};
+		${(props) => (props.$selected ? theme.colors.accent.warning : theme.colors.border.default)};
 	border-radius: ${theme.borderRadius.md};
 	padding: ${theme.spacing[4]};
 	text-align: left;
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
-	color: ${(props) => (props.$selected ? theme.colors.text.inverse : theme.colors.text.primary)};
+	color: ${theme.colors.text.primary};
 
 	&:hover {
-		border-color: ${theme.colors.accent.primary};
+		border-color: ${theme.colors.accent.warning};
 		background: ${(props) =>
-			props.$selected ? theme.colors.accent.primary : theme.colors.bg.elevated};
-		box-shadow: ${theme.shadows.md};
+			props.$selected ? theme.colors.accent.warningAlpha20 : theme.colors.bg.elevated};
+	}
+
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 2px;
 	}
 
 	&:active {
@@ -312,27 +343,34 @@ export const PresetBadge = styled.span`
 `;
 
 export const TabContainer = styled.div`
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: ${theme.spacing[1]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.secondary};
+	padding: ${theme.spacing[1]};
+`;
+
+export const PrimaryTabContainer = styled(TabContainer)`
 	display: flex;
-	gap: ${theme.spacing[2]};
+	width: fit-content;
 	margin-bottom: ${theme.spacing[6]};
-	border-bottom: 1px solid ${theme.colors.border.default};
-	padding-bottom: ${theme.spacing[2]};
 `;
 
 export const Tab = styled.button<{ $active?: boolean }>`
-	padding: ${theme.spacing[3]} ${theme.spacing[5]};
-	background: ${(props) => (props.$active ? theme.colors.bg.elevated : 'transparent')};
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	background: ${(props) => (props.$active ? theme.colors.accent.warning : 'transparent')};
 	border: none;
-	border-radius: ${theme.borderRadius.md} ${theme.borderRadius.md} 0 0;
-	color: ${(props) => (props.$active ? theme.colors.accent.primary : theme.colors.text.secondary)};
+	border-radius: ${theme.borderRadius.md};
+	color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.text.secondary)};
 	font-weight: ${(props) =>
 		props.$active ? theme.typography.fontWeight.bold : theme.typography.fontWeight.medium};
 	cursor: pointer;
 	transition: all ${theme.transitions.fast};
 
 	&:hover {
-		color: ${theme.colors.accent.primary};
-		background: ${theme.colors.bg.elevated};
+		color: ${(props) => (props.$active ? theme.colors.text.inverse : theme.colors.accent.warning)};
 	}
 
 	&:active {

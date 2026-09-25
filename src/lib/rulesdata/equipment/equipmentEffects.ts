@@ -20,7 +20,6 @@ import type { CustomArmor } from './schemas/armorSchema';
 import type { CustomShield } from './schemas/shieldSchema';
 import type { CustomSpellFocus } from './schemas/spellFocusSchema';
 import { getWeaponProperty } from './options/weaponOptions';
-import { getArmorProperty } from './options/armorOptions';
 import { getShieldProperty } from './options/shieldOptions';
 import { getSpellFocusProperty } from './options/spellFocusOptions';
 
@@ -151,6 +150,8 @@ export function getCustomEquipmentEffects(equipment: CustomEquipment): Effect[] 
 				includeFallbackAbilities: true
 			});
 		}
+		case 'general':
+			return [];
 	}
 }
 

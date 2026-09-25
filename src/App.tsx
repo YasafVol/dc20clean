@@ -28,15 +28,19 @@ import {
 	CampaignCharacterView
 } from './routes/campaigns';
 import AlternativeSheetUpdate from './routes/product-update/AlternativeSheetUpdate';
+import UpdatesIndex from './routes/product-update/UpdatesIndex';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
 import { AuthStatus } from './components/auth';
 import { useAppAuth } from './components/auth/AuthModeContext';
 import TopLeftToolbar from './components/TopLeftToolbar.tsx';
 import LanguageSwitcher from './components/LanguageSwitcher.tsx';
-import UserbackFeedback from './components/UserbackFeedback.tsx';
+import { LegalFooter } from './components/LegalFooter';
+import { PrivacyPage, TermsPage } from './routes/legal/LegalPages';
+import { isLegalConsentFlowEnabled } from './lib/analytics/config';
 import { useCampaignToasts } from './lib/hooks/useCampaignToasts';
 import Snackbar from './components/Snackbar';
+import { PostHogLifecycle } from './components/analytics/PostHogLifecycle';
 
 // Import fonts for GlobalStyle
 
@@ -45,6 +49,11 @@ import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 import libreBaskervilleItalic from './types/Fonts/LibreBaskerville-Italic.ttf';
 
 const Rulebook = lazy(() => import('./routes/rulebook/Rulebook.tsx'));
+const ConsentManager = lazy(() =>
+	import('./components/analytics/ConsentManager').then((module) => ({
+		default: module.ConsentManager
+	}))
+);
 
 const GlobalStyle = createGlobalStyle`
 	@font-face {
@@ -144,13 +153,28 @@ function App() {
 					<AuthStatus />
 				</FixedAuthStatus>
 				<BrowserRouter>
-					<UserbackFeedback />
+					{isLegalConsentFlowEnabled && (
+						<Suspense fallback={null}>
+							<ConsentManager />
+						</Suspense>
+					)}
+					<PostHogLifecycle />
 					{/* Fixed top-left toolbar with back button */}
 					<TopLeftToolbar />
 					<CampaignNotificationLayer />
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />
+						<Route
+							path="/privacy"
+							element={
+								isLegalConsentFlowEnabled ? <PrivacyPage /> : <Navigate to="/menu" replace />
+							}
+						/>
+						<Route
+							path="/terms"
+							element={isLegalConsentFlowEnabled ? <TermsPage /> : <Navigate to="/menu" replace />}
+						/>
 						<Route
 							path="/create-character"
 							element={
@@ -163,6 +187,7 @@ function App() {
 						<Route path="/spellbook" element={<Spellbook />} />
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
+						<Route path="/updates" element={<UpdatesIndex />} />
 						<Route
 							path="/updates/2026-09-18-alternative-character-sheet"
 							element={<AlternativeSheetUpdate />}
@@ -207,6 +232,7 @@ function App() {
 							element={<CampaignCharacterViewWrapper />}
 						/>
 					</Routes>
+					<LegalFooter />
 				</BrowserRouter>
 			</StyledApp>
 		</>

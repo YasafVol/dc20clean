@@ -30,6 +30,11 @@ vi.mock('react-i18next', () => ({
 				'characterSheet.maneuverPickerTiming': 'Timing',
 				'characterSheet.maneuverPickerAction': 'Action',
 				'characterSheet.maneuverPickerDescription': 'Description',
+				'characterSheet.maneuverPickerSearchLabel': 'Search maneuvers',
+				'characterSheet.maneuverPickerSearchPlaceholder': 'Search maneuvers...',
+				'characterSheet.maneuverPickerFilterLabel': 'Filter maneuvers by type',
+				'characterSheet.maneuverPickerNoMatches': 'No matching maneuvers.',
+				'characterSheet.pickerFilterAll': 'All',
 				'martialManual.type': 'Type',
 				'martialManual.cost': 'Cost',
 				'martialManual.reaction': 'Reaction',
@@ -109,5 +114,24 @@ describe('alternative maneuver picker', () => {
 				name: /Heroic Bash/
 			})
 		).not.toBeInTheDocument();
+	});
+
+	it('searches and filters the maneuver catalog', () => {
+		renderAlternativeManeuvers();
+		fireEvent.click(screen.getByTestId('add-maneuver'));
+		const picker = screen.getByTestId('maneuver-picker');
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search maneuvers' }), {
+			target: { value: heroicBash.name }
+		});
+		expect(within(picker).getAllByRole('option')).toHaveLength(1);
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search maneuvers' }), {
+			target: { value: '' }
+		});
+		fireEvent.click(within(picker).getByRole('button', { name: heroicBash.type }));
+		for (const option of within(picker).getAllByRole('option')) {
+			expect(option).toHaveTextContent(heroicBash.type);
+		}
 	});
 });

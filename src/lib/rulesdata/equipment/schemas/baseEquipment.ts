@@ -72,7 +72,7 @@ export const PHYSICAL_DAMAGE_TYPES: PhysicalDamageType[] = ['bludgeoning', 'pier
 // EQUIPMENT CATEGORIES
 // ================================================================= //
 
-export type EquipmentCategory = 'weapon' | 'armor' | 'shield' | 'spellFocus';
+export type EquipmentCategory = 'weapon' | 'armor' | 'shield' | 'spellFocus' | 'general';
 
 export const EQUIPMENT_CATEGORIES: { id: EquipmentCategory; name: string; description: string }[] =
 	[
@@ -95,6 +95,11 @@ export const EQUIPMENT_CATEGORIES: { id: EquipmentCategory; name: string; descri
 			id: 'spellFocus',
 			name: 'Spell Focus',
 			description: 'Magical implements that enhance spellcasting'
+		},
+		{
+			id: 'general',
+			name: 'General Equipment',
+			description: 'Reusable custom supplies, tools, treasures, and other inventory items'
 		}
 	];
 

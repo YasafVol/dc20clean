@@ -448,12 +448,13 @@ export const completeCharacter = async (
 			persisted: callbacks.persist !== false
 		});
 
-		// Track analytics event
-		logger.track('character_creation_completed', {
-			classId: completedCharacter.classId,
-			level: completedCharacter.level,
-			ancestry1Id: completedCharacter.ancestry1Id
-		});
+		if (callbacks.persist !== false) {
+			logger.track('character_creation_completed', {
+				class_id: completedCharacter.classId,
+				level: completedCharacter.level,
+				ancestry_id: completedCharacter.ancestry1Id
+			});
+		}
 
 		// Show success snackbar
 		callbacks.onShowSnackbar('Character created successfully!');

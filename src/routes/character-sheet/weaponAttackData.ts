@@ -1,5 +1,7 @@
 import type { AttackData } from '../../types';
 import type { Weapon } from '../../lib/rulesdata/inventoryItems';
+import { customWeaponToWeapon } from '../../lib/rulesdata/inventoryItems';
+import type { CustomWeapon } from '../../lib/rulesdata/equipment/schemas/weaponSchema';
 import { calculateDamage, getDamageType, getVersatileDamage } from '../../lib/utils/weaponUtils';
 
 export function createAttackDataFromWeapon(weapon: Weapon, id = ''): AttackData {
@@ -17,5 +19,12 @@ export function createAttackDataFromWeapon(weapon: Weapon, id = ''): AttackData 
 		damageType: getDamageType(weapon.damage),
 		brutalDamage: calculateDamage(weapon, 'brutal'),
 		heavyHitEffect: weapon.properties.includes('Impact') ? '+1 damage on Heavy Hit' : ''
+	};
+}
+
+export function createAttackDataFromCustomWeapon(customWeapon: CustomWeapon, id = ''): AttackData {
+	return {
+		...createAttackDataFromWeapon(customWeaponToWeapon(customWeapon), id),
+		customWeapon
 	};
 }

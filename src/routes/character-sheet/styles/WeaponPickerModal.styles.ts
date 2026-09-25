@@ -67,6 +67,54 @@ export const PickerPaneTitle = styled.h3`
 	text-transform: uppercase;
 `;
 
+export const PickerSearchInput = styled.input`
+	width: 100%;
+	min-height: 38px;
+	box-sizing: border-box;
+	margin-bottom: ${theme.spacing[3]};
+	padding: ${theme.spacing[2]} ${theme.spacing[3]};
+	border: 1px solid ${theme.colors.border.default};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.bg.primary};
+	color: ${theme.colors.text.primary};
+	font: inherit;
+
+	&::placeholder {
+		color: ${theme.colors.text.muted};
+	}
+
+	&:focus-visible {
+		border-color: ${theme.colors.border.focus};
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
+	}
+`;
+
+export const PickerFilterList = styled.div`
+	display: flex;
+	margin-bottom: ${theme.spacing[3]};
+	gap: ${theme.spacing[1]};
+	flex-wrap: wrap;
+`;
+
+export const PickerFilterButton = styled.button<{ $active: boolean }>`
+	min-height: 30px;
+	padding: ${theme.spacing[1]} ${theme.spacing[3]};
+	border: 1px solid
+		${({ $active }) => ($active ? theme.colors.accent.primary : theme.colors.border.default)};
+	border-radius: ${theme.borderRadius.full};
+	background: ${({ $active }) => ($active ? theme.colors.accent.primary : theme.colors.bg.primary)};
+	color: ${({ $active }) => ($active ? theme.colors.text.inverse : theme.colors.text.secondary)};
+	font-size: ${theme.typography.fontSize.xs};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
+	}
+`;
+
 export const PickerList = styled.div`
 	display: flex;
 	min-height: 0;
@@ -167,7 +215,20 @@ export const PickerSourceSwitch = styled.div`
 	border: 1px solid ${theme.colors.border.default};
 	border-radius: ${theme.borderRadius.full};
 	background: ${theme.colors.bg.primary};
-	grid-template-columns: repeat(2, minmax(86px, 1fr));
+	grid-auto-columns: minmax(86px, 1fr);
+	grid-auto-flow: column;
+`;
+
+export const PickerFooterLeading = styled.div`
+	display: flex;
+	align-items: center;
+	gap: ${theme.spacing[3]};
+	flex-wrap: wrap;
+
+	${media.mobile} {
+		align-items: stretch;
+		flex-direction: column;
+	}
 `;
 
 export const PickerSourceButton = styled.button<{ $active: boolean }>`
@@ -186,10 +247,32 @@ export const PickerSourceButton = styled.button<{ $active: boolean }>`
 	}
 `;
 
+export const PickerCreateCustomButton = styled.button`
+	min-height: 38px;
+	padding: ${theme.spacing[2]} ${theme.spacing[4]};
+	border: 1px solid ${theme.colors.accent.secondary};
+	border-radius: ${theme.borderRadius.md};
+	background: ${theme.colors.accent.secondaryAlpha10};
+	color: ${theme.colors.accent.secondary};
+	font-size: ${theme.typography.fontSize.sm};
+	font-weight: ${theme.typography.fontWeight.semibold};
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid ${theme.colors.border.focus};
+		outline-offset: 1px;
+	}
+`;
+
 export const PickerActions = styled.div`
 	display: flex;
+	margin-left: auto;
 	justify-content: flex-end;
 	gap: ${theme.spacing[2]};
+
+	${media.mobile} {
+		margin-left: 0;
+	}
 `;
 
 const PickerActionButton = styled.button`

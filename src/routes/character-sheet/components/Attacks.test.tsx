@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AttackData, InventoryItemData } from '../../../types';
+import { buildCustomWeapon } from '../../../lib/rulesdata/equipment/customWeapon';
+import { createAttackDataFromCustomWeapon } from '../weaponAttackData';
 import Attacks from './Attacks';
 
 const mockSheet = vi.hoisted(() => ({
@@ -15,7 +17,7 @@ const mockSheet = vi.hoisted(() => ({
 
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
-		t: (key: string, options?: { weapon?: string }) => {
+		t: (key: string, options?: { weapon?: string; used?: number; max?: number }) => {
 			const translations: Record<string, string> = {
 				'characterSheet.attacksNaturalWeapon': 'Natural Weapon',
 				'characterSheet.attacksNaturalWeaponMeta': 'Unarmed Strike · Derived',
@@ -31,7 +33,56 @@ vi.mock('react-i18next', () => ({
 				'characterSheet.weaponPickerInventory': 'Inventory',
 				'characterSheet.weaponPickerFullList': 'Full list',
 				'characterSheet.weaponPickerCancel': 'Cancel',
-				'characterSheet.weaponPickerAdd': 'Add weapon'
+				'characterSheet.weaponPickerAdd': 'Add weapon',
+				'characterSheet.weaponPickerSearchLabel': 'Search weapons',
+				'characterSheet.weaponPickerSearchPlaceholder': 'Search weapons...',
+				'characterSheet.weaponPickerFilterLabel': 'Filter weapons by type',
+				'characterSheet.weaponPickerFilterMelee': 'Melee',
+				'characterSheet.weaponPickerFilterRanged': 'Ranged',
+				'characterSheet.weaponPickerNoMatches': 'No matching weapons.',
+				'characterSheet.customWeaponSource': 'Custom',
+				'characterSheet.customWeaponTitle': 'Create custom weapon',
+				'characterSheet.customWeaponCreateAction': 'Create custom weapon',
+				'characterSheet.customWeaponClose': 'Close custom weapon builder',
+				'characterSheet.customWeaponProgress': 'Custom weapon creation progress',
+				'characterSheet.customWeaponTypeHelp': 'Choose the weapon type.',
+				'characterSheet.customWeaponStyleHelp': 'Choose any weapon style.',
+				'characterSheet.customWeaponDamageHelp': 'Choose a damage type.',
+				'characterSheet.customWeaponPropertiesHelp': 'Choose weapon properties.',
+				'characterSheet.customWeaponDamageType': 'Damage type',
+				'characterSheet.customWeaponNextStyle': 'Next: Style',
+				'characterSheet.customWeaponNextProperties': 'Next: Properties',
+				'characterSheet.customWeaponBack': 'Back',
+				'characterSheet.customWeaponName': 'Weapon name',
+				'characterSheet.customWeaponNamePlaceholder': 'Name this weapon...',
+				'characterSheet.customWeaponScopeHelp': 'Adds an attack only.',
+				'characterSheet.customWeaponPropertyPoints': `Property points: ${options?.used} / ${options?.max}`,
+				'characterSheet.customWeaponAutomaticProperties': 'Automatic properties (0 points)',
+				'characterSheet.customWeaponOneHanded': 'One-Handed',
+				'characterSheet.customWeaponRemoveTwoHanded': 'Remove Two-Handed · 1 point',
+				'characterSheet.customWeaponRestoreTwoHanded': 'Restore Two-Handed · refund 1 point',
+				'characterSheet.customWeaponSecondaryStyle': 'Second style (Multi-Faceted)',
+				'characterSheet.customWeaponSecondaryDamageType': 'Second style damage type',
+				'characterSheet.customWeaponPreviewName': 'Custom weapon preview',
+				'characterSheet.customWeaponLivePreview': 'Live preview',
+				'characterSheet.customWeaponPreviewPrompt': 'Choose a type and style to preview.',
+				'characterSheet.customWeaponReviewHelp': 'Review the weapon.',
+				'characterSheet.customWeaponReviewType': 'Type',
+				'characterSheet.customWeaponReviewStyle': 'Style',
+				'characterSheet.customWeaponReviewDamage': 'Damage',
+				'characterSheet.customWeaponReviewProperties': 'Properties',
+				'characterSheet.customWeaponStepType': 'Type',
+				'characterSheet.customWeaponStepStyle': 'Style',
+				'characterSheet.customWeaponStepDamage': 'Damage type',
+				'characterSheet.customWeaponStepProperties': 'Properties',
+				'characterSheet.customWeaponStepReview': 'Review',
+				'characterSheet.customWeaponNotStarted': 'Not started',
+				'characterSheet.customWeaponNone': 'None',
+				'characterSheet.customWeaponNameAndCreate': 'Name and create',
+				'characterSheet.customWeaponNext': 'Next',
+				'characterSheet.customWeaponCreate': 'Create weapon',
+				'characterSheet.customWeaponAdd': 'Add custom weapon',
+				'characterSheet.pickerFilterAll': 'All'
 			};
 			if (key === 'characterSheet.attacksViewDetails') {
 				return `View details for ${options?.weapon}`;
@@ -194,6 +245,157 @@ describe('Attacks', () => {
 			[...optionNames].sort((left, right) =>
 				left.localeCompare(right, undefined, { sensitivity: 'base' })
 			)
+		);
+	});
+
+	it('searches and filters the weapon catalog', () => {
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+		fireEvent.click(screen.getByTestId('add-weapon'));
+		const picker = screen.getByTestId('weapon-picker');
+		fireEvent.click(within(picker).getByRole('button', { name: 'Full list' }));
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search weapons' }), {
+			target: { value: 'Longbow' }
+		});
+		expect(within(picker).getAllByRole('option')).toHaveLength(1);
+		expect(within(picker).getByRole('option', { name: /Longbow/ })).toBeInTheDocument();
+
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search weapons' }), {
+			target: { value: '' }
+		});
+		fireEvent.click(within(picker).getByRole('button', { name: 'Ranged' }));
+		expect(within(picker).getAllByRole('option').length).toBeGreaterThan(1);
+		for (const option of within(picker).getAllByRole('option')) {
+			expect(option).toHaveTextContent('Ranged');
+		}
+	});
+
+	it('preserves weapon search and filtering when the source changes', () => {
+		mockSheet.inventoryItems.push({
+			id: 'inventory-hand-axe',
+			itemType: 'Weapon',
+			itemName: 'Hand Axe',
+			count: 1
+		});
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+		fireEvent.click(screen.getByTestId('add-weapon'));
+
+		const picker = screen.getByTestId('weapon-picker');
+		const search = within(picker).getByRole('searchbox', { name: 'Search weapons' });
+		const meleeFilter = within(picker).getByRole('button', { name: 'Melee' });
+		fireEvent.change(search, { target: { value: 'Hand' } });
+		fireEvent.click(meleeFilter);
+		fireEvent.click(within(picker).getByRole('button', { name: 'Full list' }));
+
+		expect(search).toHaveValue('Hand');
+		expect(meleeFilter).toHaveAttribute('aria-pressed', 'true');
+		expect(within(picker).getByRole('option', { name: /Hand Axe/ })).toBeVisible();
+
+		fireEvent.click(within(picker).getByRole('button', { name: 'Inventory' }));
+		expect(search).toHaveValue('Hand');
+		expect(meleeFilter).toHaveAttribute('aria-pressed', 'true');
+		expect(within(picker).getByRole('option', { name: /Hand Axe/ })).toBeVisible();
+	});
+
+	it('creates a character-local custom weapon through the v0.10.5 rule flow', () => {
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+		fireEvent.click(screen.getByTestId('add-weapon'));
+		const picker = screen.getByTestId('weapon-picker');
+
+		fireEvent.click(within(picker).getByRole('button', { name: 'Create custom weapon' }));
+		const builder = screen.getByTestId('custom-weapon-builder');
+		expect(screen.queryByTestId('weapon-picker')).not.toBeInTheDocument();
+		expect(within(builder).getByText('Choose the weapon type.')).toBeVisible();
+		expect(within(builder).queryByText('Choose any weapon style.')).not.toBeInTheDocument();
+		fireEvent.click(within(builder).getByRole('button', { name: /^Melee Weapon/ }));
+		fireEvent.click(within(builder).getByRole('button', { name: 'Next' }));
+		expect(within(builder).queryByText('Choose the weapon type.')).not.toBeInTheDocument();
+		expect(within(builder).getByText('Choose any weapon style.')).toBeVisible();
+		expect(within(builder).getByRole('button', { name: /^Bow/ })).toBeVisible();
+		fireEvent.click(within(builder).getByRole('button', { name: /^Axe/ }));
+		fireEvent.click(within(builder).getByRole('button', { name: 'Next' }));
+		expect(within(builder).getByRole('button', { name: /^2\.5 Damage type/ })).toBeVisible();
+		expect(within(builder).getByText('Choose a damage type.')).toBeVisible();
+		fireEvent.click(within(builder).getByRole('button', { name: 'Next' }));
+		fireEvent.click(within(builder).getByRole('button', { name: /^Guard/ }));
+		fireEvent.click(within(builder).getByRole('button', { name: /^Impact/ }));
+		fireEvent.click(within(builder).getByRole('button', { name: 'Next' }));
+		fireEvent.change(within(builder).getByRole('textbox', { name: 'Weapon name' }), {
+			target: { value: 'Rift Hook' }
+		});
+		fireEvent.click(within(builder).getByRole('button', { name: 'Create weapon' }));
+
+		expect(mockSheet.addAttack).toHaveBeenCalledWith(
+			expect.objectContaining({
+				weaponName: 'Rift Hook',
+				name: 'Rift Hook',
+				damage: '1 S',
+				damageType: 'slashing',
+				customWeapon: expect.objectContaining({
+					category: 'weapon',
+					name: 'Rift Hook',
+					weaponType: 'melee',
+					style: 'axe',
+					properties: ['guard', 'impact'],
+					pointsSpent: 2,
+					maxPoints: 2
+				})
+			})
+		);
+		expect(screen.queryByTestId('weapon-picker')).not.toBeInTheDocument();
+	});
+
+	it('returns from the separate custom builder without resetting picker search and filters', () => {
+		render(<Attacks onAttackClick={vi.fn()} explicitEditMode useWeaponPicker />);
+		fireEvent.click(screen.getByTestId('add-weapon'));
+		const picker = screen.getByTestId('weapon-picker');
+		fireEvent.click(within(picker).getByRole('button', { name: 'Full list' }));
+		fireEvent.change(within(picker).getByRole('searchbox', { name: 'Search weapons' }), {
+			target: { value: 'Long' }
+		});
+		fireEvent.click(within(picker).getByRole('button', { name: 'Ranged' }));
+
+		fireEvent.click(within(picker).getByRole('button', { name: 'Create custom weapon' }));
+		const builder = screen.getByTestId('custom-weapon-builder');
+		fireEvent.click(within(builder).getByRole('button', { name: 'Cancel' }));
+
+		const restoredPicker = screen.getByTestId('weapon-picker');
+		expect(within(restoredPicker).getByRole('searchbox', { name: 'Search weapons' })).toHaveValue(
+			'Long'
+		);
+		expect(within(restoredPicker).getByRole('button', { name: 'Ranged' })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect(within(restoredPicker).getByRole('button', { name: 'Full list' })).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+	});
+
+	it('restores a custom weapon attack from its embedded rules snapshot', () => {
+		const customWeapon = buildCustomWeapon({
+			id: 'custom-weapon-rift-hook',
+			name: 'Rift Hook',
+			weaponType: 'melee',
+			style: 'axe',
+			damageType: 'slashing',
+			properties: ['guard', 'impact']
+		});
+		mockSheet.attacks.push(
+			createAttackDataFromCustomWeapon(customWeapon, 'attack-custom-rift-hook')
+		);
+		const onAttackClick = vi.fn();
+		render(<Attacks onAttackClick={onAttackClick} explicitEditMode />);
+
+		expect(screen.getByText('Rift Hook')).toBeVisible();
+		expect(screen.getByTestId('weapon-damage')).toHaveTextContent('1');
+		expect(screen.getByTestId('weapon-heavy-damage')).toHaveTextContent('3');
+		fireEvent.click(screen.getByRole('button', { name: 'View details for Rift Hook' }));
+		expect(onAttackClick).toHaveBeenCalledWith(
+			expect.objectContaining({ customWeapon: expect.objectContaining({ id: customWeapon.id }) }),
+			expect.objectContaining({ name: 'Rift Hook', properties: ['Guard', 'Impact'] }),
+			expect.objectContaining({ isSupportedAttack: true })
 		);
 	});
 

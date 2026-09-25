@@ -10,10 +10,12 @@ import {
 	getAllCustomArmor,
 	getAllCustomShields,
 	getAllCustomSpellFocuses,
+	getAllCustomGeneralEquipment,
 	deleteCustomWeapon,
 	deleteCustomArmor,
 	deleteCustomShield,
 	deleteCustomSpellFocus,
+	deleteCustomGeneralEquipment,
 	duplicateCustomEquipment,
 	exportEquipmentToJson,
 	importEquipmentFromJson
@@ -22,20 +24,21 @@ import type { CustomWeapon } from '../../../lib/rulesdata/equipment/schemas/weap
 import type { CustomArmor } from '../../../lib/rulesdata/equipment/schemas/armorSchema';
 import type { CustomShield } from '../../../lib/rulesdata/equipment/schemas/shieldSchema';
 import type { CustomSpellFocus } from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
+import type { CustomGeneralEquipment } from '../../../lib/rulesdata/equipment/schemas/generalEquipmentSchema';
+import type { CustomEquipment } from '../../../lib/rulesdata/equipment/schemas';
 import {
 	SectionTitle,
 	SavedItemsList,
 	SavedItemCard,
 	TabContainer,
 	Tab,
-	PresetBadge,
-	ActionButtons
+	PresetBadge
 } from '../styles/CustomEquipment.styles';
 
-type FilterType = 'all' | 'weapon' | 'armor' | 'shield' | 'spellFocus';
+type FilterType = 'all' | CustomEquipment['category'];
 
 interface SavedEquipmentListProps {
-	onEdit: (equipment: CustomWeapon | CustomArmor | CustomShield | CustomSpellFocus) => void;
+	onEdit: (equipment: CustomEquipment) => void;
 }
 
 const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
@@ -44,6 +47,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 	const [armor, setArmor] = useState<CustomArmor[]>([]);
 	const [shields, setShields] = useState<CustomShield[]>([]);
 	const [spellFocuses, setSpellFocuses] = useState<CustomSpellFocus[]>([]);
+	const [generalEquipment, setGeneralEquipment] = useState<CustomGeneralEquipment[]>([]);
 	const [importError, setImportError] = useState<string | null>(null);
 
 	const loadData = () => {
@@ -51,6 +55,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 		setArmor(getAllCustomArmor());
 		setShields(getAllCustomShields());
 		setSpellFocuses(getAllCustomSpellFocuses());
+		setGeneralEquipment(getAllCustomGeneralEquipment());
 	};
 
 	useEffect(() => {
@@ -81,6 +86,13 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 	const handleDeleteSpellFocus = (id: string) => {
 		if (confirm('Are you sure you want to delete this spell focus?')) {
 			deleteCustomSpellFocus(id);
+			loadData();
+		}
+	};
+
+	const handleDeleteGeneralEquipment = (id: string) => {
+		if (confirm('Are you sure you want to delete this general equipment?')) {
+			deleteCustomGeneralEquipment(id);
 			loadData();
 		}
 	};
@@ -116,8 +128,9 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 		event.target.value = '';
 	};
 
-	const totalCount = weapons.length + armor.length + shields.length + spellFocuses.length;
-	const handleDuplicate = (category: 'weapon' | 'armor' | 'shield' | 'spellFocus', id: string) => {
+	const totalCount =
+		weapons.length + armor.length + shields.length + spellFocuses.length + generalEquipment.length;
+	const handleDuplicate = (category: CustomEquipment['category'], id: string) => {
 		duplicateCustomEquipment(category, id);
 		loadData();
 	};
@@ -307,6 +320,41 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 		</SavedItemCard>
 	);
 
+	const renderGeneralEquipmentCard = (item: CustomGeneralEquipment) => (
+		<SavedItemCard key={item.id}>
+			<div className="mb-2 flex items-start justify-between gap-3">
+				<div>
+					<h3 className="font-semibold text-white">{item.name}</h3>
+					{item.description ? (
+						<p className="mt-1 text-sm text-gray-400">{item.description}</p>
+					) : null}
+				</div>
+				<Badge variant="outline">🎒 General</Badge>
+			</div>
+			{item.cost && item.cost !== '-' ? (
+				<div className="mb-3 flex flex-wrap gap-2 text-xs">
+					<Badge variant="secondary">Cost: {item.cost}</Badge>
+				</div>
+			) : null}
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+					Edit
+				</Button>
+				<Button variant="outline" size="sm" onClick={() => handleDuplicate('general', item.id)}>
+					Duplicate
+				</Button>
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => handleDeleteGeneralEquipment(item.id)}
+					className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+				>
+					Delete
+				</Button>
+			</div>
+		</SavedItemCard>
+	);
+
 	return (
 		<div>
 			<div className="mb-6 flex items-center justify-between">
@@ -347,6 +395,9 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 				<Tab $active={filter === 'spellFocus'} onClick={() => setFilter('spellFocus')}>
 					Spell Focuses ({spellFocuses.length})
 				</Tab>
+				<Tab $active={filter === 'general'} onClick={() => setFilter('general')}>
+					General ({generalEquipment.length})
+				</Tab>
 			</TabContainer>
 
 			{totalCount === 0 ? (
@@ -363,6 +414,8 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 					{(filter === 'all' || filter === 'armor') && armor.map(renderArmorCard)}
 					{(filter === 'all' || filter === 'shield') && shields.map(renderShieldCard)}
 					{(filter === 'all' || filter === 'spellFocus') && spellFocuses.map(renderSpellFocusCard)}
+					{(filter === 'all' || filter === 'general') &&
+						generalEquipment.map(renderGeneralEquipmentCard)}
 				</SavedItemsList>
 			)}
 		</div>

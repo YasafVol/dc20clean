@@ -18,6 +18,7 @@ import { logger } from '../../../lib/utils/logger';
 import { createSpellDataFromSpell } from '../spellData';
 import RowEditControls from './shared/RowEditControls';
 import SpellPickerModal from './SpellPickerModal';
+import SpellCastModal from './SpellCastModal';
 import CatalogToolbar from './shared/CatalogToolbar';
 import {
 	StyledSpellsSection,
@@ -127,6 +128,7 @@ export interface SpellsProps {
 	onSpellCast?: (spell: SpellData) => void;
 	showTitle?: boolean;
 	useSpellPicker?: boolean;
+	useSpellCastModal?: boolean;
 }
 
 const Spells: React.FC<SpellsProps> = ({
@@ -135,10 +137,11 @@ const Spells: React.FC<SpellsProps> = ({
 	isMobile,
 	onSpellCast,
 	showTitle = true,
-	useSpellPicker = false
+	useSpellPicker = false,
+	useSpellCastModal = false
 }) => {
 	const { t } = useTranslation();
-	const { addSpell, removeSpell, updateSpell, state } = useCharacterSheet();
+	const { addSpell, removeSpell, updateSpell, updateMP, state } = useCharacterSheet();
 	const spells = useCharacterSpells();
 	const calculation = useCharacterCalculatedData();
 
@@ -153,6 +156,7 @@ const Spells: React.FC<SpellsProps> = ({
 	const [schoolFilter, setSchoolFilter] = useState<string>('all');
 	const [editingSpellIds, setEditingSpellIds] = useState<Set<string>>(new Set());
 	const [isSpellPickerOpen, setIsSpellPickerOpen] = useState(false);
+	const [spellPendingCast, setSpellPendingCast] = useState<SpellData | null>(null);
 	const expansionSessionKey = state.character.id;
 	const [expandedSpells, setExpandedSpells] = useState<Set<string>>(() => {
 		const cached = expandedSpellSessionState.get(expansionSessionKey);
@@ -661,7 +665,18 @@ const Spells: React.FC<SpellsProps> = ({
 									<StyledSpellActions>
 										{!isLocked && onSpellCast && (
 											<StyledSpellActionButton
-												onClick={() => onSpellCast(spell)}
+												onClick={(event) => {
+													event.stopPropagation();
+													if (useSpellCastModal) {
+														setSpellPendingCast(
+															selectedSpell && !spell.enhancements?.length
+																? { ...spell, enhancements: selectedSpell.enhancements }
+																: spell
+														);
+														return;
+													}
+													onSpellCast(spell);
+												}}
 												title="Cast spell"
 											>
 												Cast
@@ -771,6 +786,28 @@ const Spells: React.FC<SpellsProps> = ({
 					catalogSpells={pickerCatalogSpells}
 					onAdd={addSelectedSpell}
 					onClose={() => setIsSpellPickerOpen(false)}
+				/>
+			) : null}
+			{useSpellCastModal && spellPendingCast ? (
+				<SpellCastModal
+					spell={spellPendingCast}
+					currentMana={
+						state.character.characterState?.resources?.current?.currentMP ??
+						state.character.finalMPMax ??
+						0
+					}
+					maximumMana={calculation?.breakdowns?.mpMax?.total ?? state.character.finalMPMax ?? 0}
+					manaSpendLimit={calculation?.stats.manaSpendLimit ?? 0}
+					onCast={(spend) => {
+						const currentMana =
+							state.character?.characterState?.resources?.current?.currentMP ??
+							state.character?.finalMPMax ??
+							0;
+						updateMP(Math.max(0, currentMana - spend.mp));
+						onSpellCast?.(spellPendingCast);
+						setSpellPendingCast(null);
+					}}
+					onClose={() => setSpellPendingCast(null)}
 				/>
 			) : null}
 		</StyledSpellsSection>

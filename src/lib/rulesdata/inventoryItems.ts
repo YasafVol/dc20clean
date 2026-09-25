@@ -3,6 +3,7 @@
 import { PRESET_SPELL_FOCUSES } from './equipment/options/spellFocusOptions';
 import { PRESET_WEAPONS, getWeaponStyle } from './equipment/options/weaponOptions';
 import type {
+	CustomWeapon,
 	WeaponStyle as CanonicalWeaponStyle,
 	PresetWeapon
 } from './equipment/schemas/weaponSchema';
@@ -207,6 +208,37 @@ const DAMAGE_TYPE_ABBREVIATION: Record<PhysicalDamageType, 'B' | 'P' | 'S'> = {
 	piercing: 'P',
 	slashing: 'S'
 };
+
+export function customWeaponToWeapon(customWeapon: CustomWeapon): Weapon {
+	const styles = [customWeapon.style, customWeapon.secondaryStyle]
+		.filter((style): style is CanonicalWeaponStyle => Boolean(style))
+		.map((style) => CANONICAL_STYLE_TO_DISPLAY[style]);
+	const damageTypes = [customWeapon.damageType, customWeapon.secondaryDamageType]
+		.filter((damageType): damageType is PhysicalDamageType => Boolean(damageType))
+		.map((damageType) => DAMAGE_TYPE_ABBREVIATION[damageType]);
+	const properties = customWeapon.properties.flatMap((propertyId) => {
+		const property = CANONICAL_PROPERTY_TO_DISPLAY[propertyId];
+		return property ? [property] : [];
+	});
+
+	if (customWeapon.weaponType === 'ranged') {
+		properties.push(`Range (${customWeapon.range})` as WeaponProperty);
+	}
+
+	return {
+		itemType: ItemType.Weapon,
+		name: customWeapon.name,
+		type: customWeapon.weaponType === 'melee' ? WeaponType.Melee : WeaponType.Ranged,
+		style: styles.length === 1 ? styles[0] : styles,
+		handedness: customWeapon.properties.includes('versatile')
+			? WeaponHandedness.Versatile
+			: customWeapon.properties.includes('two-handed')
+				? WeaponHandedness.TwoHanded
+				: WeaponHandedness.OneHanded,
+		damage: `${customWeapon.finalDamage} ${[...new Set(damageTypes)].join('/')}`,
+		properties
+	};
+}
 
 const HANDEDNESS_BY_CATEGORY: Record<PresetWeapon['category'], WeaponHandedness> = {
 	'one-handed': WeaponHandedness.OneHanded,

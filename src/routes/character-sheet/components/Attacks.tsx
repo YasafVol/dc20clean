@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Info } from 'lucide-react';
 import type { AttackData } from '../../../types';
-import { weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
+import { customWeaponToWeapon, weapons, type Weapon } from '../../../lib/rulesdata/inventoryItems';
+import type { CustomWeapon } from '../../../lib/rulesdata/equipment/schemas/weaponSchema';
 import {
 	useCharacterAttacks,
 	useCharacterInventory,
@@ -19,7 +20,7 @@ import { parseDamage, createEmptyAttackData } from '../../../lib/utils/weaponUti
 import { getNaturalWeaponAttack, isNaturalWeaponAttack } from '../naturalWeaponAttack';
 import { getAncestryAttackTraits } from '../ancestryAttackTraits';
 import { sortByName } from '../catalogSorting';
-import { createAttackDataFromWeapon } from '../weaponAttackData';
+import { createAttackDataFromCustomWeapon, createAttackDataFromWeapon } from '../weaponAttackData';
 import WeaponPickerModal from './WeaponPickerModal';
 import {
 	StyledAttacksSection,
@@ -167,6 +168,10 @@ const Attacks: React.FC<AttacksProps> = ({
 		addAttack(createAttackDataFromWeapon(weapon, `attack_${Date.now()}`));
 		setIsWeaponPickerOpen(false);
 	};
+	const addCustomWeapon = (weapon: CustomWeapon) => {
+		addAttack(createAttackDataFromCustomWeapon(weapon, `attack_${Date.now()}`));
+		setIsWeaponPickerOpen(false);
+	};
 
 	const removeWeaponSlot = (attackIndex: number) => {
 		const attackToRemove = attacks[attackIndex];
@@ -283,9 +288,11 @@ const Attacks: React.FC<AttacksProps> = ({
 						const persistedAttackIndex = attacks.findIndex(
 							(persistedAttack) => persistedAttack.id === attack.id
 						);
-						const weapon = attack.weaponName
-							? (weapons.find((w) => w.name === attack.weaponName) ?? null)
-							: null;
+						const weapon = attack.customWeapon
+							? customWeaponToWeapon(attack.customWeapon)
+							: attack.weaponName
+								? (weapons.find((w) => w.name === attack.weaponName) ?? null)
+								: null;
 						const activeConditions = Object.entries(
 							characterData.characterState?.ui?.activeConditions ?? {}
 						)
@@ -470,6 +477,7 @@ const Attacks: React.FC<AttacksProps> = ({
 					inventoryWeapons={inventoryWeapons}
 					catalogWeapons={sortedWeapons}
 					onAdd={addSelectedWeapon}
+					onAddCustom={addCustomWeapon}
 					onClose={() => setIsWeaponPickerOpen(false)}
 				/>
 			)}

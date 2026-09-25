@@ -152,6 +152,7 @@ export default function AlternativeTabbedContent() {
 							<Spells
 								showTitle={false}
 								useSpellPicker
+								useSpellCastModal
 								onSpellClick={() => {}}
 								onSpellCast={handleSpellCast}
 								readOnly={readOnly}
@@ -162,6 +163,7 @@ export default function AlternativeTabbedContent() {
 								showTitle={false}
 								showInfoHeader={false}
 								explicitEditMode
+								useInventoryPicker
 								onItemClick={(inventoryData, item) =>
 									setSelectedInventoryItem({ inventoryData, item })
 								}

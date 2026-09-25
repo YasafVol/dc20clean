@@ -3,10 +3,10 @@
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Owns: Spell catalog generation, spell IDs and taxonomy, spell eligibility and selection, enhancements, and spell-facing creation, sheet, and reference behavior.
 > Does not own: Class progression slot grants, generic derived-stat calculation, equipment rules outside spell focuses, or rules-upgrade policy.
-> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, and `src/lib/rulesdata/spells-data/`.
-> Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD).
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, `src/lib/rulesdata/spells-data/`, and `src/routes/character-sheet/components/Spells.tsx`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-17
+> Last Updated: 2026-09-21
 
 ---
 
@@ -243,6 +243,15 @@ explicit character migration.
 - On the alternative sheet, Add Spell opens `SpellPickerModal` without mutating the character. Allowed spells filters the current catalog through the next positional `spellsKnownSlots` entry and `matchesSpellSlot`; global slots also consume the Global Magic Profile. All spells exposes the complete catalog.
 - Both picker lists are alphabetical and exclude already-known spell names.
 - The preview exposes source, school, tags, sustained state, cost, range, duration, effects, passive text, and enhancements. Confirmation maps the catalog `Spell` to one complete `SpellData`; cancellation persists nothing.
+- On the alternative sheet, Cast opens a focused modal for the clicked known spell. It
+  starts with no enhancements declared, supports structured fixed, repeatable, variable,
+  alternative, and prerequisite costs, and treats base MP plus enhancement MP as the
+  MSL-constrained spend. A saved row with no enhancement snapshot uses the same
+  alias-aware current-catalog fallback as its expanded spell details. MP controls also
+  stop at current Mana. Confirmation subtracts the exact MP total and then emits the
+  existing spell-cast event; cancellation persists neither resource nor selection state.
+  AP costs are shown but not automatically spent.
+- The primary sheet retains its direct Cast behavior.
 - Advanced picker filters and custom-spell creation remain outside the alternative flow.
 
 ### Spellbook (`routes/spellbook/Spellbook.tsx`)
@@ -263,6 +272,7 @@ explicit character migration.
 - `e2e/09-spells.e2e.spec.ts` — Adds a spell, filters, and deletes; validates mobile/desktop fallbacks.
 - `e2e/12-exhaustion-info.e2e.spec.ts` — Feature info buttons include class feature info affecting spells.
 - `e2e/13-character-upgrade.e2e.spec.ts` — Exercises the explicit v0.10 to v0.10.5 upgrade, approved spell rewrites, deprecated-selection review, current-rules copy creation, reload persistence, and unsupported-version blockers.
+- `e2e/22-alternative-spell-cast.e2e.spec.ts` — Declares a spell enhancement up to MSL, confirms the focused alternative-sheet cast, and verifies the visible Mana deduction.
 
 ---
 

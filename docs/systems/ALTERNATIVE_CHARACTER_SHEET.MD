@@ -4,9 +4,9 @@
 > Owns: Alternative-only composition, section disclosures, tab presentation, responsive layout, and alternative-only interaction choices.
 > Does not own: Character state, calculations, persistence, campaign authorization, shared panel behavior, equipment rules, or PDF export.
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
-> Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
+> Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Spells](./SPELLS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-18
+> Last Updated: 2026-09-21
 
 ## 1. Boundary
 
@@ -33,6 +33,8 @@ This companion specification keeps alternative-only UI detail out of
 5. Actions & Details reuses the shared Attacks, Spells, Inventory, Maneuvers, Features,
    Conditions, and Notes panels. The alternative tab supplies the section heading, so
    shared panels suppress duplicate top-level titles.
+6. Authenticated cloud users who belong to a campaign receive the same bell, unread
+   count, and campaign-feed drawer as the primary sheet.
 
 ## 3. Responsive Contract
 
@@ -61,11 +63,27 @@ This companion specification keeps alternative-only UI detail out of
    controls without horizontal page overflow.
 9. Read-only campaign views do not render `Add Weapon` and therefore cannot open the
    picker.
+10. Search matches weapon names, and the type filter narrows the active source to Melee
+    or Ranged weapons.
+11. Switching Inventory / Full list preserves the current search and type filter.
+12. `Create custom weapon` is a separate action beside the source switch. It opens a
+    five-panel accordion build sheet numbered Type (1), Style (2), Damage type (2.5),
+    Properties (3), and Review (4). The separate damage panel keeps that choice visible
+    after the complete style catalog. Its three physical damage options share one row on
+    desktop and stack vertically on compact layouts.
+    The Reskinning Weapons rule permits any style on either weapon type, and completed
+    sections remain reopenable without losing selections. Each section shows its guidance
+    beside the heading only while active, keeping the option area focused.
+13. The custom builder identifies ranged Ammo and Two-Handed as automatic properties,
+    exposes the Two-Handed removal cost, enforces requirements and exclusions, and uses
+    the shared live weapon preview. Its sheet and preview stack on compact layouts.
+14. Cancelling custom creation returns to the picker with its source, search, and filter
+    unchanged. Confirmation embeds a canonical `CustomWeapon` snapshot in the new attack;
+    it does not create an Equipage record, inventory row, or equipped-item effect.
 
-Phase boundary: custom Equipage weapons are not selectable in this picker yet. The
-current `AttackData` model stores only `weaponName`; custom weapons need a stable
-`customEquipmentId` link and compatibility handling before they can be added without
-ambiguous or reload-broken records.
+Phase boundary: existing saved Equipage weapons are not selectable in this picker. The
+separate builder creates a new character-local snapshot instead of depending on separate
+browser-local Equipage storage.
 
 ## 5. Alternative Spell Add Flow
 
@@ -85,9 +103,34 @@ ambiguous or reload-broken records.
 10. The tab uses one compact catalog toolbar: Spellbook reference, School filter,
     neutral grouped Expand/Collapse controls, and a primary Add Spell action. Controls
     wrap without changing their order when space is constrained.
+11. Search matches spell names, and the picker filter narrows the active source by
+    school.
+12. Switching Allowed spells / All spells preserves the current search and school filter.
 
-Phase boundary: advanced catalog filters and custom-spell creation are not part of this
-picker. The primary sheet retains its existing blank-row and custom-spell workflow.
+Phase boundary: custom-spell creation is not part of this picker. The primary sheet
+retains its existing blank-row and custom-spell workflow.
+
+### 5.1 Alternative Spell Cast Flow
+
+1. A known spell's `Cast` action opens a focused modal for that spell. The modal does
+   not duplicate the known-spell list or allow changing the selected spell.
+2. The modal starts with the spell's base AP/MP cost and no enhancements declared.
+3. Fixed, repeatable, variable, alternative-cost, and prerequisite-dependent spell
+   enhancements use the structured saved spell data. Older rows that lack an enhancement
+   snapshot resolve it through the same current-catalog lookup used by the expanded spell
+   details. Repeatable and variable costs use quantity controls; alternative costs expose
+   a resource-cost choice.
+4. Mana Spend Limit applies to base MP plus declared enhancement MP. AP costs remain
+   visible but are not automatically deducted by this Mana-only flow.
+5. MP increment controls stop at both the calculated Mana Spend Limit and current Mana.
+   A base cost that already exceeds either constraint disables confirmation and explains
+   the failure.
+6. Confirming subtracts the total MP from the shared current Mana resource, emits the
+   existing spell-cast campaign event, and closes the modal. Cancelling, closing, or
+   pressing Escape changes no resource.
+7. Enhancement declarations are session-only casting choices; they do not rewrite the
+   saved spell row.
+8. This modal is alternative-only. The primary sheet retains its direct Cast behavior.
 
 ## 6. Alternative Maneuver Add Flow
 
@@ -101,12 +144,49 @@ picker. The primary sheet retains its existing blank-row and custom-spell workfl
 6. Cancelling or closing creates no record.
 7. The picker uses the same responsive list/detail structure as the weapon and spell pickers.
 8. Read-only campaign views do not render `Add Maneuver`.
+9. Search matches maneuver names, and the type filter narrows the catalog by maneuver
+   type.
 
-Phase boundary: advanced catalog filters and custom-maneuver creation are not part of
-this picker. Maneuver eligibility is a count budget rather than a catalog restriction,
-so the picker does not present an Allowed / All source switch.
+Phase boundary: custom-maneuver creation is not part of this picker. Maneuver
+eligibility is a count budget rather than a catalog restriction, so the picker does not
+present an Allowed / All source switch.
 
-## 7. Other Alternative-Only Interaction Rules
+## 7. Alternative Inventory Add Flow
+
+1. `Add Item` opens `InventoryPickerModal`; it does not create a blank inventory row.
+2. Catalog lists standard inventory items alphabetically. Custom items lists saved
+   Equipage records, including non-mechanical General Equipment, plus a freeform
+   custom-item choice.
+3. Search matches names in the active source. Catalog filters by item type; Custom items
+   filters saved Equipage by equipment category.
+4. Standard items preview their current rules. Saved Equipage items preview their
+   stored description and properties. The freeform choice exposes name, description,
+   and cost fields.
+5. Quantity defaults to one and Equipped defaults to off. Both are set before
+   confirmation.
+6. Confirming creates one complete `InventoryItemData` record and closes the picker.
+7. Cancelling or closing creates no record.
+8. The picker follows the shared responsive list/detail contract and does not overflow
+   the page on compact layouts.
+9. Read-only campaign views do not render `Add Item`.
+10. Existing inventory rows retain their explicit edit lifecycle.
+11. Switching Catalog / Custom items preserves the current search and category filter.
+    Filter controls remain stable across both sources, even when the active source has
+    no matches for the retained category.
+
+`CatalogPickerModal` owns the shared modal frame, accessibility behavior, search and
+filter controls, list/detail layout, footer actions, Escape handling, and responsive
+stacking for weapon, spell, maneuver, and inventory pickers. Each picker continues to
+own its catalog eligibility, filter categories, preview content, source switches, and
+record construction. Any picker with multiple sources preserves search and filter state
+when the source changes.
+
+`EquipmentBuildSheet` owns the reusable accordion structure, accessible section state,
+and compact summary behavior for equipment builders. Both the alternative custom-weapon
+builder and all five Equipage builders use it; Equipage keeps its category-specific
+steps, summaries, validation, and save behavior.
+
+## 8. Other Alternative-Only Interaction Rules
 
 1. Attributes and combat values use the shared automatic Dice Roller.
 2. The combat action panel aligns Save DC, Initiative, and Jump as equal metrics, then
@@ -124,8 +204,8 @@ so the picker does not present an Allowed / All source switch.
    feature-specific exception text.
 7. Feature categories preserve their independent disclosure state across tab changes.
 8. Existing attack, spell, inventory, maneuver, and note rows retain the explicit
-   pencil / confirm / delete lifecycle. The weapon and spell pickers change only creation
-   of new catalog-backed rows.
+   pencil / confirm / delete lifecycle. The four catalog pickers change only creation of
+   new rows.
 9. Upgrade-required legacy characters expose only the existing resource counters and
    Exhaustion. All Actions & Details mutation controls remain hidden.
 10. Spells and Maneuvers are contextual tabs driven by the same provider-owned
@@ -142,11 +222,17 @@ so the picker does not present an Allowed / All source switch.
     damage only to Unarmed Strikes and melee weapons, and alternative-sheet Might Save
     rolls add one ADV stack. The roll label and Might card identify the source as
     `ADV (Rage)`; existing condition disadvantage stacks still cancel normally.
+13. Automatic rolls snapshot the requested dice, mode, label, and modifier before the
+    roll animation. Campaign events and toasts show the dice, signed modifier, and final
+    total from that same snapshot.
+14. Long Rest uses the shared sheet reset and restores HP, MP, SP, Rest Points, and Grit
+    Points to maximum, clears temporary HP and Exhaustion, and emits the existing event.
 
-## 8. Verification
+## 9. Verification
 
 1. `src/routes/character-sheet/components/Attacks.test.tsx` proves the picker creates a
-   populated attack, folds in the source switch, and sorts the catalog.
+   populated catalog attack and a character-local custom attack, folds in source
+   switching, and sorts the catalog.
 2. `src/routes/character-sheet/components/AttackPopup.test.tsx` proves the shared weapon
    detail card resolves current weapon rules.
 3. `e2e/20-alternative-weapon-picker.e2e.spec.ts` proves the alternative-sheet flow and
@@ -164,3 +250,23 @@ so the picker does not present an Allowed / All source switch.
 9. `src/routes/character-sheet/components/Spells.test.tsx` proves the alternative
    picker opens without mutation, applies next-slot restrictions, switches to an
    alphabetical full catalog, and confirms one populated spell.
+10. `Attacks.test.tsx`, `Spells.test.tsx`, and `Maneuvers.test.tsx` prove picker search
+    and domain filters narrow their active catalogs. Weapon and spell coverage also
+    proves that source changes preserve the current search and filter.
+11. `Inventory.test.tsx` proves the alternative picker opens without mutation, searches
+    and filters the catalog, preserves search and category state across source changes,
+    applies quantity and equipped state, and confirms one complete inventory row.
+12. `e2e/21-alternative-inventory-picker.e2e.spec.ts` proves the inventory picker flow,
+    populated-row creation, responsive reflow, and horizontal-overflow guard.
+13. `spellCastSpend.test.ts` proves fixed, repeatable, variable, alternative-cost, and
+    prerequisite calculations. `Spells.test.tsx` proves the focused modal, MSL guard,
+    Mana deduction, campaign callback, and close-on-confirm behavior.
+14. `e2e/22-alternative-spell-cast.e2e.spec.ts` proves the current-rules alternative
+    sheet opens the modal, stops enhancement MP at MSL, confirms the cast, and visibly
+    reduces the Mana card.
+15. `CampaignFeedAction.test.tsx` proves the shared bell marks notifications seen and
+    opens the feed without mounting cloud hooks when cloud authentication is unavailable.
+16. `DiceRoller.test.tsx`, `campaignEventFormat.test.ts`, and `longRest.test.ts` prove
+    automatic-roll totals, party-event formatting, and complete Long Rest restoration.
+17. `e2e/23-alternative-long-rest.e2e.spec.ts` proves the alternative-sheet action
+    visibly restores spent Grit and persists the restored value across reload.

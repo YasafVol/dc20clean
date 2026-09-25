@@ -24,5 +24,10 @@ describe('AlternativeSheetUpdate', () => {
 		});
 		expect(openCharacterLinks).toHaveLength(2);
 		openCharacterLinks.forEach((link) => expect(link).toHaveAttribute('href', '/load-character'));
+
+		expect(screen.getByRole('link', { name: /open the alternative sheet/i })).toHaveAttribute(
+			'href',
+			'/character2'
+		);
 	});
 });

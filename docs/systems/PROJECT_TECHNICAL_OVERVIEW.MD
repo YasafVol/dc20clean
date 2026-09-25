@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-18
+> Last Updated: 2026-09-25
 
 ## Tech Stack
 
@@ -17,7 +17,8 @@
 - Persistence: Hybrid storage
   - localStorage is active by default (anonymous/offline-first)
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
-- User Feedback: Userback widget when `VITE_USERBACK_ACCESS_TOKEN` is set
+- User Feedback: Userback widget on explicit feedback request when `VITE_USERBACK_ACCESS_TOKEN` is set
+- Product Analytics: PostHog Cloud EU when configured and enabled; explicit events and sanitized pageviews only. The separate default-off legal/consent flag gates the draft pages and choice UI, and only requires opt-in when that flow is enabled. See `ANALYTICS_SYSTEM.MD` and `PRIVACY_AND_LEGAL_SYSTEM.MD` for the unresolved publication review.
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -26,11 +27,12 @@
 - `src/styles/responsive.ts` is the viewport-breakpoint authority. It defines only 768px and 1200px, producing compact, tablet, and desktop modes. Prefer intrinsic CSS (`minmax`, `auto-fit`, wrapping, `clamp`, and container queries) for component-level adaptation; do not add viewport thresholds for isolated components.
 - Replace ad hoc hand-drawn SVG icons across the app with a consistent icon set, preferably `lucide-react` where an appropriate icon exists. Start with menu/reference-tool icons, then sheet action icons, builders, and popups.
 - Create a dedicated `docs/systems/UI_SYSTEM.MD` if UI conventions continue to grow beyond this overview. It should cover layout grids, icon usage, responsive rules, shared primitives, and visual QA expectations.
-- Userback feedback is a UI widget, not a storage system. The install snippet lives in `index.html`; `src/components/UserbackFeedback.tsx` adds compact route/character/target metadata. Do not send full saved characters, notes, inventory, or localStorage dumps.
+- Userback feedback is a UI widget, not a storage system. It loads only after a person chooses the footer feedback action and sees its short disclosure. The app attaches only a normalized page type and auth/storage booleans as custom data; the widget may independently observe the current URL and browser context. Do not attach character names/IDs, raw paths, queries, click targets, notes, inventory, or localStorage dumps as custom data.
 - The fixed top-right toolbar keeps authentication as the rightmost primary action. The compact language trigger shows only the current flag; full language names remain in the dropdown and accessible label.
+- The homepage top-left hamburger mirrors every action currently exposed on `/menu`, grouped by the same sections and using the same authentication and Convex availability rules. “What's New” remains the first entry; non-homepage routes retain the existing Back to Menu control where the page does not provide its own navigation.
 - Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.
 - The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
-- `/updates/2026-09-18-alternative-character-sheet` is the dated, player-facing release summary for the Alternative Character Sheet; the original undated route redirects to it. Future releases should use their own dated slug so an updates index can list stable URLs. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
+- `/updates` is the player-facing What's New index. It uses a compact, newest-first release log with one row per update and direct links to both the dated note and changed product surface. The homepage card renders the latest entry and can be dismissed; `dc20clean.dismissedWhatsNewUpdate` stores its slug so the same release stays hidden while a future release appears normally. Open `/menu?showWhatsNew=1` to temporarily show the latest card again without clearing that stored choice. `/updates/2026-09-18-alternative-character-sheet` is the first dated release summary for the Alternative Character Sheet; the old undated `/updates/alternative-character-sheet` route redirects to it. Future releases should use their own dated slug and add one entry to `src/routes/product-update/updates.ts`. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
 
 ## Local Setup
 
@@ -65,9 +67,13 @@ Testing:
 - `npm run test:e2e:ui` — E2E with interactive UI
 - `npm run test:e2e:headed` — E2E in headed browser mode
 - `npm run test:e2e:debug` — E2E in debug mode
+- `npm run e2e:meta` — Run the compact user-level smoke journeys on desktop and mobile
 - `npm run test` — Run unit tests (run mode) then E2E tests
 
 Testing policy and coverage rules are centralized in `docs/systems/TESTING_SYSTEM.MD`.
+Set `PLAYWRIGHT_BASE_URL` to run Playwright against an already deployed preview or production
+candidate instead of starting the local build and preview server. Protected Vercel previews also
+require `VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 E2E per-project and parallel:
 
@@ -119,6 +125,8 @@ Versioning policy is centralized in `docs/systems/VERSIONING_SYSTEM.MD`.
 
 ```
 src/
+├── components/
+│   └── equipment/                  # Reusable equipment-builder presentation shells
 ├── routes/                        # Application routes
 │   ├── character-creation/        # Multi-step character creation wizard
 │   ├── character-sheet/           # Character sheet (desktop + mobile)

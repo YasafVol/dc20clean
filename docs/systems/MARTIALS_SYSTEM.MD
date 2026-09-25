@@ -3,10 +3,10 @@
 > Purpose: Canonical reference for maneuver data, budget calculation, and creation/sheet integration.
 > Owns: Maneuver catalog data, maneuver IDs and formatting, maneuver selection rules, maneuver enhancements, and maneuver-facing creation and sheet behavior.
 > Does not own: Class/path progression grants, generic derived-stat calculation, effect semantics outside maneuvers, or encounter resolution.
-> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/maneuvers-v0105-report.json`, and `src/lib/rulesdata/martials/`.
-> Related systems: [Classes](./CLASS_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD).
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/maneuvers-v0105-report.json`, `src/lib/rulesdata/martials/`, `src/routes/character-sheet/components/Maneuvers.tsx`, and `src/routes/martial-manual/`.
+> Related systems: [Classes](./CLASS_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD).
 > Status: Active
-> Last Updated: 2026-09-18
+> Last Updated: 2026-09-21
 
 ---
 
@@ -167,14 +167,15 @@ Run the martials audit from most deterministic to most UI-dependent:
 4. UI/reference surface
    - Creation maneuver cards must expose enhancements for review before selection.
    - Character sheet maneuver rows/details must show full AP/SP cost, reaction trigger, range, and enhancements.
-   - A `Martial Manual` route/view is needed, parallel to `Spellbook`, for browsing all maneuvers and enhancements outside character creation.
+   - Confirm the `Martial Manual` route presents all maneuvers and enhancements outside character creation.
 5. Source/version tracking
    - Record the exact rules source artifact and rules version used for the maneuver catalog, matching the internal versioning policy.
 
-Current audit gaps:
+The sheet totals declared enhancement SP against the calculated Stamina Spend Limit
+and disables Use when the declaration exceeds it. The declaration is session-only.
 
-- Runtime descriptions are still human-reviewed against the source text to avoid storing full source prose in the generated audit report.
-- Sheet does not yet validate in-play enhancement spend against Stamina Spend Limit.
+Current audit gap: runtime descriptions remain human-reviewed against the source text
+to avoid storing full source prose in the generated audit report.
 
 ---
 

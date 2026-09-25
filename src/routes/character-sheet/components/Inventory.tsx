@@ -27,6 +27,8 @@ import {
 	StyledInventoryField
 } from '../styles/Inventory';
 import { theme } from '../styles/theme';
+import { getInventoryItemCost } from '../utils/inventoryItemCost';
+import InventoryPickerModal from './InventoryPickerModal';
 
 // Wrapper so the item-name dropdown/input and a small inline summary line stack
 // inside the same grid cell without breaking column alignment.
@@ -76,6 +78,8 @@ function formatCustomEquipmentCategory(
 			return 'Custom Shield';
 		case 'spellFocus':
 			return 'Custom Spell Focus';
+		case 'general':
+			return 'Custom General Equipment';
 		default:
 			return 'Custom';
 	}
@@ -87,6 +91,7 @@ export interface InventoryProps {
 	showInfoHeader?: boolean;
 	showTitle?: boolean;
 	explicitEditMode?: boolean;
+	useInventoryPicker?: boolean;
 }
 
 const Inventory: React.FC<InventoryProps> = ({
@@ -94,7 +99,8 @@ const Inventory: React.FC<InventoryProps> = ({
 	isMobile = false,
 	showInfoHeader = true,
 	showTitle = true,
-	explicitEditMode = false
+	explicitEditMode = false,
+	useInventoryPicker = false
 }) => {
 	const { t } = useTranslation();
 	const { updateInventory, readOnly } = useCharacterSheet();
@@ -108,6 +114,7 @@ const Inventory: React.FC<InventoryProps> = ({
 	// Track which Custom inventory slots are in freeform text-input mode (by item id)
 	const [freeformItemIds, setFreeformItemIds] = useState<Set<string>>(new Set());
 	const [editingItemIds, setEditingItemIds] = useState<Set<string>>(new Set());
+	const [isPickerOpen, setIsPickerOpen] = useState(false);
 
 	// On mount / when inventory changes, initialise freeform set from persisted data:
 	// any Custom item that has a name but no customEquipmentId is freeform.
@@ -139,6 +146,11 @@ const Inventory: React.FC<InventoryProps> = ({
 		if (explicitEditMode) {
 			setEditingItemIds((current) => new Set(current).add(newInventoryItem.id));
 		}
+	};
+
+	const addInventoryItem = (item: InventoryItemData) => {
+		updateInventory([...inventory, item]);
+		setIsPickerOpen(false);
 	};
 
 	const removeInventorySlot = (inventoryIndex: number) => {
@@ -209,7 +221,7 @@ const Inventory: React.FC<InventoryProps> = ({
 							...item,
 							itemName: itemTypeOrName,
 							itemType: selectedItem?.itemType || item.itemType,
-							cost: getItemCost(selectedItem),
+							cost: getInventoryItemCost(selectedItem),
 							customEquipmentId: undefined,
 							customEquipmentCategory: undefined,
 							isEquipped: false
@@ -254,7 +266,7 @@ const Inventory: React.FC<InventoryProps> = ({
 								itemName: equipment.name,
 								customEquipmentId: equipment.id,
 								customEquipmentCategory: equipment.category,
-								cost: '-',
+								cost: equipment.category === 'general' ? equipment.cost : '-',
 								isEquipped: false
 							}
 						: item
@@ -300,29 +312,6 @@ const Inventory: React.FC<InventoryProps> = ({
 			index === inventoryIndex ? { ...item, isEquipped } : item
 		);
 		updateInventory(updatedInventory);
-	};
-
-	const getItemCost = (item: InventoryItem | undefined | null, count: number = 1): string => {
-		if (!item || !('price' in item)) return '-';
-
-		let basePrice = 0;
-		let currency = 'g';
-
-		if (typeof item.price === 'string') {
-			// Parse string prices like "10g", "5s", etc.
-			const match = item.price.match(/(\d+)([gs]?)/);
-			if (match) {
-				basePrice = parseInt(match[1]);
-				currency = match[2] || 'g';
-			}
-		} else if (typeof item.price === 'number') {
-			basePrice = item.price;
-		}
-
-		if (basePrice === 0) return '-';
-
-		const totalPrice = basePrice * count;
-		return `${totalPrice}${currency}`;
 	};
 
 	// Helper to format shield info
@@ -491,7 +480,11 @@ const Inventory: React.FC<InventoryProps> = ({
 
 			{/* Add Item Button */}
 			{!readOnly && (
-				<StyledAddItemButton $isMobile={isMobile} onClick={addInventorySlot} data-testid="add-item">
+				<StyledAddItemButton
+					$isMobile={isMobile}
+					onClick={() => (useInventoryPicker ? setIsPickerOpen(true) : addInventorySlot())}
+					data-testid="add-item"
+				>
 					+ {t('characterSheet.inventoryAddItem')}
 				</StyledAddItemButton>
 			)}
@@ -703,7 +696,9 @@ const Inventory: React.FC<InventoryProps> = ({
 									data-label={t('characterSheet.inventoryColumnCost')}
 								>
 									<StyledInventoryCost>
-										{isCustomType ? item.cost || '-' : getItemCost(selectedItem, item.count)}
+										{isCustomType
+											? item.cost || '-'
+											: getInventoryItemCost(selectedItem, item.count)}
 									</StyledInventoryCost>
 								</StyledInventoryField>
 
@@ -723,6 +718,14 @@ const Inventory: React.FC<InventoryProps> = ({
 					})
 				)}
 			</StyledInventoryContainer>
+			{isPickerOpen ? (
+				<InventoryPickerModal
+					items={sortedCatalogItems}
+					customEquipment={customEquipment}
+					onAdd={addInventoryItem}
+					onClose={() => setIsPickerOpen(false)}
+				/>
+			) : null}
 		</StyledInventorySection>
 	);
 };

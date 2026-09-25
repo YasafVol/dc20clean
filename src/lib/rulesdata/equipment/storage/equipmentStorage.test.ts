@@ -3,8 +3,10 @@ import { EQUIPMENT_RULES_VERSION } from '../schemas/baseEquipment';
 import {
 	exportEquipmentToJson,
 	duplicateCustomEquipment,
+	getAllCustomGeneralEquipment,
 	getAllCustomWeapons,
 	importEquipmentFromJson,
+	saveCustomGeneralEquipment,
 	saveCustomWeapon
 } from './equipmentStorage';
 
@@ -121,5 +123,42 @@ describe('custom equipment storage compatibility', () => {
 			presetOrigin: 'greatsword'
 		});
 		expect(duplicate?.id).not.toBe(weapon.id);
+	});
+
+	it('stores, exports, and duplicates general equipment without mechanical effects', () => {
+		const item = {
+			id: 'field-journal',
+			name: 'Field Journal',
+			category: 'general',
+			description: 'Notes from the northern expedition.',
+			cost: '2g',
+			properties: [],
+			pointsSpent: 0,
+			maxPoints: 0,
+			effects: [],
+			createdAt: '2026-09-19T00:00:00.000Z',
+			updatedAt: '2026-09-19T00:00:00.000Z'
+		} as Parameters<typeof saveCustomGeneralEquipment>[0];
+
+		saveCustomGeneralEquipment(item);
+		const duplicate = duplicateCustomEquipment('general', item.id);
+		const saved = getAllCustomGeneralEquipment();
+
+		expect(saved).toHaveLength(2);
+		expect(saved[0]).toMatchObject({
+			name: 'Field Journal',
+			category: 'general',
+			cost: '2g',
+			effects: []
+		});
+		expect(duplicate).toMatchObject({
+			name: 'Field Journal Copy',
+			category: 'general',
+			cost: '2g'
+		});
+		// eslint-disable-next-line no-restricted-syntax
+		const exported = JSON.parse(exportEquipmentToJson());
+		expect(exported.version).toBe(2);
+		expect(exported.generalEquipment).toHaveLength(2);
 	});
 });

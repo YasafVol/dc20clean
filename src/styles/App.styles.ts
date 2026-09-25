@@ -48,7 +48,8 @@ export const StyledMain = styled.main`
 `;
 
 export const StyledFooter = styled.footer`
-	padding: 0.5rem;
+	margin-top: auto;
+	padding: 1rem;
 	text-align: center;
 	color: #9ca3af;
 	font-size: 0.8rem;

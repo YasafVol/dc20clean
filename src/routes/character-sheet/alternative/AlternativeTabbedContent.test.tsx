@@ -67,7 +67,11 @@ vi.mock('../components/Maneuvers', () => ({
 	)
 }));
 vi.mock('../components/PlayerNotes', () => ({ default: () => null }));
-vi.mock('../components/Spells', () => ({ default: () => null }));
+vi.mock('../components/Spells', () => ({
+	default: ({ useSpellCastModal }: { useSpellCastModal?: boolean }) => (
+		<div data-testid="spell-cast-mode">{useSpellCastModal ? 'modal' : 'direct'}</div>
+	)
+}));
 vi.mock('../components/FeaturePopup', () => ({ default: () => null }));
 
 afterEach(cleanup);
@@ -91,6 +95,15 @@ describe('AlternativeTabbedContent contextual tabs', () => {
 
 		expect(screen.getByRole('tab', { name: 'Spells' })).toBeInTheDocument();
 		expect(screen.queryByRole('tab', { name: 'Maneuvers' })).not.toBeInTheDocument();
+	});
+
+	it('uses the focused spell-cast modal on the alternative sheet', () => {
+		mockSheet.access.spells = true;
+		render(<AlternativeTabbedContent />);
+
+		fireEvent.click(screen.getByRole('tab', { name: 'Spells' }));
+
+		expect(screen.getByTestId('spell-cast-mode')).toHaveTextContent('modal');
 	});
 
 	it('shows the maneuver tab when the provider grants maneuver access', () => {

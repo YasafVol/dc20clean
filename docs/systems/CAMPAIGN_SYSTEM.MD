@@ -6,7 +6,7 @@
 > Authoritative source: `convex/campaigns.ts`, `convex/campaignCharacterConnections.ts`, campaign tables in `convex/schema.ts`, `src/lib/hooks/useCampaigns.ts`, and `src/routes/campaigns/`.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-13
+> Last Updated: 2026-09-20
 
 ---
 
@@ -126,19 +126,19 @@ All helpers query `campaignMembers` via the `by_campaign_and_user` index.
 
 ### 3.3 Mutations
 
-| Export             | Auth required | Description                                                                                                                                          |
-| ------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createCampaign`   | Authenticated | Creates campaign + DM membership record. Generates a unique join code (up to 10 retries). Returns `{ id: string }`                                   |
+| Export             | Auth required | Description                                                                                                                                                                                      |
+| ------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `createCampaign`   | Authenticated | Creates campaign + DM membership record. Generates a unique join code (up to 10 retries). Returns `{ id: string }`                                                                               |
 | `joinByCode`       | Authenticated | Finds campaign by code (case-insensitive), inserts or restores a `player` membership without restoring old character connections. Posts a `member_joined` event. Returns `{ id, alreadyMember }` |
-| `leaveCampaign`    | Member        | Clears character connections and soft-deletes the caller's membership. DM cannot leave (must delete campaign instead)                                |
-| `shareCharacter`   | Member        | Connects the owned character record, keeps the legacy app ID, and posts one idempotent `character_shared` event                                      |
-| `unshareCharacter` | Member        | Removes both record and legacy forms of the caller's character connection                                                                            |
-| `renameCampaign`   | Manager       | Updates `name`, `description`, `lastModified`                                                                                                        |
-| `regenerateCode`   | Manager       | Generates and persists a new unique join code. Returns `{ code }`                                                                                    |
-| `kickMember`       | Manager       | Clears character connections and soft-deletes a non-DM member's record                                                                               |
-| `setMemberRole`    | DM only       | Promotes or demotes a member between `co_dm` and `player`. Cannot change the DM's role                                                               |
-| `deleteCampaign`   | DM only       | Cascade soft-deletes: campaign → all members → all events                                                                                            |
-| `postEvent`        | Member        | Inserts a `campaignEvents` record after validating the caller's exact connected character record                                                     |
+| `leaveCampaign`    | Member        | Clears character connections and soft-deletes the caller's membership. DM cannot leave (must delete campaign instead)                                                                            |
+| `shareCharacter`   | Member        | Connects the owned character record, keeps the legacy app ID, and posts one idempotent `character_shared` event                                                                                  |
+| `unshareCharacter` | Member        | Removes both record and legacy forms of the caller's character connection                                                                                                                        |
+| `renameCampaign`   | Manager       | Updates `name`, `description`, `lastModified`                                                                                                                                                    |
+| `regenerateCode`   | Manager       | Generates and persists a new unique join code. Returns `{ code }`                                                                                                                                |
+| `kickMember`       | Manager       | Clears character connections and soft-deletes a non-DM member's record                                                                                                                           |
+| `setMemberRole`    | DM only       | Promotes or demotes a member between `co_dm` and `player`. Cannot change the DM's role                                                                                                           |
+| `deleteCampaign`   | DM only       | Cascade soft-deletes: campaign → all members → all events                                                                                                                                        |
+| `postEvent`        | Member        | Inserts a `campaignEvents` record after validating the caller's exact connected character record                                                                                                 |
 
 ### 3.4 `characters.getByIdForMember` (in `convex/characters.ts`)
 
@@ -154,7 +154,6 @@ The campaign View URL carries both the app-level character ID and the Convex rec
 
 `sharedCharacterDocIds` is authoritative once present. A deleted record or a replacement record that reuses the same app-level ID does not inherit the old connection. Calling `shareCharacter` on a legacy connection resolves all readable legacy IDs for that membership and writes the record references without duplicating the original lifecycle event.
 Leaving or being removed clears both connection fields. Rejoining never restores those links; the player must explicitly reconnect a character.
-
 
 ---
 
@@ -203,18 +202,25 @@ function generateCode(): string {
 
 ### 6.1 Built-in event types
 
-| Type               | Produced by                | Payload fields                        |
-| ------------------ | -------------------------- | ------------------------------------- |
-| `member_joined`    | `joinByCode`               | `{ displayName }`                     |
-| `character_shared` | `shareCharacter`           | `{ characterName }`                   |
-| `well_bloodied`    | `useCampaignEventProducer` | `{ characterName, currentHP, maxHP }` |
-| `bloodied`         | (reserved / future)        | `{ characterName, currentHP, maxHP }` |
+| Type               | Produced by                | Payload fields                                                             |
+| ------------------ | -------------------------- | -------------------------------------------------------------------------- |
+| `member_joined`    | `joinByCode`               | `{ displayName }`                                                          |
+| `character_shared` | `shareCharacter`           | `{ characterName }`                                                        |
+| `well_bloodied`    | `useCampaignEventProducer` | `{ characterName, currentHP, maxHP }`                                      |
+| `bloodied`         | (reserved / future)        | `{ characterName, currentHP, maxHP }`                                      |
+| `dice_roll`        | `CharacterSheetProvider`   | `{ characterName, label, mode, allResults, takenResult, modifier, total }` |
+| `long_rest`        | `CharacterSheetProvider`   | `{ characterName }`                                                        |
 
 ### 6.2 Adding a new event type
 
 1. **Producer side**: emit the new type string via `postEvent` (client-side) or a Convex action (server-side).
-2. **Feed display**: add a `case` to `formatEvent` in `src/routes/campaigns/CampaignDetail.tsx`.
+2. **Feed display**: add a `case` to `formatEvent` in `src/routes/character-sheet/utils/campaignFeedFormat.ts`.
 3. **Toast delivery**: add a `case` to `eventMessage` in `src/lib/hooks/useCampaignToasts.ts`.
+
+Dice-roll feeds and toasts share `formatDiceRollExpression`. The expression preserves all
+rolled dice, the signed modifier, and the final total. The provider's `takenResult` is the
+selected die total before the modifier; Advantage and Disadvantage still retain every die
+in `allResults` for auditability.
 
 ---
 
@@ -232,6 +238,8 @@ function generateCode(): string {
 | `src/routes/campaigns/JoinCampaign.tsx`                        | Join-by-code page                                                                                                                                           |
 | `src/routes/campaigns/CampaignCharacterView.tsx`               | Read-only sheet route and Primary/Alternative presentation switch                                                                                           |
 | `src/routes/character-sheet/hooks/CharacterSheetProvider.tsx`  | Sheet provider — read-only mode                                                                                                                             |
+| `src/routes/character-sheet/components/CampaignFeedAction.tsx` | Shared guarded bell, unread badge, and feed drawer for both sheet presentations                                                                             |
+| `src/lib/utils/campaignEventFormat.ts`                         | Shared dice-roll expression used by the campaign feed and app-level toast                                                                                   |
 | `convex/campaignCharacterConnections.ts`                       | Record-link resolution and owner-scoped legacy fallback                                                                                                     |
 | `src/routes/character-sheet/hooks/useCampaignEventProducer.ts` | HP-state event producer                                                                                                                                     |
 | `src/lib/hooks/useCampaignToasts.ts`                           | App-level toast watcher and `CampaignEventWatcher` component                                                                                                |
@@ -344,7 +352,8 @@ useCampaignToasts (app-level)
 
 ### Event-to-variant mapping
 
-`well_bloodied` → `'warning'` variant. All other event types → `'info'` variant.
+Severe health states, Rage/Wild Form entry, gained conditions, and Exhaustion changes use
+the warning variant. Other event types, including dice rolls, use the info variant.
 
 ---
 

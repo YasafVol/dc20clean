@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as campaignCharacterConnections from "../campaignCharacterConnections.js";
 import type * as campaigns from "../campaigns.js";
 import type * as characters from "../characters.js";
 import type * as encounters from "../encounters.js";
@@ -26,6 +27,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  campaignCharacterConnections: typeof campaignCharacterConnections;
   campaigns: typeof campaigns;
   characters: typeof characters;
   encounters: typeof encounters;

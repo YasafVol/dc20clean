@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getWeaponProperty } from '../options/weaponOptions';
-import { validateSpellFocus, validateWeapon } from './equipmentValidator';
+import { getStylesForWeaponType, getWeaponProperty } from '../options/weaponOptions';
+import { validateEquipment, validateSpellFocus, validateWeapon } from './equipmentValidator';
 
 const baseWeapon = {
 	weaponType: 'melee' as const,
@@ -89,6 +89,32 @@ describe('validateWeapon', () => {
 			})
 		);
 	});
+
+	it('allows every weapon style for either type under the v0.10.5 reskinning rule', () => {
+		expect(getStylesForWeaponType('melee').map((style) => style.id)).toContain('bow');
+		expect(getStylesForWeaponType('ranged').map((style) => style.id)).toContain('axe');
+	});
+
+	it('requires Multi-Faceted weapons to choose a different secondary style', () => {
+		const missingSecondary = validateWeapon({
+			...baseWeapon,
+			properties: ['multi-faceted']
+		});
+		const duplicateStyle = validateWeapon({
+			...baseWeapon,
+			secondaryStyle: 'spear',
+			properties: ['multi-faceted']
+		});
+
+		expect(missingSecondary.isValid).toBe(false);
+		expect(missingSecondary.errors).toContainEqual(
+			expect.objectContaining({ propertyId: 'multi-faceted' })
+		);
+		expect(duplicateStyle.isValid).toBe(false);
+		expect(duplicateStyle.errors).toContainEqual(
+			expect.objectContaining({ message: 'Multi-Faceted requires two different weapon styles' })
+		);
+	});
 });
 
 describe('validateSpellFocus', () => {
@@ -111,6 +137,18 @@ describe('validateSpellFocus', () => {
 		expect(result.errors).toContainEqual(
 			expect.objectContaining({
 				message: 'Points spent (2) exceeds maximum (1)'
+			})
+		);
+	});
+});
+
+describe('validateEquipment general equipment', () => {
+	it('requires only a name', () => {
+		expect(validateEquipment({ category: 'general', name: 'Field Journal' }).isValid).toBe(true);
+		expect(validateEquipment({ category: 'general', name: '   ' })).toEqual(
+			expect.objectContaining({
+				isValid: false,
+				errors: [{ message: 'General equipment requires a name' }]
 			})
 		);
 	});

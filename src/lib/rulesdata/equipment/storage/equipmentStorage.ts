@@ -8,10 +8,11 @@ import { CustomWeapon } from '../schemas/weaponSchema';
 import { CustomArmor } from '../schemas/armorSchema';
 import { CustomShield } from '../schemas/shieldSchema';
 import { CustomSpellFocus } from '../schemas/spellFocusSchema';
+import { CustomGeneralEquipment } from '../schemas/generalEquipmentSchema';
 import { EQUIPMENT_RULES_VERSION } from '../schemas/baseEquipment';
 
 const STORAGE_KEY = 'customEquipment';
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 interface StoredEquipmentData {
 	version: number;
@@ -20,6 +21,7 @@ interface StoredEquipmentData {
 	armor: CustomArmor[];
 	shields: CustomShield[];
 	spellFocuses: CustomSpellFocus[];
+	generalEquipment: CustomGeneralEquipment[];
 }
 
 // ================================================================= //
@@ -33,7 +35,8 @@ function getDefaultStorageData(): StoredEquipmentData {
 		weapons: [],
 		armor: [],
 		shields: [],
-		spellFocuses: []
+		spellFocuses: [],
+		generalEquipment: []
 	};
 }
 
@@ -53,7 +56,8 @@ function loadStorageData(): StoredEquipmentData {
 			weapons: parsed.weapons || [],
 			armor: parsed.armor || [],
 			shields: parsed.shields || [],
-			spellFocuses: parsed.spellFocuses || []
+			spellFocuses: parsed.spellFocuses || [],
+			generalEquipment: parsed.generalEquipment || []
 		};
 	} catch (error) {
 		console.error('Failed to load custom equipment from storage:', error);
@@ -222,12 +226,56 @@ export function deleteCustomSpellFocus(id: string): void {
 }
 
 // ================================================================= //
+// PUBLIC API - GENERAL EQUIPMENT
+// ================================================================= //
+
+export function getAllCustomGeneralEquipment(): CustomGeneralEquipment[] {
+	return loadStorageData().generalEquipment;
+}
+
+export function getCustomGeneralEquipment(id: string): CustomGeneralEquipment | undefined {
+	return loadStorageData().generalEquipment.find((item) => item.id === id);
+}
+
+export function saveCustomGeneralEquipment(item: CustomGeneralEquipment): void {
+	const data = loadStorageData();
+	markCurrentRules(data);
+	const existingIndex = data.generalEquipment.findIndex((savedItem) => savedItem.id === item.id);
+	const timestamp = new Date().toISOString();
+
+	if (existingIndex >= 0) {
+		data.generalEquipment[existingIndex] = { ...item, updatedAt: timestamp };
+	} else {
+		data.generalEquipment.push({
+			...item,
+			createdAt: timestamp,
+			updatedAt: timestamp
+		});
+	}
+
+	saveStorageData(data);
+}
+
+export function deleteCustomGeneralEquipment(id: string): void {
+	const data = loadStorageData();
+	markCurrentRules(data);
+	data.generalEquipment = data.generalEquipment.filter((item) => item.id !== id);
+	saveStorageData(data);
+}
+
+// ================================================================= //
 // PUBLIC API - GENERIC
 // ================================================================= //
 
 export function getAllCustomEquipment(): CustomEquipment[] {
 	const data = loadStorageData();
-	return [...data.weapons, ...data.armor, ...data.shields, ...data.spellFocuses];
+	return [
+		...data.weapons,
+		...data.armor,
+		...data.shields,
+		...data.spellFocuses,
+		...data.generalEquipment
+	];
 }
 
 export function saveCustomEquipment(equipment: CustomEquipment): void {
@@ -243,6 +291,9 @@ export function saveCustomEquipment(equipment: CustomEquipment): void {
 			break;
 		case 'spellFocus':
 			saveCustomSpellFocus(equipment as CustomSpellFocus);
+			break;
+		case 'general':
+			saveCustomGeneralEquipment(equipment as CustomGeneralEquipment);
 			break;
 	}
 }
@@ -260,6 +311,9 @@ export function deleteCustomEquipment(category: string, id: string): void {
 			break;
 		case 'spellFocus':
 			deleteCustomSpellFocus(id);
+			break;
+		case 'general':
+			deleteCustomGeneralEquipment(id);
 			break;
 	}
 }
@@ -316,6 +370,9 @@ export function importEquipmentFromJson(jsonString: string): { success: boolean;
 		if (!parsed.spellFocuses || !Array.isArray(parsed.spellFocuses)) {
 			return { success: false, error: 'Invalid data: missing spellFocuses array' };
 		}
+		if (parsed.generalEquipment !== undefined && !Array.isArray(parsed.generalEquipment)) {
+			return { success: false, error: 'Invalid data: generalEquipment must be an array' };
+		}
 
 		saveStorageData({
 			version: STORAGE_VERSION,
@@ -323,7 +380,8 @@ export function importEquipmentFromJson(jsonString: string): { success: boolean;
 			weapons: parsed.weapons,
 			armor: parsed.armor,
 			shields: parsed.shields,
-			spellFocuses: parsed.spellFocuses
+			spellFocuses: parsed.spellFocuses,
+			generalEquipment: parsed.generalEquipment || []
 		});
 
 		return { success: true };

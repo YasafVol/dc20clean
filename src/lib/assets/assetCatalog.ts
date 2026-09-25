@@ -563,7 +563,7 @@ export const ART_ASSETS: ArtAsset[] = [
 	},
 	{
 		id: 'beowulf-minion-05-01',
-		name: 'Minion 05-01',
+		name: 'Frog Monster',
 		kind: 'creature',
 		category: 'Minions',
 		pack: 'monsters-minions',

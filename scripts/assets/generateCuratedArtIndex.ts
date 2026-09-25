@@ -132,7 +132,7 @@ const rawHtml = `<!doctype html>
 <body>
 	<main>
 		<h1>Curated art review</h1>
-		<p class="intro">The 70 images selected for the app, with the current catalog name, verified archive filename, review classification, and confidence. Confidence describes how well the visible image and source name support the label. It does not assess usage rights.</p>
+		<p class="intro">The 70 images selected for the app, with the current catalog name, verified archive filename, review classification, and confidence. Confidence reflects the visible image, source name, and any user review. It does not assess usage rights.</p>
 		<div class="summary"><span><strong>40</strong> item icons</span><span><strong>30</strong> creature images</span><span><strong>${uncertainCount}</strong> labels to check</span></div>
 		<div class="controls">
 			<input id="search" type="search" placeholder="Search name, file or classification" aria-label="Search assets">

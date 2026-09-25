@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Image as ImageIcon } from 'lucide-react';
 import { ART_ASSETS, getArtAsset, type ArtAsset } from '../lib/assets/assetCatalog';
 import { theme } from '../routes/character-sheet/styles/theme';
 
@@ -67,11 +68,13 @@ export default function AssetPicker({ kind, value, onChange, label }: AssetPicke
 							alignItems: 'center',
 							gap: 10,
 							minHeight: 50,
+							minWidth: kind === 'creature' ? 164 : undefined,
 							padding: '6px 12px',
 							color: theme.colors.text.primary,
-							background: theme.colors.bg.elevated,
-							border: `1px solid ${theme.colors.border.default}`,
-							borderRadius: 8
+							background: theme.colors.crystal.primaryAlpha10,
+							border: `1px solid ${theme.colors.accent.primary}`,
+							borderRadius: 8,
+							fontWeight: 600
 						}}
 					>
 						{selected && (
@@ -83,6 +86,7 @@ export default function AssetPicker({ kind, value, onChange, label }: AssetPicke
 								style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
 							/>
 						)}
+						{!selected && <ImageIcon size={18} aria-hidden="true" />}
 						<span>{selected?.name ?? (kind === 'item' ? 'Choose icon' : 'Choose art')}</span>
 					</button>
 					{value && (

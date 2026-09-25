@@ -456,10 +456,10 @@
 	},
 	"beowulf-minion-02-01": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/02_minion_01_x.png",
-		"reviewName": "Green Flower-topped Creature",
-		"classification": "minion / green monster",
-		"confidence": "low",
-		"note": "Green rounded body with a white flower-like shape; plant identity is uncertain."
+		"reviewName": "Dire Cactus",
+		"classification": "minion / cactus monster",
+		"confidence": "high",
+		"note": "User-reviewed as a dire cactus; the archive confirms its minion role."
 	},
 	"beowulf-minion-02-02": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/02_minion_02_x.png",

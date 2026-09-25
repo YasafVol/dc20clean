@@ -531,7 +531,7 @@ export const ART_ASSETS: ArtAsset[] = [
 	},
 	{
 		id: 'beowulf-minion-02-01',
-		name: 'Minion 02-01',
+		name: 'Dire Cactus',
 		kind: 'creature',
 		category: 'Minions',
 		pack: 'monsters-minions',

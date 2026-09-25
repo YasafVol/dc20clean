@@ -17,6 +17,7 @@
 		"test:e2e:ui": "playwright test --ui",
 		"test:e2e:headed": "playwright test --headed",
 		"test:e2e:debug": "playwright test --debug",
+		"e2e:meta": "playwright test e2e/00-user-meta.e2e.spec.ts",
 		"e2e:desktop": "npx playwright test --project=desktop --workers=1",
 		"e2e:mobile": "npx playwright test --project=mobile --workers=1",
 		"e2e:all": "npx playwright test --workers=1",

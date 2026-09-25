@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-09-25
 
 ## Tech Stack
 
@@ -67,9 +67,13 @@ Testing:
 - `npm run test:e2e:ui` — E2E with interactive UI
 - `npm run test:e2e:headed` — E2E in headed browser mode
 - `npm run test:e2e:debug` — E2E in debug mode
+- `npm run e2e:meta` — Run the compact user-level smoke journeys on desktop and mobile
 - `npm run test` — Run unit tests (run mode) then E2E tests
 
 Testing policy and coverage rules are centralized in `docs/systems/TESTING_SYSTEM.MD`.
+Set `PLAYWRIGHT_BASE_URL` to run Playwright against an already deployed preview or production
+candidate instead of starting the local build and preview server. Protected Vercel previews also
+require `VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 E2E per-project and parallel:
 

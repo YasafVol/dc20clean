@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Spells](./SPELLS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-21
 
 ## 1. Boundary
 
@@ -182,8 +182,9 @@ record construction. Any picker with multiple sources preserves search and filte
 when the source changes.
 
 `EquipmentBuildSheet` owns the reusable accordion structure, accessible section state,
-and compact summary behavior for equipment builders. The custom-weapon builder currently
-uses it; other equipment categories retain their existing Equipage builders.
+and compact summary behavior for equipment builders. Both the alternative custom-weapon
+builder and all five Equipage builders use it; Equipage keeps its category-specific
+steps, summaries, validation, and save behavior.
 
 ## 8. Other Alternative-Only Interaction Rules
 

@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/`, especially `hooks/CharacterSheetProvider.tsx`, the sheet reducer, and section components.
 > Related systems: [Alternative Presentation](./ALTERNATIVE_CHARACTER_SHEET.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Conditions](./CONDITIONS_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-21
 
 ## Recent UX additions
 
@@ -78,7 +78,7 @@ state, behavior, and ownership.
 - **Damage reduction display**: `calculation.resistances[]` entries with value `true` and type `physical`, `elemental`, or `mystical` are displayed as binary PDR, EDR, or MDR instead of resistance values.
 - **Language alias display**: sheet language rows resolve saved legacy aliases through the current language catalog, so `primordial` displays as `Elemental`.
 - **Advantage note display**: `GRANT_ADV_ON_CHECK` effects are collected into `calculation.grantedAbilities` with type `advantage`, giving class features such as Commander Natural Leader a sheet-visible note without changing roll math.
-- **Collected rules notes**: Class features that are descriptive, flavor, or in-game-only should still enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` notes give the future Effects / Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
+- **Collected rules notes**: Descriptive, flavor, and in-game-only class features enter calculator output through collected effects. `GRANT_ABILITY` and `GRANT_ADV_ON_CHECK` give the Effects & Rules Notes surface deterministic source-attributed data instead of prose-only feature records.
 - **Death threshold display**: `DeathExhaustion` consumes the saved/calculated
   `finalDeathThreshold` magnitude and applies it as a negative HP threshold. This
   preserves calculator-applied modifiers such as Human Resolve. The threshold
@@ -161,16 +161,16 @@ For `upgrade-required` and `view-only` characters, the sheet suppresses fresh ca
 
 Campaign-only queries, mutations, event producers, and feed notifications mount behind `isConvexEnabled`. The localStorage-default sheet must not render a component that calls a Convex hook because no `ConvexProvider` exists in that mode.
 
-#### Complex Feature Host TODO
+#### Complex Feature Host
 
 - `ComplexFeatureHost` mounts in the Features tab and discovers modules from owned
   feature IDs or collected effects.
 - The first module is the local-only Druid Wild Form builder. It renders for
   `druid_wild_form` or a collected `GRANT_ABILITY:wild_form` grant.
-- Wild Form builder scope: reactive page state only; no saved-character schema, no persistence, no migration. Derived values should calculate on render with memoized browser state, and formula details should live in tooltips while the pane shows final values.
-- Wild Form source data: include source templates (Defensive, Grappler, Parkour, Infiltrator), Wild Form Traits, and non-negative Beastborn expanded Beast Traits from `src/lib/rulesdata/ancestries/ancestries.ts` / `traits.ts`. Treat Wild Form's built-in natural weapon as satisfying natural-weapon prerequisites, but do not include Beastborn origin/default traits such as `beastborn_beastkind`.
+- Wild Form uses reactive page state only; it adds no saved-character schema, persistence, or migration. Derived values calculate during rendering, with formula details in tooltips and final values in the pane.
+- Wild Form sources include templates (Defensive, Grappler, Parkour, Infiltrator), Wild Form Traits, and non-negative Beastborn expanded Beast Traits from `src/lib/rulesdata/ancestries/ancestries.ts` / `traits.ts`. Its built-in natural weapon satisfies natural-weapon prerequisites; Beastborn origin/default traits such as `beastborn_beastkind` are excluded.
 
-#### Spell Sheet TODOs
+#### Spell Sheet Notes
 
 - `spellPresentation.ts` builds contextual spell check/attack, damage, range, and
   in-play focus notes from saved/catalog spell data plus calculator-collected equipped effects.
@@ -189,7 +189,7 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
   selection totals SP costs, supports repeatable enhancements, blocks Use above the
   calculator's Stamina Spend Limit, and clears the declaration after Use.
 
-#### Effects Sheet TODOs
+#### Effects Sheet Notes
 
 - `effectPresentation.ts` takes source-attributed effects and returns categorized rows for:
   - calculator-applied effects already represented in stat/budget breakdowns,
@@ -198,7 +198,7 @@ Campaign-only queries, mutations, event producers, and feed notifications mount 
   - unsupported or weakly mapped effects such as `SET_VALUE:size` and `MODIFY_STAT:deathThresholdModifier`.
 - The Features tab renders those rows in an “Effects & Rules Notes” surface, including a
   dedicated resolved Size badge for `SET_VALUE:size`.
-- Keep `calculatorModules/effectCollection.ts` as the source-attributed aggregation layer. The new service should be presentation-oriented and should not duplicate stat math from `calculateCharacterWithBreakdowns()`.
+- `calculatorModules/effectCollection.ts` remains the source-attributed aggregation layer. `effectPresentation.ts` categorizes that output without duplicating stat math from `calculateCharacterWithBreakdowns()`.
 
 #### Attack Sheet Notes
 

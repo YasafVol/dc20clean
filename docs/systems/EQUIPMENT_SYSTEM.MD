@@ -3,8 +3,8 @@
 > Purpose: Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.
 > Owns: Custom weapon, armor, shield, spell-focus, and reusable general-equipment schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
 > Does not own: Character inventory rows, generic effect semantics, character-sheet equip state, or PDF export mapping.
-> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, and `src/lib/rulesdata/equipment/`.
-> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, `src/lib/rulesdata/equipment/`, `src/routes/custom-equipment/`, and `src/components/equipment/`.
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
 > Last Updated: 2026-09-21
 
@@ -341,30 +341,17 @@ Rigid.
 | Vicious        | 1    | +1 to hit with Spell Attacks               |
 | Warded         | 1    | MDR (Mystical Damage Reduction)            |
 
-Spell focus properties now expose structured effects. Protective contributes `AD +1`
-when equipped, Warded contributes binary MDR (Mystical Damage Reduction), and
-spell-specific bonuses such as Channeling, Vicious, Powerful, Reach, Long-Ranged,
-Muffled, Reactive, and Close Quarters are surfaced as granted abilities until the
-calculator has separate spell-attack/spell-check/range output fields.
+Spell focus properties expose structured effects. Protective contributes `AD +1` when
+equipped, and Warded contributes binary MDR (Mystical Damage Reduction). The equipped
+focus's granted abilities feed `spellPresentation.ts` for known-spell display: Vicious
+adds `+1` to the displayed Spell Attack modifier, Channeling adds `+1` to the displayed
+Spell Check modifier, Powerful shows `+1` Spell Attack damage, Reach adds `1 Space` to
+Range `1`, and Long-Ranged adds `5 Spaces` to ranges above `1`. Close Quarters, Muffled,
+and Reactive remain visible as contextual notes.
 
-### Spell Focus Effect TODO
-
-Apply as many spell focus properties as possible as real equipped effects instead of
-plain ability notes:
-
-- `Vicious` should calculate on the character sheet when the focus is equipped,
-  contributing to spell attack/to-hit output rather than only appearing as text.
-- `Channeling` should calculate on the character sheet when the focus is equipped,
-  contributing to spell check output once that output is separated from general
-  attack/spell check.
-- `Powerful` should be indicated when viewing spells and spell attacks, because it
-  changes Spell Attack damage by `+1`.
-- `Reach` should be indicated when viewing spells with Range `1`, because their range
-  increases by `1 Space`.
-- `Long-Ranged` should be indicated when viewing spells with Range greater than `1`,
-  because their range increases by `5 Spaces`.
-- Keep `Close Quarters`, `Muffled`, and `Reactive` visible as equipped focus effects;
-  promote them from generic ability notes if the sheet gains richer spell-context UI.
+The generic calculator still has no separate spell-attack, spell-check, or spell-range
+output fields. These spell-specific bonuses are computed for sheet presentation and do
+not rewrite the saved spell or the calculator's general attack/spell-check value.
 
 ### Preset Spell Focuses (13)
 

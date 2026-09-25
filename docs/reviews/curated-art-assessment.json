@@ -477,10 +477,10 @@
 	},
 	"beowulf-minion-04-01": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/04_minion_01_x.png",
-		"reviewName": "Purple Wide-eyed Creature",
-		"classification": "minion / purple monster",
-		"confidence": "low",
-		"note": "Upright form with possible antennae or horns; imp identity is uncertain."
+		"reviewName": "Purple Snake",
+		"classification": "minion / purple snake",
+		"confidence": "high",
+		"note": "User-reviewed as a purple snake; the archive confirms its minion role."
 	},
 	"beowulf-minion-05-01": {
 		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/05_minion_01_x.png",

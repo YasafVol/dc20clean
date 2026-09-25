@@ -555,7 +555,7 @@ export const ART_ASSETS: ArtAsset[] = [
 	},
 	{
 		id: 'beowulf-minion-04-01',
-		name: 'Minion 04-01',
+		name: 'Purple Snake',
 		kind: 'creature',
 		category: 'Minions',
 		pack: 'monsters-minions',

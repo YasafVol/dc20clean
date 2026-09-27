@@ -15,15 +15,15 @@
 	},
 	"icon-feet-01": {
 		"sourcePath": "IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 1.png",
-		"reviewName": "Feet 1",
-		"classification": "item icon / Feet",
+		"reviewName": "Boots 1",
+		"classification": "item icon / Boots",
 		"confidence": "high",
 		"note": ""
 	},
 	"icon-feet-02": {
 		"sourcePath": "IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 2.png",
-		"reviewName": "Feet 2",
-		"classification": "item icon / Feet",
+		"reviewName": "Boots 2",
+		"classification": "item icon / Boots",
 		"confidence": "high",
 		"note": ""
 	},

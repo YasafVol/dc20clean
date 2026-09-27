@@ -27,17 +27,17 @@ export const ART_ASSETS: ArtAsset[] = [
 	},
 	{
 		id: 'icon-feet-01',
-		name: 'Feet 1',
+		name: 'Boots 1',
 		kind: 'item',
-		category: 'Feet',
+		category: 'Boots',
 		pack: 'heroic-icons',
 		src: '/assets/curated/heroic-icons/icon-feet-01.png'
 	},
 	{
 		id: 'icon-feet-02',
-		name: 'Feet 2',
+		name: 'Boots 2',
 		kind: 'item',
-		category: 'Feet',
+		category: 'Boots',
 		pack: 'heroic-icons',
 		src: '/assets/curated/heroic-icons/icon-feet-02.png'
 	},

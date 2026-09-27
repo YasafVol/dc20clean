@@ -6,7 +6,7 @@
 > Authoritative source: `convex/backOffice.ts`, `convex/lib/backOfficeAccess.ts`, `src/routes/back-office/`, and `scripts/back-office/generateSystems.mjs`.
 > Related systems: [Architecture](./PROJECT_TECHNICAL_OVERVIEW.MD), [Database](./DATABASE_SYSTEM.MD), [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-27
+> Last Updated: 2026-09-28
 
 ## 1. Access and routes
 
@@ -14,7 +14,7 @@
 2. `/back-office/monsters` opens the monster list; `/back-office/monsters/:monsterId` uses the Convex document ID to open a stored stat block.
 3. Access requires real Convex authentication and a server-owned user record with a verified email matching `yasaf.vol@gmail.com` or `nzinger@gmail.com` (Nir Zinger). Client-provided identity, local mode, and `VITE_BYPASS_AUTH` cannot grant access.
 4. `backOffice.access` returns only a boolean. Every content query independently checks access before reading data or returning documents. Unknown, signed-out, and unverified accounts receive no review content.
-5. The menu and homepage navigation expose the Back office link only after server confirmation. Direct links display sign-in, restricted-access, loading, unavailable-record, and query-failure states as appropriate.
+5. The menu and homepage navigation expose the Back office link only after server confirmation. Direct links display sign-in, restricted-access, loading, unavailable-record, and query-failure states as appropriate. A missing back-office query displays a specific backend deployment message.
 6. The workspace exports no mutations. It does not confer rights to existing monster mutation functions.
 
 ## 2. System reader

@@ -5,6 +5,7 @@ import '../../styles/globals.css';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { getFunctionName } from 'convex/server';
 import BackOffice from './BackOffice';
+import { BackOfficeErrorBoundary } from './BackOfficeErrorBoundary';
 import { systemNavigation, resolveSystemLink } from './systemNavigation';
 import systems from '../../../convex/backOfficeData/systems.json';
 import type { FunctionReturnType } from 'convex/server';
@@ -264,4 +265,25 @@ describe('System navigation contracts', () => {
 			)
 		).toBeNull();
 	});
+});
+
+it('explains a missing back-office backend without exposing raw errors', () => {
+	function MissingBackend(): never {
+		throw new Error("Could not find public function for 'backOffice:access'.");
+	}
+	const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+	try {
+		render(
+			<BackOfficeErrorBoundary>
+				<MissingBackend />
+			</BackOfficeErrorBoundary>
+		);
+		expect(
+			screen.getByRole('heading', { name: 'Back office backend is not deployed' })
+		).toBeTruthy();
+		expect(screen.getByText(/Deploy the matching backend changes/)).toBeTruthy();
+		expect(screen.queryByText(/Could not find public function/)).toBeNull();
+	} finally {
+		consoleError.mockRestore();
+	}
 });

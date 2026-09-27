@@ -6,22 +6,23 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-09-25
 
 ---
 
 ## 1. Test Layers
 
-| Layer                    | Tooling                   | Location                                            | Purpose                                                                                  |
-| ------------------------ | ------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Source audits            | Node scripts              | `scripts/*/dc20-0105-*.mjs`, `scripts/classes/*.ts` | Compare runtime rules data to the v0.10.5 source artifact and generated reports          |
-| Rules data tests         | Vitest                    | `src/lib/rulesdata/**/*.test.ts`, `*.spec.ts`       | Validate schemas, IDs, source drift, generated catalogs, and feature references          |
-| Calculator tests         | Vitest                    | `src/lib/services/**/*.test.ts`, `*.spec.ts`        | Validate exact mechanical outcomes from selected effects and character inputs            |
-| UI logic/component tests | Vitest + Testing Library  | `src/routes/**/*.test.tsx`, `*.logic.test.ts`       | Validate local UI state, reducers, step gating, and component rendering                  |
-| Convex domain tests      | Vitest + `convex-test`    | `convex/**/*.test.ts`                               | Validate authenticated backend lifecycles against isolated in-memory Convex state        |
-| Acceptance features      | Gherkin                   | `e2e/features/*.feature`                            | Define readable cross-surface lifecycle contracts mapped to executable lower-layer tests |
-| E2E tests                | Playwright                | `e2e/*.e2e.spec.ts`                                 | Validate representative user journeys, persistence, import/export, and sheet surfaces    |
-| Agentic browser QA       | Playwright + repo scripts | `e2e/agentic/*`, `scripts/e2e/*`                    | Run declarative character recipes, collect artifacts, and compare results to oracles     |
+| Layer                    | Tooling                   | Location                                            | Purpose                                                                                   |
+| ------------------------ | ------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Source audits            | Node scripts              | `scripts/*/dc20-0105-*.mjs`, `scripts/classes/*.ts` | Compare runtime rules data to the v0.10.5 source artifact and generated reports           |
+| Rules data tests         | Vitest                    | `src/lib/rulesdata/**/*.test.ts`, `*.spec.ts`       | Validate schemas, IDs, source drift, generated catalogs, and feature references           |
+| Calculator tests         | Vitest                    | `src/lib/services/**/*.test.ts`, `*.spec.ts`        | Validate exact mechanical outcomes from selected effects and character inputs             |
+| UI logic/component tests | Vitest + Testing Library  | `src/routes/**/*.test.tsx`, `*.logic.test.ts`       | Validate local UI state, reducers, step gating, and component rendering                   |
+| Convex domain tests      | Vitest + `convex-test`    | `convex/**/*.test.ts`                               | Validate authenticated backend lifecycles against isolated in-memory Convex state         |
+| Acceptance features      | Gherkin                   | `e2e/features/*.feature`                            | Define readable cross-surface lifecycle contracts mapped to executable lower-layer tests  |
+| E2E tests                | Playwright                | `e2e/*.e2e.spec.ts`                                 | Validate representative user journeys, persistence, import/export, and sheet surfaces     |
+| Meta user journeys       | Playwright                | `e2e/00-user-meta.e2e.spec.ts`                      | Prove the deployed product remains usable through a compact set of critical browser paths |
+| Agentic browser QA       | Playwright + repo scripts | `e2e/agentic/*`, `scripts/e2e/*`                    | Run declarative character recipes, collect artifacts, and compare results to oracles      |
 
 Use the lowest layer that can prove the behavior. Do not move combinatorial rules math into E2E when a deterministic calculator test can prove it faster and with better failure messages.
 
@@ -60,6 +61,18 @@ Full local gates:
 npm run test:unit -- --run
 npm run test:e2e
 ```
+
+Meta user-journey gate:
+
+```bash
+npm run e2e:meta
+PLAYWRIGHT_BASE_URL=https://preview.example.com npm run e2e:meta
+```
+
+`PLAYWRIGHT_BASE_URL` targets an already deployed environment and skips the local build and
+preview server. Protected Vercel previews also require `VERCEL_AUTOMATION_BYPASS_SECRET`; the
+runner sends it through Vercel's recommended automation headers without placing it in the URL.
+Without `PLAYWRIGHT_BASE_URL`, the normal Playwright local build/preview behavior remains active.
 
 All general E2E commands use `e2e/test-character-current.json`, currently a
 canonical `dc20-0.10.5` character generated through the live creation flow.
@@ -203,6 +216,7 @@ Playwright flow to prove character load, toggle wiring, visible results, and rel
 
 | Spec                                                  | Coverage                                                                                                                                                                                                                                               |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `e2e/00-user-meta.e2e.spec.ts`                        | Compact user-level release gate: update notice to release note, JSON import to both sheet presentations, every public reference tool, uncaught browser errors, and same-origin 5xx responses                                                           |
 | `e2e/01-import.e2e.spec.ts`                           | Imports a fixture and opens the character sheet                                                                                                                                                                                                        |
 | `e2e/02-resources.e2e.spec.ts`                        | Resource controls                                                                                                                                                                                                                                      |
 | `e2e/07-weapons.e2e.spec.ts`                          | Weapon add/update/remove                                                                                                                                                                                                                               |
@@ -348,7 +362,19 @@ rank-2 purchases at that level.
 - Do not use broad text selectors when the same string can appear in hidden options, flavor text, or unrelated cards.
 - If a behavior is calculated but not visibly rendered, add a UI TODO or component test instead of pretending E2E covered it.
 
-### 7.1 Rulebook Coverage
+### 7.1 Meta User-Journey Gate
+
+1. `e2e/00-user-meta.e2e.spec.ts` is the compact release and deployment smoke gate.
+2. It must act through visible controls and browser navigation. Character state enters only through
+   the same JSON import dialog available to a user.
+3. It covers broad reachability and cross-page continuity, while focused E2E and lower-layer tests
+   remain authoritative for detailed behavior.
+4. Every journey fails on uncaught page errors and same-origin HTTP 5xx responses and attaches the
+   collected browser-health data on failure.
+5. Run it against a Vercel preview or production candidate by setting `PLAYWRIGHT_BASE_URL`.
+   Protected Vercel previews also require `VERCEL_AUTOMATION_BYPASS_SECRET`.
+
+### 7.2 Rulebook Coverage
 
 1. `src/routes/rulebook/rulebookData.test.ts`
    1. Validates generated manifest counts and unique IDs.

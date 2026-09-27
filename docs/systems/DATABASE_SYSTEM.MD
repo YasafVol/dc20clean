@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-25
+> Last Updated: 2026-09-28
 
 ---
 
@@ -335,6 +335,9 @@ encounters: defineTable({
 - **Google OAuth** via Convex Auth
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
+- Each Convex deployment needs its own `AUTH_SECRET` and `SITE_URL` for OAuth.
+  `JWT_PRIVATE_KEY` and `JWKS` are also required to issue and verify sessions;
+  the local deployment uses local-only values and must not reuse production keys.
 - `users.getCurrentUser` returns the stable string `userId`, optional display name,
   and the user document `_creationTime` as `createdAt`. Consumers preserve
   `undefined` while the query resolves and use `null` for a resolved signed-out state.

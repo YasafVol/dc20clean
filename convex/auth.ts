@@ -8,9 +8,8 @@
 import { convexAuth } from '@convex-dev/auth/server';
 import Google from '@auth/core/providers/google';
 
-const authSecret = process.env.AUTH_SECRET;
 const siteUrl = process.env.SITE_URL;
-if (!authSecret) {
+if (!process.env.AUTH_SECRET) {
 	throw new Error('Missing environment variable `AUTH_SECRET`');
 }
 if (!siteUrl) {
@@ -31,7 +30,6 @@ function isAllowedRedirectHost(hostname: string): boolean {
 }
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
-	secret: [authSecret],
 	callbacks: {
 		async redirect({ redirectTo }) {
 			try {
@@ -48,6 +46,6 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 	},
 	providers: [
 		// Google OAuth - most users have a Google account
-		Google()
+		Google
 	]
 });

@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/assets/assetCatalog.ts`, `src/components/AssetPicker.tsx`, and `static/assets/curated/`.
 > Related systems: [Equipage](./EQUIPMENT_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-25
+> Last Updated: 2026-09-28
 
 ## Catalog and UI
 
@@ -20,4 +20,8 @@
 
 1. Heroic Icon Pack and Heroic Creature Pack are by Aleksandr Makarov. The original archives include license files. Both permit commercial product use and modification and require product credit. The Icon Pack excludes public hosting except as part of a game or similar product. The Creature Pack prohibits redistribution or repackaging of original or modified assets without signed permission.
 2. RPG Monsters & Minions HUGE Pack is by Beowulf. The archive includes no license text. The creator's itch.io comments permit free or commercial digital projects and modification, prohibit redistribution and physical products, and welcome credit.
-3. The app footer credits both creators. Source archives, sprite sheets, and unused files are excluded from the repository. Before public deployment, confirm this web tool's use of the embedded images meets each pack's product-use terms, especially the Heroic packs' hosting and redistribution wording.
+3. The app footer credits both creators. Source archives, sprite sheets, and unused files are excluded from the repository. The [Heroic Icon Pack](https://iknowkingrabbit.itch.io/heroic-icon-pack) and [Heroic Creature Pack](https://iknowkingrabbit.itch.io/heroic-creature-pack) page terms were checked on 2026-09-28; their product-use permissions are interpreted to cover images embedded in DMTools with attribution. The [Monsters & Minions page](https://beowulf.itch.io/rpg-boss-monsters-minions-huge-pack) remains password protected; its terms above come from the earlier creator-comment review. The user approved shipping this integration. Do not publish the source packs or a standalone asset download.
+
+## Minor follow-up
+
+1. TODO (low priority, non-blocking): Review the 13 remaining flagged creature labels in the HTML index and improve generic asset names where useful. Preserve asset IDs and source filenames; record approved names and classifications in the catalog and assessment data, then regenerate the index.

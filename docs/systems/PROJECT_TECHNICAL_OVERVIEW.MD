@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-25
+> Last Updated: 2026-09-28
 
 ## Tech Stack
 

@@ -112,7 +112,7 @@ const EncounterPlannerContent: React.FC = () => {
 		return (
 			<PageContainer>
 				<MainContent>
-					<div className="py-12 text-center text-zinc-500">Loading encounter...</div>
+					<div className="py-12 text-center text-[var(--dm-muted)]">Loading encounter...</div>
 				</MainContent>
 			</PageContainer>
 		);
@@ -157,7 +157,7 @@ const EncounterPlannerContent: React.FC = () => {
 										type="text"
 										value={encounter.name}
 										onChange={(e) => setName(e.target.value)}
-										className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+										className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 										placeholder="Encounter name"
 									/>
 								</FormGroup>
@@ -166,7 +166,7 @@ const EncounterPlannerContent: React.FC = () => {
 									<textarea
 										value={encounter.description ?? ''}
 										onChange={(e) => setDescription(e.target.value)}
-										className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+										className="w-full resize-none rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 										rows={2}
 										placeholder="Describe the encounter..."
 									/>
@@ -232,7 +232,7 @@ const EncounterPlannerContent: React.FC = () => {
 										type="text"
 										value={encounter.environment ?? ''}
 										onChange={(e) => setEnvironment(e.target.value)}
-										className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+										className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 										placeholder="Forest clearing, dungeon room, etc."
 									/>
 								</FormGroup>
@@ -241,7 +241,7 @@ const EncounterPlannerContent: React.FC = () => {
 									<textarea
 										value={encounter.gmNotes ?? ''}
 										onChange={(e) => setGmNotes(e.target.value)}
-										className="w-full resize-none rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+										className="w-full resize-none rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 										rows={4}
 										placeholder="Tactics, traps, environmental hazards..."
 									/>

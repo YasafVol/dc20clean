@@ -35,7 +35,7 @@ export const PartyConfigForm: React.FC<PartyConfigFormProps> = ({
 				<select
 					value={party.size}
 					onChange={(e) => onSizeChange(parseInt(e.target.value, 10))}
-					className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+					className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 				>
 					{[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
 						<option key={n} value={n}>
@@ -50,7 +50,7 @@ export const PartyConfigForm: React.FC<PartyConfigFormProps> = ({
 				<select
 					value={party.averageLevel}
 					onChange={(e) => onLevelChange(parseInt(e.target.value, 10))}
-					className="w-full rounded-lg border border-purple-500/30 bg-black/30 px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+					className="w-full rounded-lg border border-[var(--dm-border)] bg-[var(--dm-field)] px-3 py-2 text-[var(--dm-text)] focus:border-[var(--dm-accent)] focus:outline-none"
 				>
 					{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
 						<option key={n} value={n}>

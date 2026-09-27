@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { Backpack } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import AssetPicker from '../../../components/AssetPicker';
 import { saveCustomGeneralEquipment } from '../../../lib/rulesdata/equipment/storage/equipmentStorage';
 import type { CustomGeneralEquipment } from '../../../lib/rulesdata/equipment/schemas/generalEquipmentSchema';
 import EquipageBuilderFrame from './EquipageBuilderFrame';
@@ -22,6 +23,7 @@ export default function GeneralEquipmentBuilder({
 }: GeneralEquipmentBuilderProps) {
 	const [step, setStep] = useState(1);
 	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [iconAssetId, setIconAssetId] = useState(initialEquipment?.iconAssetId);
 	const [description, setDescription] = useState(initialEquipment?.description ?? '');
 	const [cost, setCost] = useState(initialEquipment?.cost ?? '-');
 
@@ -33,6 +35,7 @@ export default function GeneralEquipmentBuilder({
 		const item: CustomGeneralEquipment = {
 			id: initialEquipment?.id ?? `custom-general-${Date.now()}`,
 			category: 'general',
+			iconAssetId,
 			name: trimmedName,
 			description: description.trim() || undefined,
 			cost: cost.trim() || '-',
@@ -82,6 +85,14 @@ export default function GeneralEquipmentBuilder({
 				{step === 1 && (
 					<>
 						<SectionTitle>Details</SectionTitle>
+						<div className="mb-4">
+							<AssetPicker
+								kind="item"
+								value={iconAssetId}
+								onChange={setIconAssetId}
+								label="Icon (optional)"
+							/>
+						</div>
 						<div className="mb-4">
 							<label
 								className="mb-2 block text-sm font-medium text-gray-400"

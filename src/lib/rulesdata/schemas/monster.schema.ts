@@ -330,6 +330,8 @@ export interface SavedMonster {
 	// Identity
 	id: string; // mon_<uuid>
 	name: string;
+	/** Stable ID from the curated creature art catalog. */
+	artAssetId?: string;
 	description?: string;
 	level: number; // -1 to 10
 	tier: MonsterTier;
@@ -392,6 +394,7 @@ export const savedMonsterSchema = z.object({
 	// Identity
 	id: z.string().regex(/^mon_[a-f0-9-]+$/, 'Monster ID must be in format mon_<uuid>'),
 	name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
+	artAssetId: z.string().optional(),
 	description: z.string().optional(),
 	level: z
 		.number()

@@ -4,9 +4,9 @@
 > Owns: Custom weapon, armor, shield, spell-focus, and reusable general-equipment schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.
 > Does not own: Character inventory rows, generic effect semantics, character-sheet equip state, or PDF export mapping.
 > Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, equipment source metadata, `src/lib/rulesdata/equipment/`, `src/routes/custom-equipment/`, and `src/components/equipment/`.
-> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Related systems: [Effects](./EFFECT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-09-28
 
 ---
 
@@ -113,6 +113,10 @@ resolve their canonical property effects through the same bridge as custom focus
 Rows linked to saved Equipage items keep `itemType: 'Custom'` for selector compatibility
 and also store `customEquipmentCategory` (`weapon`, `armor`, `shield`, `spellFocus`, or
 `general`) so the inventory can label them with their Equipage category.
+Every Equipage builder also offers an optional curated `iconAssetId`. The ID is saved
+with the reusable template and copied into a character inventory row when selected.
+Changing or removing an Equipage template later does not remove an existing row's icon.
+Icons are presentation only and never contribute effects or point costs.
 
 On the alternative character sheet, Add Item opens a picker instead of inserting a
 blank row. Its Custom items source exposes saved Equipage records with their stable

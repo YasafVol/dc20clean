@@ -142,8 +142,8 @@ export const MonsterList: React.FC = () => {
 						type="button"
 						className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 							activeTab === 'my-monsters'
-								? 'bg-purple-600 text-white'
-								: 'bg-black/30 text-zinc-400 hover:text-white'
+								? 'bg-[var(--dm-accent)] text-[var(--dm-page)]'
+								: 'bg-[var(--dm-field)] text-[var(--dm-subtext)] hover:text-[var(--dm-text)]'
 						}`}
 						onClick={() => setActiveTab('my-monsters')}
 					>
@@ -153,8 +153,8 @@ export const MonsterList: React.FC = () => {
 						type="button"
 						className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 							activeTab === 'homebrew'
-								? 'bg-purple-600 text-white'
-								: 'bg-black/30 text-zinc-400 hover:text-white'
+								? 'bg-[var(--dm-accent)] text-[var(--dm-page)]'
+								: 'bg-[var(--dm-field)] text-[var(--dm-subtext)] hover:text-[var(--dm-text)]'
 						}`}
 						onClick={() => setActiveTab('homebrew')}
 					>
@@ -164,7 +164,7 @@ export const MonsterList: React.FC = () => {
 
 				{/* Content */}
 				{isLoading ? (
-					<div className="py-12 text-center text-zinc-500">Loading...</div>
+					<div className="py-12 text-center text-[var(--dm-muted)]">Loading...</div>
 				) : monsters.length === 0 ? (
 					<EmptyState>
 						<EmptyStateTitle>

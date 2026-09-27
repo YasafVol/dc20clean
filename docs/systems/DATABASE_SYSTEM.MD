@@ -4,9 +4,9 @@
 > Owns: Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.
 > Does not own: Game-rule interpretation, derived-stat calculation, feature workflows, or presentation behavior.
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
-> Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-09-27
 
 ---
 
@@ -654,3 +654,7 @@ All three campaign tables use soft-delete; all reads filter `deletedAt === undef
 
 > Last updated: 2026-06-28
 > Maintainer: @DC20Clean-Team
+
+## Back-office review access
+
+`convex/backOffice.ts` provides read-only cross-owner monster review and protected system-document access for the two verified reviewer accounts. Every content query checks the server allowlist independently. No table or persisted shape is added. Monster list indexes cover active-record role/tier combinations and name search; the feature application-ID index resolves stored references. The documentation snapshot remains in the Convex backend bundle. See [Back Office](./BACK_OFFICE_SYSTEM.MD) for access and generation contracts.

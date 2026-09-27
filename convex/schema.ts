@@ -370,7 +370,7 @@ const forkStatsValidator = v.object({
 });
 
 // Main monster table schema
-const monsterValidator = {
+export const monsterValidator = {
 	// Owner reference (Convex Auth user ID) - optional for official monsters
 	userId: v.optional(v.id('users')),
 
@@ -686,7 +686,12 @@ export default defineSchema({
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
-		.index('by_official', ['isOfficial']),
+		.index('by_official', ['isOfficial'])
+		.index('by_deleted', ['deletedAt'])
+		.index('by_deleted_and_role', ['deletedAt', 'roleId'])
+		.index('by_deleted_and_tier', ['deletedAt', 'tier'])
+		.index('by_deleted_and_role_and_tier', ['deletedAt', 'roleId', 'tier'])
+		.searchIndex('search_name', { searchField: 'name', filterFields: ['deletedAt', 'roleId', 'tier'] }),
 
 	// DM Tools: Features (official + user-created)
 	features: defineTable(featureValidator)
@@ -694,7 +699,8 @@ export default defineSchema({
 		.index('by_user_and_id', ['userId', 'id'])
 		.index('by_approval_status', ['approvalStatus'])
 		.index('by_user_and_deleted', ['userId', 'deletedAt'])
-		.index('by_official', ['isOfficial']),
+		.index('by_official', ['isOfficial'])
+		.index('by_app_id', ['id']),
 
 	// DM Tools: Encounters
 	encounters: defineTable(encounterValidator)

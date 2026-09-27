@@ -4,9 +4,9 @@
 > Owns: Repository-wide stack, runtime composition, project structure, development commands, CI status, code standards, and PR conventions.
 > Does not own: Detailed subsystem behavior, rules content, feature acceptance criteria, or subsystem-specific data contracts.
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
-> Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
+> Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-09-27
 
 ## Tech Stack
 
@@ -211,3 +211,7 @@ docs/systems/                      # System documentation
   - `docs: update documentation`
 - PR contents: Include clear description, linked issues, test plan, and screenshots for UI changes
 - Stacked PRs: Optional Graphite workflow supported (see `AGENTS.md` for details)
+
+## Private review workspace
+
+`/back-office/*` contains the Systems and Monsters review workspace. Its menu and homepage-navigation link appears only for server-authorized reviewers. Cloud authentication is required and local auth bypass does not apply. `npm run backoffice:generate` creates the protected Convex documentation snapshot; dev/build/cloud-dev lifecycle scripts regenerate it, and `npm run backoffice:check` detects drift. Direct backend deployment must regenerate first. See [Back Office](./BACK_OFFICE_SYSTEM.MD) for ownership, access, and route contracts.

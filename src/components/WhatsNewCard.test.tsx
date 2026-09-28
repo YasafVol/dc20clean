@@ -19,6 +19,18 @@ describe('WhatsNewCard', () => {
 		window.history.replaceState({}, '', '/');
 	});
 
+	it('features the curated art release on the home card', () => {
+		render(<WhatsNewCard onDismiss={() => undefined} />);
+
+		expect(
+			screen.getByRole('heading', { name: 'Art for your gear and monsters' })
+		).toBeInTheDocument();
+		expect(screen.getByRole('link', { name: /read the full update/i })).toHaveAttribute(
+			'href',
+			'/updates/2026-09-28-curated-art-and-dm-tools'
+		);
+	});
+
 	it('persists dismissal for the current update', () => {
 		const { unmount } = render(<DismissibleWhatsNewCard />);
 

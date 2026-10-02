@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-27
+> Last Updated: 2026-10-02
 
 ## Tech Stack
 
@@ -44,6 +44,7 @@
 Development and build:
 
 - `npm run dev` — Start Vite dev server
+- In development only, `/back-office-preview` shows the back-office layout with local system text and sample monsters; it does not require Convex or alter the protected `/back-office` route. See `BACK_OFFICE_SYSTEM.MD`.
 - `npm run build` — Production build to `dist/`
 - `npm run preview` — Preview production build on port 4173
 - `npm run convex:dev` — Start Convex development server (continuous)

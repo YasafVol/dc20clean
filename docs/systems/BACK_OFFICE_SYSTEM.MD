@@ -6,7 +6,7 @@
 > Authoritative source: `convex/backOffice.ts`, `convex/lib/backOfficeAccess.ts`, `src/routes/back-office/`, and `scripts/back-office/generateSystems.mjs`.
 > Related systems: [Architecture](./PROJECT_TECHNICAL_OVERVIEW.MD), [Database](./DATABASE_SYSTEM.MD), [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-28
+> Last Updated: 2026-10-02
 
 ## 1. Access and routes
 
@@ -16,6 +16,7 @@
 4. `backOffice.access` returns only a boolean. Every content query independently checks access before reading data or returning documents. Unknown, signed-out, and unverified accounts receive no review content.
 5. The menu and homepage navigation expose the Back office link only after server confirmation. Direct links display sign-in, restricted-access, loading, unavailable-record, and query-failure states as appropriate. A missing back-office query displays a specific backend deployment message.
 6. The workspace exports no mutations. It does not confer rights to existing monster mutation functions.
+7. Vite development mode alone exposes `/back-office-preview`. It reuses the same reader and stat-block presentation with checkout system text and explicitly synthetic monsters. It uses no Convex queries, account access, or persistent data. The separate `/back-office` route keeps its server access checks. Production builds omit the preview route, fixture module, and system snapshot from browser assets.
 
 ## 2. System reader
 
@@ -45,3 +46,4 @@
 1. `convex/backOffice.test.ts` proves both reviewers' access, signed-out/unverified/other-account denial on every content query, pagination, complete-query role/tier filtering, search, deleted-record exclusion, and feature-reference resolution.
 2. Reader navigation tests check document coverage and system-link resolution; UI tests check access states, system/monster review interactions, and overflow at phone, tablet, and desktop widths.
 3. Verify the production browser bundle contains no system snapshot text. Backend deployment and authorized live sign-in are separate from local implementation verification.
+4. The local preview tests check navigation, filtering, detail rendering, and absence of Convex content queries without sign-in. This preview verifies presentation only; backend access behavior remains covered by the protected query tests.

@@ -279,6 +279,15 @@
 .bo-warning {
 	color: #fde68a;
 }
+.bo-preview-notice {
+	margin: 0 0 1.5rem;
+	padding: 0.8rem 1rem;
+	border: 1px solid #fbbf24;
+	border-radius: 0.5rem;
+	background: #3b2c12;
+	color: #fff2c6;
+	font-weight: 700;
+}
 @media (max-width: 767px) {
 	.bo-split {
 		grid-template-columns: minmax(0, 1fr);

@@ -5,6 +5,7 @@ import '../../styles/globals.css';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { getFunctionName } from 'convex/server';
 import BackOffice from './BackOffice';
+import BackOfficePreview from './BackOfficePreview';
 import { BackOfficeErrorBoundary } from './BackOfficeErrorBoundary';
 import { systemNavigation, resolveSystemLink } from './systemNavigation';
 import systems from '../../../convex/backOfficeData/systems.json';
@@ -117,6 +118,16 @@ function mount(path = '/back-office/systems') {
 		<MemoryRouter initialEntries={[path]}>
 			<Routes>
 				<Route path="/back-office/*" element={<BackOffice />} />
+			</Routes>
+		</MemoryRouter>
+	);
+}
+
+function mountPreview(path = '/back-office-preview/systems') {
+	return render(
+		<MemoryRouter initialEntries={[path]}>
+			<Routes>
+				<Route path="/back-office-preview/*" element={<BackOfficePreview />} />
 			</Routes>
 		</MemoryRouter>
 	);
@@ -264,6 +275,41 @@ describe('System navigation contracts', () => {
 				systems.map((entry) => entry.id)
 			)
 		).toBeNull();
+	});
+});
+
+describe('Local sample preview', () => {
+	it('shows the local documents without querying Convex or requiring sign-in', async () => {
+		state.auth.isConvexEnabled = false;
+		state.auth.isAuthenticated = false;
+		mountPreview();
+		expect(screen.getByText(/Local preview · system text from this checkout/)).toBeTruthy();
+		expect(screen.getByText('27 documents')).toBeTruthy();
+		const docs = screen.getByRole('navigation', { name: 'System documents' });
+		fireEvent.click(
+			Array.from(docs.querySelectorAll('a')).find((a) => a.href.includes('DATABASE_SYSTEM.MD'))!
+		);
+		await waitFor(() =>
+			expect(screen.getAllByRole('heading', { name: /Database & Storage System/ })).toHaveLength(2)
+		);
+		expect(state.queries).toEqual([]);
+	});
+
+	it('filters sample monsters and opens a sample stat block without querying Convex', async () => {
+		state.auth.isConvexEnabled = false;
+		state.auth.isAuthenticated = false;
+		mountPreview('/back-office-preview/monsters');
+		expect(screen.getByText('3 results')).toBeTruthy();
+		fireEvent.change(screen.getByRole('combobox', { name: 'Monster role' }), {
+			target: { value: 'lurker' }
+		});
+		expect(screen.getByText('1 results')).toBeTruthy();
+		fireEvent.click(screen.getByRole('link', { name: /Sample Cave Stalker/ }));
+		await waitFor(() =>
+			expect(screen.getByRole('heading', { name: 'Sample Cave Stalker' })).toBeTruthy()
+		);
+		expect(screen.getByText('This creature exists only in the local preview.')).toBeTruthy();
+		expect(state.queries).toEqual([]);
 	});
 });
 

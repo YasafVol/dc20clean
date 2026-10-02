@@ -3,6 +3,7 @@ import { useQuery } from 'convex/react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { FunctionReturnType } from 'convex/server';
 import { backOfficeApi } from './backOfficeApi';
 import { Input } from '../../components/ui/input';
 import {
@@ -28,15 +29,43 @@ function headingText(children: ReactNode): string {
 	return '';
 }
 
+type SystemList = FunctionReturnType<typeof backOfficeApi.listSystems>;
+type SystemDetail = FunctionReturnType<typeof backOfficeApi.getSystem>;
+
 export function SystemsReview() {
 	const { documentId } = useParams();
-	const location = useLocation();
-	const [axis, setAxis] = useState<SystemAxis>('verticals');
-	const [groupId, setGroupId] = useState('');
 	const [search, setSearch] = useState('');
 	const query = useDeferredValue(search.trim());
 	const documents = useQuery(backOfficeApi.listSystems, { search: query });
 	const document = useQuery(backOfficeApi.getSystem, documentId ? { id: documentId } : 'skip');
+	return (
+		<SystemsReviewContent
+			basePath="/back-office"
+			documents={documents}
+			document={document}
+			search={search}
+			onSearch={setSearch}
+		/>
+	);
+}
+
+export function SystemsReviewContent({
+	basePath,
+	documents,
+	document,
+	search,
+	onSearch
+}: {
+	basePath: string;
+	documents: SystemList | undefined;
+	document: SystemDetail | undefined;
+	search: string;
+	onSearch: (search: string) => void;
+}) {
+	const { documentId } = useParams();
+	const location = useLocation();
+	const [axis, setAxis] = useState<SystemAxis>('verticals');
+	const [groupId, setGroupId] = useState('');
 	const groups = systemNavigation[axis];
 	const group = groups.find((entry) => entry.id === groupId);
 	const visible = documents?.filter((entry) => !group || group.documents.includes(entry.id));
@@ -104,7 +133,7 @@ export function SystemsReview() {
 					aria-label="Search system documents"
 					placeholder="Search all system documents…"
 					value={search}
-					onChange={(event) => setSearch(event.target.value)}
+					onChange={(event) => onSearch(event.target.value)}
 				/>
 				{group && (
 					<button className="bo-link" onClick={() => setGroupId('')}>
@@ -127,7 +156,7 @@ export function SystemsReview() {
 								<Link
 									className="bo-row"
 									key={entry.id}
-									to={systemDocumentHref(entry.id)}
+									to={systemDocumentHref(entry.id).replace('/back-office', basePath)}
 									aria-current={entry.id === documentId ? 'page' : undefined}
 								>
 									<strong>{entry.title}</strong>
@@ -205,7 +234,7 @@ export function SystemsReview() {
 												)
 											]);
 											return destination ? (
-												<Link to={destination}>{children}</Link>
+												<Link to={destination.replace('/back-office', basePath)}>{children}</Link>
 											) : (
 												<span title={`Repository reference: ${href}`}>{children}</span>
 											);

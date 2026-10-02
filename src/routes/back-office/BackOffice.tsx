@@ -1,6 +1,7 @@
 import { useQuery } from 'convex/react';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import { BookOpenText, ShieldCheck, Skull } from 'lucide-react';
+import type { ComponentType } from 'react';
 import { backOfficeApi } from './backOfficeApi';
 import { useAppAuth } from '../../components/auth/AuthModeContext';
 import { SignIn } from '../../components/auth/SignIn';
@@ -20,23 +21,37 @@ function AuthorizedWorkspace() {
 			</div>
 		);
 	return (
+		<ReviewWorkspace basePath="/back-office" Systems={SystemsReview} Monsters={MonstersReview} />
+	);
+}
+
+export function ReviewWorkspace({
+	basePath,
+	Systems,
+	Monsters
+}: {
+	basePath: string;
+	Systems: ComponentType;
+	Monsters: ComponentType;
+}) {
+	return (
 		<>
 			<nav className="bo-nav" aria-label="Back office sections">
-				<NavLink to="/back-office/systems">
+				<NavLink to={`${basePath}/systems`}>
 					<BookOpenText className="mr-2 inline" size={18} aria-hidden="true" />
 					Systems
 				</NavLink>
-				<NavLink to="/back-office/monsters">
+				<NavLink to={`${basePath}/monsters`}>
 					<Skull className="mr-2 inline" size={18} aria-hidden="true" />
 					Monsters
 				</NavLink>
 			</nav>
 			<Routes>
-				<Route index element={<SystemsReview />} />
-				<Route path="systems" element={<SystemsReview />} />
-				<Route path="systems/:documentId" element={<SystemsReview />} />
-				<Route path="monsters" element={<MonstersReview />} />
-				<Route path="monsters/:monsterId" element={<MonstersReview />} />
+				<Route index element={<Systems />} />
+				<Route path="systems" element={<Systems />} />
+				<Route path="systems/:documentId" element={<Systems />} />
+				<Route path="monsters" element={<Monsters />} />
+				<Route path="monsters/:monsterId" element={<Monsters />} />
 				<Route path="*" element={<p role="alert">This review page was not found.</p>} />
 			</Routes>
 		</>

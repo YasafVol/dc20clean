@@ -1,4 +1,4 @@
-import { useDeferredValue } from 'react';
+import { useDeferredValue, type ComponentType } from 'react';
 import { usePaginatedQuery, useQuery } from 'convex/react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import type { FunctionReturnType } from 'convex/server';
@@ -30,6 +30,9 @@ function MonsterDetail({ id }: { id: string }) {
 	if (!result) return <p role="alert">This monster is unavailable or has been deleted.</p>;
 	return <MonsterStatBlock result={result} />;
 }
+
+type MonsterList = FunctionReturnType<typeof backOfficeApi.listMonsters>['page'];
+type PageStatus = 'LoadingFirstPage' | 'CanLoadMore' | 'LoadingMore' | 'Exhausted';
 
 export function MonsterStatBlock({
 	result
@@ -153,8 +156,7 @@ export function MonsterStatBlock({
 }
 
 export function MonstersReview() {
-	const { monsterId } = useParams();
-	const [params, setParams] = useSearchParams();
+	const [params] = useSearchParams();
 	const search = params.get('search') ?? '';
 	const deferredSearch = useDeferredValue(search.trim());
 	const roleValue = params.get('role') ?? '';
@@ -166,6 +168,37 @@ export function MonstersReview() {
 		{ search: deferredSearch || undefined, roleId, tier },
 		{ initialNumItems: 30 }
 	);
+	return (
+		<MonstersReviewContent
+			basePath="/back-office"
+			results={results}
+			status={status}
+			loadMore={loadMore}
+			Detail={MonsterDetail}
+		/>
+	);
+}
+
+export function MonstersReviewContent({
+	basePath,
+	results,
+	status,
+	loadMore,
+	Detail
+}: {
+	basePath: string;
+	results: MonsterList;
+	status: PageStatus;
+	loadMore: (count: number) => void;
+	Detail: ComponentType<{ id: string }>;
+}) {
+	const { monsterId } = useParams();
+	const [params, setParams] = useSearchParams();
+	const search = params.get('search') ?? '';
+	const roleValue = params.get('role') ?? '';
+	const tierValue = params.get('tier') ?? '';
+	const roleId = roles.includes(roleValue as Role) ? (roleValue as Role) : undefined;
+	const tier = tiers.includes(tierValue as Tier) ? (tierValue as Tier) : undefined;
 	const changeFilter = (key: string, value: string) => {
 		const next = new URLSearchParams(params);
 		if (value) next.set(key, value);
@@ -241,7 +274,7 @@ export function MonstersReview() {
 								<Link
 									className="bo-row"
 									key={monster._id}
-									to={`/back-office/monsters/${monster._id}?${detailQuery}`}
+									to={`${basePath}/monsters/${monster._id}?${detailQuery}`}
 									aria-current={monster._id === monsterId ? 'page' : undefined}
 								>
 									<strong>{monster.name}</strong>
@@ -268,7 +301,7 @@ export function MonstersReview() {
 				</nav>
 				<article className="bo-card bo-reader" aria-label="Monster stat block">
 					{monsterId ? (
-						<MonsterDetail key={monsterId} id={monsterId} />
+						<Detail key={monsterId} id={monsterId} />
 					) : (
 						<>
 							<h2>Choose a monster</h2>

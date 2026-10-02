@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-09-28
+> Last Updated: 2026-10-02
 
 ## Tech Stack
 
@@ -19,6 +19,7 @@
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - User Feedback: Userback widget on explicit feedback request when `VITE_USERBACK_ACCESS_TOKEN` is set
 - Product Analytics: PostHog Cloud EU when configured and enabled; explicit events and sanitized pageviews only. The separate default-off legal/consent flag gates the draft pages and choice UI, and only requires opt-in when that flow is enabled. See `ANALYTICS_SYSTEM.MD` and `PRIVACY_AND_LEGAL_SYSTEM.MD` for the unresolved publication review.
+- Frontend errors: Sentry initializes before the app in configured production/preview builds, with React 19 root error hooks, sanitized logger forwarding, environment/release identity, and hosted source-map upload. See `ERROR_REPORTING_SYSTEM.MD`. Vercel integration credentials remain build-only; only the public DSN reaches the browser.
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 

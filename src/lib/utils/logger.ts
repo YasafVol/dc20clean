@@ -13,6 +13,7 @@
  */
 
 import { captureAnalyticsEvent } from '../analytics/posthog';
+import { captureApplicationError, setErrorReportingUser } from '../monitoring/sentry';
 
 // ============================================================================
 // Types
@@ -166,47 +167,14 @@ function log(level: LogLevel, context: LogContext, message: string, data?: objec
  * Send error to Sentry (lazy-loaded)
  */
 function sendToSentry(entry: LogEntry): void {
-	// Only send if Sentry DSN is configured
-	if (!import.meta.env.VITE_SENTRY_DSN) {
-		return;
-	}
-
-	// Dynamically import Sentry to avoid bundle bloat
-	import('@sentry/react')
-		.then((Sentry) => {
-			Sentry.captureMessage(entry.message, {
-				level: 'error',
-				tags: {
-					context: entry.context,
-					sessionId: entry.sessionId
-				},
-				extra: entry.data
-			});
-		})
-		.catch(() => {
-			// Sentry not available, silently ignore
-		});
+	captureApplicationError(entry.context, entry.message);
 }
 
 /**
  * Set user context for Sentry
  */
 function setUserContext(userId: string | null): void {
-	if (!import.meta.env.VITE_SENTRY_DSN) {
-		return;
-	}
-
-	import('@sentry/react')
-		.then((Sentry) => {
-			if (userId) {
-				Sentry.setUser({ id: userId });
-			} else {
-				Sentry.setUser(null);
-			}
-		})
-		.catch(() => {
-			// Sentry not available
-		});
+	setErrorReportingUser(userId);
 }
 
 // ============================================================================

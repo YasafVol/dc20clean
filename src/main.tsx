@@ -1,3 +1,4 @@
+import { reactErrorHandler } from './lib/monitoring/sentry';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ConvexAuthProvider } from '@convex-dev/auth/react';
@@ -43,9 +44,11 @@ function renderApp() {
 		</I18nextProvider>
 	);
 
-	ReactDOM.createRoot(document.getElementById('root')!).render(
-		<React.StrictMode>{app}</React.StrictMode>
-	);
+	ReactDOM.createRoot(document.getElementById('root')!, {
+		onUncaughtError: reactErrorHandler(),
+		onCaughtError: reactErrorHandler(),
+		onRecoverableError: reactErrorHandler()
+	}).render(<React.StrictMode>{app}</React.StrictMode>);
 }
 
 // Wait for i18n to initialize before rendering to prevent race conditions in production

@@ -69,9 +69,15 @@ describe('Back office access and content', () => {
 			await expect(reviewer.query(backOfficeApi.access, {})).resolves.toBe(true);
 			const documents = await reviewer.query(backOfficeApi.listSystems, {});
 			expect(documents.some((entry) => entry.id === 'BACK_OFFICE_SYSTEM.MD')).toBe(true);
+			expect(documents.map((entry) => entry.ordinal)).toEqual(
+				Array.from({ length: documents.length }, (_, index) => index + 1)
+			);
 			expect(documents[0]).not.toHaveProperty('markdown');
 			const document = await reviewer.query(backOfficeApi.getSystem, { id: 'DATABASE_SYSTEM.MD' });
 			expect(document?.markdown).toContain('hybrid');
+			expect(document?.ordinal).toBe(
+				documents.find((entry) => entry.id === 'DATABASE_SYSTEM.MD')?.ordinal
+			);
 		}
 	);
 
@@ -103,6 +109,7 @@ describe('Back office access and content', () => {
 			search: 'normalizeCharacterStateForStorage'
 		});
 		expect(matches.some((entry) => entry.id === 'DATABASE_SYSTEM.MD')).toBe(true);
+		expect(matches.find((entry) => entry.id === 'DATABASE_SYSTEM.MD')?.ordinal).toBe(12);
 		await expect(reviewer.query(backOfficeApi.getSystem, { id: '../auth.ts' })).resolves.toBeNull();
 	});
 

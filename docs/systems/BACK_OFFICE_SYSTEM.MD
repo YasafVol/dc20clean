@@ -31,6 +31,7 @@
 6. The reader supports headings, an on-page outline, fenced code, lists, tables, and links between known system documents. External HTTP(S) links open separately. Other repository references are displayed without pretending that they are application pages. Raw HTML is not executed.
 7. `backoffice:generate` snapshots only Markdown files directly under `docs/systems/` into `convex/backOfficeData/systems.json`. The snapshot is imported solely by the protected backend, never by public browser bundles or static assets.
 8. `predev`, `prebuild`, and `preconvex:dev` regenerate the snapshot. `backoffice:check` detects drift. Direct Convex deployment commands must run `npm run backoffice:generate` first so the backend receives current documentation. Frontend builds alone do not update deployed Convex content.
+9. The reader strips a leading `DC20Clean` or `DC20` project prefix from displayed document names. It leaves Markdown source titles, filenames, and link targets unchanged. Each snapshot entry receives a one-based ordinal from the filename-sorted catalog; the list and selected document display it as two digits. Search and area filters preserve these catalog numbers.
 
 ## 3. Monster review
 

@@ -7,6 +7,7 @@ import systems from './backOfficeData/systems.json';
 
 const systemSummary = v.object({
 	id: v.string(),
+	ordinal: v.number(),
 	title: v.string(),
 	purpose: v.string(),
 	owns: v.string(),
@@ -48,6 +49,7 @@ export const listSystems = query({
 			.filter((entry) => !matching || entry.markdown.toLowerCase().includes(matching))
 			.map((entry) => ({
 				id: entry.id,
+				ordinal: entry.ordinal,
 				title: entry.title,
 				purpose: entry.purpose,
 				owns: entry.owns,

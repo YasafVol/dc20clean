@@ -9,6 +9,8 @@ import { Input } from '../../components/ui/input';
 import {
 	systemDocumentHref,
 	systemNavigation,
+	systemDisplayTitle,
+	systemOrdinalLabel,
 	resolveSystemLink,
 	type SystemAxis
 } from './systemNavigation';
@@ -159,7 +161,11 @@ export function SystemsReviewContent({
 									to={systemDocumentHref(entry.id).replace('/back-office', basePath)}
 									aria-current={entry.id === documentId ? 'page' : undefined}
 								>
-									<strong>{entry.title}</strong>
+									<strong className="bo-system-row-title">
+										<span className="bo-system-number">{systemOrdinalLabel(entry.ordinal)}</span>
+										{' '}
+										<span>{systemDisplayTitle(entry.title)}</span>
+									</strong>
 									<small>{entry.purpose}</small>
 									<small>Updated {entry.updated || 'date not recorded'}</small>
 								</Link>
@@ -184,7 +190,10 @@ export function SystemsReviewContent({
 						<>
 							<div className="bo-document-meta">
 								<span className="bo-eyebrow">System specification</span>
-								<h2>{document.title}</h2>
+								<h2>
+									<span className="bo-system-number">{systemOrdinalLabel(document.ordinal)}</span>{' '}
+									{systemDisplayTitle(document.title)}
+								</h2>
 								<p className="bo-muted">
 									Updated {document.updated || 'date not recorded'} · docs/systems/{document.id}
 								</p>
@@ -210,7 +219,11 @@ export function SystemsReviewContent({
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm]}
 									components={{
-										h1: ({ children }) => <h2 id={headingId(headingText(children))}>{children}</h2>,
+										h1: ({ children }) => (
+											<h2 id={headingId(headingText(children))}>
+												{systemDisplayTitle(headingText(children))}
+											</h2>
+										),
 										h2: ({ children }) => <h2 id={headingId(headingText(children))}>{children}</h2>,
 										h3: ({ children }) => <h3 id={headingId(headingText(children))}>{children}</h3>,
 										table: ({ children }) => (

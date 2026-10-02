@@ -111,6 +111,14 @@ export function systemDocumentHref(id: string, hash = ''): string {
 	return `/back-office/systems/${encodeURIComponent(id)}${hash}`;
 }
 
+export function systemDisplayTitle(title: string): string {
+	return title.replace(/^DC20(?:Clean)?(?:\s*[-–—:]\s*|\s+)/i, '').trim() || title;
+}
+
+export function systemOrdinalLabel(ordinal: number): string {
+	return String(ordinal).padStart(2, '0');
+}
+
 export function resolveSystemLink(href: string, documentIds: string[]): string | null {
 	const [pathname, fragment] = href.split('#');
 	const filename = pathname.split('/').pop();

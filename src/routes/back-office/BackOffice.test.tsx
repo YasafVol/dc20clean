@@ -171,6 +171,8 @@ describe('Back office review UI', () => {
 		const creation = Array.from(documentNav.querySelectorAll('a')).find((entry) =>
 			entry.href.includes('CHARACTER_CREATION_FLOW.MD')
 		)!;
+		expect(creation.textContent).toContain('08 Character Creation Flow System');
+		expect(creation.textContent).not.toContain('DC20Clean');
 		fireEvent.click(creation);
 		await waitFor(() =>
 			expect(screen.getByRole('navigation', { name: 'On this page' })).toBeTruthy()
@@ -195,7 +197,7 @@ describe('Back office review UI', () => {
 		});
 		await waitFor(() =>
 			expect(screen.getByRole('navigation', { name: 'System documents' }).textContent).toContain(
-				'Database & Storage'
+				'12 Database & Storage System'
 			)
 		);
 		fireEvent.change(screen.getByRole('searchbox', { name: 'Search system documents' }), {
@@ -286,11 +288,14 @@ describe('Local sample preview', () => {
 		expect(screen.getByText(/Local preview · system text from this checkout/)).toBeTruthy();
 		expect(screen.getByText('27 documents')).toBeTruthy();
 		const docs = screen.getByRole('navigation', { name: 'System documents' });
+		expect(docs.querySelector('a')?.textContent).toContain(
+			'01 Alternative Character Sheet Presentation'
+		);
 		fireEvent.click(
 			Array.from(docs.querySelectorAll('a')).find((a) => a.href.includes('DATABASE_SYSTEM.MD'))!
 		);
 		await waitFor(() =>
-			expect(screen.getAllByRole('heading', { name: /Database & Storage System/ })).toHaveLength(2)
+			expect(screen.getByRole('heading', { name: '12 Database & Storage System' })).toBeTruthy()
 		);
 		expect(state.queries).toEqual([]);
 	});

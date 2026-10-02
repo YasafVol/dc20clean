@@ -43,7 +43,7 @@ const caveStalker: MonsterDetail = {
 			}
 		],
 		visibility: 'private',
-		approvalStatus: 'pending',
+		approvalStatus: 'pending_review',
 		createdAt: '2026-10-02',
 		lastModified: '2026-10-02',
 		schemaVersion: '1.0.0',
@@ -85,7 +85,7 @@ const sampleMonsters: MonsterDetail[] = [
 			tier: 'apex',
 			isHomebrew: false,
 			approvalStatus: 'approved',
-			visibility: 'public',
+			visibility: 'public_credited',
 			featureIds: ['sample-iron-plating'],
 			actions: [{ ...caveStalker.monster.actions[0], id: 'sample-slam', name: 'Slam' }],
 			finalHP: 26,
@@ -113,7 +113,7 @@ const sampleMonsters: MonsterDetail[] = [
 			tier: 'standard',
 			isHomebrew: false,
 			approvalStatus: 'approved',
-			visibility: 'public',
+			visibility: 'public_credited',
 			featureIds: ['sample-mire-sight'],
 			actions: [{ ...caveStalker.monster.actions[0], id: 'sample-mire-bolt', name: 'Mire Bolt' }],
 			finalHP: 13

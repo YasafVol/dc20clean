@@ -6,11 +6,12 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const directory = path.join(root, 'docs/systems');
 const files = (await readdir(directory)).filter((name) => /\.md$/i.test(name)).sort();
 const documents = await Promise.all(
-	files.map(async (id) => {
+	files.map(async (id, index) => {
 		const markdown = await readFile(path.join(directory, id), 'utf8');
 		const metadata = (key) => markdown.match(new RegExp(`^> ${key}: (.+)$`, 'm'))?.[1] ?? '';
 		return {
 			id,
+			ordinal: index + 1,
 			title: markdown.match(/^# (.+)$/m)?.[1] ?? id,
 			purpose: metadata('Purpose'),
 			owns: metadata('Owns'),

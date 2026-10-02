@@ -1,6 +1,7 @@
 [
   {
     "id": "ALTERNATIVE_CHARACTER_SHEET.MD",
+    "ordinal": 1,
     "title": "DC20Clean — Alternative Character Sheet Presentation",
     "purpose": "Presentation contract for the alternative character sheet at `/character2/:id`.",
     "owns": "Alternative-only composition, section disclosures, tab presentation, responsive layout, and alternative-only interaction choices.",
@@ -11,6 +12,7 @@
   },
   {
     "id": "ANALYTICS_SYSTEM.MD",
+    "ordinal": 2,
     "title": "Analytics System",
     "purpose": "Define product-analytics collection, identity, privacy boundaries, event contracts, reporting semantics, and operational setup.",
     "owns": "PostHog client initialization, explicit pageview capture, acquisition attribution, authenticated identity, analytics event registration, privacy filtering, and analytics verification.",
@@ -21,6 +23,7 @@
   },
   {
     "id": "ANCESTRY_SYSTEM.MD",
+    "ordinal": 3,
     "title": "DC20Clean – Ancestry System",
     "purpose": "Reference for ancestry data, ancestry trait pools, ancestry-point selection, and ancestry creation UI.",
     "owns": "Ancestry definitions, ancestry composition, ancestry selection, ancestry-point spending, and ancestry-facing trait availability.",
@@ -31,6 +34,7 @@
   },
   {
     "id": "BACKGROUND_SYSTEM.MD",
+    "ordinal": 4,
     "title": "DC20Clean – Background System (Skills, Trades, Languages)",
     "purpose": "Canonical reference for Background skills, trades, languages, point budgets, conversions, validation, and UI wiring.",
     "owns": "Background option data, allocation budgets, conversions, mastery spending behavior, and Background-stage validation and presentation.",
@@ -41,16 +45,18 @@
   },
   {
     "id": "BACK_OFFICE_SYSTEM.MD",
+    "ordinal": 5,
     "title": "DC20Clean — Back Office",
     "purpose": "Private, read-only workspace for understanding system specifications and reviewing stored monsters.",
     "owns": "Reviewer access, system-document navigation and rendering, monster review queries, and back-office routes.",
     "excludes": "Rules interpretation, monster editing or approval, source imports, general user administration, or documentation authoring.",
     "authoritativeSource": "`convex/backOffice.ts`, `convex/lib/backOfficeAccess.ts`, `src/routes/back-office/`, and `scripts/back-office/generateSystems.mjs`.",
     "updated": "2026-10-02",
-    "markdown": "# DC20Clean — Back Office\n\n> Purpose: Private, read-only workspace for understanding system specifications and reviewing stored monsters.\n> Owns: Reviewer access, system-document navigation and rendering, monster review queries, and back-office routes.\n> Does not own: Rules interpretation, monster editing or approval, source imports, general user administration, or documentation authoring.\n> Authoritative source: `convex/backOffice.ts`, `convex/lib/backOfficeAccess.ts`, `src/routes/back-office/`, and `scripts/back-office/generateSystems.mjs`.\n> Related systems: [Architecture](./PROJECT_TECHNICAL_OVERVIEW.MD), [Database](./DATABASE_SYSTEM.MD), [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Testing](./TESTING_SYSTEM.MD).\n> Status: Active\n> Last Updated: 2026-10-02\n\n## 1. Access and routes\n\n1. `/back-office` and `/back-office/systems` open the system reader; `/back-office/systems/:documentId` opens a specific Markdown specification.\n2. `/back-office/monsters` opens the monster list; `/back-office/monsters/:monsterId` uses the Convex document ID to open a stored stat block.\n3. Access requires real Convex authentication and a server-owned user record with a verified email matching `yasaf.vol@gmail.com` or `nzinger@gmail.com` (Nir Zinger). Client-provided identity, local mode, and `VITE_BYPASS_AUTH` cannot grant access.\n4. `backOffice.access` returns only a boolean. Every content query independently checks access before reading data or returning documents. Unknown, signed-out, and unverified accounts receive no review content.\n5. The menu and homepage navigation expose the Back office link only after server confirmation. Direct links display sign-in, restricted-access, loading, unavailable-record, and query-failure states as appropriate. A missing back-office query displays a specific backend deployment message.\n6. The workspace exports no mutations. It does not confer rights to existing monster mutation functions.\n7. Vite development mode alone exposes `/back-office-preview`. It reuses the same reader and stat-block presentation with checkout system text and explicitly synthetic monsters. It uses no Convex queries, account access, or persistent data. The separate `/back-office` route keeps its server access checks. Production builds omit the preview route, fixture module, and system snapshot from browser assets.\n\n## 2. System reader\n\n1. `docs/systems/` remains the documentation authority. The reader does not author or rewrite these files.\n2. `systemNavigation.ts` supplies three overlapping reading views:\n   1. Verticals: character building, rules and equipment, and the DM workspace.\n   2. Flows: build/save/play, progression/upgrade/export, and monster/encounter/campaign preparation.\n   3. Horizontals: shared mechanics, data/compatibility, and platform/quality.\n3. These are curated navigation paths. They do not assert a complete FITL architecture or introduce another behavior specification. Horizontals here means shared systems; FITL's architectural layers are not relabeled as systems.\n4. Search matches the full Markdown across all active documents and combines with the optional selected area. Without an area filter every specification remains discoverable, including newly added files.\n5. Metadata displays purpose, ownership, exclusions, authority, and the recorded update date. Missing metadata is shown as unrecorded, not inferred.\n6. The reader supports headings, an on-page outline, fenced code, lists, tables, and links between known system documents. External HTTP(S) links open separately. Other repository references are displayed without pretending that they are application pages. Raw HTML is not executed.\n7. `backoffice:generate` snapshots only Markdown files directly under `docs/systems/` into `convex/backOfficeData/systems.json`. The snapshot is imported solely by the protected backend, never by public browser bundles or static assets.\n8. `predev`, `prebuild`, and `preconvex:dev` regenerate the snapshot. `backoffice:check` detects drift. Direct Convex deployment commands must run `npm run backoffice:generate` first so the backend receives current documentation. Frontend builds alone do not update deployed Convex content.\n\n## 3. Monster review\n\n1. Reviewers can read active official, custom, and homebrew monsters across owners, including private and pending records. Soft-deleted records are excluded from both lists and details.\n2. Lists use bounded reactive pagination, 30 initial records and at most 50 per backend page. Name search uses a Convex search index; role/tier filters apply to the complete query, not just loaded rows. Empty-search queries use indexes for the active filter combination.\n3. Detail displays persisted HP, PD, AD, attack, save DC, damage, attributes, feature points, actions, descriptions, lore, tactics, visibility, and approval state. It does not recalculate, migrate, or save monsters.\n4. Referenced features are resolved by application ID using the indexed feature catalog, preferring official entries, then the monster owner's entries, then approved public entries. Missing references are explicitly visible.\n5. Existing fork metadata is displayed when available. The current monster schema has no source-document/page fields; the reader explicitly displays the absence of a stored source reference rather than assigning a publication or page.\n6. Search and filters survive opening a detail link. A missing, deleted, or invalid record cannot produce an editable designer.\n\n## 4. Verification\n\n1. `convex/backOffice.test.ts` proves both reviewers' access, signed-out/unverified/other-account denial on every content query, pagination, complete-query role/tier filtering, search, deleted-record exclusion, and feature-reference resolution.\n2. Reader navigation tests check document coverage and system-link resolution; UI tests check access states, system/monster review interactions, and overflow at phone, tablet, and desktop widths.\n3. Verify the production browser bundle contains no system snapshot text. Backend deployment and authorized live sign-in are separate from local implementation verification.\n4. The local preview tests check navigation, filtering, detail rendering, and absence of Convex content queries without sign-in. This preview verifies presentation only; backend access behavior remains covered by the protected query tests.\n"
+    "markdown": "# DC20Clean — Back Office\n\n> Purpose: Private, read-only workspace for understanding system specifications and reviewing stored monsters.\n> Owns: Reviewer access, system-document navigation and rendering, monster review queries, and back-office routes.\n> Does not own: Rules interpretation, monster editing or approval, source imports, general user administration, or documentation authoring.\n> Authoritative source: `convex/backOffice.ts`, `convex/lib/backOfficeAccess.ts`, `src/routes/back-office/`, and `scripts/back-office/generateSystems.mjs`.\n> Related systems: [Architecture](./PROJECT_TECHNICAL_OVERVIEW.MD), [Database](./DATABASE_SYSTEM.MD), [Monsters](./MONSTER_SYSTEM_SPEC.MD), [Testing](./TESTING_SYSTEM.MD).\n> Status: Active\n> Last Updated: 2026-10-02\n\n## 1. Access and routes\n\n1. `/back-office` and `/back-office/systems` open the system reader; `/back-office/systems/:documentId` opens a specific Markdown specification.\n2. `/back-office/monsters` opens the monster list; `/back-office/monsters/:monsterId` uses the Convex document ID to open a stored stat block.\n3. Access requires real Convex authentication and a server-owned user record with a verified email matching `yasaf.vol@gmail.com` or `nzinger@gmail.com` (Nir Zinger). Client-provided identity, local mode, and `VITE_BYPASS_AUTH` cannot grant access.\n4. `backOffice.access` returns only a boolean. Every content query independently checks access before reading data or returning documents. Unknown, signed-out, and unverified accounts receive no review content.\n5. The menu and homepage navigation expose the Back office link only after server confirmation. Direct links display sign-in, restricted-access, loading, unavailable-record, and query-failure states as appropriate. A missing back-office query displays a specific backend deployment message.\n6. The workspace exports no mutations. It does not confer rights to existing monster mutation functions.\n7. Vite development mode alone exposes `/back-office-preview`. It reuses the same reader and stat-block presentation with checkout system text and explicitly synthetic monsters. It uses no Convex queries, account access, or persistent data. The separate `/back-office` route keeps its server access checks. Production builds omit the preview route, fixture module, and system snapshot from browser assets.\n\n## 2. System reader\n\n1. `docs/systems/` remains the documentation authority. The reader does not author or rewrite these files.\n2. `systemNavigation.ts` supplies three overlapping reading views:\n   1. Verticals: character building, rules and equipment, and the DM workspace.\n   2. Flows: build/save/play, progression/upgrade/export, and monster/encounter/campaign preparation.\n   3. Horizontals: shared mechanics, data/compatibility, and platform/quality.\n3. These are curated navigation paths. They do not assert a complete FITL architecture or introduce another behavior specification. Horizontals here means shared systems; FITL's architectural layers are not relabeled as systems.\n4. Search matches the full Markdown across all active documents and combines with the optional selected area. Without an area filter every specification remains discoverable, including newly added files.\n5. Metadata displays purpose, ownership, exclusions, authority, and the recorded update date. Missing metadata is shown as unrecorded, not inferred.\n6. The reader supports headings, an on-page outline, fenced code, lists, tables, and links between known system documents. External HTTP(S) links open separately. Other repository references are displayed without pretending that they are application pages. Raw HTML is not executed.\n7. `backoffice:generate` snapshots only Markdown files directly under `docs/systems/` into `convex/backOfficeData/systems.json`. The snapshot is imported solely by the protected backend, never by public browser bundles or static assets.\n8. `predev`, `prebuild`, and `preconvex:dev` regenerate the snapshot. `backoffice:check` detects drift. Direct Convex deployment commands must run `npm run backoffice:generate` first so the backend receives current documentation. Frontend builds alone do not update deployed Convex content.\n9. The reader strips a leading `DC20Clean` or `DC20` project prefix from displayed document names. It leaves Markdown source titles, filenames, and link targets unchanged. Each snapshot entry receives a one-based ordinal from the filename-sorted catalog; the list and selected document display it as two digits. Search and area filters preserve these catalog numbers.\n\n## 3. Monster review\n\n1. Reviewers can read active official, custom, and homebrew monsters across owners, including private and pending records. Soft-deleted records are excluded from both lists and details.\n2. Lists use bounded reactive pagination, 30 initial records and at most 50 per backend page. Name search uses a Convex search index; role/tier filters apply to the complete query, not just loaded rows. Empty-search queries use indexes for the active filter combination.\n3. Detail displays persisted HP, PD, AD, attack, save DC, damage, attributes, feature points, actions, descriptions, lore, tactics, visibility, and approval state. It does not recalculate, migrate, or save monsters.\n4. Referenced features are resolved by application ID using the indexed feature catalog, preferring official entries, then the monster owner's entries, then approved public entries. Missing references are explicitly visible.\n5. Existing fork metadata is displayed when available. The current monster schema has no source-document/page fields; the reader explicitly displays the absence of a stored source reference rather than assigning a publication or page.\n6. Search and filters survive opening a detail link. A missing, deleted, or invalid record cannot produce an editable designer.\n\n## 4. Verification\n\n1. `convex/backOffice.test.ts` proves both reviewers' access, signed-out/unverified/other-account denial on every content query, pagination, complete-query role/tier filtering, search, deleted-record exclusion, and feature-reference resolution.\n2. Reader navigation tests check document coverage and system-link resolution; UI tests check access states, system/monster review interactions, and overflow at phone, tablet, and desktop widths.\n3. Verify the production browser bundle contains no system snapshot text. Backend deployment and authorized live sign-in are separate from local implementation verification.\n4. The local preview tests check navigation, filtering, detail rendering, and absence of Convex content queries without sign-in. This preview verifies presentation only; backend access behavior remains covered by the protected query tests.\n"
   },
   {
     "id": "CALCULATION_SYSTEM.MD",
+    "ordinal": 6,
     "title": "DC20Clean – Calculation & Derived Stats System",
     "purpose": "Definitive guide to derived stat formulas, effect application order, mastery cap validation, and breakdown output.",
     "owns": "Pure character calculation, effect aggregation order, budgets, validation results, derived-stat outputs, and calculation breakdowns.",
@@ -61,6 +67,7 @@
   },
   {
     "id": "CAMPAIGN_SYSTEM.MD",
+    "ordinal": 7,
     "title": "DC20Clean — Campaign System",
     "purpose": "Multi-player campaign layer: campaign management, membership, character sharing, live event notifications, and read-only sheet viewing.",
     "owns": "Campaign membership and permissions, join codes, character sharing, campaign events, campaign notifications, and campaign-scoped sheet access.",
@@ -71,6 +78,7 @@
   },
   {
     "id": "CHARACTER_CREATION_FLOW.MD",
+    "ordinal": 8,
     "title": "DC20Clean – Character Creation Flow System",
     "purpose": "Canonical reference for the multi-stage character-creation, edit, level-up, completion, and explicit rules-upgrade flows.",
     "owns": "Wizard stage order, navigation gates, cross-stage state transitions, completion actions, and flow-level coordination between stages.",
@@ -81,6 +89,7 @@
   },
   {
     "id": "CHARACTER_SHEET.MD",
+    "ordinal": 9,
     "title": "DC20Clean – Character Sheet",
     "purpose": "End-to-end map of Character Sheet UI: architecture, components, data sources, and interactions.",
     "owns": "Character-sheet state and presentation, in-play resource controls, sheet actions, auto-save coordination, responsive layouts, and read-only rendering.",
@@ -91,6 +100,7 @@
   },
   {
     "id": "CLASS_SYSTEM.MD",
+    "ordinal": 10,
     "title": "DC20Clean – Class System",
     "purpose": "Single reference for Classes, Features, Talents, and Level Progression.",
     "owns": "Class and subclass definitions, class features, talents, class progression data, feature choices, and class-specific grants.",
@@ -101,6 +111,7 @@
   },
   {
     "id": "CONDITIONS_SYSTEM.MD",
+    "ordinal": 11,
     "title": "DC20Clean - Conditions System",
     "purpose": "Source-audited condition catalog, condition interaction effects, active condition tracking, and sheet-facing automation.",
     "owns": "Canonical condition data, condition IDs, condition normalization, active-condition presentation, and supported condition-effect summaries.",
@@ -111,6 +122,7 @@
   },
   {
     "id": "DATABASE_SYSTEM.MD",
+    "ordinal": 12,
     "title": "DC20Clean – Database & Storage System",
     "purpose": "Persistence architecture for characters and DM Tools: hybrid localStorage/Convex storage, schemas, auth, migrations.",
     "owns": "Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.",
@@ -121,6 +133,7 @@
   },
   {
     "id": "EFFECT_SYSTEM.MD",
+    "ordinal": 13,
     "title": "DC20Clean – Effect System",
     "purpose": "Canonical catalog of `Effect.type` semantics, targets, choice resolution, and stacking rules used across Traits and Class Features.",
     "owns": "The canonical effect contract, effect targets, stacking semantics, choice resolution rules, and generic effect-processing expectations.",
@@ -131,6 +144,7 @@
   },
   {
     "id": "ENCOUNTER_SYSTEM_SPEC.MD",
+    "ordinal": 14,
     "title": "DC20 Encounter System (DM Tools)",
     "purpose": "Encounter planner using DC20's budget system: party size x level formulas, difficulty scaling, monster slotting, and validation.",
     "owns": "Encounter budgets, difficulty thresholds, party context, monster slotting, encounter validation, encounter persistence, and encounter import/export contracts.",
@@ -141,6 +155,7 @@
   },
   {
     "id": "EQUIPMENT_SYSTEM.MD",
+    "ordinal": 15,
     "title": "DC20Clean – Equipage (Custom Equipment System)",
     "purpose": "Central reference for custom equipment creation, data models, validation rules, storage, and UI flows.",
     "owns": "Custom weapon, armor, shield, spell-focus, and reusable general-equipment schemas, point-buy validation, presets, builder workflows, and custom-equipment storage.",
@@ -151,6 +166,7 @@
   },
   {
     "id": "FEATURE_ID_NAMING_CONVENTION.md",
+    "ordinal": 16,
     "title": "Feature ID Naming Convention",
     "purpose": "Standard naming convention for feature IDs in class definitions.",
     "owns": "Stable class-feature, subclass-feature, and feature-choice identifier formats and conversion rules.",
@@ -161,6 +177,7 @@
   },
   {
     "id": "LEVELING_SYSTEM.MD",
+    "ordinal": 17,
     "title": "DC20Clean – Leveling System",
     "purpose": "Canonical reference for level progression, path allocations, talents, subclass timing, multiclass choices, and level-dependent creation budgets.",
     "owns": "Progression aggregation inputs, leveling choices and budgets, path progression, talent spending, subclass selection timing, and multiclass selection rules.",
@@ -171,6 +188,7 @@
   },
   {
     "id": "MARTIALS_SYSTEM.MD",
+    "ordinal": 18,
     "title": "DC20Clean - Martials System (Maneuvers)",
     "purpose": "Canonical reference for maneuver data, budget calculation, and creation/sheet integration.",
     "owns": "Maneuver catalog data, maneuver IDs and formatting, maneuver selection rules, maneuver enhancements, and maneuver-facing creation and sheet behavior.",
@@ -181,6 +199,7 @@
   },
   {
     "id": "MONSTER_SYSTEM_SPEC.MD",
+    "ordinal": 19,
     "title": "DC20 Monster System (DM Tools)",
     "purpose": "Monster designer using DC20's point-buy framework: Statistics Table, role modifiers, tier system, feature point-buy, action builder, seed data, community sharing.",
     "owns": "Monster statistics, roles, tiers, monster features and actions, monster validation, monster persistence contracts, and monster designer workflows.",
@@ -191,6 +210,7 @@
   },
   {
     "id": "PDF_EXPORT_SYSTEM.MD",
+    "ordinal": 20,
     "title": "DC20Clean – PDF Export System",
     "purpose": "Canonical architecture, scope, and acceptance reference for exporting stored characters to supported DC20 fillable PDFs.",
     "owns": "PDF export DTOs, version routing, field maps, transformation, template filling, download behavior, and export-specific validation.",
@@ -201,6 +221,7 @@
   },
   {
     "id": "PRIVACY_AND_LEGAL_SYSTEM.MD",
+    "ordinal": 21,
     "title": "Privacy and Legal System",
     "purpose": "Define the user-facing privacy choices, public legal-page wiring, feedback loading boundary, and release review for these features.",
     "owns": "Consent UI and persistence, legal-page presentation, public links, and the legal/consent feature flag.",
@@ -211,6 +232,7 @@
   },
   {
     "id": "PROJECT_TECHNICAL_OVERVIEW.MD",
+    "ordinal": 22,
     "title": "Project Technical Overview",
     "purpose": "Technical overview of the DC20Clean codebase: stack, scripts, testing, project structure, and contribution expectations.",
     "owns": "Repository-wide stack, runtime composition, project structure, development commands, CI status, code standards, and PR conventions.",
@@ -221,6 +243,7 @@
   },
   {
     "id": "RULEBOOK_SYSTEM.MD",
+    "ordinal": 23,
     "title": "Rulebook System",
     "purpose": "Passive in-app reading surface for the DC20 rules Markdown.",
     "owns": "Rulebook source ingestion, generated article boundaries, table of contents, search index, routes, lazy loading, and reader presentation.",
@@ -231,6 +254,7 @@
   },
   {
     "id": "SPELLS_SYSTEM.MD",
+    "ordinal": 24,
     "title": "DC20Clean – Spells System (v0.10.5)",
     "purpose": "Single reference for spell data model, assignment rules, UI flows, and validation.",
     "owns": "Spell catalog generation, spell IDs and taxonomy, spell eligibility and selection, enhancements, and spell-facing creation, sheet, and reference behavior.",
@@ -241,6 +265,7 @@
   },
   {
     "id": "TESTING_SYSTEM.MD",
+    "ordinal": 25,
     "title": "DC20Clean - Testing System",
     "purpose": "Central testing policy for source audits, rules data, calculator behavior, UI components, and Playwright E2E flows.",
     "owns": "Test-layer policy, test placement, validation commands, E2E standards, agentic QA conventions, and repository-wide quality gates.",
@@ -251,6 +276,7 @@
   },
   {
     "id": "TRAITS_SYSTEM.MD",
+    "ordinal": 26,
     "title": "DC20Clean – Traits System",
     "purpose": "Single reference for Traits: data shape, effect typing, validation, runtime processing, and UI usage.",
     "owns": "Trait definitions, trait IDs, prerequisites, trait choices, trait validation, trait effect declarations, and trait-facing UI behavior.",
@@ -261,6 +287,7 @@
   },
   {
     "id": "VERSIONING_SYSTEM.MD",
+    "ordinal": 27,
     "title": "DC20Clean – Internal Versioning System",
     "purpose": "Canonical policy for schema, rules, PDF, and system-source versioning.",
     "owns": "Version-lane definitions, rules-version normalization, compatibility classification, upgrade routing, schema-version policy, PDF-version routing policy, and source-version metadata requirements.",

@@ -149,6 +149,17 @@
 	display: block;
 	font-size: 1.05rem;
 }
+.bo-row .bo-system-row-title {
+	display: flex;
+	align-items: baseline;
+	gap: 0.75rem;
+}
+.bo-system-number {
+	color: #8fd4ff;
+	font-variant-numeric: tabular-nums;
+	font-weight: 800;
+	white-space: nowrap;
+}
 .bo-row small {
 	display: block;
 	margin-top: 0.35rem;

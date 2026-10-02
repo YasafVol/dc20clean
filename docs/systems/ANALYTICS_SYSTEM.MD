@@ -75,7 +75,7 @@ VITE_POSTHOG_HOST=https://eu.i.posthog.com
 3. All four values are browser-visible Vite configuration. None grants read or administrative access to PostHog.
 4. To disable collection, set `VITE_ENABLE_ANALYTICS=false` and redeploy the frontend. Changing the legal/consent flag is not an analytics kill switch.
 5. Every outgoing event, including SDK identity/person-property events, gets `app_environment`, `app_release`, and `$geoip_disable=true` after privacy sanitization. Vercel's environment and commit SHA supply these values; explicit local overrides use `VITE_APP_ENVIRONMENT` and `VITE_APP_RELEASE`.
-6. Use `app_environment=production` in production reports. Preview URLs and identified preview activity share this project, so event-level environment filtering is required.
+6. Use `app_environment=production` in new production reports. The existing dashboard `961669` uses the event filter `$host=dc20clean.vercel.app` to include historical production events that predate environment tags while excluding preview and diagnostic traffic. Preview URLs and identified preview activity share this project, so event-level environment or hostname filtering is required.
 
 ## 5. Identity Lifecycle
 
@@ -191,7 +191,7 @@ Do not treat bounce rate, scroll depth, or exact session duration as authoritati
 ### 9.2 Product insights
 
 1. Acquisition: unique `$pageview` visitors by `$referring_domain`, `utm_source`, and `utm_medium`.
-2. Activation funnel: `$pageview` → `sign_in_started` → `authenticated_session_started` → `character_creation_completed`.
+2. Activation funnel: `$pageview` → `sign_in_started` → `authenticated_session_started` → `character_creation_completed`. The saved insight `sQVh5808` implements these sequential steps with a 14-day conversion window; dashboard `961669` applies the production hostname filter.
 3. Authenticated active users: unique identified users emitting `authenticated_session_started`, viewed daily, weekly, and monthly.
 4. Feature usage: unique visitors by sanitized `$pathname`.
 5. Signup history: identified people grouped by `account_created_at`.

@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `scripts/`, `e2e/`, and colocated test files.
 > Related systems: Every behavior-specific system doc defines what must be proven; this document defines where and how to prove it.
 > Status: Active
-> Last Updated: 2026-10-02
+> Last Updated: 2026-10-03
 
 ---
 
@@ -81,7 +81,7 @@ committed legacy-version coverage must construct or name its fixture inside the
 explicit upgrade or compatibility spec.
 
 Vitest uses `client` (browser), `server` (Node), and `convex` (Edge runtime) projects. Tests that stub `import.meta.env` or process-backed environment state must stay in the server project and be excluded from the browser project. Convex function tests use `convex-test` and authenticate with `t.withIdentity`.
-The PostHog SDK adapter, deployment-envelope, and Sentry adapter tests are server-only; analytics privacy and React lifecycle tests also run in the browser project. Monitoring tests prove configured startup, disabled development/unconfigured builds, content scrubbing, production/preview event tags, GeoIP suppression, and Global Privacy Control. Live verification also requires a deployed error in Sentry with source mapping and real PostHog events from both environments.
+The PostHog SDK adapter, deployment-envelope, and Sentry adapter tests are server-only; analytics privacy and React lifecycle tests also run in the browser project. Monitoring tests prove configured startup, disabled development/unconfigured builds, content scrubbing, production/preview event tags, GeoIP suppression, and Global Privacy Control. Live verification also requires a deployed error in Sentry with source mapping and real PostHog events from both environments. Find the labeled browser events in the provider UI; request success or a configured token alone is insufficient. PostHog filters automated webdriver traffic, and browser privacy controls can suppress capture. Keep any approved diagnostic exception and UI trigger in disposable test code, remove its deployment afterward, and retain shipped privacy controls. See `ANALYTICS_SYSTEM.MD` Section 11.4 and `ERROR_REPORTING_SYSTEM.MD` for the verified baseline, and `LOGGING_SYSTEM.MD` for console versus provider boundaries.
 Flag tests must prove PostHog starts without a consent choice when the legal/consent flow is off, while its routes, links, and controls are hidden. With the flow on, consent tests prove no PostHog initialization before a valid analytics choice, cancellation of queued captures after withdrawal, and resume on reacceptance. Browser checks must confirm public signed-out legal access and both languages only with that flag on, plus no Userback request before an explicit feedback action.
 
 Agentic browser QA gates:

@@ -19,6 +19,7 @@
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - User Feedback: Userback widget on explicit feedback request when `VITE_USERBACK_ACCESS_TOKEN` is set
 - Product Analytics: PostHog Cloud EU when configured and enabled; explicit events and sanitized pageviews only. The separate default-off legal/consent flag gates the draft pages and choice UI, and only requires opt-in when that flow is enabled. See `ANALYTICS_SYSTEM.MD` and `PRIVACY_AND_LEGAL_SYSTEM.MD` for the unresolved publication review.
+- Application logs: the shared logger writes threshold-filtered browser console output and forwards error messages to Sentry and registered product actions to PostHog. It has no remote structured-log sink; direct console calls bypass it. See `LOGGING_SYSTEM.MD`.
 - Frontend errors: Sentry initializes before the app in configured production/preview builds, with React 19 root error hooks, sanitized logger forwarding, environment/release identity, and hosted source-map upload. See `ERROR_REPORTING_SYSTEM.MD`. Vercel integration credentials remain build-only; only the public DSN reaches the browser.
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier

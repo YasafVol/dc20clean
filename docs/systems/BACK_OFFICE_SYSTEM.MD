@@ -24,7 +24,7 @@
 2. `systemNavigation.ts` supplies three overlapping reading views:
    1. Verticals: character building, rules and equipment, and the DM workspace.
    2. Flows: build/save/play, progression/upgrade/export, and monster/encounter/campaign preparation.
-   3. Horizontals: shared mechanics, data/compatibility, and platform/quality, including shared art assets and error reporting.
+   3. Horizontals: shared mechanics, data/compatibility, and platform/quality, including shared art assets, error reporting, and logging.
 3. These are curated navigation paths. They do not assert a complete FITL architecture or introduce another behavior specification. Horizontals here means shared systems; FITL's architectural layers are not relabeled as systems.
 4. Search matches the full Markdown across all active documents and combines with the optional selected area. Without an area filter every specification remains discoverable, including newly added files.
 5. Metadata displays purpose, ownership, exclusions, authority, and the recorded update date. Missing metadata is shown as unrecorded, not inferred.

@@ -102,6 +102,7 @@ export const systemNavigation: Record<SystemAxis, SystemGroup[]> = {
 				'TESTING_SYSTEM.MD',
 				'ANALYTICS_SYSTEM.MD',
 				'ERROR_REPORTING_SYSTEM.MD',
+				'LOGGING_SYSTEM.MD',
 				'PRIVACY_AND_LEGAL_SYSTEM.MD',
 				'BACK_OFFICE_SYSTEM.MD'
 			]

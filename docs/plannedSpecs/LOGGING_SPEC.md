@@ -4,7 +4,8 @@
 
 This specification details the implementation of a centralized logging system for the DC20 Character Creator, integrating Vercel Analytics for metrics, Sentry for error tracking, and preparing for future Convex server-side logging.
 
-**Status**: Planned  
+**Status**: Historical planning; superseded by `docs/systems/LOGGING_SYSTEM.MD`, `ANALYTICS_SYSTEM.MD`, and `ERROR_REPORTING_SYSTEM.MD`. Proposed Vercel Analytics and log batching below are not shipped.
+
 **Priority**: Medium  
 **Dependencies**: None (Convex integration is additive)
 

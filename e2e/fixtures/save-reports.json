@@ -1,0 +1,639 @@
+{
+	"cleric": {
+		"ancestry1Id": "human",
+		"ancestry1Name": "Human",
+		"ancestry2Id": null,
+		"bloodiedValue": 5,
+		"characterState": {
+			"activeConditions": [],
+			"attacks": [],
+			"inventory": {
+				"currency": {
+					"copper": 0,
+					"gold": 0,
+					"silver": 0
+				},
+				"items": []
+			},
+			"maneuvers": [],
+			"notes": {
+				"playerNotes": ""
+			},
+			"resources": {
+				"current": {
+					"actionPointsUsed": 0,
+					"currentGritPoints": 3,
+					"currentHP": 10,
+					"currentMP": 12,
+					"currentRestPoints": 10,
+					"currentSP": 0,
+					"deathSteps": 0,
+					"exhaustionLevel": 0,
+					"isDead": false,
+					"tempHP": 0
+				},
+				"original": {
+					"maxGritPoints": 3,
+					"maxHP": 10,
+					"maxMP": 12,
+					"maxRestPoints": 10,
+					"maxSP": 0
+				}
+			},
+			"spells": [],
+			"ui": {
+				"activeConditions": {},
+				"combatToggles": {
+					"isRaging": false,
+					"isWildFormed": false
+				},
+				"manualDefenseOverrides": {}
+			}
+		},
+		"classId": "cleric",
+		"className": "Cleric",
+		"combatTraining": [
+			{
+				"source": "Spellcasting Expansion",
+				"type": "Spell_Focuses"
+			},
+			{
+				"source": "Spellcasting Path",
+				"type": "Spell_Focuses"
+			},
+			{
+				"source": "Spellcasting Path",
+				"type": "Light_Armor"
+			},
+			{
+				"source": "Spellcasting Path",
+				"type": "Light_Shields"
+			}
+		],
+		"completedAt": "2026-10-03T00:00:00.000Z",
+		"createdAt": "2026-10-03T00:00:00.000Z",
+		"finalAD": 12,
+		"finalADBrutalThreshold": 22,
+		"finalADHeavyThreshold": 17,
+		"finalAgility": 1,
+		"finalAttackSpellCheck": 5,
+		"finalCharisma": 1,
+		"finalCombatMastery": 2,
+		"finalDeathThreshold": 6,
+		"finalGritPoints": 3,
+		"finalHPMax": 10,
+		"finalInitiativeBonus": 3,
+		"finalIntelligence": 3,
+		"finalJumpDistance": 1,
+		"finalMPMax": 12,
+		"finalMartialCheck": 3,
+		"finalMight": 1,
+		"finalMoveSpeed": 5,
+		"finalName": "Save report cleric",
+		"finalPD": 14,
+		"finalPDBrutalThreshold": 24,
+		"finalPDHeavyThreshold": 19,
+		"finalPDR": 0,
+		"finalPlayerName": "Save regression test",
+		"finalPrimeModifierAttribute": "intelligence",
+		"finalPrimeModifierValue": 3,
+		"finalRestPoints": 10,
+		"finalSPMax": 0,
+		"finalSaveAgility": 3,
+		"finalSaveCharisma": 3,
+		"finalSaveDC": 15,
+		"finalSaveIntelligence": 5,
+		"finalSaveMight": 3,
+		"holdBreath": 1,
+		"id": "save-report-cleric",
+		"languagesData": {
+			"common": {
+				"fluency": "fluent"
+			},
+			"human": {
+				"fluency": "fluent"
+			}
+		},
+		"lastModified": "2026-10-03T00:00:00.000Z",
+		"level": 3,
+		"maneuvers": [],
+		"movement": {
+			"burrow": {
+				"full": false,
+				"half": false
+			},
+			"climb": {
+				"full": false,
+				"half": true
+			},
+			"fly": {
+				"full": false,
+				"half": false
+			},
+			"glide": {
+				"full": false,
+				"half": false
+			},
+			"swim": {
+				"full": false,
+				"half": true
+			}
+		},
+		"pathPointAllocations": {
+			"martial": 0,
+			"spellcasting": 1
+		},
+		"pendingSubclassChoice": false,
+		"resistances": [],
+		"rulesVersion": "dc20-0.10.5",
+		"schemaVersion": "2.2.0",
+		"selectedFeatureChoices": {
+			"cleric_cleric_order_0": "Radiant",
+			"cleric_cleric_order_1": ["Life", "Divination"],
+			"cleric_divine_damage": "Radiant",
+			"cleric_divine_domain": ["Life", "Divination"]
+		},
+		"selectedMulticlassOption": null,
+		"selectedSubclass": "Priest",
+		"selectedTalents": {
+			"general_spellcasting_expansion": 1
+		},
+		"selectedTraitIds": [
+			"human_attribute_increase",
+			"human_resolve",
+			"human_determination",
+			"human_unbreakable"
+		],
+		"senses": [],
+		"skillMasteryLimitElevations": {
+			"medicine": {
+				"source": "spent_points",
+				"value": 1
+			}
+		},
+		"skillToTradeConversions": 0,
+		"skillsData": {
+			"acrobatics": 1,
+			"athletics": 1,
+			"awareness": 1,
+			"intimidation": 1,
+			"medicine": 2,
+			"stealth": 1,
+			"survival": 1
+		},
+		"spells": [
+			{
+				"cost": {
+					"ap": 1
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018243285_0.46617890981057375",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Arcane Bolt"
+			},
+			{
+				"cost": {
+					"ap": 2
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018243285_0.17236901275903171",
+				"isPrepared": true,
+				"notes": "",
+				"range": "Self",
+				"school": "Astromancy",
+				"spellName": "Arcane Wave"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 2
+				},
+				"duration": "1 Minute (Sustained)",
+				"id": "spell_1791018243285_0.3581104494918613",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Banish"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "10 Minutes (Sustained)",
+				"id": "spell_1791018243285_0.29643313507009483",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Blessing of Air"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "10 Minutes",
+				"id": "spell_1791018243285_0.15033686599752605",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Blessing of Zephyr"
+			},
+			{
+				"cost": {
+					"ap": 2,
+					"mp": 4
+				},
+				"duration": "1 Minute (Sustained)",
+				"id": "spell_1791018243285_0.7237456388500532",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Gravity Shift"
+			},
+			{
+				"cost": {
+					"ap": 2,
+					"mp": 1
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018243285_0.6122834535093061",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Gravity Well"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "1 Minute",
+				"id": "spell_1791018243285_0.4618129154709284",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Haste"
+			},
+			{
+				"cost": {
+					"ap": 2,
+					"mp": 2
+				},
+				"duration": "1 Minute (Sustained)",
+				"id": "spell_1791018243285_0.9719989109554507",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Increase Gravity"
+			}
+		],
+		"tradeToLanguageConversions": 0,
+		"tradeToSkillConversions": 0,
+		"tradesData": {
+			"blacksmithing": 1,
+			"cooking": 1,
+			"herbalism": 1,
+			"leatherworking": 1
+		},
+		"unlockedFeatureIds": [
+			"cleric_spellcasting_path",
+			"cleric_order",
+			"cleric_divine_blessing",
+			"cleric_divine_omen",
+			"cleric_channel_divinity"
+		],
+		"usePrimeCapRule": false,
+		"vulnerabilities": [],
+		"wellBloodiedValue": 3,
+		"breakdowns": {}
+	},
+	"wizard": {
+		"ancestry1Id": "human",
+		"ancestry1Name": "Human",
+		"ancestry2Id": null,
+		"bloodiedValue": 5,
+		"characterState": {
+			"activeConditions": [],
+			"attacks": [],
+			"inventory": {
+				"currency": {
+					"copper": 0,
+					"gold": 0,
+					"silver": 0
+				},
+				"items": []
+			},
+			"maneuvers": [],
+			"notes": {
+				"playerNotes": ""
+			},
+			"resources": {
+				"current": {
+					"actionPointsUsed": 0,
+					"currentGritPoints": 3,
+					"currentHP": 9,
+					"currentMP": 9,
+					"currentRestPoints": 9,
+					"currentSP": 0,
+					"deathSteps": 0,
+					"exhaustionLevel": 0,
+					"isDead": false,
+					"tempHP": 0
+				},
+				"original": {
+					"maxGritPoints": 3,
+					"maxHP": 9,
+					"maxMP": 9,
+					"maxRestPoints": 9,
+					"maxSP": 0
+				}
+			},
+			"spells": [],
+			"ui": {
+				"activeConditions": {},
+				"combatToggles": {
+					"isRaging": false,
+					"isWildFormed": false
+				},
+				"manualDefenseOverrides": {}
+			}
+		},
+		"classId": "wizard",
+		"className": "Wizard",
+		"combatTraining": [
+			{
+				"source": "Spellcasting Expansion",
+				"type": "Spell_Focuses"
+			},
+			{
+				"source": "Spellcasting Path",
+				"type": "Spell_Focuses"
+			},
+			{
+				"source": "Spellcasting Path",
+				"type": "Light_Armor"
+			}
+		],
+		"completedAt": "2026-10-03T00:00:00.000Z",
+		"createdAt": "2026-10-03T00:00:00.000Z",
+		"finalAD": 11,
+		"finalADBrutalThreshold": 21,
+		"finalADHeavyThreshold": 16,
+		"finalAgility": 0,
+		"finalAttackSpellCheck": 4,
+		"finalCharisma": 1,
+		"finalCombatMastery": 1,
+		"finalDeathThreshold": 5,
+		"finalGritPoints": 3,
+		"finalHPMax": 9,
+		"finalInitiativeBonus": 1,
+		"finalIntelligence": 3,
+		"finalJumpDistance": 0,
+		"finalMPMax": 9,
+		"finalMartialCheck": 3,
+		"finalMight": 1,
+		"finalMoveSpeed": 5,
+		"finalName": "Save report wizard",
+		"finalPD": 12,
+		"finalPDBrutalThreshold": 22,
+		"finalPDHeavyThreshold": 17,
+		"finalPDR": 0,
+		"finalPlayerName": "Save regression test",
+		"finalPrimeModifierAttribute": "intelligence",
+		"finalPrimeModifierValue": 3,
+		"finalRestPoints": 9,
+		"finalSPMax": 0,
+		"finalSaveAgility": 1,
+		"finalSaveCharisma": 2,
+		"finalSaveDC": 14,
+		"finalSaveIntelligence": 4,
+		"finalSaveMight": 2,
+		"holdBreath": 1,
+		"id": "save-report-wizard",
+		"languagesData": {
+			"common": {
+				"fluency": "fluent"
+			},
+			"human": {
+				"fluency": "fluent"
+			}
+		},
+		"lastModified": "2026-10-03T00:00:00.000Z",
+		"level": 2,
+		"maneuvers": [],
+		"movement": {
+			"burrow": {
+				"full": false,
+				"half": false
+			},
+			"climb": {
+				"full": false,
+				"half": true
+			},
+			"fly": {
+				"full": false,
+				"half": false
+			},
+			"glide": {
+				"full": false,
+				"half": false
+			},
+			"swim": {
+				"full": false,
+				"half": true
+			}
+		},
+		"pathPointAllocations": {
+			"martial": 0,
+			"spellcasting": 1
+		},
+		"pendingSubclassChoice": false,
+		"resistances": [],
+		"rulesVersion": "dc20-0.10.5",
+		"schemaVersion": "2.2.0",
+		"selectedFeatureChoices": {
+			"wizard_spell_school_initiate_0": "Divination"
+		},
+		"selectedMulticlassOption": null,
+		"selectedTalents": {
+			"general_spellcasting_expansion": 1
+		},
+		"selectedTraitIds": [
+			"human_attribute_increase",
+			"human_resolve",
+			"human_determination",
+			"human_unbreakable"
+		],
+		"senses": [],
+		"skillToTradeConversions": 0,
+		"skillsData": {
+			"acrobatics": 1,
+			"athletics": 1,
+			"awareness": 1,
+			"insight": 1,
+			"intimidation": 1,
+			"medicine": 1,
+			"stealth": 1,
+			"survival": 1
+		},
+		"spells": [
+			{
+				"cost": {
+					"ap": 1
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018400272_0.44944459593628383",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Arcane Bolt"
+			},
+			{
+				"cost": {
+					"ap": 2
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018400272_0.09042647751858901",
+				"isPrepared": true,
+				"notes": "",
+				"range": "Self",
+				"school": "Astromancy",
+				"spellName": "Arcane Wave"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 2
+				},
+				"duration": "1 Minute (Sustained)",
+				"id": "spell_1791018400272_0.16277543397636118",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Banish"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "10 Minutes (Sustained)",
+				"id": "spell_1791018400272_0.3476008654937427",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Blessing of Air"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "10 Minutes",
+				"id": "spell_1791018400272_0.00032463213725897333",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Blessing of Zephyr"
+			},
+			{
+				"cost": {
+					"ap": 2,
+					"mp": 4
+				},
+				"duration": "1 Minute (Sustained)",
+				"id": "spell_1791018400272_0.25224244352323466",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Gravity Shift"
+			},
+			{
+				"cost": {
+					"ap": 2,
+					"mp": 1
+				},
+				"duration": "Instantaneous",
+				"id": "spell_1791018400272_0.5291020250919419",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Gravity Well"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "1 Minute",
+				"id": "spell_1791018400272_0.2875469193924416",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Astromancy",
+				"spellName": "Haste"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "1 Minute",
+				"id": "spell_1791018400272_0.270128370642554",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Divination",
+				"spellName": "Bless"
+			},
+			{
+				"cost": {
+					"ap": 1,
+					"mp": 1
+				},
+				"duration": "1 Hour",
+				"id": "spell_1791018400272_0.5595236708899947",
+				"isPrepared": true,
+				"notes": "",
+				"range": "10 Spaces",
+				"school": "Divination",
+				"spellName": "Danger Sense"
+			}
+		],
+		"tradeToLanguageConversions": 0,
+		"tradeToSkillConversions": 0,
+		"tradesData": {
+			"blacksmithing": 1,
+			"cooking": 1,
+			"leatherworking": 1
+		},
+		"unlockedFeatureIds": [
+			"wizard_spellcasting_path",
+			"wizard_spell_school_initiate",
+			"wizard_arcane_sigil",
+			"wizard_ritual_caster",
+			"wizard_prepared_spell"
+		],
+		"usePrimeCapRule": false,
+		"vulnerabilities": [],
+		"wellBloodiedValue": 3,
+		"breakdowns": {}
+	}
+}

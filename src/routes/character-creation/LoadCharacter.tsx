@@ -432,7 +432,6 @@ function LoadCharacter() {
 			characterToImport = {
 				...characterToImport,
 				id: characterToImport.id || generateNewCharacterId(),
-				importedAt: currentTime,
 				lastModified: currentTime, // Always update to current time when importing
 				schemaVersion: normalizeSchemaVersion(characterToImport.schemaVersion),
 				rulesVersion: normalizeRulesVersion(characterToImport.rulesVersion),
@@ -451,7 +450,7 @@ function LoadCharacter() {
 
 			// Add to characters list and save
 			const updatedCharacters = [...existingCharacters, characterToImport as SavedCharacter];
-			await storage.saveAllCharacters(updatedCharacters);
+			await storage.saveCharacter(characterToImport as SavedCharacter);
 			setSavedCharacters(sortCharactersNewestFirst(updatedCharacters));
 
 			setImportMessage({

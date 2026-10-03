@@ -212,6 +212,16 @@ Playwright flow to prove character load, toggle wiring, visible results, and rel
 
 ---
 
+`e2e/25-save-reports.e2e.spec.ts` covers the reported Cleric 3/Priest and Wizard 2
+creation, import, explicit upgrade, edit/finish, reload, and preservation flows.
+Its constructed compatibility fixtures are isolated from the shared current-rules fixture.
+They reproduce visible report choices; they are not recovered historical payloads.
+Run `npx playwright test e2e/25-save-reports.e2e.spec.ts --project=desktop --workers=1`
+against a local-storage build. Authenticated production-storage verification is separate;
+a passing local-storage run alone does not establish cloud-save success.
+`convex/characterSave.test.ts` verifies the same records against authenticated mutations
+and the strict table schema, including the rejected `importedAt` negative control.
+
 ## 4. Current E2E Inventory
 
 | Spec                                                  | Coverage                                                                                                                                                                                                                                               |

@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-09-25
+> Last Updated: 2026-10-03
 
 ---
 
@@ -80,7 +80,7 @@ Required behavior:
      Convex can create the current-rules copy even when the source record has
      incomplete nested runtime resources.
    - The Convex save boundary must remove calculator-only, creation-input, and
-     JSON export envelope fields carried through upgrade object spreads; these
+     import/export envelope fields (including legacy `importedAt`) carried through upgrade object spreads; these
      are not part of the persisted character schema.
 7. Mark the draft as `rulesUpgradeStatus: "needs-review"` when retired/deprecated selections were removed or require player alternatives.
 8. Force unresolved retired/ambiguous choices through explicit user selection before treating the upgrade as complete.

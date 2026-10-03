@@ -3,10 +3,15 @@
 > Purpose: Single reference for spell data model, assignment rules, UI flows, and validation.
 > Owns: Spell catalog generation, spell IDs and taxonomy, spell eligibility and selection, enhancements, and spell-facing creation, sheet, and reference behavior.
 > Does not own: Class progression slot grants, generic derived-stat calculation, equipment rules outside spell focuses, or rules-upgrade policy.
-> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, `src/lib/rulesdata/spells-data/`, and `src/routes/character-sheet/components/Spells.tsx`.
+> Authoritative source: `docs/assets/dc20-0.10.5/DC20 0.10.5 clean.md`, `docs/migration/spells-v0105-report.json`, `src/lib/rulesdata/spells-data/`, `src/lib/utils/characterEdit.ts`, and `src/routes/character-sheet/components/Spells.tsx`.
 > Related systems: [Classes](./CLASS_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Alternative Character Sheet](./ALTERNATIVE_CHARACTER_SHEET.MD), [Versioning](./VERSIONING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-10-03
+
+Saved-character edit and upgraded-draft entry restore saved spells into actual current
+calculator slot IDs using slot eligibility. Restoration can reassign eligible saved
+spells between slots to satisfy restricted grants; it never selects new spells.
+Unmatched saved choices remain for explicit review and do not satisfy completion gates.
 
 ---
 

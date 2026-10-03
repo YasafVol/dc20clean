@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-creation/`, `src/lib/stores/characterContext.tsx`, and `src/lib/services/characterCompletion.ts`.
 > Related systems: [Calculation](./CALCULATION_SYSTEM.MD), [Leveling](./LEVELING_SYSTEM.MD), [Database](./DATABASE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-10-03
 
 #### Purpose Details
 
@@ -27,6 +27,7 @@
 - A successfully persisted new character emits the registered `character_creation_completed` analytics event. Non-persisting builds used by level-up do not emit creation events; analytics must never receive the character or player name.
 - Character completion leaves `ancestry2Name` unset when no second ancestry is selected; it must not persist an `Unknown` placeholder for an absent optional ancestry.
 - The explicit v0.10 to current-version action shows its migration plan, creates a new current-rules draft, applies approved aliases/reworks (including the Force Dome and Wall of Force merge into Forcefield), removes disclosed deprecated selections, and unlocks edit/level-up only on the new copy. Migration never mutates the old instance. Consolidated language aliases keep the strongest fluency; removed languages no longer consume points and mark the new copy as `needs-review`.
+- Saved-character edit entry restores known spells to current calculator slot IDs using slot eligibility and reassignment where restricted grants require it. Unmatched choices remain for player review and do not satisfy completion gates.
 - Validation gating: `CharacterCreation.tsx` calls `isStepCompleted(stepNumber)` before allowing navigation; each stage enforces completion via calculator outputs (ancestry/background budgets, attribute points remaining, spell slot validity, maneuver validity)
 - Calculator contract: `calculateCharacterWithBreakdowns(convertToEnhancedBuildData(state))` runs on every state change and returns:
   - `stats.finalAttributePoints`, `background`, `ancestry`, `breakdowns`, `validation`

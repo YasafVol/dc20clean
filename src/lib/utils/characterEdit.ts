@@ -8,7 +8,12 @@ import { CURRENT_SCHEMA_VERSION, normalizeSchemaVersion } from '../types/schemaV
 import { normalizeRulesVersion } from '../rulesdata/versioning/rulesVersion';
 import { normalizeSelectedTalents } from './storageUtils';
 import { traitsData } from '../rulesdata/ancestries/traits';
-import { ALL_SPELLS as allSpells } from '../rulesdata/spells-data';
+import { ALL_SPELLS as allSpells, getSpellById } from '../rulesdata/spells-data';
+import {
+	calculateCharacterWithBreakdowns,
+	convertToEnhancedBuildData
+} from '../services/enhancedCharacterCalculator';
+import { matchesSpellSlot } from '../services/spellFiltering';
 import { getDefaultStorage } from '../storage';
 import { debug } from './debug';
 
@@ -77,7 +82,36 @@ export const convertCharacterToInProgress = (
 					}
 				}
 			});
-			return record;
+			const { spellsKnownSlots, globalMagicProfile } = calculateCharacterWithBreakdowns(
+				convertToEnhancedBuildData(savedCharacter)
+			);
+			const entries = Object.entries(record);
+			const assigned = new Map<string, number>();
+			// Reassign earlier matches when needed so broad slots cannot consume the
+			// only spell eligible for a restricted slot. Never choose new spells.
+			const assign = (spellIndex: number, visited: Set<string>): boolean => {
+				const spell = getSpellById(entries[spellIndex][1]);
+				if (!spell) return false;
+				for (const slot of spellsKnownSlots) {
+					if (visited.has(slot.id) || !matchesSpellSlot(spell, slot, globalMagicProfile)) continue;
+					visited.add(slot.id);
+					const previous = assigned.get(slot.id);
+					if (previous === undefined || assign(previous, visited)) {
+						assigned.set(slot.id, spellIndex);
+						return true;
+					}
+				}
+				return false;
+			};
+			entries.forEach((_, index) => assign(index, new Set()));
+			const restored = { ...record };
+			for (const [slotId, spellIndex] of assigned) {
+				const [oldKey, spellId] = entries[spellIndex];
+				delete restored[oldKey];
+				restored[slotId] = spellId;
+			}
+			// Unmatched saved choices stay available for explicit player review.
+			return restored;
 		})(),
 		// Convert ManeuverData[] back to string[] (maneuver names)
 		selectedManeuvers: Array.isArray(savedCharacter.maneuvers)

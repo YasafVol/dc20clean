@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
 > Related systems: [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-28
+> Last Updated: 2026-10-03
 
 ---
 
@@ -181,7 +181,7 @@ Convex writes must run character state through this normalizer because table
 validators require complete `resources.current` and currency fields, while
 older local or cloud records may contain partial nested objects.
 
-`prepareCharacterForSave()` also removes non-persisted JSON export metadata,
+`prepareCharacterForSave()` also removes non-persisted import/export metadata (including legacy `importedAt`),
 character-creation selection inputs, and calculator-only outputs before Convex
 writes. Upgrade recalculation and JSON import use object spreads, so those
 transient fields can otherwise reach the strict character table validator and
@@ -516,7 +516,7 @@ This is read-time normalization. It becomes durable when the normalized characte
 
 **Migration to v2.2.0**: Characters migrating from v2.1.0 or earlier receive empty/default-compatible display fields (`resistances`, `vulnerabilities`, `senses`, `combatTraining`) when loaded and are persisted on the next full save.
 
-Imported older JSON is normalized through the same deserializer before duplicate-ID handling and save, so legacy stringified arrays, missing `rulesVersion`, and older talent shapes follow the same compatibility path as existing localStorage records.
+Imported older JSON is normalized through the same deserializer before duplicate-ID handling and save, so legacy stringified arrays, missing `rulesVersion`, and older talent shapes follow the same compatibility path as existing localStorage records. Import updates `lastModified` and saves only the imported record; it must not rewrite unrelated characters or add an undeclared `importedAt` field.
 
 ### 6.4 localStorage → Convex Migration
 

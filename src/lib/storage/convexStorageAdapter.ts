@@ -65,6 +65,7 @@ function hasRecordEntries(value: unknown): boolean {
 
 const NON_PERSISTED_CHARACTER_FIELDS = [
 	// JSON export envelope metadata.
+	'importedAt',
 	'exportedAt',
 	'exportVersion',
 	// Character-creation inputs represented by the persisted display arrays.

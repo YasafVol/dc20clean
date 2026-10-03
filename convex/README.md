@@ -18,8 +18,11 @@ echo "VITE_CONVEX_URL=<your-deployment-url>" >> ../.env.local
 echo "VITE_USE_CONVEX=true" >> ../.env.local
 ```
 
-Set `AUTH_SECRET` and the Google OAuth env vars in the Convex dashboard before running
-`npx convex dev`.
+Set `AUTH_SECRET` and `SITE_URL` as Convex deployment environment variables before
+running `npx convex dev`; they do not belong in `.env.local`. Local deployments
+need local-only values. To exercise sign-in, also configure `JWT_PRIVATE_KEY`,
+`JWKS`, and the Google OAuth credentials on that deployment. Do not reuse
+production secrets for local verification.
 
 ## Files
 

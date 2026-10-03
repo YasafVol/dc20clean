@@ -6,7 +6,7 @@
 > Authoritative source: `src/lib/rulesdata/versioning/`, `src/lib/types/schemaVersion.ts`, and the version constants owned by individual subsystems.
 > Related systems: [Database](./DATABASE_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Project Technical Overview](./PROJECT_TECHNICAL_OVERVIEW.MD).
 > Status: Active
-> Last Updated: 2026-09-19
+> Last Updated: 2026-09-25
 
 ---
 
@@ -108,6 +108,11 @@ The optional canonical `customWeapon` snapshot inside an attack is also an addit
 field within the already-permissive attack-array payload. It does not change the
 character envelope or require a schema-version bump; attacks without the snapshot retain
 their existing catalog/name-based behavior.
+
+Optional curated `iconAssetId` values on inventory rows and Equipage templates, and
+`artAssetId` on monsters, are additive presentation fields. Existing records remain
+valid with no migration. Character inventory uses the already-permissive item-array
+payload, so this addition does not change the character envelope or its schema version.
 
 ## 6. PDF Version Policy
 

@@ -4,9 +4,9 @@
 > Owns: Persisted data shapes, storage interfaces and adapters, Convex tables, authentication integration, storage normalization, and schema migration.
 > Does not own: Game-rule interpretation, derived-stat calculation, feature workflows, or presentation behavior.
 > Authoritative source: `src/lib/types/dataContracts.ts`, `src/lib/storage/`, `convex/schema.ts`, and the Convex persistence functions.
-> Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
+> Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), [Versioning](./VERSIONING_SYSTEM.MD), [Character Creation](./CHARACTER_CREATION_FLOW.MD), [Character Sheet](./CHARACTER_SHEET.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [PDF Export](./PDF_EXPORT_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-27
+> Last Updated: 2026-10-03
 
 ---
 
@@ -29,6 +29,12 @@ The DC20 Character Creator uses a **hybrid storage model**:
 | Campaigns            | `campaigns`, `campaignMembers`, `campaignEvents` | Active (Convex only)           |
 
 The storage abstraction layer (`src/lib/storage/`) allows seamless switching between backends.
+
+Curated art references are optional stable IDs: `iconAssetId` on browser-local
+Equipage templates and character inventory rows, and `artAssetId` on Convex monster
+records. Existing records need no migration. Encounter slots retain their existing
+monster ID and resolve art from the linked monster. The art catalog stores static
+files and metadata, not per-user uploads or storage URLs.
 
 ---
 
@@ -329,6 +335,9 @@ encounters: defineTable({
 - **Google OAuth** via Convex Auth
 - User ID linked to all records
 - Data only visible to owner (except approved homebrew)
+- Each Convex deployment needs its own `AUTH_SECRET` and `SITE_URL` for OAuth.
+  `JWT_PRIVATE_KEY` and `JWKS` are also required to issue and verify sessions;
+  the local deployment uses local-only values and must not reuse production keys.
 - `users.getCurrentUser` returns the stable string `userId`, optional display name,
   and the user document `_creationTime` as `createdAt`. Consumers preserve
   `undefined` while the query resolves and use `null` for a resolved signed-out state.

@@ -3,20 +3,36 @@
  */
 
 import styled from 'styled-components';
+import { theme } from '../../../character-sheet/styles/theme';
 
 // ============================================================================
 // PAGE LAYOUT
 // ============================================================================
 
 export const PageContainer = styled.div`
+	--dm-page: ${theme.colors.bg.primary};
+	--dm-surface: ${theme.colors.bg.secondary};
+	--dm-raised: ${theme.colors.bg.elevated};
+	--dm-field: ${theme.colors.bg.primary};
+	--dm-border: ${theme.colors.border.default};
+	--dm-accent: ${theme.colors.accent.primary};
+	--dm-accent-soft: ${theme.colors.crystal.primaryAlpha10};
+	--dm-accent-mid: ${theme.colors.crystal.primaryAlpha20};
+	--dm-accent-strong: ${theme.colors.crystal.primaryAlpha30};
+	--dm-text: ${theme.colors.text.primary};
+	--dm-subtext: ${theme.colors.text.secondary};
+	--dm-muted: ${theme.colors.text.muted};
+	--dm-gold: ${theme.colors.accent.warning};
 	min-height: 100vh;
-	background: url('/src/assets/BlackBG.jpg') center/cover no-repeat;
+	background: var(--dm-page);
+	color: var(--dm-text);
+	font-family: ${theme.typography.fontFamily.primary};
 `;
 
 export const Header = styled.div`
 	padding: 1.5rem 2rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.3);
-	background: rgba(0, 0, 0, 0.4);
+	border-bottom: 1px solid var(--dm-border);
+	background: var(--dm-surface);
 `;
 
 export const HeaderContent = styled.div`
@@ -43,7 +59,7 @@ export const HeaderRight = styled.div`
 
 export const Title = styled.h1`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1.5rem;
 	font-weight: bold;
 	letter-spacing: 0.05em;
@@ -52,7 +68,7 @@ export const Title = styled.h1`
 `;
 
 export const Subtitle = styled.p`
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-size: 0.875rem;
 	margin: 0;
 `;
@@ -76,18 +92,18 @@ export const MonsterGrid = styled.div`
 export const EmptyState = styled.div`
 	text-align: center;
 	padding: 4rem 2rem;
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 `;
 
 export const EmptyStateTitle = styled.h2`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1.5rem;
 	margin-bottom: 0.5rem;
 `;
 
 export const EmptyStateText = styled.p`
-	color: #71717a;
+	color: var(--dm-muted);
 	margin-bottom: 1.5rem;
 `;
 
@@ -102,18 +118,18 @@ export const MonsterCardContainer = styled.div<{ $tier?: string }>`
 				props.$tier === 'legendary'
 					? 'rgba(234, 179, 8, 0.15)'
 					: props.$tier === 'apex'
-						? 'rgba(168, 85, 247, 0.15)'
-						: 'rgba(30, 27, 75, 0.8)'}
+						? 'var(--dm-accent-soft)'
+						: 'var(--dm-surface)'}
 			0%,
-		rgba(30, 27, 75, 0.9) 100%
+		var(--dm-surface) 100%
 	);
 	border: 1px solid
 		${(props) =>
 			props.$tier === 'legendary'
 				? '#eab308'
 				: props.$tier === 'apex'
-					? '#a855f7'
-					: 'rgba(168, 85, 247, 0.4)'};
+					? 'var(--dm-accent)'
+					: 'var(--dm-accent-strong)'};
 	border-radius: 12px;
 	overflow: hidden;
 	transition: all 0.2s ease;
@@ -121,14 +137,18 @@ export const MonsterCardContainer = styled.div<{ $tier?: string }>`
 	&:hover {
 		transform: translateY(-2px);
 		border-color: ${(props) =>
-			props.$tier === 'legendary' ? '#facc15' : props.$tier === 'apex' ? '#c084fc' : '#a855f7'};
-		box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.3);
+			props.$tier === 'legendary'
+				? '#facc15'
+				: props.$tier === 'apex'
+					? 'var(--dm-accent)'
+					: 'var(--dm-accent)'};
+		box-shadow: 0 8px 24px -4px var(--dm-accent-strong);
 	}
 `;
 
 export const CardHeader = styled.div`
 	padding: 1rem;
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	border-bottom: 1px solid var(--dm-accent-mid);
 `;
 
 export const CardTitleRow = styled.div`
@@ -140,7 +160,7 @@ export const CardTitleRow = styled.div`
 
 export const CardName = styled.h3`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1.125rem;
 	font-weight: 600;
 	margin: 0;
@@ -164,16 +184,20 @@ export const TierBadge = styled.span<{ $tier?: string }>`
 		props.$tier === 'legendary'
 			? 'rgba(234, 179, 8, 0.2)'
 			: props.$tier === 'apex'
-				? 'rgba(168, 85, 247, 0.2)'
+				? 'var(--dm-accent-mid)'
 				: 'rgba(74, 222, 128, 0.2)'};
 	color: ${(props) =>
-		props.$tier === 'legendary' ? '#facc15' : props.$tier === 'apex' ? '#c084fc' : '#4ade80'};
+		props.$tier === 'legendary'
+			? '#facc15'
+			: props.$tier === 'apex'
+				? 'var(--dm-accent)'
+				: '#4ade80'};
 	border: 1px solid
 		${(props) =>
 			props.$tier === 'legendary'
 				? 'rgba(234, 179, 8, 0.4)'
 				: props.$tier === 'apex'
-					? 'rgba(168, 85, 247, 0.4)'
+					? 'var(--dm-accent-strong)'
 					: 'rgba(74, 222, 128, 0.4)'};
 `;
 
@@ -188,7 +212,7 @@ export const LevelBadge = styled.span`
 `;
 
 export const CardSubtitle = styled.p`
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-size: 0.75rem;
 	margin: 0.25rem 0 0;
 `;
@@ -212,7 +236,7 @@ export const StatItem = styled.div`
 
 export const StatLabel = styled.div`
 	font-size: 0.625rem;
-	color: #71717a;
+	color: var(--dm-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
@@ -220,12 +244,12 @@ export const StatLabel = styled.div`
 export const StatValue = styled.div`
 	font-size: 1.125rem;
 	font-weight: 600;
-	color: #e5e7eb;
+	color: var(--dm-text);
 `;
 
 export const CardFooter = styled.div`
 	padding: 0.75rem 1rem;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	border-top: 1px solid var(--dm-accent-mid);
 	display: flex;
 	justify-content: flex-end;
 	gap: 0.5rem;
@@ -261,16 +285,16 @@ export const DesignerSidebar = styled.div`
 `;
 
 export const Section = styled.div`
-	background: rgba(30, 27, 75, 0.8);
-	border: 1px solid rgba(168, 85, 247, 0.3);
+	background: var(--dm-surface);
+	border: 1px solid var(--dm-border);
 	border-radius: 12px;
 	overflow: hidden;
 `;
 
 export const SectionHeader = styled.div`
 	padding: 0.75rem 1rem;
-	background: rgba(168, 85, 247, 0.1);
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	background: var(--dm-raised);
+	border-bottom: 1px solid var(--dm-border);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -278,7 +302,7 @@ export const SectionHeader = styled.div`
 
 export const SectionTitle = styled.h2`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1rem;
 	font-weight: 600;
 	margin: 0;
@@ -309,7 +333,7 @@ export const FormGroup = styled.div<{ $flex?: number }>`
 
 export const FormLabel = styled.label`
 	font-size: 0.75rem;
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-weight: 500;
 `;
 
@@ -318,29 +342,29 @@ export const FormLabel = styled.label`
 // ============================================================================
 
 export const PreviewCard = styled.div`
-	background: linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(49, 46, 129, 0.9) 100%);
-	border: 1px solid rgba(168, 85, 247, 0.4);
+	background: linear-gradient(135deg, var(--dm-surface) 0%, var(--dm-raised) 100%);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 12px;
 	overflow: hidden;
 `;
 
 export const PreviewHeader = styled.div`
 	padding: 1rem;
-	background: rgba(168, 85, 247, 0.15);
-	border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+	background: var(--dm-accent-soft);
+	border-bottom: 1px solid var(--dm-accent-strong);
 	text-align: center;
 `;
 
 export const PreviewName = styled.h2`
 	font-family: 'Cinzel', serif;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-size: 1.25rem;
 	font-weight: bold;
 	margin: 0 0 0.25rem;
 `;
 
 export const PreviewSubtitle = styled.p`
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-size: 0.75rem;
 	margin: 0;
 `;
@@ -352,10 +376,10 @@ export const PreviewResetRow = styled.div`
 `;
 
 export const PreviewResetButton = styled.button`
-	border: 1px solid rgba(168, 85, 247, 0.35);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 6px;
 	background: rgba(0, 0, 0, 0.18);
-	color: #c4b5fd;
+	color: var(--dm-subtext);
 	cursor: pointer;
 	font-size: 0.6875rem;
 	line-height: 1;
@@ -366,9 +390,9 @@ export const PreviewResetButton = styled.button`
 		color 0.2s ease;
 
 	&:hover {
-		background: rgba(168, 85, 247, 0.14);
-		border-color: rgba(168, 85, 247, 0.65);
-		color: #e9d5ff;
+		background: var(--dm-accent-soft);
+		border-color: var(--dm-accent);
+		color: var(--dm-text);
 	}
 `;
 
@@ -387,7 +411,7 @@ export const PreviewStatItem = styled.div<{ $highlight?: boolean }>`
 	min-height: 5.75rem;
 	background: ${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.3)')};
 	border: 1px solid
-		${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
+		${(props) => (props.$highlight ? 'rgba(74, 222, 128, 0.3)' : 'var(--dm-accent-mid)')};
 	border-radius: 8px;
 	padding: 0.75rem 2rem;
 	text-align: center;
@@ -403,10 +427,10 @@ export const PreviewStatAdjustButton = styled.button<{ $side: 'left' | 'right' }
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid rgba(168, 85, 247, 0.32);
+	border: 1px solid var(--dm-accent-strong);
 	border-radius: 9999px;
 	background: rgba(0, 0, 0, 0.28);
-	color: #c4b5fd;
+	color: var(--dm-subtext);
 	cursor: pointer;
 	font-size: 0.875rem;
 	font-weight: 700;
@@ -417,15 +441,15 @@ export const PreviewStatAdjustButton = styled.button<{ $side: 'left' | 'right' }
 		color 0.2s ease;
 
 	&:hover {
-		background: rgba(168, 85, 247, 0.2);
-		border-color: rgba(168, 85, 247, 0.7);
-		color: #ffffff;
+		background: var(--dm-accent-mid);
+		border-color: var(--dm-accent);
+		color: var(--dm-text);
 	}
 `;
 
 export const PreviewStatLabel = styled.div`
 	font-size: 0.625rem;
-	color: #71717a;
+	color: var(--dm-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	margin-bottom: 0.25rem;
@@ -434,12 +458,12 @@ export const PreviewStatLabel = styled.div`
 export const PreviewStatValue = styled.div<{ $highlight?: boolean }>`
 	font-size: 1.5rem;
 	font-weight: 700;
-	color: ${(props) => (props.$highlight ? '#4ade80' : '#e5e7eb')};
+	color: ${(props) => (props.$highlight ? '#4ade80' : 'var(--dm-text)')};
 `;
 
 export const PreviewDivider = styled.hr`
 	border: none;
-	border-top: 1px solid rgba(168, 85, 247, 0.2);
+	border-top: 1px solid var(--dm-accent-mid);
 	margin: 1rem 0;
 `;
 
@@ -453,7 +477,7 @@ export const EncounterCost = styled.div`
 
 export const EncounterCostLabel = styled.div`
 	font-size: 0.625rem;
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 `;
@@ -461,7 +485,7 @@ export const EncounterCostLabel = styled.div`
 export const EncounterCostValue = styled.div`
 	font-size: 1.75rem;
 	font-weight: 700;
-	color: #fbbf24;
+	color: var(--dm-gold);
 `;
 
 // ============================================================================
@@ -481,9 +505,9 @@ export const RoleGrid = styled.div`
 export const RoleCard = styled.button<{ $selected?: boolean }>`
 	background: ${(props) =>
 		props.$selected
-			? 'linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%)'
+			? 'linear-gradient(135deg, var(--dm-accent-strong) 0%, var(--dm-accent-mid) 100%)'
 			: 'rgba(0, 0, 0, 0.3)'};
-	border: 1px solid ${(props) => (props.$selected ? '#a855f7' : 'rgba(168, 85, 247, 0.2)')};
+	border: 1px solid ${(props) => (props.$selected ? 'var(--dm-accent)' : 'var(--dm-accent-mid)')};
 	border-radius: 8px;
 	padding: 0.75rem;
 	cursor: pointer;
@@ -493,22 +517,22 @@ export const RoleCard = styled.button<{ $selected?: boolean }>`
 	&:hover {
 		background: ${(props) =>
 			props.$selected
-				? 'linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%)'
-				: 'rgba(168, 85, 247, 0.1)'};
-		border-color: ${(props) => (props.$selected ? '#c084fc' : 'rgba(168, 85, 247, 0.4)')};
+				? 'linear-gradient(135deg, var(--dm-accent-strong) 0%, var(--dm-accent-strong) 100%)'
+				: 'var(--dm-accent-soft)'};
+		border-color: ${(props) => (props.$selected ? 'var(--dm-accent)' : 'var(--dm-accent-strong)')};
 	}
 `;
 
 export const RoleName = styled.div<{ $selected?: boolean }>`
 	font-weight: 600;
-	color: ${(props) => (props.$selected ? '#fbbf24' : '#e5e7eb')};
+	color: ${(props) => (props.$selected ? 'var(--dm-gold)' : 'var(--dm-text)')};
 	font-size: 0.875rem;
 	margin-bottom: 0.25rem;
 `;
 
 export const RoleModifiers = styled.div`
 	font-size: 0.8125rem;
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	margin-top: 0.25rem;
 `;
 
@@ -527,7 +551,7 @@ export const FeatureBudget = styled.div`
 `;
 
 export const BudgetLabel = styled.span`
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 	font-size: 0.875rem;
 `;
 
@@ -548,16 +572,14 @@ export const FeatureItem = styled.div<{ $selected?: boolean }>`
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem;
-	background: ${(props) => (props.$selected ? 'rgba(74, 222, 128, 0.1)' : 'rgba(0, 0, 0, 0.2)')};
-	border: 1px solid
-		${(props) => (props.$selected ? 'rgba(74, 222, 128, 0.3)' : 'rgba(168, 85, 247, 0.2)')};
+	background: ${(props) => (props.$selected ? 'var(--dm-accent-soft)' : 'var(--dm-raised)')};
+	border: 1px solid ${(props) => (props.$selected ? 'var(--dm-accent)' : 'var(--dm-border)')};
 	border-radius: 8px;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: ${(props) =>
-			props.$selected ? 'rgba(74, 222, 128, 0.15)' : 'rgba(168, 85, 247, 0.1)'};
+		background: var(--dm-accent-soft);
 	}
 `;
 
@@ -567,19 +589,19 @@ export const FeatureInfo = styled.div`
 
 export const FeatureName = styled.div<{ $selected?: boolean }>`
 	font-weight: 500;
-	color: ${(props) => (props.$selected ? '#4ade80' : '#e5e7eb')};
+	color: ${(props) => (props.$selected ? 'var(--dm-accent)' : 'var(--dm-text)')};
 	font-size: 0.875rem;
 `;
 
 export const FeatureDescription = styled.div`
 	font-size: 0.75rem;
-	color: #71717a;
+	color: var(--dm-muted);
 	margin-top: 0.125rem;
 `;
 
 export const FeatureCost = styled.div<{ $selected?: boolean }>`
 	font-weight: 600;
-	color: ${(props) => (props.$selected ? '#4ade80' : '#fbbf24')};
+	color: ${(props) => (props.$selected ? 'var(--dm-accent)' : 'var(--dm-gold)')};
 	padding-left: 0.75rem;
 `;
 
@@ -595,7 +617,7 @@ export const ActionList = styled.div`
 
 export const ActionCard = styled.div`
 	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(168, 85, 247, 0.2);
+	border: 1px solid var(--dm-accent-mid);
 	border-radius: 8px;
 	overflow: hidden;
 `;
@@ -605,13 +627,13 @@ export const ActionHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem;
-	background: rgba(168, 85, 247, 0.1);
-	border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+	background: var(--dm-accent-soft);
+	border-bottom: 1px solid var(--dm-accent-mid);
 `;
 
 export const ActionName = styled.div`
 	font-weight: 600;
-	color: #e5e7eb;
+	color: var(--dm-text);
 	font-size: 0.875rem;
 `;
 
@@ -620,7 +642,7 @@ export const ActionApCost = styled.div`
 	align-items: center;
 	gap: 0.25rem;
 	font-size: 0.75rem;
-	color: #fbbf24;
+	color: var(--dm-gold);
 	font-weight: 600;
 `;
 
@@ -636,17 +658,17 @@ export const ActionStats = styled.div`
 
 export const ActionStat = styled.div`
 	font-size: 0.75rem;
-	color: #a1a1aa;
+	color: var(--dm-subtext);
 
 	span {
-		color: #e5e7eb;
+		color: var(--dm-text);
 		font-weight: 500;
 	}
 `;
 
 export const ActionDescription = styled.div`
 	font-size: 0.75rem;
-	color: #71717a;
+	color: var(--dm-muted);
 `;
 
 export const ActionFooter = styled.div`
@@ -654,7 +676,7 @@ export const ActionFooter = styled.div`
 	justify-content: flex-end;
 	gap: 0.5rem;
 	padding: 0.5rem 0.75rem;
-	border-top: 1px solid rgba(168, 85, 247, 0.1);
+	border-top: 1px solid var(--dm-accent-soft);
 `;
 
 // ============================================================================

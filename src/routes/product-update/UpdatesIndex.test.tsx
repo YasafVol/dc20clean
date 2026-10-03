@@ -13,9 +13,14 @@ describe('UpdatesIndex', () => {
 
 		expect(screen.getByRole('heading', { name: "What's New", level: 1 })).toBeInTheDocument();
 		expect(screen.getByRole('region', { name: 'Product updates' })).toBeInTheDocument();
+		expect(screen.getByText('Art for your gear and monsters')).toBeInTheDocument();
 		expect(screen.getByRole('heading', { name: 'The new character sheet' })).toBeInTheDocument();
 		expect(screen.getByText('Character')).toBeInTheDocument();
-		expect(screen.getByRole('link', { name: /^read$/i })).toHaveAttribute(
+		expect(screen.getAllByRole('link', { name: /^read$/i })[0]).toHaveAttribute(
+			'href',
+			'/updates/2026-09-28-curated-art-and-dm-tools'
+		);
+		expect(screen.getAllByRole('link', { name: /^read$/i })[1]).toHaveAttribute(
 			'href',
 			'/updates/2026-09-18-alternative-character-sheet'
 		);

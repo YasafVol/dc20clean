@@ -26,6 +26,7 @@ import type { CustomShield } from '../../../lib/rulesdata/equipment/schemas/shie
 import type { CustomSpellFocus } from '../../../lib/rulesdata/equipment/schemas/spellFocusSchema';
 import type { CustomGeneralEquipment } from '../../../lib/rulesdata/equipment/schemas/generalEquipmentSchema';
 import type { CustomEquipment } from '../../../lib/rulesdata/equipment/schemas';
+import { getArtAsset } from '../../../lib/assets/assetCatalog';
 import {
 	SectionTitle,
 	SavedItemsList,
@@ -39,6 +40,19 @@ type FilterType = 'all' | CustomEquipment['category'];
 
 interface SavedEquipmentListProps {
 	onEdit: (equipment: CustomEquipment) => void;
+}
+
+function EquipmentIcon({ id }: { id?: string }) {
+	const art = getArtAsset(id);
+	return art ? (
+		<img
+			src={art.src}
+			alt=""
+			width={32}
+			height={32}
+			className="mr-2 inline-block align-middle [image-rendering:pixelated]"
+		/>
+	) : null;
 }
 
 const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
@@ -140,6 +154,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 			<div className="mb-2 flex items-start justify-between">
 				<div>
 					<h3 className="font-semibold text-white">
+						<EquipmentIcon id={weapon.iconAssetId} />
 						{weapon.name}
 						{weapon.isPreset && <PresetBadge>Preset</PresetBadge>}
 					</h3>
@@ -190,6 +205,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 			<div className="mb-2 flex items-start justify-between">
 				<div>
 					<h3 className="font-semibold text-white">
+						<EquipmentIcon id={item.iconAssetId} />
 						{item.name}
 						{item.isPreset && <PresetBadge>Preset</PresetBadge>}
 					</h3>
@@ -229,6 +245,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 			<div className="mb-2 flex items-start justify-between">
 				<div>
 					<h3 className="font-semibold text-white">
+						<EquipmentIcon id={item.iconAssetId} />
 						{item.name}
 						{item.isPreset && <PresetBadge>Preset</PresetBadge>}
 					</h3>
@@ -275,6 +292,7 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 			<div className="mb-2 flex items-start justify-between">
 				<div>
 					<h3 className="font-semibold text-white">
+						<EquipmentIcon id={item.iconAssetId} />
 						{item.name}
 						{item.isPreset && <PresetBadge>Preset</PresetBadge>}
 					</h3>
@@ -324,7 +342,10 @@ const SavedEquipmentList: React.FC<SavedEquipmentListProps> = ({ onEdit }) => {
 		<SavedItemCard key={item.id}>
 			<div className="mb-2 flex items-start justify-between gap-3">
 				<div>
-					<h3 className="font-semibold text-white">{item.name}</h3>
+					<h3 className="font-semibold text-white">
+						<EquipmentIcon id={item.iconAssetId} />
+						{item.name}
+					</h3>
 					{item.description ? (
 						<p className="mt-1 text-sm text-gray-400">{item.description}</p>
 					) : null}

@@ -6,7 +6,7 @@
 > Authoritative source: `package.json`, `vite.config.ts`, `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/`, `src/App.tsx`, and the current repository structure.
 > Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), All active system docs in this directory; use the task routing in `AGENTS.md` to select the relevant specifications.
 > Status: Active
-> Last Updated: 2026-10-02
+> Last Updated: 2026-10-03
 
 ## Tech Stack
 
@@ -19,6 +19,7 @@
   - Convex cloud storage is active when `VITE_USE_CONVEX=true` and `VITE_CONVEX_URL` is set
 - User Feedback: Userback widget on explicit feedback request when `VITE_USERBACK_ACCESS_TOKEN` is set
 - Product Analytics: PostHog Cloud EU when configured and enabled; explicit events and sanitized pageviews only. The separate default-off legal/consent flag gates the draft pages and choice UI, and only requires opt-in when that flow is enabled. See `ANALYTICS_SYSTEM.MD` and `PRIVACY_AND_LEGAL_SYSTEM.MD` for the unresolved publication review.
+- Frontend errors: Sentry initializes before the app in configured production/preview builds, with React 19 root error hooks, sanitized logger forwarding, environment/release identity, and hosted source-map upload. See `ERROR_REPORTING_SYSTEM.MD`. Vercel integration credentials remain build-only; only the public DSN reaches the browser.
 - Testing: Vitest (browser + node environments), Playwright
 - Code Quality: ESLint + Prettier
 
@@ -32,7 +33,7 @@
 - The homepage top-left hamburger mirrors every action currently exposed on `/menu`, grouped by the same sections and using the same authentication and Convex availability rules. “What's New” remains the first entry; non-homepage routes retain the existing Back to Menu control where the page does not provide its own navigation.
 - Signed-in DM and campaign menu actions share one four-card desktop row with separate “DM Tools” and “Campaigns” headings. The groups stack below 1200px; their cards stack below 768px.
 - The Rule Book menu card spans two columns and is centered beneath the four standard reference-tool cards on desktop, using the same 1.5rem vertical rhythm as the menu sections.
-- `/updates` is the player-facing What's New index. It uses a compact, newest-first release log with one row per update and direct links to both the dated note and changed product surface. The homepage card renders the latest entry and can be dismissed; `dc20clean.dismissedWhatsNewUpdate` stores its slug so the same release stays hidden while a future release appears normally. Open `/menu?showWhatsNew=1` to temporarily show the latest card again without clearing that stored choice. `/updates/2026-09-18-alternative-character-sheet` is the first dated release summary for the Alternative Character Sheet; the old undated `/updates/alternative-character-sheet` route redirects to it. Future releases should use their own dated slug and add one entry to `src/routes/product-update/updates.ts`. Keep page claims aligned with the active Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
+- `/updates` is the player-facing What's New index. It uses a compact, newest-first release log with one row per update and direct links to both the dated note and changed product surface. The homepage card renders the latest entry and can be dismissed; `dc20clean.dismissedWhatsNewUpdate` stores its slug so the same release stays hidden while a future release appears normally. Open `/menu?showWhatsNew=1` to temporarily show the latest card again without clearing that stored choice. `/updates/2026-09-28-curated-art-and-dm-tools` covers the art picker and DM Tools theme; `/updates/2026-09-18-alternative-character-sheet` covers the Alternative Character Sheet. The old undated `/updates/alternative-character-sheet` route redirects to its dated note. Future releases should use their own dated slug and add one entry to `src/routes/product-update/updates.ts`. Keep page claims aligned with the active Art Asset, Character Sheet, Alternative Character Sheet, and Campaign system specifications; product communication is not an additional behavior authority.
 
 ## Local Setup
 
@@ -68,9 +69,13 @@ Testing:
 - `npm run test:e2e:ui` — E2E with interactive UI
 - `npm run test:e2e:headed` — E2E in headed browser mode
 - `npm run test:e2e:debug` — E2E in debug mode
+- `npm run e2e:meta` — Run the compact user-level smoke journeys on desktop and mobile
 - `npm run test` — Run unit tests (run mode) then E2E tests
 
 Testing policy and coverage rules are centralized in `docs/systems/TESTING_SYSTEM.MD`.
+Set `PLAYWRIGHT_BASE_URL` to run Playwright against an already deployed preview or production
+candidate instead of starting the local build and preview server. Protected Vercel previews also
+require `VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 E2E per-project and parallel:
 

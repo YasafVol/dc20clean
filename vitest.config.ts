@@ -25,7 +25,9 @@ export default defineConfig({
 					exclude: [
 						'src/lib/server/**',
 						'src/lib/convexClient.test.ts',
-						'src/lib/analytics/posthog.test.ts'
+						'src/lib/analytics/posthog.test.ts',
+						'src/lib/analytics/telemetry.test.ts',
+						'src/lib/monitoring/**/*.test.ts'
 					],
 					setupFiles: ['./vitest-setup-client.ts']
 				}

@@ -105,11 +105,14 @@ describe('Back office access and content', () => {
 
 	it('searches full document text and returns null for unknown paths', async () => {
 		const { reviewer } = await setup();
+		const all = await reviewer.query(backOfficeApi.listSystems, {});
 		const matches = await reviewer.query(backOfficeApi.listSystems, {
 			search: 'normalizeCharacterStateForStorage'
 		});
 		expect(matches.some((entry) => entry.id === 'DATABASE_SYSTEM.MD')).toBe(true);
-		expect(matches.find((entry) => entry.id === 'DATABASE_SYSTEM.MD')?.ordinal).toBe(12);
+		expect(matches.find((entry) => entry.id === 'DATABASE_SYSTEM.MD')?.ordinal).toBe(
+			all.find((entry) => entry.id === 'DATABASE_SYSTEM.MD')?.ordinal
+		);
 		await expect(reviewer.query(backOfficeApi.getSystem, { id: '../auth.ts' })).resolves.toBeNull();
 	});
 

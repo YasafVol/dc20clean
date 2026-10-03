@@ -162,8 +162,7 @@ export function SystemsReviewContent({
 									aria-current={entry.id === documentId ? 'page' : undefined}
 								>
 									<strong className="bo-system-row-title">
-										<span className="bo-system-number">{systemOrdinalLabel(entry.ordinal)}</span>
-										{' '}
+										<span className="bo-system-number">{systemOrdinalLabel(entry.ordinal)}</span>{' '}
 										<span>{systemDisplayTitle(entry.title)}</span>
 									</strong>
 									<small>{entry.purpose}</small>

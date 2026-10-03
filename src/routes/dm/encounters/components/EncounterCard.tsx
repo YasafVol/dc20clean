@@ -30,7 +30,7 @@ export interface EncounterCardProps {
 const DIFFICULTY_COLORS: Record<string, string> = {
 	trivial: 'green',
 	easy: 'green',
-	medium: 'purple',
+	medium: 'blue',
 	hard: 'yellow',
 	deadly: 'red'
 };

@@ -29,6 +29,8 @@ import {
 import { theme } from '../styles/theme';
 import { getInventoryItemCost } from '../utils/inventoryItemCost';
 import InventoryPickerModal from './InventoryPickerModal';
+import AssetPicker from '../../../components/AssetPicker';
+import { getArtAsset } from '../../../lib/assets/assetCatalog';
 
 // Wrapper so the item-name dropdown/input and a small inline summary line stack
 // inside the same grid cell without breaking column alignment.
@@ -195,6 +197,7 @@ const Inventory: React.FC<InventoryProps> = ({
 							...item,
 							itemType,
 							itemName: '',
+							iconAssetId: undefined,
 							cost: '-',
 							customEquipmentId: undefined,
 							customEquipmentCategory: undefined,
@@ -220,6 +223,7 @@ const Inventory: React.FC<InventoryProps> = ({
 					? {
 							...item,
 							itemName: itemTypeOrName,
+							iconAssetId: undefined,
 							itemType: selectedItem?.itemType || item.itemType,
 							cost: getInventoryItemCost(selectedItem),
 							customEquipmentId: undefined,
@@ -247,6 +251,7 @@ const Inventory: React.FC<InventoryProps> = ({
 					? {
 							...item,
 							itemName: '',
+							iconAssetId: undefined,
 							customEquipmentId: undefined,
 							customEquipmentCategory: undefined,
 							cost: '-',
@@ -264,6 +269,7 @@ const Inventory: React.FC<InventoryProps> = ({
 						? {
 								...item,
 								itemName: equipment.name,
+								iconAssetId: equipment.iconAssetId,
 								customEquipmentId: equipment.id,
 								customEquipmentCategory: equipment.category,
 								cost: equipment.category === 'general' ? equipment.cost : '-',
@@ -595,6 +601,15 @@ const Inventory: React.FC<InventoryProps> = ({
 									data-label={t('characterSheet.inventoryColumnItem')}
 								>
 									<ItemNameCell>
+										{getArtAsset(item.iconAssetId) && (
+											<img
+												src={getArtAsset(item.iconAssetId)!.src}
+												alt=""
+												width={30}
+												height={30}
+												style={{ imageRendering: 'pixelated', objectFit: 'contain' }}
+											/>
+										)}
 										{!isEditing ? (
 											<StyledInventoryValue>{item.itemName || '—'}</StyledInventoryValue>
 										) : isCustomType ? (
@@ -617,6 +632,19 @@ const Inventory: React.FC<InventoryProps> = ({
 															</option>
 														))}
 											</StyledInventorySelect>
+										)}
+										{isEditing && isCustomType && isCustomFreeform(item) && (
+											<AssetPicker
+												kind="item"
+												value={item.iconAssetId}
+												onChange={(iconAssetId) =>
+													updateInventory(
+														inventory.map((entry) =>
+															entry.id === item.id ? { ...entry, iconAssetId } : entry
+														)
+													)
+												}
+											/>
 										)}
 										{(() => {
 											const summary = buildInlineSummary(selectedItem ?? null, item);

@@ -6,7 +6,7 @@
 > Authoritative source: `src/routes/character-sheet/alternative/` plus alternative-specific props passed to shared character-sheet components.
 > Related systems: [Character Sheet](./CHARACTER_SHEET.MD), [Spells](./SPELLS_SYSTEM.MD), [Equipment](./EQUIPMENT_SYSTEM.MD), [Calculation](./CALCULATION_SYSTEM.MD), [Campaigns](./CAMPAIGN_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-20
+> Last Updated: 2026-09-28
 
 ## 1. Boundary
 
@@ -171,6 +171,9 @@ present an Allowed / All source switch.
 9. Read-only campaign views do not render `Add Item`.
 10. Existing inventory rows retain their explicit edit lifecycle.
 11. Switching Catalog / Custom items preserves the current search and category filter.
+12. Saved Equipage choices copy their optional curated icon ID into the new row.
+    Freeform choices can select an icon in the preview. The row retains the chosen
+    icon independently of the browser-local Equipage template.
     Filter controls remain stable across both sources, even when the active source has
     no matches for the retained category.
 
@@ -182,8 +185,9 @@ record construction. Any picker with multiple sources preserves search and filte
 when the source changes.
 
 `EquipmentBuildSheet` owns the reusable accordion structure, accessible section state,
-and compact summary behavior for equipment builders. The custom-weapon builder currently
-uses it; other equipment categories retain their existing Equipage builders.
+and compact summary behavior for equipment builders. Both the alternative custom-weapon
+builder and all five Equipage builders use it; Equipage keeps its category-specific
+steps, summaries, validation, and save behavior.
 
 ## 8. Other Alternative-Only Interaction Rules
 

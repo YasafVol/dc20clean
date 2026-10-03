@@ -95,11 +95,13 @@ export const systemNavigation: Record<SystemAxis, SystemGroup[]> = {
 		{
 			id: 'platform',
 			title: 'Platform and quality',
-			description: 'Architecture, tests, analytics, privacy, and this workspace.',
+			description: 'Architecture, shared assets, tests, telemetry, privacy, and this workspace.',
 			documents: [
 				'PROJECT_TECHNICAL_OVERVIEW.MD',
+				'ART_ASSET_SYSTEM.MD',
 				'TESTING_SYSTEM.MD',
 				'ANALYTICS_SYSTEM.MD',
+				'ERROR_REPORTING_SYSTEM.MD',
 				'PRIVACY_AND_LEGAL_SYSTEM.MD',
 				'BACK_OFFICE_SYSTEM.MD'
 			]

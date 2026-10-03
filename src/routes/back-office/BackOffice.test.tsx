@@ -13,6 +13,9 @@ import type { FunctionReturnType } from 'convex/server';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { backOfficeApi } from './backOfficeApi';
 
+const documentNumber = (id: string) =>
+	String(systems.find((entry) => entry.id === id)!.ordinal).padStart(2, '0');
+
 const monsterDetail: NonNullable<FunctionReturnType<typeof backOfficeApi.getMonster>> = {
 	monster: {
 		_id: 'monster-one' as Id<'monsters'>,
@@ -171,7 +174,9 @@ describe('Back office review UI', () => {
 		const creation = Array.from(documentNav.querySelectorAll('a')).find((entry) =>
 			entry.href.includes('CHARACTER_CREATION_FLOW.MD')
 		)!;
-		expect(creation.textContent).toContain('08 Character Creation Flow System');
+		expect(creation.textContent).toContain(
+			`${documentNumber('CHARACTER_CREATION_FLOW.MD')} Character Creation Flow System`
+		);
 		expect(creation.textContent).not.toContain('DC20Clean');
 		fireEvent.click(creation);
 		await waitFor(() =>
@@ -197,7 +202,7 @@ describe('Back office review UI', () => {
 		});
 		await waitFor(() =>
 			expect(screen.getByRole('navigation', { name: 'System documents' }).textContent).toContain(
-				'12 Database & Storage System'
+				`${documentNumber('DATABASE_SYSTEM.MD')} Database & Storage System`
 			)
 		);
 		fireEvent.change(screen.getByRole('searchbox', { name: 'Search system documents' }), {
@@ -286,7 +291,7 @@ describe('Local sample preview', () => {
 		state.auth.isAuthenticated = false;
 		mountPreview();
 		expect(screen.getByText(/Local preview · system text from this checkout/)).toBeTruthy();
-		expect(screen.getByText('27 documents')).toBeTruthy();
+		expect(screen.getByText(`${systems.length} documents`)).toBeTruthy();
 		const docs = screen.getByRole('navigation', { name: 'System documents' });
 		expect(docs.querySelector('a')?.textContent).toContain(
 			'01 Alternative Character Sheet Presentation'
@@ -295,7 +300,11 @@ describe('Local sample preview', () => {
 			Array.from(docs.querySelectorAll('a')).find((a) => a.href.includes('DATABASE_SYSTEM.MD'))!
 		);
 		await waitFor(() =>
-			expect(screen.getByRole('heading', { name: '12 Database & Storage System' })).toBeTruthy()
+			expect(
+				screen.getByRole('heading', {
+					name: `${documentNumber('DATABASE_SYSTEM.MD')} Database & Storage System`
+				})
+			).toBeTruthy()
 		);
 		expect(state.queries).toEqual([]);
 	});

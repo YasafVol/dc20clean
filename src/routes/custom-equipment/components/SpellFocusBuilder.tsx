@@ -5,6 +5,7 @@
 import React, { useState, useMemo } from 'react';
 import { WandSparkles } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import AssetPicker from '../../../components/AssetPicker';
 import { Badge } from '../../../components/ui/badge';
 import {
 	SPELL_FOCUS_PROPERTIES,
@@ -51,6 +52,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack, initialEq
 		initialEquipment?.properties.filter((property) => property !== 'two-handed-focus') ?? []
 	);
 	const [name, setName] = useState(initialEquipment?.name ?? '');
+	const [iconAssetId, setIconAssetId] = useState(initialEquipment?.iconAssetId);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(
 		initialEquipment?.presetOrigin ?? null
 	);
@@ -119,6 +121,7 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack, initialEq
 		const focus: CustomSpellFocus = {
 			id: initialEquipment?.id ?? `custom-focus-${Date.now()}`,
 			category: 'spellFocus',
+			iconAssetId,
 			name: name || 'Custom Spell Focus',
 			hands: hands!,
 			properties: props,
@@ -377,6 +380,14 @@ const SpellFocusBuilder: React.FC<SpellFocusBuilderProps> = ({ onBack, initialEq
 				{step === 3 && (
 					<>
 						<SectionTitle>Step 3: Review & Save</SectionTitle>
+						<div className="mb-4">
+							<AssetPicker
+								kind="item"
+								value={iconAssetId}
+								onChange={setIconAssetId}
+								label="Icon (optional)"
+							/>
+						</div>
 
 						<div className="mb-4">
 							<label className="mb-2 block text-sm font-medium text-gray-400">Name</label>

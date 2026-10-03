@@ -68,7 +68,7 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 	if (isLoading) {
 		return (
 			<SectionContent>
-				<div className="py-4 text-center text-zinc-500">Loading features...</div>
+				<div className="py-4 text-center text-[var(--dm-muted)]">Loading features...</div>
 			</SectionContent>
 		);
 	}
@@ -93,13 +93,13 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 					<div key={cost} className="mb-4">
 						<button
 							type="button"
-							className="mb-2 flex w-full items-center justify-between rounded-lg bg-black/20 px-3 py-2 transition-colors hover:bg-black/30"
+							className="mb-2 flex w-full items-center justify-between rounded-lg bg-[var(--dm-raised)] px-3 py-2 transition-colors hover:bg-[var(--dm-field)]"
 							onClick={() => setExpandedCost(isExpanded ? null : cost)}
 						>
 							<span className="text-sm font-medium text-amber-400">
 								{cost}-Point Features ({features.length})
 							</span>
-							<span className="text-xs text-zinc-500">{isExpanded ? '▼' : '▶'}</span>
+							<span className="text-xs text-[var(--dm-muted)]">{isExpanded ? '▼' : '▶'}</span>
 						</button>
 
 						{isExpanded && (
@@ -122,7 +122,9 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 												<FeatureName $selected={isSelected}>
 													{feature.name}
 													{feature.source !== 'official' && (
-														<span className="ml-2 text-xs text-zinc-500">({feature.source})</span>
+														<span className="ml-2 text-xs text-[var(--dm-muted)]">
+															({feature.source})
+														</span>
 													)}
 												</FeatureName>
 												<FeatureDescription>{feature.description}</FeatureDescription>
@@ -141,8 +143,8 @@ export const FeaturePointBuy: React.FC<FeaturePointBuyProps> = ({
 
 			{/* Selected Features Summary */}
 			{selectedFeatures.length > 0 && (
-				<div className="mt-4 border-t border-purple-500/20 pt-4">
-					<div className="mb-2 text-xs text-zinc-500">Selected Features:</div>
+				<div className="mt-4 border-t border-[var(--dm-border)] pt-4">
+					<div className="mb-2 text-xs text-[var(--dm-muted)]">Selected Features:</div>
 					<div className="flex flex-wrap gap-1">
 						{selectedFeatures.map((feature) => (
 							<button

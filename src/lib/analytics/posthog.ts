@@ -1,7 +1,8 @@
 import type { PostHog } from 'posthog-js';
 import { hasAnalyticsConsent } from './consent';
 import { isLegalConsentFlowEnabled } from './config';
-import { buildAnalyticsPageviewProperties, sanitizePostHogEvent } from './privacy';
+import { buildAnalyticsPageviewProperties } from './privacy';
+import { prepareAnalyticsEvent } from './telemetry';
 
 const projectToken = import.meta.env.VITE_POSTHOG_PROJECT_TOKEN?.trim();
 const apiHost = import.meta.env.VITE_POSTHOG_HOST?.trim() || 'https://eu.i.posthog.com';
@@ -10,6 +11,12 @@ export const isAnalyticsEnabled =
 	import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && Boolean(projectToken);
 
 function hasAnalyticsPermission(): boolean {
+	if (
+		typeof navigator !== 'undefined' &&
+		(navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl
+	) {
+		return false;
+	}
 	return !isLegalConsentFlowEnabled || hasAnalyticsConsent();
 }
 
@@ -113,7 +120,7 @@ async function getAnalyticsClient(): Promise<PostHog | null> {
 						cross_subdomain_cookie: false,
 						respect_dnt: true,
 						ip: false,
-						before_send: sanitizePostHogEvent
+						before_send: prepareAnalyticsEvent
 					});
 				}
 				if (posthog.has_opted_out_capturing()) {

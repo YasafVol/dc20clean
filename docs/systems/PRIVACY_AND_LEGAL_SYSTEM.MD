@@ -4,9 +4,9 @@
 > Owns: Consent UI and persistence, legal-page presentation, public links, and the legal/consent feature flag.
 > Does not own: Final legal determinations or attorney approval, Convex authentication, product telemetry event semantics, cloud retention settings, or account-deletion backend behavior.
 > Authoritative source: `src/lib/analytics/config.ts`, `src/App.tsx`, `src/components/analytics/ConsentManager.tsx`, `src/lib/analytics/consent.ts`, `src/routes/legal/LegalPages.tsx`, `src/routes/legal/LegalPages.styles.ts`, `src/components/LegalFooter.tsx`, `src/components/auth/SignIn.tsx`, `src/components/UserbackFeedback.tsx`, `src/lib/feedback/userback.ts`, and `index.html`.
-> Related systems: `ANALYTICS_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
+> Related systems: `ERROR_REPORTING_SYSTEM.MD`, `ANALYTICS_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
 > Status: Active technical implementation; legal copy remains draft and unapproved.
-> Last Updated: 2026-09-21
+> Last Updated: 2026-10-02
 
 ## 1. Public surfaces
 
@@ -31,6 +31,6 @@
 ## 4. Publication checklist
 
 1. Confirm operator legal identity, public privacy/contact address, jurisdictions and rights handling, intended ages, game-publisher attribution, and effective dates in both language versions.
-2. Confirm actual retention/deletion procedures for account, game content, feedback, and analytics; provider locations and DPAs; whether the configured Sentry error path sends any production data; and how a user can make a data request. Do not promise a self-service deletion flow that does not exist.
+2. Confirm actual retention/deletion procedures for account, game content, feedback, and analytics; provider locations and DPAs; and how a user can make a data request. Sentry now initializes for configured frontend builds; its technical collection boundary is `ERROR_REPORTING_SYSTEM.MD`. Its configured Vercel project is hosted in the US, while PostHog uses EU Cloud. Review these actual provider flows before publishing the draft notices. Do not promise a self-service deletion flow that does not exist.
 3. Have owner/legal review the notices and Terms of Use; remove every `[REVIEW REQUIRED]`/`[REVISIÓN NECESARIA]` marker and draft banner, version the approved content, and re-check the runtime data flows.
 4. Before production analytics, resolve the notice and consent basis and verify the chosen flag mode in a browser. The flag is not a legal-approval signal. After deployment, re-check the live pages and network requests.

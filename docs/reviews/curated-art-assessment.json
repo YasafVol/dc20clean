@@ -1,0 +1,492 @@
+{
+	"icon-cape-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Cape/CapeOriginal/CapeOriginal 1.png",
+		"reviewName": "Cape 1",
+		"classification": "item icon / Cape",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-cape-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Cape/CapeOriginal/CapeOriginal 2.png",
+		"reviewName": "Cape 2",
+		"classification": "item icon / Cape",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-feet-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 1.png",
+		"reviewName": "Boots 1",
+		"classification": "item icon / Boots",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-feet-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Feet/FeetOriginal/FeetOriginal 2.png",
+		"reviewName": "Boots 2",
+		"classification": "item icon / Boots",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-gauntlet-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Gauntlet/GauntletOriginal/GauntletOriginal 1.png",
+		"reviewName": "Gauntlet 1",
+		"classification": "item icon / Gauntlet",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-gauntlet-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Gauntlet/GauntletOriginal/GauntletOriginal 2.png",
+		"reviewName": "Gauntlet 2",
+		"classification": "item icon / Gauntlet",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-helmet-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Helmet/HelmetOriginal/HelmetOriginal 1.png",
+		"reviewName": "Helmet 1",
+		"classification": "item icon / Helmet",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-helmet-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Helmet/HelmetOriginal/HelmetOriginal 2.png",
+		"reviewName": "Helmet 2",
+		"classification": "item icon / Helmet",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-leg-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Leg/LegOriginal/LegOriginal 1.png",
+		"reviewName": "Leg 1",
+		"classification": "item icon / Leg",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-leg-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Leg/LegOriginal/LegOriginal 2.png",
+		"reviewName": "Leg 2",
+		"classification": "item icon / Leg",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-necklace-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Necklace/NecklaceOriginal/NecklaceOriginal 1.png",
+		"reviewName": "Necklace 1",
+		"classification": "item icon / Necklace",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-necklace-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Necklace/NecklaceOriginal/NecklaceOriginal 2.png",
+		"reviewName": "Necklace 2",
+		"classification": "item icon / Necklace",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-ring-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Ring/RingOriginal/RingOriginal 1.png",
+		"reviewName": "Ring 1",
+		"classification": "item icon / Ring",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-ring-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Ring/RingOriginal/RingOriginal 2.png",
+		"reviewName": "Ring 2",
+		"classification": "item icon / Ring",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-shield-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Shield/ShieldOriginal/ShieldOriginal 1.png",
+		"reviewName": "Shield 1",
+		"classification": "item icon / Shield",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-shield-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Shield/ShieldOriginal/ShieldOriginal 2.png",
+		"reviewName": "Shield 2",
+		"classification": "item icon / Shield",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-torso-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Torso/TorsoOriginal/TorsoOriginal 1.png",
+		"reviewName": "Torso 1",
+		"classification": "item icon / Torso",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-torso-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Torso/TorsoOriginal/TorsoOriginal 2.png",
+		"reviewName": "Torso 2",
+		"classification": "item icon / Torso",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-axe-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Axe/AxeOriginal/AxeOriginal 1.png",
+		"reviewName": "Axe 1",
+		"classification": "item icon / Axe",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-axe-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Axe/AxeOriginal/AxeOriginal 2.png",
+		"reviewName": "Axe 2",
+		"classification": "item icon / Axe",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-dagger-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Dagger/DaggerOriginal/DaggerOriginal 1.png",
+		"reviewName": "Dagger 1",
+		"classification": "item icon / Dagger",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-dagger-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Dagger/DaggerOriginal/DaggerOriginal 2.png",
+		"reviewName": "Dagger 2",
+		"classification": "item icon / Dagger",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-mace-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Mace/MaceOriginal/MaceOriginal 1.png",
+		"reviewName": "Mace 1",
+		"classification": "item icon / Mace",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-mace-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Mace/MaceOriginal/MaceOriginal 2.png",
+		"reviewName": "Mace 2",
+		"classification": "item icon / Mace",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-ranged-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Ranged/RangedOriginal/RangedOriginal 1.png",
+		"reviewName": "Ranged 1",
+		"classification": "item icon / Ranged",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-ranged-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Ranged/RangedOriginal/RangedOriginal 2.png",
+		"reviewName": "Ranged 2",
+		"classification": "item icon / Ranged",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-spear-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Spear/SpearOriginal/SpearOriginal 1.png",
+		"reviewName": "Spear 1",
+		"classification": "item icon / Spear",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-spear-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Spear/SpearOriginal/SpearOriginal 2.png",
+		"reviewName": "Spear 2",
+		"classification": "item icon / Spear",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-staff-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Staff/StaffOriginal/StaffOriginal 1.png",
+		"reviewName": "Staff 1",
+		"classification": "item icon / Staff",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-staff-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Staff/StaffOriginal/StaffOriginal 2.png",
+		"reviewName": "Staff 2",
+		"classification": "item icon / Staff",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-sword-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Sword/SwordOriginal/SwordOriginal 1.png",
+		"reviewName": "Sword 1",
+		"classification": "item icon / Sword",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-sword-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Weapon/Sword/SwordOriginal/SwordOriginal 2.png",
+		"reviewName": "Sword 2",
+		"classification": "item icon / Sword",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-arrow-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Arrow/ArrowOrigin/ArrowOrigin 1.png",
+		"reviewName": "Arrow 1",
+		"classification": "item icon / Arrow",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-arrow-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Arrow/ArrowOrigin/ArrowOrigin 2.png",
+		"reviewName": "Arrow 2",
+		"classification": "item icon / Arrow",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-artifact-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Artifact/ArtifactOriginal/ArtifactOriginal 1.png",
+		"reviewName": "Artifact 1",
+		"classification": "item icon / Artifact",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-artifact-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Artifact/ArtifactOriginal/ArtifactOriginal 2.png",
+		"reviewName": "Artifact 2",
+		"classification": "item icon / Artifact",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-book-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Book/BookOrigin/BookOrigin 1.png",
+		"reviewName": "Book 1",
+		"classification": "item icon / Book",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-book-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Book/BookOrigin/BookOrigin 2.png",
+		"reviewName": "Book 2",
+		"classification": "item icon / Book",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-key-01": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Key/KeyOrigin/KeyOrigin 1.png",
+		"reviewName": "Key 1",
+		"classification": "item icon / Key",
+		"confidence": "high",
+		"note": ""
+	},
+	"icon-key-02": {
+		"sourcePath": "IconPack 1.0/AllItems/Miscellaneous/Key/KeyOrigin/KeyOrigin 2.png",
+		"reviewName": "Key 2",
+		"classification": "item icon / Key",
+		"confidence": "high",
+		"note": ""
+	},
+	"heroic-creature-castle-griffin": {
+		"sourcePath": "castle/griffin/icon_griffin_0_32x32.png",
+		"reviewName": "Griffin",
+		"classification": "griffin",
+		"confidence": "high",
+		"note": "Archive name and beaked quadruped silhouette agree."
+	},
+	"heroic-creature-castle-paladin": {
+		"sourcePath": "castle/paladin/icon_paladin_0_32x32.png",
+		"reviewName": "Paladin",
+		"classification": "armored humanoid / paladin role",
+		"confidence": "high",
+		"note": "Paladin is the archive name; the image itself mainly shows armor."
+	},
+	"heroic-creature-castle-angel": {
+		"sourcePath": "castle/angel/icon_angel_0_32x32.png",
+		"reviewName": "Angel",
+		"classification": "celestial humanoid",
+		"confidence": "high",
+		"note": "Archive names it angel; visible wings support the label."
+	},
+	"heroic-creature-dark-bastion-demon": {
+		"sourcePath": "dark bastion/demon/icon_demon_0_32x32.png",
+		"reviewName": "Demon",
+		"classification": "demon",
+		"confidence": "high",
+		"note": "Archive name and visible form support the label."
+	},
+	"heroic-creature-dark-bastion-hell-hound": {
+		"sourcePath": "dark bastion/hell hound/icon_hell_hound_0_32x32.png",
+		"reviewName": "Hell Hound",
+		"classification": "fiendish canine",
+		"confidence": "high",
+		"note": "Archive name and canine silhouette agree."
+	},
+	"heroic-creature-necropolis-lich": {
+		"sourcePath": "necropolis/lich/icon_lich_0_32x32.png",
+		"reviewName": "Lich",
+		"classification": "undead / archive-labeled lich",
+		"confidence": "medium",
+		"note": "The archive calls it a lich; the small portrait alone shows a pale humanoid, so lich identity depends on the source label."
+	},
+	"heroic-creature-necropolis-skeleton": {
+		"sourcePath": "necropolis/skeleton/icon_skeleton_0_32x32.png",
+		"reviewName": "Skeleton",
+		"classification": "undead / skeleton",
+		"confidence": "high",
+		"note": "Archive name and skeletal form agree."
+	},
+	"heroic-creature-stronghold-cyclop": {
+		"sourcePath": "stronghold/cyclop/icon_cyclop_0_32x32.png",
+		"reviewName": "Cyclops",
+		"classification": "giant / cyclops",
+		"confidence": "high",
+		"note": "The archive spells this cyclop; Cyclops is the standard display spelling."
+	},
+	"heroic-creature-stronghold-goblin": {
+		"sourcePath": "stronghold/goblin/icon_goblin_0_32x32.png",
+		"reviewName": "Goblin",
+		"classification": "humanoid / goblin",
+		"confidence": "high",
+		"note": "Archive name and form support the label."
+	},
+	"heroic-creature-wizards-golem": {
+		"sourcePath": "wizards/golem/icon_golem_0_32x32.png",
+		"reviewName": "Golem",
+		"classification": "construct / golem",
+		"confidence": "high",
+		"note": "Archive name and constructed form support the label."
+	},
+	"heroic-creature-wizards-naga": {
+		"sourcePath": "wizards/naga/icon_naga_0_32x32.png",
+		"reviewName": "Naga",
+		"classification": "serpent humanoid / naga",
+		"confidence": "medium",
+		"note": "The archive calls it a naga; the small image does not clearly establish its anatomy."
+	},
+	"heroic-creature-great-elf-treant": {
+		"sourcePath": "great elf/treant/icon_treant_0_32x32.png",
+		"reviewName": "Treant",
+		"classification": "plant creature / treant",
+		"confidence": "high",
+		"note": "Archive name and tree-like silhouette agree."
+	},
+	"heroic-creature-great-elf-deer": {
+		"sourcePath": "great elf/deer/icon_deer_0_32x32.png",
+		"reviewName": "Deer",
+		"classification": "beast / deer",
+		"confidence": "high",
+		"note": "Archive name and deer silhouette agree."
+	},
+	"heroic-creature-elementals-fire-elemental": {
+		"sourcePath": "elementals/fire elemental/icon_fire_elemental_0_32x32.png",
+		"reviewName": "Fire Elemental",
+		"classification": "fire elemental",
+		"confidence": "high",
+		"note": "Archive name and fiery silhouette agree."
+	},
+	"heroic-creature-elementals-ice-elemental": {
+		"sourcePath": "elementals/ice elemental/icon_ice_elemental_0_32x32.png",
+		"reviewName": "Ice Elemental",
+		"classification": "ice elemental",
+		"confidence": "high",
+		"note": "Archive name and icy silhouette agree."
+	},
+	"beowulf-boss-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/01_boss_x.png",
+		"reviewName": "Pale Masked Creature",
+		"classification": "boss / masked creature",
+		"confidence": "low",
+		"note": "Archive confirms boss role. The face looks mask-like; body and species remain unclear."
+	},
+	"beowulf-boss-02": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/02_boss_x.png",
+		"reviewName": "Green Horned Creature",
+		"classification": "boss / horned monster",
+		"confidence": "medium",
+		"note": "Green horns or limbs and a pink lower mass are visible; species unclear."
+	},
+	"beowulf-boss-03": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/03_boss_03_x.png",
+		"reviewName": "Brown Round Creature",
+		"classification": "boss / round monster",
+		"confidence": "low",
+		"note": "The visible face has multiple eyes; a skull or undead identity is not supported."
+	},
+	"beowulf-boss-04": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/04_boss_x.png",
+		"reviewName": "Naga",
+		"classification": "boss / naga",
+		"confidence": "high",
+		"note": "User-reviewed as a naga; the archive confirms its boss role."
+	},
+	"beowulf-boss-05": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/05_boss_x.png",
+		"reviewName": "Green Eyed Figure",
+		"classification": "boss / humanoid monster",
+		"confidence": "low",
+		"note": "Face and extended arms are visible; exact species unclear."
+	},
+	"beowulf-boss-06": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/06_boss_x.png",
+		"reviewName": "Purple Spined Monster",
+		"classification": "boss / spined monster",
+		"confidence": "medium",
+		"note": "Spiky purple silhouette is visible; species unclear."
+	},
+	"beowulf-minion-01-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/01_minion_01_x.png",
+		"reviewName": "Pink White-topped Creature 1",
+		"classification": "minion / pink creature variant",
+		"confidence": "medium",
+		"note": "First of four related pink sprites with a white protrusion; species unclear."
+	},
+	"beowulf-minion-01-02": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/01_minion_02_x.png",
+		"reviewName": "Pink White-topped Creature 2",
+		"classification": "minion / pink creature variant",
+		"confidence": "medium",
+		"note": "Second pink variant with a white protrusion; species unclear."
+	},
+	"beowulf-minion-01-03": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/01_minion_03_x.png",
+		"reviewName": "Pink White-topped Creature 3",
+		"classification": "minion / pink creature variant",
+		"confidence": "medium",
+		"note": "Third pink variant with a taller white protrusion; species unclear."
+	},
+	"beowulf-minion-01-04": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/01_minion_04_x.png",
+		"reviewName": "Pink White-topped Creature 4",
+		"classification": "minion / pink creature variant",
+		"confidence": "medium",
+		"note": "Fourth pink variant with a white protrusion; species unclear."
+	},
+	"beowulf-minion-02-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/02_minion_01_x.png",
+		"reviewName": "Dire Cactus",
+		"classification": "minion / cactus monster",
+		"confidence": "high",
+		"note": "User-reviewed as a dire cactus; the archive confirms its minion role."
+	},
+	"beowulf-minion-02-02": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/02_minion_02_x.png",
+		"reviewName": "Toothed Green Creature",
+		"classification": "minion / reptilian-looking monster",
+		"confidence": "medium",
+		"note": "Low green body and large teeth; exact species unclear."
+	},
+	"beowulf-minion-03-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/03_minion_01_x.png",
+		"reviewName": "Brown Round Creature",
+		"classification": "minion / round monster",
+		"confidence": "low",
+		"note": "Brown rounded body with prominent eyes and a pink central feature; species unclear."
+	},
+	"beowulf-minion-04-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/04_minion_01_x.png",
+		"reviewName": "Purple Snake",
+		"classification": "minion / purple snake",
+		"confidence": "high",
+		"note": "User-reviewed as a purple snake; the archive confirms its minion role."
+	},
+	"beowulf-minion-05-01": {
+		"sourcePath": "Bosses & Minions Pack_3.5/Bosses & Minions/Sprites (Battlers) 1x/05_minion_01_x.png",
+		"reviewName": "Frog Monster",
+		"classification": "minion / frog monster",
+		"confidence": "high",
+		"note": "User-reviewed as a frog monster; the archive confirms its minion role."
+	}
+}

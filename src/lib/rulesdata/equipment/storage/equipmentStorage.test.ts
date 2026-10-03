@@ -129,6 +129,7 @@ describe('custom equipment storage compatibility', () => {
 		const item = {
 			id: 'field-journal',
 			name: 'Field Journal',
+			iconAssetId: 'icon-book-01',
 			category: 'general',
 			description: 'Notes from the northern expedition.',
 			cost: '2g',
@@ -149,12 +150,14 @@ describe('custom equipment storage compatibility', () => {
 			name: 'Field Journal',
 			category: 'general',
 			cost: '2g',
-			effects: []
+			effects: [],
+			iconAssetId: 'icon-book-01'
 		});
 		expect(duplicate).toMatchObject({
 			name: 'Field Journal Copy',
 			category: 'general',
-			cost: '2g'
+			cost: '2g',
+			iconAssetId: 'icon-book-01'
 		});
 		// eslint-disable-next-line no-restricted-syntax
 		const exported = JSON.parse(exportEquipmentToJson());

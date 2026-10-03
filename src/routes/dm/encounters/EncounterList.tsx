@@ -83,7 +83,7 @@ export const EncounterList: React.FC = () => {
 
 			<MainContent>
 				{isLoading ? (
-					<div className="py-12 text-center text-zinc-500">Loading...</div>
+					<div className="py-12 text-center text-[var(--dm-muted)]">Loading...</div>
 				) : encounters.length === 0 ? (
 					<EmptyState>
 						<EmptyStateTitle>No Encounters Yet</EmptyStateTitle>

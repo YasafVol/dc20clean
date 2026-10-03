@@ -287,6 +287,8 @@ export interface SpellData {
 
 export interface InventoryItemData {
 	id: string;
+	/** Copied from Equipage or chosen for a freeform item, so this row keeps its icon. */
+	iconAssetId?: string;
 	itemType:
 		| 'Weapon'
 		| 'Armor'

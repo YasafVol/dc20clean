@@ -18,6 +18,24 @@ export interface ProductUpdateSummary {
  */
 export const productUpdates: ProductUpdateSummary[] = [
 	{
+		slug: '2026-09-28-curated-art-and-dm-tools',
+		date: 'September 28, 2026',
+		dateTime: '2026-09-28',
+		kicker: 'Product update',
+		area: 'Equipment & DM Tools',
+		title: 'Art for your gear and monsters',
+		excerpt:
+			'Choose item icons when making custom gear and creature art when designing monsters. DM Tools now shares the main app’s look.',
+		highlights: [
+			'Item icons for custom equipment and inventory',
+			'Creature art across monster and encounter views',
+			'A shared look for the monster and encounter tools'
+		],
+		updateHref: '/updates/2026-09-28-curated-art-and-dm-tools',
+		featureHref: '/dm/monsters',
+		featureLabel: 'Open Monster Designer'
+	},
+	{
 		slug: '2026-09-18-alternative-character-sheet',
 		date: 'September 18, 2026',
 		dateTime: '2026-09-18',

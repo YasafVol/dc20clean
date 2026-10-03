@@ -3,10 +3,10 @@
 > Purpose: Define product-analytics collection, identity, privacy boundaries, event contracts, reporting semantics, and operational setup.
 > Owns: PostHog client initialization, explicit pageview capture, acquisition attribution, authenticated identity, analytics event registration, privacy filtering, and analytics verification.
 > Does not own: Application logs, error reporting, source user records, authorization, access-policy enforcement, legal determinations, final privacy-notice text, PostHog billing, or retention settings.
-> Authoritative source: `src/lib/analytics/`, `src/components/analytics/PostHogLifecycle.tsx`, `src/components/auth/CurrentUserContext.tsx`, `convex/users.ts`, and analytics environment variables.
-> Related systems: `PRIVACY_AND_LEGAL_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `CHARACTER_CREATION_FLOW.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
+> Authoritative source: `src/lib/analytics/`, `src/lib/monitoring/environment.ts`, `vite.config.ts`, `src/components/analytics/PostHogLifecycle.tsx`, `src/components/auth/CurrentUserContext.tsx`, `convex/users.ts`, and analytics environment variables.
+> Related systems: `ERROR_REPORTING_SYSTEM.MD`, `PRIVACY_AND_LEGAL_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `CHARACTER_CREATION_FLOW.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
 > Status: Active
-> Last Updated: 2026-09-21
+> Last Updated: 2026-10-02
 
 ## 1. Goals and Boundaries
 
@@ -20,7 +20,7 @@
    1. Session replay.
    2. Click or form autocapture.
    3. User-authored content analysis.
-   4. Error or performance monitoring; Sentry remains the intended error-reporting boundary.
+   4. Error or performance monitoring; Sentry owns frontend errors through `ERROR_REPORTING_SYSTEM.MD`.
    5. Authorization decisions. Analytics data must never decide who can use a feature.
 
 ## 2. Provider and Control Plane
@@ -32,7 +32,7 @@
    3. Ingestion host: `https://eu.i.posthog.com`.
    4. Authorized production URL: `https://dc20clean.vercel.app`.
 3. The PostHog project token is a public, write-only browser token. It belongs in deployment configuration but must not be copied into documentation.
-4. Production configuration is stored in Vercel. Analytics and the draft legal/consent flow have independent flags. Development and preview remain disabled unless a deliberate validation run supplies the variables. Neither flag constitutes legal approval.
+4. Production and preview configuration is stored in Vercel. Both use the EU project and are separated by the `app_environment` event property. Development remains disabled by default. Analytics and the draft legal/consent flow have independent flags; neither constitutes legal approval.
 5. Vercel Analytics is not part of the runtime. Do not run both providers without an explicit migration decision.
 
 ## 3. Runtime Architecture
@@ -74,6 +74,8 @@ VITE_POSTHOG_HOST=https://eu.i.posthog.com
 2. `VITE_POSTHOG_HOST` defaults to the EU ingestion host.
 3. All four values are browser-visible Vite configuration. None grants read or administrative access to PostHog.
 4. To disable collection, set `VITE_ENABLE_ANALYTICS=false` and redeploy the frontend. Changing the legal/consent flag is not an analytics kill switch.
+5. Every outgoing event, including SDK identity/person-property events, gets `app_environment`, `app_release`, and `$geoip_disable=true` after privacy sanitization. Vercel's environment and commit SHA supply these values; explicit local overrides use `VITE_APP_ENVIRONMENT` and `VITE_APP_RELEASE`.
+6. Use `app_environment=production` in new production reports. The existing dashboard `961669` uses the event filter `$host=dc20clean.vercel.app` to include historical production events that predate environment tags while excluding preview and diagnostic traffic. Preview URLs and identified preview activity share this project, so event-level environment or hostname filtering is required.
 
 ## 5. Identity Lifecycle
 
@@ -153,8 +155,8 @@ VITE_POSTHOG_HOST=https://eu.i.posthog.com
    8. Automatic campaign and referrer persistence.
 2. Additional constraints:
    1. Person profiles are created only for identified users.
-   2. IP-based enrichment is disabled.
-   3. Browser Do Not Track and Global Privacy Control signals are respected.
+   2. IP storage is disabled by the SDK and the project's Discard client IP data setting. `$geoip_disable=true` explicitly disables enrichment; the project GeoIP transformation is also paused. `ip=false` alone does not prevent server-side enrichment.
+   3. Browser Do Not Track is enforced by the SDK. Global Privacy Control blocks the adapter before SDK import and before capture.
    4. Persistence is localStorage-only and cross-subdomain cookies are disabled.
    5. URL hashes are disabled at the SDK level and removed again by the privacy sanitizer.
    6. PostHog's personal-data masking remains enabled as defense in depth.
@@ -189,7 +191,7 @@ Do not treat bounce rate, scroll depth, or exact session duration as authoritati
 ### 9.2 Product insights
 
 1. Acquisition: unique `$pageview` visitors by `$referring_domain`, `utm_source`, and `utm_medium`.
-2. Activation funnel: `$pageview` → `sign_in_started` → `authenticated_session_started` → `character_creation_completed`.
+2. Activation funnel: `$pageview` → `sign_in_started` → `authenticated_session_started` → `character_creation_completed`. The saved insight `sQVh5808` implements these sequential steps with a 14-day conversion window; dashboard `961669` applies the production hostname filter.
 3. Authenticated active users: unique identified users emitting `authenticated_session_started`, viewed daily, weekly, and monthly.
 4. Feature usage: unique visitors by sanitized `$pathname`.
 5. Signup history: identified people grouped by `account_created_at`.

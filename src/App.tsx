@@ -28,6 +28,7 @@ import {
 	CampaignCharacterView
 } from './routes/campaigns';
 import AlternativeSheetUpdate from './routes/product-update/AlternativeSheetUpdate';
+import CuratedArtUpdate from './routes/product-update/CuratedArtUpdate';
 import UpdatesIndex from './routes/product-update/UpdatesIndex';
 
 import { StyledApp, FixedAuthStatus } from './styles/App.styles';
@@ -210,6 +211,10 @@ function App() {
 						<Route path="/martial-manual" element={<MartialManual />} />
 						<Route path="/conditions" element={<Conditions />} />
 						<Route path="/updates" element={<UpdatesIndex />} />
+						<Route
+							path="/updates/2026-09-28-curated-art-and-dm-tools"
+							element={<CuratedArtUpdate />}
+						/>
 						<Route
 							path="/updates/2026-09-18-alternative-character-sheet"
 							element={<AlternativeSheetUpdate />}

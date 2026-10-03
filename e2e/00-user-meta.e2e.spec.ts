@@ -59,16 +59,18 @@ test.describe('Meta user journeys', () => {
 		await openApp(page, '/menu?showWhatsNew=1');
 		await expect(page.getByRole('heading', { name: 'DC20 Character Creator' })).toBeVisible();
 
-		const updateNotice = page.getByRole('region', { name: 'The new character sheet' });
+		const updateNotice = page.getByRole('region', { name: 'Art for your gear and monsters' });
 		await expect(updateNotice).toBeVisible();
 		await updateNotice.getByRole('link', { name: /Read the full update/i }).click();
 
-		await expect(page).toHaveURL(/\/updates\/2026-09-18-alternative-character-sheet$/);
-		await expect(page.getByRole('heading', { name: 'The new character sheet' })).toBeVisible();
-		await page.getByRole('link', { name: /Open your characters/i }).click();
+		await expect(page).toHaveURL(/\/updates\/2026-09-28-curated-art-and-dm-tools$/);
+		await expect(
+			page.getByRole('heading', { name: 'Art for your gear and monsters' })
+		).toBeVisible();
+		await page.getByRole('link', { name: /Create equipment/i }).click();
 
-		await expect(page).toHaveURL(/\/load-character$/);
-		await expect(page.getByRole('heading', { name: 'Load Character' })).toBeVisible();
+		await expect(page).toHaveURL(/\/custom-equipment$/);
+		await expect(page.getByRole('heading', { name: 'Custom Equipment' })).toBeVisible();
 		await expectHealthyBrowser(health, testInfo);
 	});
 

@@ -64,7 +64,12 @@
 		"leveling:review:extract:0105": "vite-node scripts/leveling/dc20-0105-leveling-review.ts",
 		"leveling:review:validate:0105": "vite-node scripts/leveling/dc20-0105-leveling-review.ts --check",
 		"leveling:review:generate:0105": "vite-node scripts/leveling/dc20-0105-leveling-review.ts --write",
-		"rulebook:generate:0105": "node scripts/rulebook/generate-rulebook-artifact.mjs"
+		"rulebook:generate:0105": "node scripts/rulebook/generate-rulebook-artifact.mjs",
+		"backoffice:generate": "node scripts/back-office/generateSystems.mjs",
+		"backoffice:check": "node scripts/back-office/generateSystems.mjs --check",
+		"predev": "npm run backoffice:generate",
+		"prebuild": "npm run backoffice:generate",
+		"preconvex:dev": "npm run backoffice:generate"
 	},
 	"files": [
 		"dist",

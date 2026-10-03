@@ -1,3 +1,4 @@
+import { BackOfficeLink } from '../routes/back-office/BackOfficeLink';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -255,6 +256,7 @@ export const TopLeftToolbar: React.FC = () => {
 									onNavigate={() => setIsMenuOpen(false)}
 								/>
 							))}
+							<BackOfficeLink />
 						</MenuPopover>
 					)}
 				</>

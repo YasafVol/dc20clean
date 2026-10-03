@@ -1,3 +1,4 @@
+import { BackOfficeLink } from '../routes/back-office/BackOfficeLink';
 export const HeadIcon = () => (
 	<svg
 		id="Layer_1"
@@ -249,6 +250,7 @@ function Menu() {
 		<StyledContainer>
 			<StyledMenuPrimaryContent>
 				<StyledTitle>{t('menu.title')}</StyledTitle>
+				<BackOfficeLink />
 				<StyledSubtitle>
 					{t('menu.subtitle')}
 					<br />

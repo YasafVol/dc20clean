@@ -4,9 +4,9 @@
 > Owns: Monster statistics, roles, tiers, monster features and actions, monster validation, monster persistence contracts, and monster designer workflows.
 > Does not own: Encounter-budget rules, general storage/authentication infrastructure, player-character calculation, or combat execution.
 > Authoritative source: `src/lib/rulesdata/dm/monsterStatistics.ts`, `src/lib/rulesdata/dm/monsterRoles.ts`, `src/lib/services/monsterCalculator.ts`, `src/lib/rulesdata/schemas/monster.schema.ts`, `src/routes/dm/monsters/`, and `convex/monsters.ts`.
-> Related systems: [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
+> Related systems: [Back Office](./BACK_OFFICE_SYSTEM.MD), [Encounters](./ENCOUNTER_SYSTEM_SPEC.MD), [Database](./DATABASE_SYSTEM.MD), [Art Assets](./ART_ASSET_SYSTEM.MD), [Testing](./TESTING_SYSTEM.MD).
 > Status: Active
-> Last Updated: 2026-09-25
+> Last Updated: 2026-10-03
 
 ---
 
@@ -591,3 +591,7 @@ The importer reports:
 - **Errors** for missing required fields (name, level, role, actions)
 - **Warnings** for mapped fields (role variations, action types)
 - **Warnings** for features not found in official list (requires custom feature creation)
+
+## Back-office monster review
+
+`/back-office/monsters` is a separate, read-only cross-owner review surface restricted by Convex to the two verified reviewer accounts. It lists active official, custom, and homebrew records with name search, role/tier filters, and pagination. Detail uses saved statistics and resolves feature references without recalculating or writing. Existing fork metadata is shown; missing source-document/page references and unresolved features remain visible. Designer permissions and mutation behavior are unchanged. See [Back Office](./BACK_OFFICE_SYSTEM.MD).

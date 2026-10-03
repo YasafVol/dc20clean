@@ -106,6 +106,8 @@ export declare const internalAction: ActionBuilder<DataModel, "internal">;
  */
 export declare const httpAction: HttpActionBuilder;
 
+export declare const env: Record<string, string | undefined>;
+
 /**
  * Typesafe environment variables.
  *

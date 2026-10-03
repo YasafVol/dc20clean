@@ -49,6 +49,10 @@ import cinzelFont from './types/Fonts/Cinzel-VariableFont_wght.ttf';
 import urbanistFont from './types/Fonts/Urbanist-VariableFont_wght.ttf';
 import libreBaskervilleItalic from './types/Fonts/LibreBaskerville-Italic.ttf';
 
+const BackOffice = lazy(() => import('./routes/back-office/BackOffice'));
+const BackOfficePreview = import.meta.env.DEV
+	? lazy(() => import('./routes/back-office/BackOfficePreview'))
+	: null;
 const Rulebook = lazy(() => import('./routes/rulebook/Rulebook.tsx'));
 const ConsentManager = lazy(() =>
 	import('./components/analytics/ConsentManager').then((module) => ({
@@ -166,6 +170,24 @@ function App() {
 					<Routes>
 						<Route path="/" element={<Navigate to="/menu" replace />} />
 						<Route path="/menu" element={<Menu />} />
+						<Route
+							path="/back-office/*"
+							element={
+								<Suspense fallback={<p role="status">Loading back office…</p>}>
+									<BackOffice />
+								</Suspense>
+							}
+						/>
+						{BackOfficePreview && (
+							<Route
+								path="/back-office-preview/*"
+								element={
+									<Suspense fallback={<p role="status">Loading local preview…</p>}>
+										<BackOfficePreview />
+									</Suspense>
+								}
+							/>
+						)}
 						<Route
 							path="/privacy"
 							element={

@@ -31,7 +31,7 @@
 6. The reader supports headings, an on-page outline, fenced code, lists, tables, and links between known system documents. External HTTP(S) links open separately. Other repository references are displayed without pretending that they are application pages. Raw HTML is not executed.
 7. `backoffice:generate` snapshots only Markdown files directly under `docs/systems/` into `convex/backOfficeData/systems.json`. The snapshot is imported solely by the protected backend, never by public browser bundles or static assets.
 8. `predev`, `prebuild`, and `preconvex:dev` regenerate the snapshot. `backoffice:check` detects drift. Direct Convex deployment commands must run `npm run backoffice:generate` first so the backend receives current documentation. Frontend builds alone do not update deployed Convex content.
-9. The reader strips a leading `DC20Clean` or `DC20` project prefix from displayed document names. It leaves Markdown source titles, filenames, and link targets unchanged. Each snapshot entry receives a one-based ordinal from the filename-sorted catalog; the list and selected document display it as two digits. Search and area filters preserve these catalog numbers.
+9. The reader strips a leading `DC20Clean` or `DC20` project prefix from displayed document names. It leaves Markdown source titles, filenames, and link targets unchanged. Each snapshot entry receives a one-based ordinal from the filename-sorted catalog; the list and selected document display it as two digits. Search and area filters preserve these catalog numbers. Result counts use the singular label for one document.
 
 ## 3. Monster review
 
@@ -48,3 +48,4 @@
 2. Reader navigation tests check document coverage and system-link resolution; UI tests check access states, system/monster review interactions, and overflow at phone, tablet, and desktop widths.
 3. Verify the production browser bundle contains no system snapshot text. Backend deployment and authorized live sign-in are separate from local implementation verification.
 4. The local preview tests check navigation, filtering, detail rendering, and absence of Convex content queries without sign-in. This preview verifies presentation only; backend access behavior remains covered by the protected query tests.
+5. The opt-in Playwright logbook in `e2e/back-office-logbook.e2e.spec.ts` records real-browser local preview flows, anonymous development-backend denial, and the PR preview's Vercel protection boundary. The dated evidence is in `docs/reviews/back-office-playwright-2026-10-03.md`.

@@ -152,7 +152,8 @@ export function SystemsReviewContent({
 					) : (
 						<>
 							<p className="bo-muted">
-								{visible?.length} documents{group ? ` · ${group.title}` : ''}
+								{visible?.length} {visible?.length === 1 ? 'document' : 'documents'}
+								{group ? ` · ${group.title}` : ''}
 							</p>
 							{visible?.map((entry) => (
 								<Link

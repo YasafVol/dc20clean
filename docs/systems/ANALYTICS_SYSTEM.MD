@@ -4,9 +4,9 @@
 > Owns: PostHog client initialization, explicit pageview capture, acquisition attribution, authenticated identity, analytics event registration, privacy filtering, and analytics verification.
 > Does not own: Application logs, error reporting, source user records, authorization, access-policy enforcement, legal determinations, final privacy-notice text, PostHog billing, or retention settings.
 > Authoritative source: `src/lib/analytics/`, `src/lib/monitoring/environment.ts`, `vite.config.ts`, `src/components/analytics/PostHogLifecycle.tsx`, `src/components/auth/CurrentUserContext.tsx`, `convex/users.ts`, and analytics environment variables.
-> Related systems: `ERROR_REPORTING_SYSTEM.MD`, `PRIVACY_AND_LEGAL_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `CHARACTER_CREATION_FLOW.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
+> Related systems: `LOGGING_SYSTEM.MD`, `ERROR_REPORTING_SYSTEM.MD`, `PRIVACY_AND_LEGAL_SYSTEM.MD`, `DATABASE_SYSTEM.MD`, `CHARACTER_CREATION_FLOW.MD`, `PROJECT_TECHNICAL_OVERVIEW.MD`, `TESTING_SYSTEM.MD`.
 > Status: Active
-> Last Updated: 2026-10-02
+> Last Updated: 2026-10-03
 
 ## 1. Goals and Boundaries
 
@@ -275,3 +275,11 @@ After every analytics rollout:
 2. Analytics capture is fire-and-forget. Product actions never await PostHog delivery.
 3. Invalid routes, attribution values, timestamps, events, or properties are dropped rather than sent unsafely.
 4. If unexpected private data appears, disable analytics in Vercel, redeploy, then correct the sanitizer before re-enabling it.
+
+### 11.4 Verified delivery baseline
+
+1. Production verification on 2026-10-02 exercised the actual deployed route lifecycle and SDK: three pageviews reached project `278381`, visually matched to distinct ID `01a0fc3c-92b4-76e3-9fcf-f9911a9cd9b8`. The labeled menu event `01a0fc3c-9f75-718b-b5ab-25c8799d5f81` carried campaign `pw_20261002105021`, `app_environment=production`, release `8fd72dd07b008873207a2e6a39c2fe27ba8fa142`, and `$geoip_disable=true`. Browser ingestion returned HTTP 200.
+2. Protected-preview verification on 2026-10-03 used the owner's existing signed-in Chrome. A disposable preview built from the same source sent a labeled menu pageview and a normal Create Character route pageview, visually matched to distinct ID `01a0fc75-41d1-756b-b693-3de70fb78462`. The menu event carried `utm_campaign=preview_browser_20261002`, `app_environment=preview`, explicit diagnostic release `preview-browser-verification-8fd72dd`, and disabled GeoIP. Captured URLs omitted queries and hashes; no game records were saved.
+3. Diagnostics are explicitly separated from ordinary collection. The production Playwright browser required a test-only bot-filter exception. The owner approved a temporary preview-tab Do Not Track exception; Chrome's setting stayed enabled. Neither exception is shipped in the application adapter. SDK initialization under Do Not Track can leave its batch queue paused; diagnostic code must explicitly opt in or use immediate sending after an approved exception. Provider ingestion may take minutes to appear in Activity.
+4. These checks establish frontend SDK delivery and provider visibility for both environments. Anonymous browser checks do not prove the complete live authentication/sign-out/character-completion funnel; focused adapter, lifecycle, and completion tests cover those contracts. Retention enforcement, deletion operations, and legal publication remain separate follow-ups in Section 8.1.
+5. New preview builds inherit the shared Vercel settings and code on their branch. Immutable older deployments require a rebuild to receive fixes. Never promote a disposable diagnostic preview to production; remove it after verification.

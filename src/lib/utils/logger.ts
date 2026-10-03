@@ -9,7 +9,8 @@
  * - Sentry error tracking integration
  *
  * @see docs/systems/ANALYTICS_SYSTEM.MD
- * @see docs/plannedSpecs/LOGGING_SPEC.md
+ * @see docs/systems/LOGGING_SYSTEM.MD
+ * @see docs/systems/ERROR_REPORTING_SYSTEM.MD
  */
 
 import { captureAnalyticsEvent } from '../analytics/posthog';
@@ -21,7 +22,7 @@ import { captureApplicationError, setErrorReportingUser } from '../monitoring/se
 
 /**
  * Log severity levels
- * - debug: Detailed information for debugging (dev only)
+ * - debug: Detailed information; enabled by the development default threshold
  * - info: General operational information
  * - warn: Warning conditions that should be reviewed
  * - error: Error conditions that need attention
@@ -164,7 +165,7 @@ function log(level: LogLevel, context: LogContext, message: string, data?: objec
 // ============================================================================
 
 /**
- * Send error to Sentry (lazy-loaded)
+ * Forward the operation message through the initialized Sentry adapter
  */
 function sendToSentry(entry: LogEntry): void {
 	captureApplicationError(entry.context, entry.message);
@@ -194,7 +195,7 @@ function trackEvent(eventName: string, properties?: object): void {
 
 export const logger = {
 	/**
-	 * Debug level - Development only, suppressed in production
+	 * Debug level - Suppressed by the default production threshold; VITE_LOG_LEVEL can override
 	 * Use for: Detailed debugging information, variable dumps, flow tracing
 	 *
 	 * @example
